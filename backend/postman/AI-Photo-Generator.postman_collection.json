@@ -1,0 +1,84 @@
+{
+  "info": {
+    "name": "AI Photo Generator - Backend (AILabTools AI Photography)",
+    "description": "Calls the backend, which calls AILabTools POST /api/image/effects/ai-photography and polls GET /api/common/query-async-task-result. Set the collection variable baseUrl. For the 'image' field choose type File in Postman and pick a portrait (JPG, PNG or WebP, max 10 MB, under 4096x4096 px). style_title / style_desc must be English.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "taskId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api", "health"] } }
+    },
+    {
+      "name": "Generate (waits for the result, JSON)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const j = pm.response.json();",
+              "pm.test('finished (200) or still processing (202)', () => pm.expect([200, 202]).to.include(pm.response.code));",
+              "if (j.taskId) pm.collectionVariables.set('taskId', j.taskId);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "image", "type": "file", "src": [], "description": "Original portrait (JPEG/JPG/PNG/WEBP, <= 10 MB, < 4096x4096 px)" },
+            { "key": "style_title", "type": "text", "value": "Golden hour film portrait", "description": "Style name, English, max 500 characters (required)" },
+            { "key": "style_desc", "type": "text", "value": "A cinematic golden hour portrait on a sunlit street, warm soft light, shallow depth of field, subtle film grain", "description": "Style description, English, max 1000 characters (required)" },
+            { "key": "image_size", "type": "text", "value": "3:4", "description": "Optional output aspect ratio: auto (default), 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9", "disabled": true }
+          ]
+        },
+        "url": { "raw": "{{baseUrl}}/api/photos/generate", "host": ["{{baseUrl}}"], "path": ["api", "photos", "generate"] }
+      }
+    },
+    {
+      "name": "Generate (raw image - use Send and Download)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "image", "type": "file", "src": [] },
+            { "key": "style_title", "type": "text", "value": "Golden hour film portrait" },
+            { "key": "style_desc", "type": "text", "value": "A cinematic golden hour portrait on a sunlit street, warm soft light, subtle film grain" }
+          ]
+        },
+        "url": { "raw": "{{baseUrl}}/api/photos/generate?response=image", "host": ["{{baseUrl}}"], "path": ["api", "photos", "generate"], "query": [{ "key": "response", "value": "image" }] }
+      }
+    },
+    {
+      "name": "Task status / result (use the taskId from a 202 response)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/api/photos/tasks/{{taskId}}", "host": ["{{baseUrl}}"], "path": ["api", "photos", "tasks", "{{taskId}}"] }
+      }
+    },
+    {
+      "name": "Error example - missing style_title (expects 400)",
+      "request": {
+        "method": "POST",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "image", "type": "file", "src": [] },
+            { "key": "style_desc", "type": "text", "value": "Warm cinematic light" }
+          ]
+        },
+        "url": { "raw": "{{baseUrl}}/api/photos/generate", "host": ["{{baseUrl}}"], "path": ["api", "photos", "generate"] }
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(176 70% 32%)"/><stop offset="1" stop-color="hsl(231 75% 12%)"/></linearGradient>
+<radialGradient id="r" cx=".3" cy=".25" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<clipPath id="c"><rect width="120" height="120" rx="0"/></clipPath></defs>
+<g clip-path="url(#c)"><rect width="120" height="120" fill="url(#g)"/><rect width="120" height="120" fill="url(#r)"/>
+<circle cx="60" cy="45.6" r="19.2" fill="#fff" fill-opacity=".14"/>
+<path d="M24 86.39999999999999 Q60 57.599999999999994 96 86.39999999999999 Z" fill="#fff" fill-opacity=".12"/>
+<text x="50%" y="103.2" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="700" font-size="9" fill="#fff" fill-opacity=".85">QR</text>
+<text x="50%" y="114.9" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="5" fill="#fff" fill-opacity=".5">replace with QR</text></g></svg>
