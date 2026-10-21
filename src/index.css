@@ -73,3 +73,32 @@ body {
   .hero-card:hover { translate: 0 -7px; scale: 1.03; }
 }
 @media (prefers-reduced-motion: reduce) { .hero-card { transition: none; } }
+
+/* Welcome popup entrance / exit: backdrop fade + blur, card fade + scale + rise, soft glow, coin pop, staggered text reveal. Quick (<= ~0.7 s) and subtle. */
+@keyframes welcome-backdrop-in { from { opacity: 0; backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); } to { opacity: 1; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); } }
+@keyframes welcome-backdrop-out { from { opacity: 1; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); } to { opacity: 0; backdrop-filter: blur(0); -webkit-backdrop-filter: blur(0); } }
+@keyframes welcome-card-in { from { opacity: 0; transform: translateY(18px) scale(0.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes welcome-card-out { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(8px) scale(0.97); } }
+@keyframes welcome-glow-in { from { opacity: 0; transform: translateX(-50%) scale(0.7); } to { opacity: 1; transform: translateX(-50%) scale(1); } }
+@keyframes welcome-coin-pop { 0% { opacity: 0; transform: scale(0.55); } 60% { opacity: 1; transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes welcome-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.welcome-backdrop { animation: welcome-backdrop-in .3s ease-out both; }
+.welcome-card { animation: welcome-card-in .42s cubic-bezier(.22,1,.36,1) both; }
+.welcome-glow { animation: welcome-glow-in .9s ease-out both; }
+.welcome-coin { animation: welcome-coin-pop .5s cubic-bezier(.34,1.4,.64,1) .14s both; }
+.welcome-rise { animation: welcome-rise .42s cubic-bezier(.22,1,.36,1) both; }
+.welcome-rise-1 { animation-delay: .22s; }
+.welcome-rise-2 { animation-delay: .3s; }
+.welcome-rise-3 { animation-delay: .38s; }
+.welcome-closing.welcome-backdrop { animation: welcome-backdrop-out .2s ease-in both; }
+.welcome-closing .welcome-card { animation: welcome-card-out .2s ease-in both; }
+@media (prefers-reduced-motion: reduce) {
+  .welcome-backdrop, .welcome-card, .welcome-glow, .welcome-coin, .welcome-rise, .welcome-closing.welcome-backdrop, .welcome-closing .welcome-card { animation: none !important; }
+}
+
+/* Header profile dropdown: short fade + slight scale/slide from the top-right corner; plays in reverse when closing. */
+@keyframes profile-menu-in { from { opacity: 0; transform: translateY(-6px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes profile-menu-out { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-6px) scale(0.97); } }
+.profile-menu { transform-origin: top right; animation: profile-menu-in .16s cubic-bezier(.22,1,.36,1) both; }
+.profile-menu[data-closing='true'] { animation: profile-menu-out .12s ease-in both; }
+@media (prefers-reduced-motion: reduce) { .profile-menu, .profile-menu[data-closing='true'] { animation: none; } }

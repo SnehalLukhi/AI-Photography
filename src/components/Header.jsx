@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
+import { useStudio, WELCOME_COINS } from '../context/StudioContext.jsx'
 
 export const SparkIcon = ({ className = 'size-3.5 text-[#B070FA]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
@@ -66,12 +68,107 @@ function GetApp({ small }) {
   )
 }
 
-const Claim = ({ small }) => (
+/** Compact coin badge (74 x 32, border-box) for signed-in users: the existing coin.svg + the welcome-coin amount. Display only - there is no coin balance in the app. The whole badge links to the Pricing page. */
+const CoinBadge = ({ className = '' }) => (
+  <Link to="/pricing" aria-label={`${WELCOME_COINS} coins - view pricing`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-[#34343c] bg-[#17171c] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#B070FA]/60 hover:bg-[#1d1b26] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(176,112,250,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${className}`}>
+    <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] shrink-0 object-contain" />
+    <span className="text-[15px] font-bold leading-none tabular-nums text-white">{WELCOME_COINS}</span>
+  </Link>
+)
+
+// Profile dropdown (signed-in users). Name / e-mail come from the saved demo session: there is no profile page and no stored display name, so the name is derived
+// from the e-mail. Every item opens an existing route; Log out clears the saved demo session (there is no real auth provider).
+const PROFILE_ITEMS = [
+  ['/transactions', 'Transactions', 'M4 7h16M4 12h16M4 17h10'],
+  ['/transfer', 'Connect App Account', 'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1'],
+  ['/help', 'Help', 'M9.5 9a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17.2v.1M12 21a9 9 0 100-18 9 9 0 000 18z'],
+  ['/contact-us', 'Contact Support', 'M4 6h16v12H4zM4 7l8 6 8-6'],
+  ['/feedback', 'Share Your Feedback', 'M4 5h16v11H9l-5 4z'],
+  ['/privacy-policy', 'Privacy Policy', 'M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z'],
+]
+export const displayName = (email) => (email.split('@')[0] || '').split(/[._-]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') || 'Pixora user'
+
+function ProfileMenu() {
+  const { userEmail, signOut } = useStudio()
+  const nav = useNavigate()
+  const { pathname } = useLocation()
+  const btn = useRef(null)
+  const panel = useRef(null)
+  const timer = useRef(null)
+  const [open, setOpen] = useState(false)
+  const [shown, setShown] = useState(false) // mounted (stays mounted briefly while the close animation plays)
+  const [pos, setPos] = useState({ top: 0, right: 12 })
+  const name = displayName(userEmail || '')
+  const initial = (name[0] || 'P').toUpperCase()
+
+  const place = useCallback(() => {
+    const r = btn.current?.getBoundingClientRect()
+    if (r) setPos({ top: Math.round(r.bottom + 10), right: Math.max(12, Math.round(window.innerWidth - r.right)) })
+  }, [])
+  const close = useCallback((focus) => {
+    clearTimeout(timer.current)
+    setOpen(false)
+    timer.current = setTimeout(() => setShown(false), window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 120)
+    if (focus) btn.current?.focus()
+  }, [])
+  const toggle = () => { if (open) { close(); return } clearTimeout(timer.current); place(); setShown(true); setOpen(true) }
+
+  useLayoutEffect(() => { if (open) place() }, [open, place])
+  useEffect(() => () => clearTimeout(timer.current), [])
+  useEffect(() => { if (open) close() }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!open) return
+    const down = (e) => { if (!panel.current?.contains(e.target) && !btn.current?.contains(e.target)) close() }
+    const key = (e) => { if (e.key === 'Escape') close(true) }
+    window.addEventListener('mousedown', down); window.addEventListener('touchstart', down); window.addEventListener('keydown', key)
+    window.addEventListener('resize', place); window.addEventListener('scroll', place, true)
+    return () => { window.removeEventListener('mousedown', down); window.removeEventListener('touchstart', down); window.removeEventListener('keydown', key); window.removeEventListener('resize', place); window.removeEventListener('scroll', place, true) }
+  }, [open, close, place])
+
+  return (
+    <>
+      <button ref={btn} type="button" onClick={toggle} aria-label="Open profile menu" aria-haspopup="menu" aria-expanded={open}
+        className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-[#B070FA] to-[#F066D8] text-[14px] font-bold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12)] transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] active:scale-95">{initial}</button>
+      {shown && createPortal(
+        <div ref={panel} role="menu" aria-label="Profile" data-closing={!open} style={{ top: pos.top, right: pos.right }}
+          className="profile-menu fixed z-[400] w-[300px] max-w-[calc(100vw-24px)] rounded-2xl border border-white/10 bg-[#16161c] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.65)]">
+          <Link to="/profile" role="menuitem" onClick={() => close()} className="flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors hover:bg-white/[0.07] focus-visible:bg-white/[0.07] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#B070FA]">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#B070FA] to-[#F066D8] text-[16px] font-bold text-white">{initial}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[15px] font-semibold text-white">{name}</span>
+              <span className="block truncate text-xs text-[#C4B5FD]/75" title={userEmail}>{userEmail}</span>
+            </span>
+            <svg className="size-4 shrink-0 text-[#C4B5FD]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          </Link>
+          <div className="my-1.5 h-px bg-white/10" />
+          {PROFILE_ITEMS.map(([to, label, d]) => (
+            <Link key={to} to={to} role="menuitem" onClick={() => close()}
+              className="flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-[14px] font-medium text-[#E4DDFB] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#B070FA]">
+              <svg className="size-[18px] shrink-0 text-[#B070FA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+              {label}
+            </Link>
+          ))}
+          <div className="my-1.5 h-px bg-white/10" />
+          <button type="button" role="menuitem" onClick={() => { close(); signOut(); nav('/login') }}
+            className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2.5 text-left text-[14px] font-medium text-[#E4DDFB] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#B070FA]">
+            <svg className="size-[18px] shrink-0 text-[#B070FA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9" /></svg>
+            Log out
+          </button>
+        </div>, document.body)}
+    </>
+  )
+}
+
+const Claim = ({ small }) => {
+  const { signedIn } = useStudio()
+  if (signedIn) return <CoinBadge />
+  return (
   <Link to="/login" className={`group btn-grad shrink-0 ${small ? '!h-8 !gap-1.5 !px-3 !py-0 !text-[11px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}>
     <SparkIcon className="size-3.5 text-white transition-transform group-hover:scale-110" />
     <span className="whitespace-nowrap">Claim 50 Coins</span>
   </Link>
-)
+  )
+}
 
 const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-[#B070FA]/15 text-white ring-1 ring-inset ring-[#B070FA]/30' : 'text-[#C4B5FD] hover:bg-white/[0.06] hover:text-white'}`
 const Underline = () => null
@@ -86,6 +183,7 @@ const accountLinks = [['/transactions', 'Transactions'], ['/transfer', 'Connect 
 export default function Header({ generating = false }) {
   const [menu, setMenu] = useState(false)
   const { pathname } = useLocation()
+  const { signedIn } = useStudio()
   useEffect(() => { setMenu(false) }, [pathname])
   const scrolled = useScrolled()
   const xl = useXl()
@@ -115,11 +213,13 @@ export default function Header({ generating = false }) {
               </div>
               <div className="hidden shrink-0 items-center justify-end gap-2 lg:flex xl:gap-3">
                 <Claim />
+                {signedIn && <ProfileMenu />}
                 <GetApp />
               </div>
               <div className="flex items-center justify-end gap-2 lg:hidden">
                 <GetApp small />
                 <Claim small />
+                {signedIn && <ProfileMenu />}
                 <button type="button" aria-label="Open main menu" aria-expanded={menu} onClick={() => setMenu(!menu)} className="inline-flex cursor-pointer items-center justify-center rounded-xl p-2 text-[#C4B5FD] transition-colors hover:text-white focus:outline-none">
                   <svg className="block size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d={menu ? 'M6 6l12 12M6 18L18 6' : 'M4 6h16M4 12h16M4 18h16'} /></svg>
                 </button>
@@ -138,9 +238,11 @@ export default function Header({ generating = false }) {
                 <div className="!mt-2 space-y-0.5 border-t border-white/10 pt-2">
                   <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4B5FD]/75">Account &amp; Support</div>
                   {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#C4B5FD] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
+                  {signedIn ? <CoinBadge className="!mt-2 w-full" /> : (
                   <Link to="/login" className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#B070FA]/50 bg-[#B070FA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#B070FA] hover:bg-[#B070FA]/20">
                     <SparkIcon className="size-3.5 text-[#B070FA]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
                   </Link>
+                  )}
                 </div>
               </div>
             </div>
@@ -154,10 +256,11 @@ export default function Header({ generating = false }) {
         <Logo />
         {(
           <div className="flex items-center gap-2">
+            {signedIn && <CoinBadge />}
             <GetApp small />
-            <Link to="/pricing" aria-label="Upgrade to Pro" className="p-1 text-[#D8B4FE] transition-transform active:scale-95">
+            {signedIn ? <ProfileMenu /> : <Link to="/pricing" aria-label="Upgrade to Pro" className="p-1 text-[#D8B4FE] transition-transform active:scale-95">
               <svg className="size-7" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" /></svg>
-            </Link>
+            </Link>}
           </div>
         )}
       </header>
@@ -170,7 +273,7 @@ export default function Header({ generating = false }) {
 const tabs = [
   { to: '/', label: 'Home', match: (p) => p === '/', d: 'M3 11l9-8 9 8v10h-6v-6H9v6H3z' },
   { to: '/explore', label: 'Explore', match: (p) => p === '/explore', d: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z' },
-  { to: '/creations', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/feedback', '/transactions', '/transfer'].includes(p), d: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0' },
+  { to: '/creations', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/contact-us', '/feedback', '/transactions', '/transfer', '/profile'].includes(p), d: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0' },
 ]
 
 function MobileTabs({ pathname }) {

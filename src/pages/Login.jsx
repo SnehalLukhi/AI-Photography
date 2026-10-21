@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
@@ -42,7 +42,7 @@ function Field({ id, label, error, right, ...props }) {
 
 export function Login() {
   const nav = useNavigate()
-  const { signIn } = useStudio()
+  const { signIn, signedIn } = useStudio()
   const [mode, setMode] = useState('login') // 'login' | 'signup'
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -77,10 +77,11 @@ export function Login() {
     setErrors(e); setNote('')
     if (Object.keys(e).length) return
     setBusy(true)
-    timer.current = setTimeout(() => { signIn(); nav('/creations') }, 600) // demo: no real authentication
+    timer.current = setTimeout(() => { signIn(email.trim()); nav('/creations') }, 600) // demo: no real authentication
   }
   const clear = (k, set) => (ev) => { set(ev.target.value); if (errors[k]) setErrors({ ...errors, [k]: '' }) }
 
+  if (signedIn) return <Navigate to="/creations" replace /> // already signed in (restored session): no Login page
   return (
     <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#000000] text-white lg:flex-row-reverse">
       {/* photo panel (desktop only): static, muted, no effects */}

@@ -128,8 +128,7 @@ export const demoCreations = [
 ]
 
 export const plans = [
-  { id: 'weekly', name: 'Weekly', price: '₹499', per: '/week', coins: '800 Coins · Standard', coinImg: 'coin' },
-  { id: 'monthly', name: 'Monthly', price: '₹999', per: '/month', coins: '1,500 Coins · Pro', coinImg: 'coin' },
-  { id: 'yearly', name: 'Yearly', price: '₹4,999', per: '/year', coins: '11,000 Coins · Ultra', coinImg: 'coin', popular: true },
+  { id: 'weekly', name: 'Weekly Premium', price: '$4.99', per: '/ week', coins: '110 Coins', coinImg: 'coin', details: [['Coins included', '110'], ['Cost per image', '15 coins'], ['Images available', '7'], ['Coins used for 7 images', '105'], ['Remaining coins', '5']] },
+  { id: 'monthly', name: 'Monthly Premium', price: '$9.99', per: '/ month', coins: '220 Coins', coinImg: 'coin', details: [['Coins included', '220'], ['Cost per image', '15 coins'], ['Images available', '14'], ['Coins used for 14 images', '210'], ['Remaining coins', '10']] },
+  { id: 'yearly', name: 'Yearly Premium', price: '$39.99', per: '/ year', coins: '2,700 Coins / year', coinImg: 'coin', popular: true, details: [['Total coins', '2,700 per year'], ['Monthly allocation', '225 coins per month'], ['Cost per image', '15 coins'], ['Images available', '180 per year'], ['Monthly images', 'Up to 15']] },
 ]
-export const planPerks = ['Premium templates', 'AI photo generation', 'AI video generation', 'HD downloads', 'Faster processing', 'Creation history']
