@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-=======
-import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
@@ -27,7 +22,7 @@ const COLUMNS = [ // [animation, seconds] - alternating directions, like the ref
 })
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-const Eye = ({ off }) => (
+export const Eye = ({ off }) => (
   <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />{off && <path d="M4 4l16 16" />}
   </svg>
@@ -42,7 +37,7 @@ const GoogleLogo = () => (
   </svg>
 )
 
-function Field({ id, label, error, right, ...props }) {
+export function Field({ id, label, error, right, ...props }) {
   return (
     <div>
       <label htmlFor={id} className="mb-2 block text-sm font-medium text-[#C4B5FD]">{label}</label>
@@ -95,7 +90,6 @@ export function Login() {
     setErrors(e); setNote('')
     if (Object.keys(e).length) return
     setBusy(true)
-<<<<<<< HEAD
     try {
       const session = signup ? await register({ email: email.trim(), password, name: name.trim() }) : await login({ email: email.trim(), password })
       signIn(session)
@@ -104,9 +98,6 @@ export function Login() {
       setErrors({ form: err.message || 'Something went wrong. Please try again.' })
       setBusy(false)
     }
-=======
-    timer.current = setTimeout(() => { signIn(email.trim()); nav('/creations') }, 600) // demo: no real authentication
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
   }
   const clear = (k, set) => (ev) => { set(ev.target.value); if (errors[k]) setErrors({ ...errors, [k]: '' }) }
 
@@ -163,7 +154,7 @@ export function Login() {
               )}
               {!signup && (
                 <div className="text-right text-sm">
-                  <button type="button" onClick={() => setNote('Password reset is not connected yet (demo).')} className="cursor-pointer text-[#C4B5FD]/75 transition-colors duration-200 hover:text-white">Forgot password?</button>
+                  <Link to="/forgot-password" className="cursor-pointer text-[#C4B5FD]/75 transition-colors duration-200 hover:text-white">Forgot password?</Link>
                 </div>
               )}
               {errors.form && <p role="alert" className="text-sm text-red-400">{errors.form}</p>}

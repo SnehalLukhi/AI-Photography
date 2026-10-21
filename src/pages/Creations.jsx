@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
-<<<<<<< HEAD
 import { listGenerations, getGeneration, deleteGeneration } from '../lib/aiPhotography.js'
+import { SparkIcon } from '../components/Header.jsx'
 
 const toCreation = (g) => ({
   id: g.id, generationId: g.id, type: 'image', name: g.template || 'AI photo', image: g.result?.url, original: g.original?.url,
@@ -32,9 +32,6 @@ function Compare({ item, onClose, onDelete }) {
     </div>
   )
 }
-=======
-import { SparkIcon } from '../components/Header.jsx'
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
 
 export default function Creations() {
   const { creations, setCreations, signedIn, authReady, signOut } = useStudio()
@@ -78,19 +75,11 @@ export default function Creations() {
       <h1 className="mt-6 text-[32px] font-bold leading-[1.05] tracking-tight text-[#ffffff] sm:text-[44px] lg:text-[48px]"><span>My </span><span className="grad-text">Creations</span></h1>
       <p className="mt-3 max-w-[620px] text-base font-normal leading-relaxed text-[#C4B5FD]/85 sm:mt-4">Your generated content, all in one place.</p>
 
-<<<<<<< HEAD
-      {signedIn && <button type="button" onClick={signOut} className="btn-dark mt-4">Log out</button>}
       {loadError && <p role="alert" className="mt-4 text-sm text-red-300">{loadError}</p>}
       {!authReady ? null : !signedIn ? (
-        <div className="mx-auto mt-8 flex w-full max-w-3xl flex-col items-center justify-center card-box !rounded-xl p-10 text-center sm:mt-12 sm:p-16">
-          <div className="mb-6 flex size-20 items-center justify-center rounded-full border border-[#B070FA]/20 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] shadow-inner sm:size-24">
-            <svg className="size-8 text-[#C4B5FD] sm:size-10" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-=======
-      {!signedIn ? (
         <div className="mx-auto mt-8 flex w-full max-w-3xl flex-col items-center justify-center rounded-[28px] border border-white/5 bg-[#121216] p-8 text-center sm:mt-12 sm:p-16">
           <div className="mb-6 flex size-20 items-center justify-center rounded-full border border-white/10 bg-[#1b1b26] shadow-inner sm:size-24">
             <svg className="size-8 text-[#C4B5FD] sm:size-10" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 017 0v3" strokeLinecap="round" strokeLinejoin="round" /></svg>
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
           </div>
           <h2 className="mb-2 text-2xl font-normal tracking-normal text-[#ffffff]/95 sm:text-[30px]">Sign in to view your creations</h2>
           <p className="mb-8 max-w-md text-sm font-normal text-[#C4B5FD]/75 sm:text-base">Join our community of creators to store and manage your AI generations permanently.</p>
@@ -107,11 +96,7 @@ export default function Creations() {
           ) : (
             <div className="mt-8 grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {list.map((c) => (
-<<<<<<< HEAD
-                <div key={c.id} onClick={() => c.original && openItem(c)} className={`group relative aspect-[9/16] animate-fade-in overflow-hidden rounded-xl border border-[#3A3552] bg-[#000000] ${c.original ? 'cursor-pointer' : ''}`}>
-=======
-                <div key={c.id} className="group relative aspect-[9/16] animate-fade-in overflow-hidden rounded-[20px] border border-white/5 bg-[#121216] transition-transform duration-300 hover:-translate-y-1">
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
+                <div key={c.id} onClick={() => c.original && openItem(c)} className={`group relative aspect-[9/16] animate-fade-in overflow-hidden rounded-[20px] border border-white/5 bg-[#121216] transition-transform duration-300 hover:-translate-y-1 ${c.original ? 'cursor-pointer' : ''}`}>
                   {/* every generated picture fills the whole 9:16 card (cropped evenly, never stretched): results from the AI Photography API are almost 9:16, Cartoon results keep the photo's own shape */}
                   <img src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />

@@ -4,6 +4,7 @@ const env = require('../config/env')
 const AppError = require('../utils/AppError')
 const { getDb, tx } = require('../db')
 const wallet = require('./wallet.service')
+const mailer = require('./mailer.service')
 
 const scrypt = promisify(crypto.scrypt)
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -79,6 +80,47 @@ async function login({ email, password }) {
   return { token: signToken(user.id), user: publicUser(user) }
 }
 
+const sha256 = (v) => crypto.createHash('sha256').update(v).digest('hex')
+const RESET_COOLDOWN_MS = 60 * 1000 // at most one reset e-mail per account per minute
+
+/**
+ * "Forgot password": e-mails a one-time reset link. It ALWAYS answers the same (whether or not the e-mail has an account) so it cannot be used to find out who is registered;
+ * the e-mail is sent in the background for the same reason (equal response time).
+ */
+async function requestPasswordReset(email) {
+  email = typeof email === 'string' ? email.trim().toLowerCase() : ''
+  if (!EMAIL_RE.test(email) || email.length > 254) throw new AppError(400, 'INVALID_EMAIL', 'Enter a valid email address.')
+  const db = getDb()
+  const user = db.prepare('SELECT id, email FROM users WHERE email = ?').get(email)
+  if (!user) return
+  const now = Date.now()
+  if (db.prepare('SELECT 1 FROM password_resets WHERE user_id = ? AND created_at > ?').get(user.id, now - RESET_COOLDOWN_MS)) return
+  const token = crypto.randomBytes(32).toString('base64url')
+  db.prepare('INSERT INTO password_resets (token_hash, user_id, expires_at, created_at) VALUES (?, ?, ?, ?)').run(sha256(token), user.id, now + env.passwordReset.expireMinutes * 60 * 1000, now)
+  const link = `${env.passwordReset.frontendUrl}/reset-password?token=${token}`
+  if (!mailer.isConfigured()) {
+    console.warn('[mail] SMTP is not configured (SMTP_HOST / SMTP_USER / SMTP_PASSWORD / SMTP_FROM): the reset e-mail was not sent.')
+    if (env.nodeEnv !== 'production') console.warn(`[mail] development only - reset link for ${user.email}: ${link}`)
+    return
+  }
+  mailer.sendPasswordReset(user.email, link, env.passwordReset.expireMinutes).catch((e) => console.error('[mail] could not send the reset e-mail:', e.message))
+}
+
+/** Sets a new password with the token from the e-mail (one use; all other open reset links of the account are cancelled too). */
+async function resetPassword(token, password) {
+  if (typeof password !== 'string' || password.length < 8 || password.length > 128) throw new AppError(400, 'INVALID_PASSWORD', 'Password must be 8 to 128 characters.')
+  const invalid = () => new AppError(400, 'INVALID_RESET_TOKEN', 'This reset link is invalid or has expired. Please request a new one.')
+  if (typeof token !== 'string' || token.length < 20 || token.length > 200) throw invalid()
+  const hash = await hashPassword(password)
+  tx(() => {
+    const db = getDb()
+    const row = db.prepare('SELECT user_id FROM password_resets WHERE token_hash = ? AND used_at IS NULL AND expires_at > ?').get(sha256(token), Date.now())
+    if (!row) throw invalid()
+    db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hash, row.user_id)
+    db.prepare('UPDATE password_resets SET used_at = ? WHERE user_id = ? AND used_at IS NULL').run(Date.now(), row.user_id)
+  })
+}
+
 const fetchJson = async (url, init) => {
   try {
     const res = await fetch(url, { ...init, signal: AbortSignal.timeout(8000) })
@@ -124,4 +166,4 @@ function getUser(id) {
   return u ? publicUser(u) : null
 }
 
-module.exports = { register, login, loginWithGoogle, getUser, verifyToken }
+module.exports = { register, login, loginWithGoogle, requestPasswordReset, resetPassword, getUser, verifyToken }

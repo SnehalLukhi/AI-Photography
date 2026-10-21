@@ -141,7 +141,7 @@ starts (`402 INSUFFICIENT_COINS` if the balance is too low, before AILabTools is
 
 | Endpoint | Purpose |
 |---|---|
-| `GET /api/plans` | public: coin plans (`id`, `name`, `priceInr`, `per`, `coins`, `tier`) + `costPerGeneration`; defined in `src/config/plans.js` |
+| `GET /api/plans` | public: coin plans (`id`, `name`, `price`, `currency`, `per`, `coins`) + `costPerGeneration`; defined in `src/config/plans.js` |
 | `GET /api/wallet` | `{ coins, costPerGeneration, history[] }` (login required); `coins` is also in the `user` of `/api/auth/me`, login and register |
 | `POST /api/wallet/redeem` | JSON `{ code }`: adds the coins of a one-time code (`404 INVALID_CODE`) |
 | `POST /api/wallet/checkout` | JSON `{ planId }`: starts a payment. **`503 PAYMENTS_NOT_CONFIGURED` until a payment gateway is connected** - no coins are ever credited for free |

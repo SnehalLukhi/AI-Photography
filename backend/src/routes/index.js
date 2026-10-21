@@ -38,6 +38,8 @@ router.get('/health', health)
 router.post('/auth/register', authLimiter, authCtl.register)
 router.post('/auth/login', authLimiter, authCtl.login)
 router.post('/auth/google', authLimiter, authCtl.google)
+router.post('/auth/forgot-password', authLimiter, authCtl.forgotPassword)
+router.post('/auth/reset-password', authLimiter, authCtl.resetPassword)
 router.get('/auth/me', requireAuth, authCtl.me)
 
 // Coins

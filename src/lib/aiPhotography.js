@@ -197,6 +197,11 @@ export async function loginWithGoogle() {
   return authRequest('google', jsonPost({ accessToken }))
 }
 
+/** Asks the backend to e-mail a password reset link. The answer is always the same, whether or not the address has an account. */
+export const forgotPassword = (email) => authRequest('forgot-password', jsonPost({ email }))
+/** Sets a new password with the token from the reset e-mail. Rejects with the backend's message when the link is invalid or expired. */
+export const resetPassword = (token, password) => authRequest('reset-password', jsonPost({ token, password }))
+
 /** The user a saved token belongs to ({ id, email, name }); rejects with status 401 when the token is no longer valid. */
 export const fetchMe = async () => (await authRequest('me', { headers: headers() })).user
 

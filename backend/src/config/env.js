@@ -54,6 +54,19 @@ module.exports = {
     rateLimitMax: int(process.env.AUTH_RATE_LIMIT_MAX, 20), // login / register attempts per IP per 15 minutes
   },
 
+  // Outgoing e-mail (password reset links). Any SMTP server; port 465 = TLS, other ports (587) = STARTTLS.
+  smtp: {
+    host: (process.env.SMTP_HOST || '').trim(),
+    port: int(process.env.SMTP_PORT, 587),
+    user: (process.env.SMTP_USER || '').trim(),
+    password: process.env.SMTP_PASSWORD || '',
+    from: (process.env.SMTP_FROM || '').trim(),
+  },
+  passwordReset: {
+    expireMinutes: int(process.env.PASSWORD_RESET_EXPIRE_MINUTES, 30),
+    frontendUrl: (process.env.FRONTEND_BASE_URL || list(process.env.CORS_ORIGIN, ['http://localhost:5173'])[0]).replace(/\/+$/, ''), // where the reset link in the e-mail points
+  },
+
   coins: {
     perGeneration: int(process.env.COIN_COST_PER_GENERATION, 15), // coins one generation costs
     signupBonus: int(process.env.SIGNUP_BONUS_COINS, 50), // free coins for a new account

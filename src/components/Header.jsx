@@ -2,11 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { createPortal } from 'react-dom'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
-<<<<<<< HEAD
 import { useStudio } from '../context/StudioContext.jsx'
-=======
-import { useStudio, WELCOME_COINS } from '../context/StudioContext.jsx'
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
 
 export const SparkIcon = ({ className = 'size-3.5 text-[#B070FA]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
@@ -72,27 +68,16 @@ function GetApp({ small }) {
   )
 }
 
-<<<<<<< HEAD
-/** Logged out: invites to sign up for the free coins. Logged in: shows the coin balance and links to Pricing. */
-const useCoinLink = () => {
-  const { signedIn, coins } = useStudio()
-  return signedIn ? { to: '/pricing', label: `${coins.toLocaleString()} Coins` } : { to: '/login', label: 'Claim 50 Coins' }
-}
-const Claim = ({ small }) => {
-  const { to, label } = useCoinLink()
-  return (
-    <Link to={to} className={`group btn-grad shrink-0 ${small ? '!h-8 !gap-1.5 !px-3 !py-0 !text-[11px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}>
-      <SparkIcon className="size-3.5 text-white transition-transform group-hover:scale-110" />
-      <span className="whitespace-nowrap">{label}</span>
-    </Link>
-=======
 /** Compact coin badge (74 x 32, border-box) for signed-in users: the existing coin.svg + the welcome-coin amount. Display only - there is no coin balance in the app. The whole badge links to the Pricing page. */
-const CoinBadge = ({ className = '' }) => (
-  <Link to="/pricing" aria-label={`${WELCOME_COINS} coins - view pricing`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-[#34343c] bg-[#17171c] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#B070FA]/60 hover:bg-[#1d1b26] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(176,112,250,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${className}`}>
+const CoinBadge = ({ className = '' }) => {
+  const { coins } = useStudio()
+  return (
+  <Link to="/pricing" aria-label={`${coins} coins - view pricing`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-[#34343c] bg-[#17171c] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#B070FA]/60 hover:bg-[#1d1b26] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(176,112,250,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${className}`}>
     <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] shrink-0 object-contain" />
-    <span className="text-[15px] font-bold leading-none tabular-nums text-white">{WELCOME_COINS}</span>
+    <span className="text-[15px] font-bold leading-none tabular-nums text-white">{coins.toLocaleString()}</span>
   </Link>
-)
+  )
+}
 
 // Profile dropdown (signed-in users). Name / e-mail come from the saved demo session: there is no profile page and no stored display name, so the name is derived
 // from the e-mail. Every item opens an existing route; Log out clears the saved demo session (there is no real auth provider).
@@ -185,7 +170,6 @@ const Claim = ({ small }) => {
     <SparkIcon className="size-3.5 text-white transition-transform group-hover:scale-110" />
     <span className="whitespace-nowrap">Claim 50 Coins</span>
   </Link>
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
   )
 }
 
@@ -206,7 +190,6 @@ export default function Header({ generating = false }) {
   useEffect(() => { setMenu(false) }, [pathname])
   const scrolled = useScrolled()
   const xl = useXl()
-  const coinLink = useCoinLink()
 
   return (
     <>
@@ -258,14 +241,9 @@ export default function Header({ generating = false }) {
                 <div className="!mt-2 space-y-0.5 border-t border-white/10 pt-2">
                   <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4B5FD]/75">Account &amp; Support</div>
                   {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#C4B5FD] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
-<<<<<<< HEAD
-                  <Link to={coinLink.to} className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#B070FA]/50 bg-[#B070FA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#B070FA] hover:bg-[#B070FA]/20">
-                    <SparkIcon className="size-3.5 text-[#B070FA]" /><span className="whitespace-nowrap">{coinLink.label}</span>
-=======
                   {signedIn ? <CoinBadge className="!mt-2 w-full" /> : (
                   <Link to="/login" className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#B070FA]/50 bg-[#B070FA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#B070FA] hover:bg-[#B070FA]/20">
                     <SparkIcon className="size-3.5 text-[#B070FA]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
                   </Link>
                   )}
                 </div>

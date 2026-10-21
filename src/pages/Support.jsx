@@ -1,11 +1,8 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
-<<<<<<< HEAD
 import { redeemCode } from '../lib/aiPhotography.js'
-=======
 import { displayName } from '../components/Header.jsx'
->>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
 
 const Hero = ({ eyebrow, title, sub }) => (
   <header className="mx-auto max-w-3xl px-4 pt-10 text-center">

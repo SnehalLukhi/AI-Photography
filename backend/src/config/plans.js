@@ -1,9 +1,9 @@
 /**
- * Coin plans shown on the Pricing page (GET /api/plans). Prices are in INR; `coins` are added to the buyer's balance once per successful payment.
- * This file is the single source: the frontend only displays what the API returns.
+ * Coin plans shown on the Pricing page (GET /api/plans). `price` is in `currency`; `coins` are added to the buyer's balance once per successful payment.
+ * This file is the single source of prices and coin amounts: the frontend only displays what the API returns (its card texts live in src/data/templates.js).
  */
 module.exports = [
-  { id: 'weekly', name: 'Weekly', priceInr: 499, per: '/week', coins: 800, tier: 'Standard' },
-  { id: 'monthly', name: 'Monthly', priceInr: 999, per: '/month', coins: 1500, tier: 'Pro' },
-  { id: 'yearly', name: 'Yearly', priceInr: 4999, per: '/year', coins: 11000, tier: 'Ultra', popular: true },
+  { id: 'weekly', name: 'Weekly Premium', price: 4.99, currency: 'USD', per: '/ week', coins: 110 },
+  { id: 'monthly', name: 'Monthly Premium', price: 9.99, currency: 'USD', per: '/ month', coins: 220 },
+  { id: 'yearly', name: 'Yearly Premium', price: 39.99, currency: 'USD', per: '/ year', coins: 2700, popular: true },
 ]

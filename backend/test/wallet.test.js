@@ -45,7 +45,7 @@ test('a new account gets the 50 free coins; plans are public; wallet needs a log
   assert.deepEqual(w.history.map((x) => [x.reason, x.delta]), [['signup_bonus', 50]])
 
   const plans = await (await get('/plans')).json()
-  assert.deepEqual(plans.plans.map((p) => [p.id, p.priceInr, p.coins]), [['weekly', 499, 800], ['monthly', 999, 1500], ['yearly', 4999, 11000]])
+  assert.deepEqual(plans.plans.map((p) => [p.id, p.price, p.currency, p.coins]), [['weekly', 4.99, 'USD', 110], ['monthly', 9.99, 'USD', 220], ['yearly', 39.99, 'USD', 2700]])
   assert.equal((await get('/wallet')).status, 401)
 })
 
@@ -93,7 +93,7 @@ test('checkout is refused until a payment gateway is connected; a verified payme
 
   assert.equal(payments.grantPurchase(u.id, 'weekly', 'pay_123'), true)
   assert.equal(payments.grantPurchase(u.id, 'weekly', 'pay_123'), false) // same payment again (webhook retry)
-  assert.equal(await coins(u.token), 850)
+  assert.equal(await coins(u.token), 160)
   assert.throws(() => payments.grantPurchase(u.id, 'weekly', ''), { code: 'INVALID_PAYMENT' })
-  assert.equal(wallet.balance(u.id), 850)
+  assert.equal(wallet.balance(u.id), 160)
 })

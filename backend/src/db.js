@@ -39,6 +39,15 @@ function getDb() {
     );
     CREATE INDEX IF NOT EXISTS coin_ledger_user ON coin_ledger (user_id, id);
     CREATE UNIQUE INDEX IF NOT EXISTS coin_ledger_ref ON coin_ledger (reason, ref) WHERE ref IS NOT NULL;
+    -- only the SHA-256 of a reset token is stored, never the token itself (the e-mailed link is the only copy)
+    CREATE TABLE IF NOT EXISTS password_resets (
+      token_hash TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      expires_at INTEGER NOT NULL,
+      used_at INTEGER,
+      created_at INTEGER NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS password_resets_user ON password_resets (user_id, created_at);
     CREATE TABLE IF NOT EXISTS redeem_codes (
       code TEXT PRIMARY KEY,
       coins INTEGER NOT NULL,
