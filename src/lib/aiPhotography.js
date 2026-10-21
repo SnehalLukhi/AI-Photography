@@ -21,6 +21,17 @@ export const IMAGE_SIZE = '9:16'
 export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 export const MAX_BYTES = 10 * 1024 * 1024
 const POLL_MS = 5000
+
+// Login token from POST /api/auth/login | register, sent as `Authorization: Bearer` on every backend call. Kept in localStorage so a refresh stays logged in.
+const TOKEN_KEY = 'ai-photo-token'
+let token = ''
+try { token = localStorage.getItem(TOKEN_KEY) || '' } catch { /* storage blocked: the login lasts until the page is closed */ }
+export const getAuthToken = () => token
+export function setAuthToken(value) {
+  token = value || ''
+  try { token ? localStorage.setItem(TOKEN_KEY, token) : localStorage.removeItem(TOKEN_KEY) } catch { /* ignore */ }
+}
+const headers = () => (token ? { Authorization: `Bearer ${token}` } : {})
 const GIVE_UP_MS = 5 * 60 * 1000
 
 // Each category with a JSON catalogue: the folder its template images live in, and its JSON templates (the single source of the prompts).
@@ -134,24 +145,144 @@ async function readJson(res) {
   try { return await res.json() } catch { return {} }
 }
 
-const failure = (body, res) => new Error(
-  body?.error?.message
-  || (res.status === 404 ? `The AI Photography backend was not found at ${API_BASE}. Start it (npm start in /backend) and check VITE_API_BASE_URL.` : `The generation service returned an error (HTTP ${res.status}).`))
+// Problems on our side (the AI provider's account is out of credits or its key is rejected) are not something a user can fix: show a neutral message.
+const PROVIDER_PROBLEM = new Set(['AILAB_INSUFFICIENT_CREDITS', 'AILAB_AUTH_FAILED', 'AILAB_API_KEY_MISSING'])
+/** Error with the backend's message; `.status` is the HTTP status (401 = not logged in / login expired), `.code` the backend's error code (e.g. INSUFFICIENT_COINS). */
+const failure = (body, res) => Object.assign(new Error(
+  PROVIDER_PROBLEM.has(body?.error?.code) ? 'Generation is temporarily unavailable. Please try again later. Your coins were not used.'
+  : body?.error?.message
+  || (res.status === 404 ? `The AI Photography backend was not found at ${API_BASE}. Start it (npm start in /backend) and check VITE_API_BASE_URL.` : `The generation service returned an error (HTTP ${res.status}).`)), { status: res.status, code: body?.error?.code })
 
-/** First usable https image URL from a succeeded response, or throws. */
+async function authRequest(path, init) {
+  let res
+  try { res = await fetch(`${API_BASE}/api/auth/${path}`, init) } catch { throw new Error('Could not reach the server. Make sure the backend is running and try again.') }
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body
+}
+const jsonPost = (data) => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+
+/** Create an account. Resolves with { token, user }. */
+export const register = (data) => authRequest('register', jsonPost(data))
+/** Log in. Resolves with { token, user }. */
+export const login = (data) => authRequest('login', jsonPost(data))
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
+let gisLoading
+/** Loads Google's sign-in script once. Call early (e.g. when the Login page opens) so the later click can open the Google window without a delay. */
+export function loadGoogle() {
+  if (!GOOGLE_CLIENT_ID) return Promise.resolve(false)
+  gisLoading ||= new Promise((resolve) => {
+    if (window.google?.accounts?.oauth2) return resolve(true)
+    const s = document.createElement('script')
+    s.src = 'https://accounts.google.com/gsi/client'; s.async = true
+    s.onload = () => resolve(true)
+    s.onerror = () => { gisLoading = undefined; resolve(false) }
+    document.head.appendChild(s)
+  })
+  return gisLoading
+}
+
+/** "Continue with Google": opens Google's window, then the backend checks the Google token and returns our own { token, user }. Rejects with a user-facing message. */
+export async function loginWithGoogle() {
+  if (!GOOGLE_CLIENT_ID) throw new Error('Google sign-in is not set up yet (VITE_GOOGLE_CLIENT_ID is missing).')
+  if (!(await loadGoogle())) throw new Error('Could not load Google sign-in. Check your connection and try again.')
+  const accessToken = await new Promise((resolve, reject) => {
+    window.google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid email profile',
+      callback: (r) => (r.access_token ? resolve(r.access_token) : reject(new Error('Google sign-in was cancelled.'))),
+      error_callback: (e) => reject(new Error(e?.type === 'popup_closed' ? 'Google sign-in was cancelled.' : 'Google sign-in failed. Please allow pop-ups and try again.')),
+    }).requestAccessToken()
+  })
+  return authRequest('google', jsonPost({ accessToken }))
+}
+
+/** Asks the backend to e-mail a password reset link. The answer is always the same, whether or not the address has an account. */
+export const forgotPassword = (email) => authRequest('forgot-password', jsonPost({ email }))
+/** Sets a new password with the token from the reset e-mail. Rejects with the backend's message when the link is invalid or expired. */
+export const resetPassword = (token, password) => authRequest('reset-password', jsonPost({ token, password }))
+
+/** The user a saved token belongs to ({ id, email, name }); rejects with status 401 when the token is no longer valid. */
+export const fetchMe = async () => (await authRequest('me', { headers: headers() })).user
+
+/**
+ * Result of a succeeded response: { url, original, generationId }. When the backend stored the images (DigitalOcean Spaces) `url` is the stored copy,
+ * which does not expire like the AI provider's 24 h link; `original` is the stored upload. Throws when there is no image.
+ */
 function pickImage(body) {
-  const url = (body.images || []).find((u) => /^https?:\/\//i.test(u))
+  const g = body.generation
+  const ai = (body.images || []).find((u) => /^https?:\/\//i.test(u))
+  const url = g?.result?.url || ai
   if (!url) throw new Error('The AI finished but did not return an image. Please try again.')
-  return url
+  return { url, original: g?.original?.url || '', generationId: g?.id || '' }
+}
+
+/** Coin plans for the Pricing page: { plans: [{ id, name, priceInr, per, coins, tier, popular? }], costPerGeneration }. Public. */
+export async function getPlans() {
+  const res = await fetch(`${API_BASE}/api/plans`)
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body
+}
+
+/** Coin balance, cost of one generation and the latest coin movements: { coins, costPerGeneration, history }. */
+export async function getWallet() {
+  const res = await fetch(`${API_BASE}/api/wallet`, { headers: headers() })
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body
+}
+
+/** Redeems a one-time code. Resolves with { coins, balance }. */
+export async function redeemCode(code) {
+  const res = await fetch(`${API_BASE}/api/wallet/redeem`, { ...jsonPost({ code }), headers: { 'Content-Type': 'application/json', ...headers() } })
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body
+}
+
+/** Starts the payment for a plan. Rejects with the backend's message (503 while no payment gateway is connected). */
+export async function startCheckout(planId) {
+  const res = await fetch(`${API_BASE}/api/wallet/checkout`, { ...jsonPost({ planId }), headers: { 'Content-Type': 'application/json', ...headers() } })
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body
+}
+
+/**
+ * One page of the logged-in user's stored generations, newest first: { generations: [{ id, status, createdAt, template, original: { url }, result: { url } | null }], nextToken }.
+ * Pass the previous `nextToken` to get the next page. Empty when storage is off.
+ */
+export async function listGenerations({ nextToken, signal } = {}) {
+  const res = await fetch(`${API_BASE}/api/generations?limit=24${nextToken ? `&nextToken=${encodeURIComponent(nextToken)}` : ''}`, { headers: headers(), signal })
+  const body = await readJson(res)
+  if (res.status === 503) return { generations: [], nextToken: undefined }
+  if (!res.ok) throw failure(body, res)
+  return { generations: body.generations || [], nextToken: body.nextToken }
+}
+
+/** One stored generation with fresh signed URLs for the original and the AI image (use it to show both side by side). */
+export async function getGeneration(id, { signal } = {}) {
+  const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}`, { headers: headers(), signal })
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body.generation
+}
+
+/** Deletes both stored images of a generation (only works from the browser that created it). */
+export async function deleteGeneration(id) {
+  const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}`, { method: 'DELETE', headers: headers() })
+  if (!res.ok) throw failure(await readJson(res), res)
 }
 
 /**
  * Sends the photo plus the template's title/description to the backend and resolves with the generated image URL.
  * Rejects (never resolves with the original photo) on any failure: network, API error, no image, or timeout.
  */
-export async function generatePhoto({ file, title, desc, cartoonType, beardTemplate, hairTemplate, hairColor, signal }) {
+export async function generatePhoto({ file, title, desc, cartoonType, beardTemplate, hairTemplate, hairColor, name, signal }) {
   const form = new FormData()
   form.append('image', file, file.name)
+  if (name) form.append('template_name', name) // shown in My Creations
   if (hairTemplate) { form.append('template', hairTemplate); if (hairColor) form.append('color', hairColor) } // Hairstyle: JSON template id; the backend maps them to the API's hair_style / color
   else if (beardTemplate) form.append('template', beardTemplate) // Beard: the JSON id only; the backend sends the template's reference image as `image_template`
   else if (cartoonType) form.append('type', cartoonType) // Cartoon Yourself: the style is chosen with `type`; no prompts, no image_size
@@ -163,7 +294,7 @@ export async function generatePhoto({ file, title, desc, cartoonType, beardTempl
 
   let res
   try {
-    res = await fetch(`${API_BASE}${hairTemplate ? '/api/hairstyle/generate' : beardTemplate ? '/api/beard/generate' : cartoonType ? '/api/cartoon/generate' : '/api/photos/generate'}`, { method: 'POST', body: form, signal })
+    res = await fetch(`${API_BASE}${hairTemplate ? '/api/hairstyle/generate' : beardTemplate ? '/api/beard/generate' : cartoonType ? '/api/cartoon/generate' : '/api/photos/generate'}`, { method: 'POST', body: form, headers: headers(), signal })
   } catch (e) {
     if (e.name === 'AbortError') throw e
     throw new Error('Could not reach the generation service. Make sure the backend is running and try again.')
@@ -178,7 +309,7 @@ export async function generatePhoto({ file, title, desc, cartoonType, beardTempl
   while (Date.now() < deadline) {
     await sleep(POLL_MS, signal)
     try {
-      res = await fetch(`${API_BASE}${pollUrl}`, { signal })
+      res = await fetch(`${API_BASE}${pollUrl}`, { headers: headers(), signal })
     } catch (e) {
       if (e.name === 'AbortError') throw e
       throw new Error('Lost the connection to the generation service. Please try again.')

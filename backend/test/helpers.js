@@ -4,6 +4,15 @@ const fs = require('node:fs')
 const sharp = require('sharp')
 const { UPLOAD_DIR } = require('../src/utils/tempFiles')
 
+// Test environment, set before the app is loaded: throw-away in-memory user database, fixed token secret, no login rate limit.
+process.env.DATABASE_PATH = ':memory:'
+process.env.JWT_SECRET = 'test-secret'
+process.env.AUTH_RATE_LIMIT_MAX = '1000'
+process.env.DAILY_GENERATION_LIMIT = '100000'
+process.env.COIN_COST_PER_GENERATION = '1' // tests make many generations: plenty of cheap coins
+process.env.SIGNUP_BONUS_COINS = '1000000'
+const rawFetch = globalThis.fetch
+
 const solid = (w, h, rgb, format = 'png') => sharp({ create: { width: w, height: h, channels: 3, background: rgb } })[format]().toBuffer()
 const resultJpeg = () => solid(64, 64, { r: 10, g: 200, b: 90 }, 'jpeg')
 
@@ -50,9 +59,21 @@ async function startMockAilab(handlers) {
   return { url: `http://127.0.0.1:${server.address().port}`, calls, close: () => new Promise((r) => server.close(r)) }
 }
 
+/**
+ * Starts the app on a free port. Test-only convenience: registers a user and makes fetch() send that user's token to this app,
+ * unless a request sets its own Authorization header (an empty one = not logged in).
+ */
 async function startApp(app) {
   const server = await new Promise((r) => { const s = app.listen(0, '127.0.0.1', () => r(s)) })
-  return { base: `http://127.0.0.1:${server.address().port}`, close: () => new Promise((r) => server.close(r)) }
+  const base = `http://127.0.0.1:${server.address().port}`
+  const { token } = await (await rawFetch(`${base}/api/auth/register`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: 'tester@example.com', password: 'test-password-1' }) })).json()
+  globalThis.fetch = (url, init = {}) => {
+    if (!String(url).startsWith(base)) return rawFetch(url, init)
+    const headers = new Headers(init.headers)
+    if (!headers.has('authorization')) headers.set('authorization', `Bearer ${token}`)
+    return rawFetch(url, { ...init, headers })
+  }
+  return { base, token, close: () => { globalThis.fetch = rawFetch; return new Promise((r) => server.close(r)) } }
 }
 
 function form(files, fields = {}) {

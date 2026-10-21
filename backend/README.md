@@ -119,6 +119,63 @@ Errors always look like `{ "success": false, "error": { "code": "...", "message"
 Status/result of a job (use the `taskId` from a `202`). `200` with the same body as above when `task_status` = 2,
 `202` with `status: "queued" | "processing"` otherwise. `?response=image` streams the first result image.
 
+### Accounts (login required)
+Email + password accounts in a SQLite file (`DATABASE_PATH`, default `backend/data/app.db`; needs Node >= 22.13 and a persistent disk). Set `JWT_SECRET`
+(a long random string; required when `NODE_ENV=production`).
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/auth/register` | JSON `{ email, password (8-128), name? }` -> `201 { token, user }` (`409 EMAIL_TAKEN`) |
+| `POST /api/auth/login` | JSON `{ email, password }` -> `{ token, user }` (`401 INVALID_CREDENTIALS`) |
+| `GET /api/auth/me` | the logged-in user |
+
+Send `Authorization: Bearer <token>` (valid 7 days) on **every** endpoint except `/api/health` and the two above; otherwise `401 UNAUTHORIZED`.
+Each user may start `DAILY_GENERATION_LIMIT` (default 20) generations per day (`429 DAILY_LIMIT_REACHED`); failed requests are not counted.
+Login/register are limited to `AUTH_RATE_LIMIT_MAX` (20) attempts per IP per 15 minutes. Passwords are stored as scrypt hashes.
+Stored generations belong to the user who made them; other users get `404`.
+
+### Coins
+Every generation costs `COIN_COST_PER_GENERATION` coins (default 15); a new account gets `SIGNUP_BONUS_COINS` (default 50). The coins are taken when the request
+starts (`402 INSUFFICIENT_COINS` if the balance is too low, before AILabTools is called) and given back automatically if the request fails.
+`DAILY_GENERATION_LIMIT` (default 100) stays as an abuse cap. Every change is kept in the `coin_ledger` table.
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/plans` | public: coin plans (`id`, `name`, `price`, `currency`, `per`, `coins`) + `costPerGeneration`; defined in `src/config/plans.js` |
+| `GET /api/wallet` | `{ coins, costPerGeneration, history[] }` (login required); `coins` is also in the `user` of `/api/auth/me`, login and register |
+| `POST /api/wallet/redeem` | JSON `{ code }`: adds the coins of a one-time code (`404 INVALID_CODE`) |
+| `POST /api/wallet/checkout` | JSON `{ planId }`: starts a payment. **`503 PAYMENTS_NOT_CONFIGURED` until a payment gateway is connected** - no coins are ever credited for free |
+
+Create redeem codes: `npm run create-code -- 100 5` (5 codes worth 100 coins each; users enter them on the "Transfer code" page).
+To connect a gateway: make `createCheckout` in `src/services/payments.service.js` create the gateway's order, and have the gateway's verified webhook call
+`grantPurchase(userId, planId, paymentId)` - it credits the plan's coins once per payment id, so webhook retries are safe.
+
+### Stored images (DigitalOcean Spaces)
+Set `SPACES_KEY`, `SPACES_SECRET`, `SPACES_BUCKET` (+ `SPACES_REGION`, e.g. `nyc3`) in `.env`; keep the Space **private**. Then every call to the four
+`/generate` endpoints saves the user's original photo, and the AI result once it has finished, as one *generation*
+(`generations/<uuid>/original.jpg`, `result.jpg`, `meta.json`). Responses get an extra `generation` field; if storage is off or fails,
+generation still works and `generation` is missing / `stored: false`. If the job was still running (`202`), polling `GET /api/photos/tasks/:taskId`
+saves the result when it finishes and returns `generation` as well.
+
+A `generation` looks like:
+```json
+{ "id": "5c1e...-uuid", "status": "completed", "createdAt": "...", "api": "ai-photography", "template": "Golden hour...",
+  "original": { "url": "https://...signed...", "mimeType": "image/jpeg" },
+  "result":   { "url": "https://...signed...", "mimeType": "image/jpeg" }, "urlExpiresInSeconds": 3600 }
+```
+`status` is `pending` (no result yet; `result` is `null`) or `completed`. URLs are signed and expire - call `GET` again for fresh ones.
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/generations` | multipart `image` (+ optional `template` text): save an original photo, returns `201` + `generation` |
+| `POST /api/generations/:id/result` | multipart `image`: save an AI image for that generation (`409` if it already has one) |
+| `GET /api/generations/:id` | the original + AI image of one generation (signed URLs) - use this to show both side by side |
+| `GET /api/generations?limit=20&nextToken=` | this browser's generations, newest first  |
+| `DELETE /api/generations/:id` | delete both images; only for the browser that created it (`403` otherwise) |
+
+Errors: `503 STORAGE_NOT_CONFIGURED`, `404 GENERATION_NOT_FOUND`, `400 INVALID_GENERATION_ID`, `409 RESULT_ALREADY_SAVED`.
+Generations are tied to the logged-in user. The optional form field `template_name` (all generate endpoints and `POST /api/generations`) is the display name saved with a generation.
+
 ## 4. Verified against the official documentation
 
 | Item | Documented | Used here |
@@ -132,10 +189,8 @@ Status/result of a job (use the `taskId` from a `202`). `200` with the same body
 | Validity | async results valid 24 h | reported as `expiresInHours: 24` |
 | Success rule | HTTP 200 (else `error_detail`) | same |
 
-A real request through this backend was accepted by AILabTools (authentication, endpoint and multipart request passed). On the account
-used for development it was answered with `ERROR_NOT_ENOUGH_CREDITS` (no credits), so a completed result - and therefore the exact
-field names inside `data` - has not been observed yet. A real status call with an unknown id returned AILabTools' own
-`ERROR_PARAMETERS: task_id is invalid`, confirming the polling URL and header.
+A real request through this backend has been run end to end against AILabTools: the task was accepted, polled (about 30 s in the queue) and completed. A completed
+task's `data` is `{ "cost_time": <seconds>, "result_urls": ["https://..."] }`; the backend lists those URLs in `images` (and, with Spaces configured, saves the first one).
 
 ## 5. Security and temp files
 

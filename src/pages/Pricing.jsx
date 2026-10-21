@@ -1,10 +1,33 @@
-import { useState } from 'react'
-import { plans } from '../data/templates.js'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { plans as fallbackPlans } from '../data/templates.js'
+import { getPlans, startCheckout } from '../lib/aiPhotography.js'
+import { useStudio } from '../context/StudioContext.jsx'
 import { brandImages } from '../data/images.js'
 import { SparkIcon } from '../components/Header.jsx'
 
 export default function Pricing() {
+  const nav = useNavigate()
+  const { signedIn } = useStudio()
   const [note, setNote] = useState('')
+  const [busy, setBusy] = useState('')
+  // the plans come from the backend (single source of prices and coins); the built-in list is only shown if the backend cannot be reached
+  const [plans, setPlans] = useState(fallbackPlans)
+  useEffect(() => {
+    getPlans().then((r) => setPlans(r.plans.map((p) => {
+      const card = fallbackPlans.find((f) => f.id === p.id) || {}
+      return { ...card, ...p, price: new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.price), coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
+    }))).catch(() => {})
+  }, [])
+  const choose = async (p) => {
+    if (!signedIn) { nav('/login'); return }
+    setBusy(p.id); setNote('')
+    try {
+      const out = await startCheckout(p.id)
+      if (out.url) window.location.assign(out.url) // hosted payment page of the gateway
+    } catch (e) { setNote(e.message) }
+    setBusy('')
+  }
   return (
     <div className="mx-auto w-full max-w-none px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12 xl:px-16">
       <header className="max-w-3xl">
@@ -31,15 +54,14 @@ export default function Pricing() {
               <dl className="mt-7 flex flex-1 flex-col gap-3.5 text-[13px] text-[#C4B5FD] sm:mt-8 sm:gap-4 sm:text-[14px]">
                 {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="mt-px text-[#C4B5FD]/80">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold leading-snug text-white">{value}</dd></div>)}
               </dl>
-              <button type="button" onClick={() => setNote(`Demo only - "${p.name}" is not connected to a payment gateway yet.`)}
+              <button type="button" disabled={busy === p.id} onClick={() => choose(p)}
                 className={`group relative mt-8 flex h-[52px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl text-[15px] font-semibold text-white transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${p.popular ? 'grad-bg shadow-[0_0_28px_rgba(176,112,250,0.35)] hover:shadow-[0_0_36px_rgba(176,112,250,0.45)]' : 'border border-white/[0.08] bg-[#1A1A24] hover:border-transparent hover:shadow-[0_0_28px_rgba(176,112,250,0.35)]'}`}>
                 {!p.popular && <span className="grad-bg pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />}
-                <span className="relative z-10">Choose {p.name}</span>
+                <span className="relative z-10">{busy === p.id ? 'Please wait…' : `Choose ${p.name}`}</span>
               </button>
             </article>
           ))}
         </div>
-        <p className="mt-6 text-center text-[11px] text-[#C4B5FD] sm:hidden">Auto-renewable subscription. Cancel anytime.</p>
         {note && <p role="status" className="mt-4 rounded-xl border border-[#B070FA]/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-4 py-3 text-center text-sm text-[#C4B5FD]">{note}</p>}
       </section>
     </div>
