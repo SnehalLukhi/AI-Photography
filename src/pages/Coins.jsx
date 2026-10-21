@@ -63,7 +63,7 @@ export default function Coins() {
           })}
         </div>
         {note && <p role="status" className="mt-4 rounded-xl border border-[#B070FA]/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-4 py-3 text-center text-sm text-[#C4B5FD]">{note}</p>}
-        <p className="mt-6 text-center text-sm text-[#C4B5FD]/75">Prefer a subscription? <Link to="/pricing" className="font-semibold text-white underline">See the plans</Link> · Have a code? <Link to="/transfer" className="font-semibold text-white underline">Redeem it</Link></p>
+        <p className="mt-6 text-center text-sm text-[#C4B5FD]/75">Prefer a subscription? <Link to="/pricing" className="font-semibold text-white underline">See the plans</Link></p>
       </section>
     </div>
   )
