@@ -19,7 +19,7 @@ const EXT = { jpeg: 'jpg', png: 'png', webp: 'webp' }
  * downscaled (same format) because the API rejects those.
  * @returns {{ buffer: Buffer, mimeType: string, filename: string, width: number, height: number, resized: boolean }}
  */
-async function prepareImage(filePath, label = 'image') {
+async function prepareImage(filePath, label = 'image', { formats = Object.keys(FORMATS), maxBytes = MAX_BYTES, maxSide = MAX_SIDE } = {}) {
   let meta
   try {
     meta = await sharp(filePath, { failOn: 'error' }).metadata()
@@ -27,8 +27,9 @@ async function prepareImage(filePath, label = 'image') {
     throw new AppError(422, 'INVALID_IMAGE', `"${label}" is not a valid image file.`)
   }
   const format = meta.format
-  if (!FORMATS[format]) {
-    throw new AppError(415, 'UNSUPPORTED_FILE_TYPE', `"${label}" must be a JPG, PNG or WebP image (detected: ${format || 'unknown'}).`)
+  if (!FORMATS[format] || !formats.includes(format)) {
+    const allowed = formats.map((f) => ({ jpeg: 'JPG', png: 'PNG', webp: 'WebP' }[f])).join(', ').replace(/, ([^,]*)$/, ' or $1')
+    throw new AppError(415, 'UNSUPPORTED_FILE_TYPE', `"${label}" must be a ${allowed} image (detected: ${format || 'unknown'}).`)
   }
   if (!meta.width || !meta.height) throw new AppError(422, 'INVALID_IMAGE', `"${label}" has no readable dimensions.`)
 
@@ -37,17 +38,17 @@ async function prepareImage(filePath, label = 'image') {
   let { width, height } = meta
   let resized = false
 
-  if (Math.max(width, height) > MAX_SIDE) {
+  if (Math.max(width, height) > maxSide) {
     const out = await sharp(filePath, { failOn: 'error' })
-      .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true })
+      .resize({ width: maxSide, height: maxSide, fit: 'inside', withoutEnlargement: true })
       .toFormat(format, format === 'jpeg' ? { quality: 92 } : undefined)
       .toBuffer({ resolveWithObject: true })
     buffer = out.data; width = out.info.width; height = out.info.height; resized = true
   } else {
     buffer = await fs.readFile(filePath)
   }
-  if (buffer.length > MAX_BYTES) {
-    throw new AppError(413, 'FILE_SIZE_EXCEEDS_LIMIT', `"${label}" is larger than the 10 MB limit.`)
+  if (buffer.length > maxBytes) {
+    throw new AppError(413, 'FILE_SIZE_EXCEEDS_LIMIT', `"${label}" is larger than the ${Math.round(maxBytes / 1048576)} MB limit.`)
   }
   return { buffer, mimeType: FORMATS[format], filename: `image.${EXT[format]}`, width, height, resized }
 }

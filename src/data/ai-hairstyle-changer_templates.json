@@ -1,0 +1,2879 @@
+{
+  "version": 1,
+  "global": {
+    "output": {
+      "format": "png",
+      "default_aspect_ratio": "9:16"
+    }
+  },
+  "categories": [
+    {
+      "id": "hairstyle_men",
+      "name": "Hairstyle Changer - Men",
+      "gender": "male",
+      "colors": [
+        {
+          "id": "blonde",
+          "name": "Blonde",
+          "prompt": "The hair color is golden blonde."
+        },
+        {
+          "id": "platinumBlonde",
+          "name": "Platinum Blonde",
+          "prompt": "The hair color is platinum blonde."
+        },
+        {
+          "id": "brown",
+          "name": "Brown",
+          "prompt": "The hair color is rich brown."
+        },
+        {
+          "id": "lightBrown",
+          "name": "Light Brown",
+          "prompt": "The hair color is light brown."
+        },
+        {
+          "id": "black",
+          "name": "Black",
+          "prompt": "The hair color is jet black."
+        },
+        {
+          "id": "grey",
+          "name": "Grey",
+          "prompt": "The hair color is natural grey."
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "prompt": "The hair color is white."
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "prompt": "The hair color is metallic silver."
+        },
+        {
+          "id": "red",
+          "name": "Red",
+          "prompt": "The hair color is vivid red."
+        },
+        {
+          "id": "burgundy",
+          "name": "Burgundy",
+          "prompt": "The hair color is deep burgundy."
+        },
+        {
+          "id": "orange",
+          "name": "Orange",
+          "prompt": "The hair color is vivid orange."
+        },
+        {
+          "id": "pink",
+          "name": "Pink",
+          "prompt": "The hair color is bright pink."
+        },
+        {
+          "id": "purple",
+          "name": "Purple",
+          "prompt": "The hair color is vivid purple."
+        },
+        {
+          "id": "lightPurple",
+          "name": "Light Purple",
+          "prompt": "The hair color is light pastel lavender purple."
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "prompt": "The hair color is vivid blue."
+        },
+        {
+          "id": "lightBlue",
+          "name": "Light Blue",
+          "prompt": "The hair color is light pastel blue."
+        },
+        {
+          "id": "darkBlue",
+          "name": "Dark Blue",
+          "prompt": "The hair color is dark navy blue."
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "prompt": "The hair color is vivid green."
+        },
+        {
+          "id": "darkGreen",
+          "name": "Dark Green",
+          "prompt": "The hair color is dark forest green."
+        },
+        {
+          "id": "gradient",
+          "name": "Gradient",
+          "prompt": "The hair has a gradient ombre color fading smoothly from dark roots to vivid ends."
+        },
+        {
+          "id": "multicolored",
+          "name": "Multicolored",
+          "prompt": "The hair is multicolored with several vivid color streaks."
+        }
+      ],
+      "templates": [
+        {
+          "id": "hair_men_buzzcut",
+          "name": "Buzz Cut",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_buzzcut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a buzz cut, very short hair clipped evenly all over to a uniform short length. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_undercut",
+          "name": "Undercut",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_undercut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an undercut, short shaved or faded sides and back with longer, textured hair kept on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_pompadour",
+          "name": "Pompadour",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_pompadour.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a pompadour, hair swept up and back from the forehead with high volume at the front and short tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_slickback",
+          "name": "Slick Back",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_slickback.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a slicked-back hairstyle, hair combed straight back from the forehead with a glossy, neat finish. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_curlyshag",
+          "name": "Curly Shag",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_curlyshag.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a curly shag, layered medium-length curly hair with a tousled, textured shape. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_wavyshag",
+          "name": "Wavy Shag",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_wavyshag.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a wavy shag, layered medium-length wavy hair with feathered, tousled texture. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_fauxhawk",
+          "name": "Faux Hawk",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_fauxhawk.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a faux hawk, short sides with longer hair on top styled upward into a ridge along the center. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_spiky",
+          "name": "Spiky",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_spiky.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to spiky hair, short hair styled upward into defined, textured spikes. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_combover",
+          "name": "Comb Over",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_combover.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a comb-over, hair parted on one side and combed neatly across the head, with shorter tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_hightightfade",
+          "name": "High Tight Fade",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_hightightfade.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a high and tight fade, sides and back faded very short up high with slightly longer short hair on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_manbun",
+          "name": "Man Bun",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_manbun.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a man bun, longer hair gathered and tied up into a bun at the top or back of the head. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_afro",
+          "name": "Afro",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_afro.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an afro, full, rounded, voluminous tightly curled natural hair. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_lowfade",
+          "name": "Low Fade",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_lowfade.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a low fade, sides and back gradually tapered down just above the ears and neckline, with longer hair on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_undercutlonghair",
+          "name": "Undercut Long Hair",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_undercutlonghair.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an undercut with long hair, shaved or faded sides with long hair on top swept back or to the side. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_twoblockhaircut",
+          "name": "Two Block Haircut",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_twoblockhaircut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a two-block haircut, longer hair on top with a shorter, tapered block on the sides and back. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_texturedfringe",
+          "name": "Textured Fringe",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_texturedfringe.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a textured fringe, short layered hair on top with a choppy fringe falling across the forehead and short tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_bluntbowlcut",
+          "name": "Blunt Bowl Cut",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_bluntbowlcut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a blunt bowl cut, hair cut straight across the forehead and evenly around the head in a rounded bowl shape. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_longwavycurtainbangs",
+          "name": "Long Wavy Curtain Bangs",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_longwavycurtainbangs.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long wavy hair with curtain bangs, center-parted bangs sweeping to each side of the face and soft waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_messytousled",
+          "name": "Messy Tousled",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_messytousled.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to messy tousled hair, medium-length hair with a casual, loosely tousled, uneven texture. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_cornrowbraids",
+          "name": "Cornrow Braids",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_cornrowbraids.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to cornrow braids, hair braided tightly in neat rows close to the scalp. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_longhairtiedup",
+          "name": "Long Hair Tied Up",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_longhairtiedup.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long hair tied up, long hair gathered high and tied back neatly. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_middle_parted",
+          "name": "Middle Parted",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_middle_parted.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a middle-parted hairstyle, hair parted down the center and falling evenly to both sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_mangreased",
+          "name": "Greased Back",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_mangreased.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a greased-back hairstyle, hair slicked straight back with a shiny, wet-look pomade finish. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_wavymiddlepart",
+          "name": "Wavy Middle Part",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_wavymiddlepart.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a wavy middle part, medium-length wavy hair parted in the center and falling softly on both sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_natural_side_part",
+          "name": "Natural Side Part",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_natural_side_part.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a natural side part, short to medium hair parted on one side with a neat, natural finish. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_wolf_crop",
+          "name": "Wolf Crop",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_wolf_crop.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a wolf crop, short layered hair with a choppy, shaggy texture and a wispy fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_wind_tousled_crop",
+          "name": "Wind Tousled Crop",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_wind_tousled_crop.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a wind-tousled crop, a short crop styled with airy, windswept texture. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_side_parted_textured",
+          "name": "Side Parted Textured",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_side_parted_textured.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a side-parted textured hairstyle, short textured hair with a clear side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_fluffymiddlepart",
+          "name": "Fluffy Middle Part",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_fluffymiddlepart.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a fluffy middle part, soft, voluminous hair parted in the center with airy volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_freshside_parted",
+          "name": "Fresh Side Parted",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_freshside_parted.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a fresh side-parted hairstyle, clean tapered sides with neat hair on top parted to one side. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_smooth_crop",
+          "name": "Smooth Crop",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_smooth_crop.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a smooth crop, a short cropped hairstyle with a sleek, smooth finish and a neat fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_korean_wavy_crop",
+          "name": "Korean Wavy Crop",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_korean_wavy_crop.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a Korean wavy crop, short to medium hair with soft waves and a light fringe in a trendy Korean style. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_comma_hair",
+          "name": "Comma Hair",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_comma_hair.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to comma hair, a Korean-style hairstyle with the fringe curled into a comma shape across the forehead. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_side_part_crop",
+          "name": "Side Part Crop",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_side_part_crop.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a side-part crop, a short crop with a defined side part and a neat shape. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_natural_middle_part",
+          "name": "Natural Middle Part",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_natural_middle_part.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a natural middle part, medium-length natural hair parted in the center with a relaxed finish. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_chestnut",
+          "name": "Chestnut",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_chestnut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat, swept-up hair with a short textured top and tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_choppybangs",
+          "name": "Choppy Bangs",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_choppybangs.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, choppy, textured fringe falling forward over the forehead. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_structuredwavyshag",
+          "name": "Structured Wavy Shag",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_structuredwavyshag.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length wavy layered hair, side-swept and shaggy, with defined waves covering the ears. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_tinfoilperm",
+          "name": "Tinfoil Perm",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_tinfoilperm.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, tight, defined curls on top with a tousled texture and short sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0001",
+          "name": "Style 01",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0001.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to wavy, medium-length hair swept up and to the side with volume on top and a loose, tousled finish. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0002",
+          "name": "Style 02",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0002.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long hair pulled up into a high ponytail with a few loose strands. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0003",
+          "name": "Style 03",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0003.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat hair with a textured fringe brushed forward and to the side. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0004",
+          "name": "Style 04",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0004.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short hair with a side-swept fringe over the forehead and tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0005",
+          "name": "Style 05",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0005.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat side-parted hair swept to one side. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0006",
+          "name": "Style 06",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0006.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length, curly, tousled hair with a loose fringe falling on the forehead. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0007",
+          "name": "Style 07",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0007.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length wavy hair, tousled and side-swept, falling over the forehead and longer around the ears. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0008",
+          "name": "Style 08",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0008.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat side-parted hair with a slight lift at the front. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0009",
+          "name": "Style 09",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0009.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, wavy, center-parted hair falling past the shoulders. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0010",
+          "name": "Style 10",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0010.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat hair swept back with a side part and a small quiff. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0011",
+          "name": "Style 11",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0011.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short side-swept quiff with volume at the front. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0012",
+          "name": "Style 12",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0012.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, loosely wavy, center-parted hair falling past the shoulders. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0013",
+          "name": "Style 13",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0013.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length wavy hair swept to the side with a neat side part, partly covering the ears. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0014",
+          "name": "Style 14",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0014.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, tight curls on top with short tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0015",
+          "name": "Style 15",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0015.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, smooth hair with a side-swept fringe and a neat side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0016",
+          "name": "Style 16",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0016.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a voluminous swept-up quiff with short sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0017",
+          "name": "Style 17",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0017.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, slicked side-parted hair in a classic neat style. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0018",
+          "name": "Style 18",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0018.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, tousled, textured hair with messy volume on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0019",
+          "name": "Style 19",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0019.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length hair swept back and to the side with a longer, wavy fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0020",
+          "name": "Style 20",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0020.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to hair braided in rows into a high braided top knot with faded sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0021",
+          "name": "Style 21",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0021.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length wavy hair swept back with a side part and volume on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0022",
+          "name": "Style 22",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0022.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short side-swept pompadour with a neat finish. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0023",
+          "name": "Style 23",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0023.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, messy, textured hair swept to the side with volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0024",
+          "name": "Style 24",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0024.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length hair slicked back from a center-ish part and tucked behind the ears. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0025",
+          "name": "Style 25",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0025.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, spiky, textured top with tight faded sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0026",
+          "name": "Style 26",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0026.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-long, messy, tousled hair with strands falling across the forehead. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0027",
+          "name": "Style 27",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0027.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a medium-length swept-back quiff, neat with volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0028",
+          "name": "Style 28",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0028.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat, side-swept hair with a classic tapered cut. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0029",
+          "name": "Style 29",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0029.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short hair with a swept-up fringe and a side part with tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0030",
+          "name": "Style 30",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0030.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat side-parted hair swept to one side. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0031",
+          "name": "Style 31",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0031.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short hair with a longer top brushed back into a quiff. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0032",
+          "name": "Style 32",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0032.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat side-parted hair with light volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0033",
+          "name": "Style 33",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0033.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, soft, side-swept hair with volume on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0034",
+          "name": "Style 34",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0034.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, textured, swept-up quiff. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0035",
+          "name": "Style 35",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0035.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short hair with a textured fringe brushed forward. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0036",
+          "name": "Style 36",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0036.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, natural, side-swept hair. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0037",
+          "name": "Style 37",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0037.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short to medium hair with volume swept back and to the side. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0038",
+          "name": "Style 38",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0038.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, slicked-back hair with a side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0039",
+          "name": "Style 39",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0039.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, natural, side-parted textured hair. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0040",
+          "name": "Style 40",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0040.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, messy, textured hair on top with neat tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0041",
+          "name": "Style 41",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0041.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length hair with a long fringe swept deeply across to one side. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0042",
+          "name": "Style 42",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0042.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, slicked-back hair with a side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0043",
+          "name": "Style 43",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0043.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, natural, side-parted hair. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0044",
+          "name": "Style 44",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0044.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat, slicked-back hair. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0045",
+          "name": "Style 45",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0045.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, side-swept hair with a fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0046",
+          "name": "Style 46",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0046.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, tight curls on top with faded sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0047",
+          "name": "Style 47",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0047.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, loose, curly hair falling past the shoulders. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0048",
+          "name": "Style 48",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0048.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long hair swept back with a long braid at one side. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0049",
+          "name": "Style 49",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0049.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-long layered hair swept back and to the sides at ear length. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0050",
+          "name": "Style 50",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0050.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length, messy, shaggy layers with a tousled texture. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0051",
+          "name": "Style 51",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0051.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, straight hair past the shoulders, center-parted and swept back from the face. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0052",
+          "name": "Style 52",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0052.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length, voluminous wavy hair with layered, messy waves swept back. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0053",
+          "name": "Style 53",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0053.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length wavy hair with a soft side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0054",
+          "name": "Style 54",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0054.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short to medium, voluminous swept-up quiff with hair brushed upward. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0055",
+          "name": "Style 55",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0055.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length, tousled hair with wavy, textured volume on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0056",
+          "name": "Style 56",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0056.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length curly hair with loose, voluminous curls. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0057",
+          "name": "Style 57",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0057.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length wavy hair styled into a swept quiff. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0058",
+          "name": "Style 58",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0058.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, wavy, tousled hair on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0059",
+          "name": "Style 59",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0059.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to spiky, messy, textured hair brushed upward. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0060",
+          "name": "Style 60",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0060.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, spiky, swept-up textured hair with short sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0061",
+          "name": "Style 61",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0061.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, neat side-parted hair with tapered sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_men_male_hairstyle_0062",
+          "name": "Style 62",
+          "preview_url": "https://YOUR-CDN/templates/hair_men_male_hairstyle_0062.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "male",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length wavy hair slicked back with a side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        }
+      ]
+    },
+    {
+      "id": "hairstyle_women",
+      "name": "Hairstyle Changer - Women",
+      "gender": "female",
+      "colors": [
+        {
+          "id": "blonde",
+          "name": "Blonde",
+          "prompt": "The hair color is golden blonde."
+        },
+        {
+          "id": "platinumBlonde",
+          "name": "Platinum Blonde",
+          "prompt": "The hair color is platinum blonde."
+        },
+        {
+          "id": "brown",
+          "name": "Brown",
+          "prompt": "The hair color is rich brown."
+        },
+        {
+          "id": "lightBrown",
+          "name": "Light Brown",
+          "prompt": "The hair color is light brown."
+        },
+        {
+          "id": "black",
+          "name": "Black",
+          "prompt": "The hair color is jet black."
+        },
+        {
+          "id": "grey",
+          "name": "Grey",
+          "prompt": "The hair color is natural grey."
+        },
+        {
+          "id": "white",
+          "name": "White",
+          "prompt": "The hair color is white."
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "prompt": "The hair color is metallic silver."
+        },
+        {
+          "id": "red",
+          "name": "Red",
+          "prompt": "The hair color is vivid red."
+        },
+        {
+          "id": "burgundy",
+          "name": "Burgundy",
+          "prompt": "The hair color is deep burgundy."
+        },
+        {
+          "id": "orange",
+          "name": "Orange",
+          "prompt": "The hair color is vivid orange."
+        },
+        {
+          "id": "pink",
+          "name": "Pink",
+          "prompt": "The hair color is bright pink."
+        },
+        {
+          "id": "purple",
+          "name": "Purple",
+          "prompt": "The hair color is vivid purple."
+        },
+        {
+          "id": "lightPurple",
+          "name": "Light Purple",
+          "prompt": "The hair color is light pastel lavender purple."
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "prompt": "The hair color is vivid blue."
+        },
+        {
+          "id": "lightBlue",
+          "name": "Light Blue",
+          "prompt": "The hair color is light pastel blue."
+        },
+        {
+          "id": "darkBlue",
+          "name": "Dark Blue",
+          "prompt": "The hair color is dark navy blue."
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "prompt": "The hair color is vivid green."
+        },
+        {
+          "id": "darkGreen",
+          "name": "Dark Green",
+          "prompt": "The hair color is dark forest green."
+        },
+        {
+          "id": "gradient",
+          "name": "Gradient",
+          "prompt": "The hair has a gradient ombre color fading smoothly from dark roots to vivid ends."
+        },
+        {
+          "id": "multicolored",
+          "name": "Multicolored",
+          "prompt": "The hair is multicolored with several vivid color streaks."
+        }
+      ],
+      "templates": [
+        {
+          "id": "hair_women_shortpixiewithshavedsides",
+          "name": "Short Pixie With Shaved Sides",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_shortpixiewithshavedsides.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie cut with shaved sides, very short sides with longer textured hair on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_shortneatbob",
+          "name": "Short Neat Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_shortneatbob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short neat bob, a sleek chin-length bob with straight bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_doublebun",
+          "name": "Double Bun",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_doublebun.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a double bun hairstyle, hair divided into two buns on the top or sides of the head. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_updo",
+          "name": "Updo",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_updo.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a braided updo wrapped around the head with a delicate headpiece. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_spiked",
+          "name": "Spiked",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_spiked.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to spiked hair, short hair styled upward into defined spikes. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_bowlcut",
+          "name": "Bowl Cut",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_bowlcut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a bowl cut, hair cut straight across the forehead and evenly around the head in a rounded shape. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_chignon",
+          "name": "Chignon",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_chignon.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a chignon, hair twisted and pinned into a neat low bun at the nape of the neck. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_pixiecut",
+          "name": "Pixie Cut",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_pixiecut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a pixie cut, short cropped hair with soft textured layers and a side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_slickedback",
+          "name": "Slicked Back",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_slickedback.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, sleek, straight hair slicked back from the forehead. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_longcurly",
+          "name": "Long Curly",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_longcurly.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long curly hair, long voluminous curls falling past the shoulders. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_curlybob",
+          "name": "Curly Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_curlybob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a curly bob, a chin-length bob with defined, bouncy curls. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_stackedcurlsinshortbob",
+          "name": "Stacked Curls In Short Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_stackedcurlsinshortbob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to stacked curls in a short bob, a short bob with curls layered and stacked for volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_sidepartcomboverhairstylewithhighfade",
+          "name": "Side Part Comb-Over High Fade",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_sidepartcomboverhairstylewithhighfade.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a long side-swept top with the other side faded short, an asymmetrical cut. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_wavyfrenchbobvibesfrom1920",
+          "name": "1920s Wavy French Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_wavyfrenchbobvibesfrom1920.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a 1920s-style wavy French bob, a chin-length bob with sculpted finger waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_bobcut",
+          "name": "Bob Cut",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_bobcut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a classic bob haircut, a straight bob cut at jaw length with a clean line. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_shorttwintails",
+          "name": "Short Twintails",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_shorttwintails.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short twintails, hair tied into two short ponytails on both sides of the head. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_shortcurlypixie",
+          "name": "Short Curly Pixie",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_shortcurlypixie.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short curly pixie, a very short pixie cut with natural curls. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_longstraight",
+          "name": "Long Straight",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_longstraight.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long straight hair, smooth, sleek, straight hair falling past the shoulders. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_longwavy",
+          "name": "Long Wavy",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_longwavy.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long wavy hair, long soft waves falling past the shoulders. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_fishtailbraid",
+          "name": "Fishtail Braid",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_fishtailbraid.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a fishtail braid, hair woven into a long, intricate fishtail braid. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_twinbraids",
+          "name": "Twin Braids",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_twinbraids.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to twin braids, hair divided into two braids hanging on both sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_ponytail",
+          "name": "Ponytail",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_ponytail.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a long, sleek, high ponytail with straight bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_dreadlocks",
+          "name": "Dreadlocks",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_dreadlocks.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to dreadlocks, hair locked into long ropes of dreadlocks. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_cornrows",
+          "name": "Cornrows",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_cornrows.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to cornrows, hair braided tightly in neat rows close to the scalp. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_shoulderlengthhair",
+          "name": "Shoulder Length Hair",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_shoulderlengthhair.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to smooth, straight hair ending around the jaw and neck with a center part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_loosecurlyafro",
+          "name": "Loose Curly Afro",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_loosecurlyafro.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a loose curly afro, a rounded, voluminous afro with loose curls. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_longtwintails",
+          "name": "Long Twintails",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_longtwintails.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long twintails, hair tied into two long ponytails on both sides of the head. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_longhimecut",
+          "name": "Long Hime Cut",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_longhimecut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a long hime cut, long straight hair with straight-cut side locks framing the face and blunt bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_boxbraids",
+          "name": "Box Braids",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_boxbraids.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to box braids, hair in long, individual square-parted braids. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_layered_waves",
+          "name": "Layered Waves",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_layered_waves.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, layered wavy bob with soft curls at the ends. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_side_flip_perm",
+          "name": "Side Flip Perm",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_side_flip_perm.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a side flip perm, hair permed so the ends flip outward, with a side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_textured_crop",
+          "name": "Textured Crop",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_textured_crop.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, smooth crop with a neat full fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_mushroom_curl",
+          "name": "Mushroom Curl",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_mushroom_curl.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a mushroom curl, a rounded, voluminous short cut with curls forming a mushroom-like dome. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_vintage_curls",
+          "name": "Vintage Curls",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_vintage_curls.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short vintage curls with tousled volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_magic_perm",
+          "name": "Magic Perm",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_magic_perm.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short permed cut with soft curls and a tousled fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_side_parted_waves",
+          "name": "Side Parted Waves",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_side_parted_waves.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to side-parted waves, soft waves with a deep side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_fluffy_short",
+          "name": "Fluffy Short",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_fluffy_short.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a fluffy short haircut, short, airy hair with soft volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_smooth_inward_bob",
+          "name": "Smooth Inward Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_smooth_inward_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a smooth inward bob, a sleek bob with the ends curved inward toward the chin. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_neat_short",
+          "name": "Neat Short",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_neat_short.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a neat short haircut, a tidy short style with smooth, even layers. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_natural_short",
+          "name": "Natural Short",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_natural_short.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a natural short haircut, a short, relaxed cut with a natural finish. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_chic_tapered_bob",
+          "name": "Chic Tapered Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_chic_tapered_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a chic tapered bob, a bob that is shorter at the nape and longer toward the front. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_edgy_textured_pixie",
+          "name": "Edgy Textured Pixie",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_edgy_textured_pixie.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an edgy textured pixie, a short pixie with choppy, piecey texture. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_elegant_wavy_crop",
+          "name": "Elegant Wavy Crop",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_elegant_wavy_crop.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an elegant wavy crop, a short crop with soft, graceful, polished waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_chic_wavy_pixie",
+          "name": "Chic Wavy Pixie",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_chic_wavy_pixie.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a chic wavy pixie, a short pixie with soft waves and movement. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_elegant_side_wave",
+          "name": "Elegant Side Wave",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_elegant_side_wave.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an elegant side wave, hair swept to one side in soft, polished waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_soft_layered_curl",
+          "name": "Soft Layered Curl",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_soft_layered_curl.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, layered cut with soft curls and a side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_executive_pixie",
+          "name": "Executive Pixie",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_executive_pixie.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an executive pixie, a polished, sleek short pixie with a neat, professional shape. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_curved_chic_bob",
+          "name": "Curved Chic Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_curved_chic_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a curved chic bob, a bob with the ends curved gracefully. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_airy_short_curls",
+          "name": "Airy Short Curls",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_airy_short_curls.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to airy short curls, short hair with light, bouncy curls and volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_playful_curly_bob",
+          "name": "Playful Curly Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_playful_curly_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a playful curly bob, a short bob with bouncy, defined curls. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_playful_wavy_bob",
+          "name": "Playful Wavy Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_playful_wavy_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a playful wavy bob with bangs, short and bouncy. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_elegant_soft_curl",
+          "name": "Elegant Soft Curl",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_elegant_soft_curl.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to elegant soft curls, hair styled in soft, graceful, loose curls. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_elegant_smooth_bob",
+          "name": "Elegant Smooth Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_elegant_smooth_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an elegant smooth bob, a sleek, smooth bob with a polished shine. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_retro_airy_curl",
+          "name": "Retro Airy Curl",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_retro_airy_curl.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to retro airy curls, vintage-inspired, light, airy curls with volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_soft_wavy_bob",
+          "name": "Soft Wavy Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_soft_wavy_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a soft wavy bob, a chin-length bob with soft, natural waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_light_inward_bob",
+          "name": "Light Inward Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_light_inward_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a light, straight bob with blunt bangs and the ends gently curved inward. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_neat_curly_crop_cut",
+          "name": "Neat Curly Crop Cut",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_neat_curly_crop_cut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a neat curly crop, a short, tidy cut with neat, defined curls. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_elegant_volumized_bob",
+          "name": "Elegant Volumized Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_elegant_volumized_bob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an elegant volumized bob, a bob with lifted volume at the crown and smooth ends. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_modern_curls_chic",
+          "name": "Modern Curls Chic",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_modern_curls_chic.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to short, tight, defined curls with volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_mocha_volume_pixie",
+          "name": "Mocha Volume Pixie",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_mocha_volume_pixie.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie with voluminous curls on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_elegant_side_flow",
+          "name": "Elegant Side Flow",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_elegant_side_flow.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an elegant side flow, hair flowing smoothly to one side with a graceful, polished shape. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_classicwavybob",
+          "name": "Classic Wavy Bob",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_classicwavybob.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a classic wavy bob, a chin-length bob with classic waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_fluffy_pixie_cut",
+          "name": "Fluffy Pixie Cut",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_fluffy_pixie_cut.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a fluffy pixie cut, a short pixie with soft, airy, fluffy texture. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_frenchbangs",
+          "name": "French Bangs",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_frenchbangs.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to French bangs, wispy, slightly choppy bangs above the eyebrows with softly layered hair. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_japaneseshort",
+          "name": "Japanese Short",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_japaneseshort.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a Japanese-style short haircut, a soft, layered short cut with light, airy ends. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_mediumlonglayered",
+          "name": "Medium Long Layered",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_mediumlonglayered.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a chin-length, smooth, layered bob with a center-side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0001",
+          "name": "Style 01",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0001.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a sleek chin-length bob with full, blunt, straight bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0002",
+          "name": "Style 02",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0002.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short curly pixie with volume on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0003",
+          "name": "Style 03",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0003.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie cut with long, choppy, side-swept bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0004",
+          "name": "Style 04",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0004.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short wavy bob with a side part and voluminous waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0005",
+          "name": "Style 05",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0005.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, loose, wavy hair worn with a jeweled tiara. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0006",
+          "name": "Style 06",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0006.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an elegant pinned updo with loose face-framing strands and a jeweled hair accessory. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0007",
+          "name": "Style 07",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0007.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a sleek chin-length bob with a deep side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0008",
+          "name": "Style 08",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0008.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, tousled, wavy bob at jaw length. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0009",
+          "name": "Style 09",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0009.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, voluminous, tousled waves with a deep side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0010",
+          "name": "Style 10",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0010.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short layered pixie with a side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0011",
+          "name": "Style 11",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0011.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a classic chin-length bob with straight, blunt bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0012",
+          "name": "Style 12",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0012.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short wavy bob with wispy bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0013",
+          "name": "Style 13",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0013.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, voluminous curly bob with a side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0014",
+          "name": "Style 14",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0014.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, loose waves with a center part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0015",
+          "name": "Style 15",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0015.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a shoulder-skimming wavy bob with bangs and voluminous waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0016",
+          "name": "Style 16",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0016.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an angled chin-length bob with straight side-swept bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0017",
+          "name": "Style 17",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0017.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a tousled wavy medium bob with wispy bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0018",
+          "name": "Style 18",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0018.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to vintage set curls pinned into a retro style with a decorative hair accessory. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0019",
+          "name": "Style 19",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0019.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie cut swept up and to the side with volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0020",
+          "name": "Style 20",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0020.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie crop swept to the side with a neat fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0021",
+          "name": "Style 21",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0021.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, smooth, straight hair with a headband accessory and long layers. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0022",
+          "name": "Style 22",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0022.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, glossy waves with a center part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0023",
+          "name": "Style 23",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0023.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a shaggy mullet-style cut with a spiky, layered top and longer sides. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0024",
+          "name": "Style 24",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0024.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, messy, wavy cropped cut with side bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0025",
+          "name": "Style 25",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0025.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a rounded short bob with a soft side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0026",
+          "name": "Style 26",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0026.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to an asymmetrical bob with a long side-swept deep side part covering one eye. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0027",
+          "name": "Style 27",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0027.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, voluminous, wavy hair with a deep side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0028",
+          "name": "Style 28",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0028.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie with voluminous curls on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0029",
+          "name": "Style 29",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0029.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short layered bob with feathered, flicked-out ends and a side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0030",
+          "name": "Style 30",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0030.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie with a neat side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0031",
+          "name": "Style 31",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0031.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short textured pixie with spiky layers. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0032",
+          "name": "Style 32",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0032.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a long, sleek low side ponytail with a headband. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0033",
+          "name": "Style 33",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0033.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, textured pixie bob with a side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0034",
+          "name": "Style 34",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0034.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short rounded bob with full side bangs and layers. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0035",
+          "name": "Style 35",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0035.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a layered, angled chin-length bob with a side part, longer toward the front. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0036",
+          "name": "Style 36",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0036.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short bob with a full fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0037",
+          "name": "Style 37",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0037.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, curly, tousled crop. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0038",
+          "name": "Style 38",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0038.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie with a textured side-swept fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0039",
+          "name": "Style 39",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0039.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a layered chin-length wavy bob with side bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0040",
+          "name": "Style 40",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0040.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie with a lifted quiff and volume on top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0041",
+          "name": "Style 41",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0041.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a low, messy, pinned updo with face-framing strands. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0042",
+          "name": "Style 42",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0042.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short pixie with a swept fringe and a voluminous top. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0043",
+          "name": "Style 43",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0043.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, cropped pixie with a textured fringe. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0044",
+          "name": "Style 44",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0044.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, wavy pixie with side-swept volume. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0045",
+          "name": "Style 45",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0045.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a smooth, sleek chin-length bob with a side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0046",
+          "name": "Style 46",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0046.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a shoulder-length wavy lob with layers and a center part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0047",
+          "name": "Style 47",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0047.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a high, messy top bun with wispy bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0048",
+          "name": "Style 48",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0048.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a chin-length bob with a side part and slightly flipped ends. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0049",
+          "name": "Style 49",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0049.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a low pinned updo with loose face-framing strands. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0050",
+          "name": "Style 50",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0050.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a half-up top knot with loose tendrils. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0051",
+          "name": "Style 51",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0051.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, glamorous waves with a deep side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0052",
+          "name": "Style 52",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0052.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, sleek, side-swept pixie cut. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0053",
+          "name": "Style 53",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0053.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a smooth chin-length bob with a side part and a slight inward curve. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0054",
+          "name": "Style 54",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0054.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, layered hair with full curtain bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0055",
+          "name": "Style 55",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0055.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, layered hair with long, slightly wavy bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0056",
+          "name": "Style 56",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0056.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short layered bob with a side-swept fringe and flicked, voluminous ends. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0057",
+          "name": "Style 57",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0057.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a chin-length blunt bob with full, straight bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0058",
+          "name": "Style 58",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0058.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, sleek, side-swept pixie with a side part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0059",
+          "name": "Style 59",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0059.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a high top bun with wispy bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0060",
+          "name": "Style 60",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0060.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, layered, loosely wavy hair. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0061",
+          "name": "Style 61",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0061.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, straight, sleek hair with a center part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0062",
+          "name": "Style 62",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0062.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a chin-length bob with a side part and a slight inward curve. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0063",
+          "name": "Style 63",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0063.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long, straight, slightly layered hair with full bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0064",
+          "name": "Style 64",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0064.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a chin-length wavy bob with a side part and softly flipped ends. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0065",
+          "name": "Style 65",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0065.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a short, sleek, layered cut with a side-swept fringe, tucked behind one ear. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0066",
+          "name": "Style 66",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0066.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to long hair with thin side braids and a high top bun. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0067",
+          "name": "Style 67",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0067.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a crown braid across the top of the head with side bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0068",
+          "name": "Style 68",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0068.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a wavy, voluminous chin-length bob with tousled waves. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0069",
+          "name": "Style 69",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0069.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a top knot bun with wispy bangs. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0070",
+          "name": "Style 70",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0070.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to shoulder-length wavy hair with braids at the sides and a center part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0071",
+          "name": "Style 71",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0071.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a sleek angled bob with a side part and a voluminous side sweep. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0072",
+          "name": "Style 72",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0072.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to medium-length layered hair with slightly flared ends and a center part. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        },
+        {
+          "id": "hair_women_female_hairstyle_0073",
+          "name": "Style 73",
+          "preview_url": "https://YOUR-CDN/templates/hair_women_female_hairstyle_0073.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 10,
+          "gender": "female",
+          "prompt": "Keep the person's face shape, skin tone, expression, outfit and background unchanged. Change the hairstyle to a braided crown updo with loose, wispy strands. Natural hairline, realistic hair strands and texture, photorealistic, sharp focus. Keep the original hair color unless a different hair color is specified."
+        }
+      ]
+    }
+  ]
+}

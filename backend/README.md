@@ -33,7 +33,7 @@ cp .env.example .env        # Windows PowerShell: Copy-Item .env.example .env
 npm run dev                 # auto-restart (nodemon)   |   npm start   for production
 npm test                    # automated tests - no key, no internet and no credits needed
 ```
-Server: `http://localhost:5000` (`PORT`). Check it: `curl http://localhost:5000/api/health`.
+Server: `http://localhost:5001` (`PORT`). Check it: `curl http://localhost:5001/api/health`.
 
 ## 2. API key
 
@@ -47,7 +47,7 @@ An account without credits gets `402 AILAB_INSUFFICIENT_CREDITS` (AILabTools: `E
 
 ## 3. API reference
 
-Base URL: `http://localhost:5000`
+Base URL: `http://localhost:5001`
 
 ### `GET /api/health`
 ```json
@@ -78,7 +78,7 @@ fd.append('image', file)                                   // File from <input t
 fd.append('style_title', 'Golden hour film portrait')
 fd.append('style_desc', 'Cinematic golden hour portrait, warm soft light, subtle film grain')
 fd.append('image_size', '3:4')                             // optional
-const res = await fetch('http://localhost:5000/api/photos/generate', { method: 'POST', body: fd })
+const res = await fetch('http://localhost:5001/api/photos/generate', { method: 'POST', body: fd })
 const out = await res.json()
 if (res.status === 200) show(out.images[0])                // result URL(s)
 else if (res.status === 202) poll(out.pollUrl)             // still working: poll GET out.pollUrl
@@ -148,7 +148,7 @@ field names inside `data` - has not been observed yet. A real status call with a
 ## 6. Testing with Postman
 
 1. Start the server (`npm run dev`) with a real `AILAB_API_KEY` and AILabTools credits.
-2. Import `backend/postman/AI-Photo-Generator.postman_collection.json`. Collection variable `baseUrl` = `http://localhost:5000`.
+2. Import `backend/postman/AI-Photo-Generator.postman_collection.json`. Collection variable `baseUrl` = `http://localhost:5001`.
 3. **Health**: `GET {{baseUrl}}/api/health` -> `"status": "ok"`, `"apiKeyConfigured": true`.
 4. **Generate**: `POST {{baseUrl}}/api/photos/generate`, Body -> **form-data**:
    - `image` - hover the key, change its type to **File**, choose a portrait photo.
@@ -162,7 +162,7 @@ field names inside `data` - has not been observed yet. A real status call with a
 
 curl equivalent:
 ```bash
-curl -X POST http://localhost:5000/api/photos/generate \
+curl -X POST http://localhost:5001/api/photos/generate \
   -F "image=@portrait.jpg" -F "style_title=Golden hour film portrait" \
   -F "style_desc=A cinematic golden hour portrait, warm soft light, subtle film grain" -F "image_size=3:4"
 ```
@@ -171,7 +171,7 @@ curl -X POST http://localhost:5000/api/photos/generate \
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `PORT` | `5000` | server port |
+| `PORT` | `5001` | server port |
 | `AILAB_API_KEY` | - | **required** AILabTools key |
 | `CORS_ORIGIN` | `http://localhost:5173,http://localhost:5174` | allowed frontend origins |
 | `MAX_UPLOAD_MB` | `10` | upload cap (the API limit is 10 MB) |

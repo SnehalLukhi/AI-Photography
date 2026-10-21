@@ -6,10 +6,9 @@ import Home from './pages/Home.jsx'
 import Explore from './pages/Explore.jsx'
 import Generate from './pages/Generate.jsx'
 import NotFound from './pages/NotFound.jsx'
-import Dance from './pages/Dance.jsx'
 import Creations from './pages/Creations.jsx'
 import Pricing from './pages/Pricing.jsx'
-import { Help, Contact, Feedback, Transfer, Legal } from './pages/Support.jsx'
+import { Help, Feedback, Transfer, Legal } from './pages/Support.jsx'
 import Login from './pages/Login.jsx'
 
 export default function App() {
@@ -18,7 +17,7 @@ export default function App() {
   const generating = pathname === '/generate' // fixed-height page: no footer, no mobile chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
-    <div className="flex min-h-screen w-full flex-col overflow-x-clip bg-[#0b0a12] selection:bg-[#8b5cf6]/30">
+    <div className="flex min-h-screen w-full flex-col overflow-x-clip bg-[#000000] selection:bg-[#B070FA]/30">
       {!bare && <Header generating={generating} />}
       <main className="flex-1 bg-page">
         <Routes>
@@ -27,8 +26,6 @@ export default function App() {
           <Route path="/generate" element={<Generate />} />
           <Route path="/studio" element={<Navigate to="/explore" replace />} />
           <Route path="/result" element={<Navigate to="/creations" replace />} />
-          <Route path="/dance-videos" element={<Dance />} />
-          <Route path="/dance" element={<Navigate to="/dance-videos" replace />} />
           <Route path="/diy/*" element={<Navigate to="/explore" replace />} />
           <Route path="/creations" element={<Creations />} />
           <Route path="/pricing" element={<Pricing />} />
@@ -36,7 +33,6 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/transfer" element={<Transfer />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/contact-us" element={<Contact />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/privacy-policy" element={<Legal kind="privacy" />} />
           <Route path="/terms-conditions" element={<Legal kind="terms" />} />

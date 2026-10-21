@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from 'react'
-import { demoCreations } from '../data/templates.js'
 
 const Ctx = createContext(null)
 export const useStudio = () => useContext(Ctx)
@@ -10,7 +9,7 @@ export function StudioProvider({ children }) {
 
   const [gender, setGender] = useState('All') // UI-only filter state
   const [signedIn, setSignedIn] = useState(false) // frontend demo flag only - no auth
-  const [creations, setCreations] = useState(demoCreations)
+  const [creations, setCreations] = useState([])
   const addCreation = (c) => setCreations((l) => [{ id: `new-${Date.now()}`, date: 'Just now', ...c }, ...l])
 
   const setPhoto = (file) => {

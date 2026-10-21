@@ -1,4 +1,5 @@
 const crypto = require('node:crypto')
+const fs = require('node:fs')
 const multer = require('multer')
 const env = require('../config/env')
 const AppError = require('../utils/AppError')
@@ -8,7 +9,9 @@ const { UPLOAD_DIR } = require('../utils/tempFiles')
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
 
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
+  // multer does not create a directory returned by a destination callback, and the dir was only created once at start-up: if the OS (temp cleanup, Storage Sense) or a
+  // person removes it while the server runs, every upload failed with "ENOENT ... open ...\ai-photo-generator-uploads\<id>.upload". Re-create it for each upload.
+  destination: (_req, _file, cb) => fs.mkdir(UPLOAD_DIR, { recursive: true, mode: 0o700 }, (err) => cb(err, UPLOAD_DIR)),
   // Random name, no user-controlled path or extension.
   filename: (_req, _file, cb) => cb(null, `${crypto.randomUUID()}.upload`),
 })

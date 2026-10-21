@@ -25,6 +25,9 @@ const { sniffMime } = require('./image.service')
  */
 
 const SUBMIT_PATH = '/api/image/effects/ai-photography'
+const CARTOON_PATH = '/api/portrait/effects/portrait-animation' // Cartoon Yourself
+const BEARD_PATH = '/api/portrait/editing/ai-beard-styling' // AI Beard Styling
+const HAIRSTYLE_PATH = '/api/portrait/effects/hairstyle-editor-premium' // Hairstyle Changer Premium
 const TASK_RESULT_PATH = '/api/common/query-async-task-result'
 const IMAGE_SIZES = ['auto', '1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4', '9:16', '16:9', '21:9']
 const STATUS = { 0: 'queued', 1: 'processing', 2: 'succeeded' }
@@ -103,6 +106,74 @@ async function submitPhotography({ image, styleTitle, styleDesc, imageSize }) {
   return { taskId: body.task_id, taskType: body.task_type, requestId: body.request_id, logId: body.log_id }
 }
 
+/**
+ * Submit a Cartoon Yourself job (official docs: POST /api/portrait/effects/portrait-animation, multipart: image, type, task_type).
+ * Always async (`task_type=async`, the mode the docs recommend); the result is read with the same task-result API as AI Photography
+ * and its `data.image_url` is listed in `images` by getTask/collectUrls.
+ * @param {{ image: {buffer, mimeType, filename}, type: string }} p
+ */
+async function submitCartoon({ image, type }) {
+  const form = new FormData()
+  form.append('task_type', 'async')
+  form.append('type', type)
+  form.append('image', new Blob([image.buffer], { type: image.mimeType }), image.filename)
+
+  const res = await ailabFetch(`${env.ailab.baseUrl}${CARTOON_PATH}`, {
+    method: 'POST',
+    headers: { 'ailabapi-api-key': env.ailab.apiKey },
+    body: form,
+  })
+  const body = await parseJson(res)
+  assertOk(res, body)
+  if (!body.task_id) throw new AppError(502, 'AILAB_NO_TASK_ID', 'AILabTools did not return a task_id.', { requestId: body.request_id, logId: body.log_id })
+  return { taskId: body.task_id, taskType: body.task_type, requestId: body.request_id, logId: body.log_id }
+}
+
+/**
+ * Submit an AI Beard Styling job (official docs: POST /api/portrait/editing/ai-beard-styling, multipart: image, image_template).
+ * `image_template` is a reference image FILE (not an id or text). The optional `beard` preset is deliberately never sent: it would take precedence over image_template.
+ * Async like the other APIs (submit returns task_id; result in data.result_urls, picked up by getTask/collectUrls).
+ * @param {{ image: {buffer, mimeType, filename}, template: {buffer, mimeType, filename} }} p
+ */
+async function submitBeard({ image, template }) {
+  const form = new FormData()
+  form.append('image', new Blob([image.buffer], { type: image.mimeType }), image.filename)
+  form.append('image_template', new Blob([template.buffer], { type: template.mimeType }), template.filename)
+
+  const res = await ailabFetch(`${env.ailab.baseUrl}${BEARD_PATH}`, {
+    method: 'POST',
+    headers: { 'ailabapi-api-key': env.ailab.apiKey },
+    body: form,
+  })
+  const body = await parseJson(res)
+  assertOk(res, body)
+  if (!body.task_id) throw new AppError(502, 'AILAB_NO_TASK_ID', 'AILabTools did not return a task_id.', { requestId: body.request_id, logId: body.log_id })
+  return { taskId: body.task_id, taskType: body.task_type, requestId: body.request_id, logId: body.log_id }
+}
+
+/**
+ * Submit a Hairstyle Changer Premium job (official docs: POST /api/portrait/effects/hairstyle-editor-premium, multipart: image, hair_style, color, image_template).
+ * `hair_style` is a documented enum value. `image_template` is deliberately not sent: the docs say it is ignored whenever `hair_style` is present.
+ * Async; the result image URL is data.image (picked up by getTask/collectUrls).
+ * @param {{ image: {buffer, mimeType, filename}, hairStyle: string, color?: string }} p
+ */
+async function submitHairstyle({ image, hairStyle, color }) {
+  const form = new FormData()
+  form.append('image', new Blob([image.buffer], { type: image.mimeType }), image.filename)
+  form.append('hair_style', hairStyle)
+  if (color) form.append('color', color)
+
+  const res = await ailabFetch(`${env.ailab.baseUrl}${HAIRSTYLE_PATH}`, {
+    method: 'POST',
+    headers: { 'ailabapi-api-key': env.ailab.apiKey },
+    body: form,
+  })
+  const body = await parseJson(res)
+  assertOk(res, body)
+  if (!body.task_id) throw new AppError(502, 'AILAB_NO_TASK_ID', 'AILabTools did not return a task_id.', { requestId: body.request_id, logId: body.log_id })
+  return { taskId: body.task_id, taskType: body.task_type, requestId: body.request_id, logId: body.log_id }
+}
+
 /** One status check. Returns { status: 'queued'|'processing'|'succeeded', taskId, data?, images? }. */
 async function getTask(taskId) {
   const res = await ailabFetch(`${env.ailab.baseUrl}${TASK_RESULT_PATH}?task_id=${encodeURIComponent(taskId)}`, {
@@ -140,4 +211,4 @@ async function downloadImage(url) {
   return { buffer, mimeType: res.headers.get('content-type')?.split(';')[0] || sniffMime(buffer) }
 }
 
-module.exports = { submitPhotography, getTask, waitForTask, downloadImage, collectUrls, IMAGE_SIZES, SUBMIT_PATH, TASK_RESULT_PATH }
+module.exports = { submitPhotography, submitCartoon, submitBeard, submitHairstyle, getTask, waitForTask, downloadImage, collectUrls, IMAGE_SIZES, SUBMIT_PATH, CARTOON_PATH, BEARD_PATH, TASK_RESULT_PATH }

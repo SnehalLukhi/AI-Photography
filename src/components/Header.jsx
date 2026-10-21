@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 
-export const SparkIcon = ({ className = 'size-3.5 text-[#8b5cf6]' }) => (
+export const SparkIcon = ({ className = 'size-3.5 text-[#B070FA]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
 )
 const Chevron = ({ open }) => (
-  <svg className={`size-3 text-[#858094] transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+  <svg className={`size-3 text-[#C4B5FD]/75 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
 )
 const PhoneIcon = () => (
-  <svg className="size-3.5 text-[#8b5cf6]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" strokeLinecap="round" /></svg>
+  <svg className="size-3.5 text-[#B070FA]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" strokeLinecap="round" /></svg>
 )
 
 const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
@@ -45,22 +45,21 @@ function useXl() {
 const main = [
   { to: '/', label: 'Home' },
   { to: '/explore', label: 'Explore' },
-  { to: '/dance-videos', label: 'Make Me Dance' },
 ]
 
 function GetApp({ small }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="relative shrink-0" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button type="button" onClick={() => setOpen(!open)} className={`flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] font-medium text-white transition-colors hover:border-[#8b5cf6]/60 hover:bg-[#8b5cf6]/10 ${small ? 'h-8 px-3 text-xs' : 'h-10 px-4 text-[13px]'}`}>
+      <button type="button" onClick={() => setOpen(!open)} className={`flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] font-medium text-white transition-colors hover:border-[#B070FA]/60 hover:bg-[#B070FA]/10 ${small ? 'h-8 px-3 text-xs' : 'h-10 px-4 text-[13px]'}`}>
         <PhoneIcon /><span>Get App</span><Chevron open={open} />
       </button>
       <div className={`absolute right-0 top-full z-50 w-[200px] pt-2.5 transition-all duration-300 ${open ? 'visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
-        <div className="relative flex flex-col items-center space-y-2.5 rounded-2xl border border-[#8b5cf6]/20 bg-[#14121d]/95 p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
-          <span aria-hidden="true" className="absolute -top-[6px] right-10 size-2.5 rotate-45 border-l border-t border-[#8b5cf6]/20 bg-[#14121d]" />
-          <div className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#8b5cf6]/15 px-2 py-1 text-[11px] font-semibold text-white">Android App</div>
+        <div className="relative flex flex-col items-center space-y-2.5 rounded-2xl border border-[#B070FA]/20 bg-gradient-to-br from-[#2A1B52]/95 to-[#1A284F]/95 p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
+          <span aria-hidden="true" className="absolute -top-[6px] right-10 size-2.5 rotate-45 border-l border-t border-[#B070FA]/20 bg-gradient-to-br from-[#2A1B52] to-[#1A284F]" />
+          <div className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B070FA]/15 px-2 py-1 text-[11px] font-semibold text-white">Android App</div>
           <div className="my-0.5 rounded-xl bg-white p-1.5 shadow-inner transition-transform hover:scale-105"><img src={brandImages.qr} alt="QR code" className="size-24 rounded-md object-contain" /></div>
-          <p className="text-[10px] font-medium leading-tight text-[#b8b4c7]">Scan for the app</p>
+          <p className="text-[10px] font-medium leading-tight text-[#C4B5FD]">Scan for the app</p>
         </div>
       </div>
     </div>
@@ -74,7 +73,7 @@ const Claim = ({ small }) => (
   </Link>
 )
 
-const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-[#8b5cf6]/15 text-white ring-1 ring-inset ring-[#8b5cf6]/30' : 'text-[#b8b4c7] hover:bg-white/[0.06] hover:text-white'}`
+const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-[#B070FA]/15 text-white ring-1 ring-inset ring-[#B070FA]/30' : 'text-[#C4B5FD] hover:bg-white/[0.06] hover:text-white'}`
 const Underline = () => null
 const DLink = ({ to, children }) => (
   <NavLink to={to} end={to === '/'} className={navLink}>
@@ -82,7 +81,7 @@ const DLink = ({ to, children }) => (
   </NavLink>
 )
 
-const accountLinks = [['/transactions', 'Transactions'], ['/transfer', 'Connect App Account'], ['/help', 'Help'], ['/contact-us', 'Contact Support'], ['/feedback', 'Share Your Feedback'], ['/privacy-policy', 'Privacy Policy']]
+const accountLinks = [['/transactions', 'Transactions'], ['/transfer', 'Connect App Account'], ['/help', 'Help'], ['/feedback', 'Share Your Feedback'], ['/privacy-policy', 'Privacy Policy']]
 
 export default function Header({ generating = false }) {
   const [menu, setMenu] = useState(false)
@@ -95,12 +94,12 @@ export default function Header({ generating = false }) {
     <>
       {/* Tablet / desktop nav */}
       <div className="pointer-events-none fixed left-0 right-0 z-50 hidden justify-center md:flex" style={{ top: scrolled ? 10 : 14, transition: `top 400ms ${EASE}` }}>
-        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgba(14,16,18,0.78)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgba(14,16,18,0.97)]' : ''}`}
+        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgba(0,0,0,0.78)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgba(0,0,0,0.97)]' : ''}`}
           style={{
             width: `calc(100% - ${xl ? 48 : 32}px)`,
             maxWidth: '96rem',
             borderRadius: 9999,
-            borderColor: scrolled ? 'rgba(139,92,246, 0.22)' : 'rgba(139,92,246, 0.14)',
+            borderColor: scrolled ? 'rgba(176,112,250, 0.22)' : 'rgba(176,112,250, 0.14)',
             boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.06), ${scrolled ? '0 14px 40px rgba(0, 0, 0, 0.45)' : '0 6px 24px rgba(0, 0, 0, 0.25)'}`,
             transition: ['border-color', 'box-shadow'].map((p) => `${p} 400ms ${EASE}`).join(', '),
           }}>
@@ -121,7 +120,7 @@ export default function Header({ generating = false }) {
               <div className="flex items-center justify-end gap-2 lg:hidden">
                 <GetApp small />
                 <Claim small />
-                <button type="button" aria-label="Open main menu" aria-expanded={menu} onClick={() => setMenu(!menu)} className="inline-flex cursor-pointer items-center justify-center rounded-xl p-2 text-[#b8b4c7] transition-colors hover:text-white focus:outline-none">
+                <button type="button" aria-label="Open main menu" aria-expanded={menu} onClick={() => setMenu(!menu)} className="inline-flex cursor-pointer items-center justify-center rounded-xl p-2 text-[#C4B5FD] transition-colors hover:text-white focus:outline-none">
                   <svg className="block size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d={menu ? 'M6 6l12 12M6 18L18 6' : 'M4 6h16M4 12h16M4 18h16'} /></svg>
                 </button>
               </div>
@@ -130,17 +129,17 @@ export default function Header({ generating = false }) {
           <div className={`overflow-hidden transition-all duration-300 ease-in-out lg:hidden ${menu ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0'}`}>
             <div className="no-scrollbar max-h-[70vh] overflow-y-auto border-t border-white/10">
               <div className="space-y-0.5 px-3 pb-3 pt-2">
-                {[...main, { to: '/creations', label: 'My Creations' }, { to: '/pricing', label: 'Pricing' }].slice(0, 3).map((l) => (
-                  <NavLink key={l.to} to={l.to} end className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#8b5cf6]/15 text-white ring-1 ring-inset ring-[#8b5cf6]/30' : 'text-[#b8b4c7] hover:bg-white/[0.06] hover:text-white'}`}>{l.label}</NavLink>
+                {[...main, { to: '/creations', label: 'My Creations' }, { to: '/pricing', label: 'Pricing' }].slice(0, main.length).map((l) => (
+                  <NavLink key={l.to} to={l.to} end className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#B070FA]/15 text-white ring-1 ring-inset ring-[#B070FA]/30' : 'text-[#C4B5FD] hover:bg-white/[0.06] hover:text-white'}`}>{l.label}</NavLink>
                 ))}
                 {[['/creations', 'My Creations'], ['/pricing', 'Pricing']].map(([to, label]) => (
-                  <NavLink key={to} to={to} className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#8b5cf6]/15 text-white ring-1 ring-inset ring-[#8b5cf6]/30' : 'text-[#b8b4c7] hover:bg-white/[0.06] hover:text-white'}`}>{label}</NavLink>
+                  <NavLink key={to} to={to} className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#B070FA]/15 text-white ring-1 ring-inset ring-[#B070FA]/30' : 'text-[#C4B5FD] hover:bg-white/[0.06] hover:text-white'}`}>{label}</NavLink>
                 ))}
                 <div className="!mt-2 space-y-0.5 border-t border-white/10 pt-2">
-                  <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#858094]">Account &amp; Support</div>
-                  {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#b8b4c7] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
-                  <Link to="/login" className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#8b5cf6]/50 bg-[#8b5cf6]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#8b5cf6] hover:bg-[#8b5cf6]/20">
-                    <SparkIcon className="size-3.5 text-[#8b5cf6]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
+                  <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4B5FD]/75">Account &amp; Support</div>
+                  {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#C4B5FD] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
+                  <Link to="/login" className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#B070FA]/50 bg-[#B070FA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#B070FA] hover:bg-[#B070FA]/20">
+                    <SparkIcon className="size-3.5 text-[#B070FA]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
                   </Link>
                 </div>
               </div>
@@ -151,12 +150,12 @@ export default function Header({ generating = false }) {
       <div className="hidden h-[92px] md:block" />
 
       {/* Mobile header */}
-      <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#0b0a12]/95 px-4 py-3 backdrop-blur-md md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
+      <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#000000]/95 px-4 py-3 backdrop-blur-md md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
         <Logo />
         {(
           <div className="flex items-center gap-2">
             <GetApp small />
-            <Link to="/pricing" aria-label="Upgrade to Pro" className="p-1 text-[#8b5cf6] transition-transform active:scale-95">
+            <Link to="/pricing" aria-label="Upgrade to Pro" className="p-1 text-[#D8B4FE] transition-transform active:scale-95">
               <svg className="size-7" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" /></svg>
             </Link>
           </div>
@@ -170,19 +169,19 @@ export default function Header({ generating = false }) {
 
 const tabs = [
   { to: '/', label: 'Home', match: (p) => p === '/', d: 'M3 11l9-8 9 8v10h-6v-6H9v6H3z' },
-  { to: '/explore', label: 'Explore', match: (p) => p === '/explore' || p === '/dance-videos', d: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z' },
-  { to: '/creations', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/contact-us', '/feedback', '/transactions', '/transfer'].includes(p), d: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0' },
+  { to: '/explore', label: 'Explore', match: (p) => p === '/explore', d: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z' },
+  { to: '/creations', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/feedback', '/transactions', '/transfer'].includes(p), d: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0' },
 ]
 
 function MobileTabs({ pathname }) {
   const idx = Math.max(0, tabs.findIndex((t) => t.match(pathname)))
   return (
-    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[85%] max-w-[316px] -translate-x-1/2 select-none items-center justify-around rounded-[6px] bg-[#14121d] p-1 shadow-[0_10px_35px_rgba(0,0,0,0.9)] md:hidden" style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}>
-      <div className="pointer-events-none absolute top-1/2 z-[1] h-[54px] -translate-y-1/2 rounded-[4px] shadow-[0_4px_15px_rgba(139,92,246,0.25)] transition-all duration-300" style={{ width: 'calc((100% - 8px) / 3)', left: `calc(4px + ${idx} * (100% - 8px) / 3)`, background: 'linear-gradient(#292536, #14121d) padding-box, linear-gradient(135deg, #a78bfa 0%, #8b5cf6 42%, #7c54f0 100%) border-box', border: '1.5px solid transparent' }} />
+    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[85%] max-w-[316px] -translate-x-1/2 select-none items-center justify-around rounded-[6px] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-1 shadow-[0_10px_35px_rgba(0,0,0,0.9)] md:hidden" style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="pointer-events-none absolute top-1/2 z-[1] h-[54px] -translate-y-1/2 rounded-[4px] shadow-[0_4px_15px_rgba(176,112,250,0.25)] transition-all duration-300" style={{ width: 'calc((100% - 8px) / 3)', left: `calc(4px + ${idx} * (100% - 8px) / 3)`, background: 'linear-gradient(#2A1B52, #1A284F) padding-box, linear-gradient(135deg, #B070FA 0%, #F066D8 100%) border-box', border: '1.5px solid transparent' }} />
       {tabs.map((t, i) => (
         <Link key={t.label} to={t.to} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
-          <svg className={`size-5 transition-all duration-300 ${i === idx ? 'text-[#8b5cf6] opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
-          <span className={`text-[11px] tracking-wider transition-all duration-300 ${i === idx ? 'font-medium text-[#8b5cf6]' : 'font-normal text-white/50'}`}>{t.label}</span>
+          <svg className={`size-5 transition-all duration-300 ${i === idx ? 'text-[#B070FA] opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <span className={`text-[11px] tracking-wider transition-all duration-300 ${i === idx ? 'font-medium text-[#B070FA]' : 'font-normal text-white/50'}`}>{t.label}</span>
         </Link>
       ))}
     </div>

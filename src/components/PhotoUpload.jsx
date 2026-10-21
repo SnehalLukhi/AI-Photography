@@ -28,7 +28,7 @@ export default function PhotoUpload({ photo, onChange }) {
           <div>
             <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full border border-accent bg-accent/10 text-2xl">⇪</div>
             <p className="font-medium">Tap to upload or drag a photo</p>
-            <p className="mt-1 text-sm text-[#858094]">JPG, PNG up to 20MB</p>
+            <p className="mt-1 text-sm text-[#C4B5FD]/75">JPG, PNG up to 20MB</p>
           </div>
         )}
       </div>

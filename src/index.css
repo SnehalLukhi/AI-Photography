@@ -3,32 +3,32 @@
 @tailwind utilities;
 
 body {
-  @apply bg-[#0b0a12] text-[#f8f5ff] font-sans font-normal antialiased overflow-x-hidden;
-  background-image: radial-gradient(620px 520px at 12% 180px, rgba(139,92,246,0.07), transparent 72%), radial-gradient(640px 600px at 88% 320px, rgba(139,92,246,0.07), transparent 72%);
+  @apply bg-[#000000] text-[#ffffff] font-sans font-normal antialiased overflow-x-hidden;
+  background-image: radial-gradient(620px 520px at 12% 180px, rgba(176,112,250,0.07), transparent 72%), radial-gradient(640px 600px at 88% 320px, rgba(176,112,250,0.07), transparent 72%);
   background-repeat: no-repeat;
 }
-::selection { background: #8b5cf6; color: #0b0a12; }
+::selection { background: #B070FA; color: #ffffff; }
 
-/* Pixora: black + lavender purple palette (page #0B0A12, cards #14121D, accent #8b5cf6, borders #292536) */
+/* Pixora: black + purple palette (page #000000, cards #2A1B52 to #1A284F, accent #B070FA, button gradient #B070FA to #F066D8, borders #3A3552) */
 @layer base {
-  h1, h2, h3 { color: #f8f5ff; font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif; letter-spacing: -0.03em; line-height: 1.04; }
+  h1, h2, h3 { color: #ffffff; font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif; letter-spacing: -0.03em; line-height: 1.04; }
   h1, h2 { font-weight: 700; }
   b, strong { font-weight: 600; }
 }
 .font-display { font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif; font-weight: 600; letter-spacing: -0.02em; text-transform: none; }
 
 @layer components {
-  .btn-grad { @apply cursor-pointer inline-flex items-center justify-center gap-2.5 rounded-full bg-[#8b5cf6] hover:brightness-110 px-6 py-3 text-[15px] font-semibold text-[#0b0a12] shadow-[0_10px_30px_-10px_rgba(139,92,246,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-10px_rgba(139,92,246,0.65)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0; }
-  .btn-grad { background-image: linear-gradient(90deg, #a78bfa 0%, #8b5cf6 55%, #7c54f0 100%); }
-  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 text-[15px] font-medium text-[#f8f5ff] transition-all duration-300 hover:border-[#8b5cf6]/50 hover:bg-[#8b5cf6]/[0.06] disabled:cursor-not-allowed disabled:opacity-40; }
-  .grad-text { color: #8b5cf6; background-image: linear-gradient(90deg, #a78bfa 0%, #8b5cf6 55%, #7c54f0 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-  .grad-bg { background-color: #8b5cf6; background-image: linear-gradient(90deg, #a78bfa 0%, #8b5cf6 55%, #7c54f0 100%); color: #0b0a12 !important; }
+  .btn-grad { @apply cursor-pointer inline-flex items-center justify-center gap-2.5 rounded-full bg-[#B070FA] hover:brightness-110 px-6 py-3 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(176,112,250,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-10px_rgba(176,112,250,0.65)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0; }
+  .btn-grad { background-image: linear-gradient(90deg, #B070FA 0%, #F066D8 100%); text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 text-[15px] font-medium text-[#ffffff] transition-all duration-300 hover:border-[#B070FA]/50 hover:bg-[#B070FA]/[0.06] disabled:cursor-not-allowed disabled:opacity-40; }
+  .grad-text { color: #B070FA; background-image: linear-gradient(90deg, #B070FA 0%, #F066D8 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .grad-bg { background-color: #B070FA; background-image: linear-gradient(90deg, #B070FA 0%, #F066D8 100%); color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
   .grad-bg:hover { filter: brightness(1.1); }
-  .card-box { @apply rounded-[24px] border border-white/[0.08] bg-[#14121d]; }
-  .pill-tag { @apply inline-flex items-center gap-2 rounded-full border border-[#8b5cf6]/25 bg-[#8b5cf6]/[0.07] px-3.5 py-1.5 text-[11px] font-medium text-[#a78bfa]; }
-  .eyebrow { @apply inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8b5cf6]; }
-  .eyebrow::before { content: ''; @apply size-1.5 rounded-full bg-[#8b5cf6] shadow-[0_0_10px_#8b5cf6]; }
-  .mono { @apply text-[11px] font-medium text-[#858094]; }
+  .card-box { @apply rounded-[24px] border border-white/[0.08] bg-gradient-to-br from-[#2A1B52] to-[#1A284F]; }
+  .pill-tag { @apply inline-flex items-center gap-2 rounded-full border border-[#B070FA]/25 bg-[#B070FA]/[0.07] px-3.5 py-1.5 text-[11px] font-medium text-[#C4B5FD]; }
+  .eyebrow { @apply inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#B070FA]; }
+  .eyebrow::before { content: ''; @apply size-1.5 rounded-full bg-[#B070FA] shadow-[0_0_10px_#B070FA]; }
+  .mono { @apply text-[11px] font-medium text-[#C4B5FD]/75; }
   /* hairline divider */
   .sprockets { height: 1px; background: rgba(255,255,255,0.08); }
   /* hover corner marks (kept subtle) */
@@ -55,16 +55,16 @@ body {
 @media (prefers-reduced-motion: reduce) { .login-col { animation: none !important; } }
 
 /* recolours the existing coral brand/feature icons toward the lavender accent (images themselves are untouched) */
-.gold-img { filter: hue-rotate(249deg) saturate(0.95); }
+.gold-img { filter: hue-rotate(263deg) saturate(0.95); }
 
 /* Hero orbit: one thin gradient ellipse behind the framed prints, plus a soft colour wash */
 .orbit { position: absolute; left: 50%; top: 52%; width: 100%; height: 66%; transform: translate(-50%, -50%) rotate(-8deg); border-radius: 9999px; pointer-events: none;
-  border: 1px solid rgba(139,92,246,0.55); box-shadow: 0 0 18px rgba(139,92,246,0.18); }
+  border: 1px solid rgba(176,112,250,0.55); box-shadow: 0 0 18px rgba(176,112,250,0.18); }
 .orbit-glow { position: absolute; left: 50%; top: 50%; width: 70%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 9999px; pointer-events: none; filter: blur(90px); opacity: .28;
-  background: radial-gradient(circle at 35% 40%, #8b5cf6, transparent 60%), radial-gradient(circle at 70% 60%, #8b5cf6, transparent 60%); }
+  background: radial-gradient(circle at 35% 40%, #B070FA, transparent 60%), radial-gradient(circle at 70% 60%, #B070FA, transparent 60%); }
 
 /* recolours the coral phone-frame artwork on the Home hero toward the lavender accent (the photos inside the frames are separate and untouched) */
-.tint-frame { filter: hue-rotate(249deg) saturate(0.95); }
+.tint-frame { filter: hue-rotate(263deg) saturate(0.95); }
 
 /* Hero image cards: soft lift + slight scale on hover (mouse devices only; touch keeps the normal state). Uses the independent `translate` /
    `scale` properties so each card keeps its own tilt (`transform: rotate`). No glow, shadow or border change. */

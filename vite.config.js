@@ -77,7 +77,7 @@ function exploreFolders() {
       for (const d of fs.readdirSync(path.join(images, 'explore'), { withFileTypes: true })) {
         if (!d.isDirectory()) continue
         out[`explore/${d.name}`] = list(`explore/${d.name}`)
-        // one level of sub-folders too (e.g. explore/Fun/baby)
+        // one level of sub-folders too (e.g. explore/Hairstyle/baby)
         for (const sd of fs.readdirSync(path.join(images, 'explore', d.name), { withFileTypes: true })) if (sd.isDirectory()) out[`explore/${d.name}/${sd.name}`] = list(`explore/${d.name}/${sd.name}`)
       }
     } catch { /* no explore folder yet */ }

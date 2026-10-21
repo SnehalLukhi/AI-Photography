@@ -54,25 +54,20 @@ export const exploreTabs = [
   { id: 'old-money', folders: ['explore/old-money'], name: 'Old Money' },
   { id: 'top-carousel', folders: ['explore/top-carousel', 'explore/Top Carousel', 'Top Carousel'], name: 'Top Carousel' },
   // Beard: card title = file name up to the first space / opening bracket ('AnchorBeardClean (AnchorBeardClean).jpg' -> 'AnchorBeardClean'). Not part of "All".
-  { id: 'beard', folders: ['explore/beard'], name: 'Beard', title: (stem) => stem.split(/[\s(]/)[0] || stem, hideFromAll: true },
-  // Fun: three separate sub-categories (each reads only its own folder). They are not listed as sidebar items themselves - see funTab - and not in "All".
-  { id: 'fun-baby', parent: 'fun', folders: ['explore/Fun/baby'], title: (stem) => stem.split(/[\s(]/)[0] || stem, name: 'Baby', category: 'Fun · Baby', hideFromAll: true },
-  { id: 'fun-men', parent: 'fun', folders: ['explore/Fun/men'], title: (stem) => stem.split(/[\s(]/)[0] || stem, name: 'Men', category: 'Fun · Men', hideFromAll: true },
-  { id: 'fun-woman', parent: 'fun', folders: ['explore/Fun/woman'], title: (stem) => stem.split(/[\s(]/)[0] || stem, name: 'Woman', category: 'Fun · Woman', hideFromAll: true },
+  { id: 'beard', folders: ['explore/beard'], name: 'Beard', title: (stem) => stem.split(/[\s(]/)[0] || stem, hideFromAll: true, exclude: ['common_image'] }, // common_image is not a template: never listed or selectable
   // Hairstyle: three sub-categories (explore/Hairstyle/{baby,man,woman}); card title = file name without extension and without the trailing " (…)" part. Not part of "All".
-  { id: 'hairstyle-baby', parent: 'hairstyle', folders: ['explore/Hairstyle/baby'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Baby', category: 'Hairstyle · Baby', hideFromAll: true },
+  { id: 'hairstyle-baby', parent: 'hairstyle', folders: ['explore/Hairstyle/baby'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Baby', category: 'Hairstyle · Baby', hideFromAll: true, exclude: ['Messy Bun (female_hairstyle_0039)'] }, // same style id as "Baby Soft Layered Bob" (and JSON 0039 is a bob, not a bun): unconfirmed
   { id: 'hairstyle-man', parent: 'hairstyle', folders: ['explore/Hairstyle/man'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Man', category: 'Hairstyle · Man', hideFromAll: true },
-  { id: 'hairstyle-woman', parent: 'hairstyle', folders: ['explore/Hairstyle/woman'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Woman', category: 'Hairstyle · Woman', hideFromAll: true },
+  { id: 'hairstyle-woman', parent: 'hairstyle', folders: ['explore/Hairstyle/woman'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Woman', category: 'Hairstyle · Woman', hideFromAll: true, exclude: ['Textured Pixie(female_hairstyle_00020)'] }, // "00020" is a typo, not a documented hair_style: unconfirmed
 ]
-/** The "Fun" sidebar entry: a parent whose subs are the fun-* tabs above ({ id: URL ?sub=, tabId: key for categoryItems }). */
+/** The "Hairstyle" sidebar entry: a parent whose subs are the hairstyle-* tabs above ({ id: URL ?sub=, tabId: key for categoryItems }). */
 const parentTab = (id, name) => ({ id, name, subs: exploreTabs.filter((t) => t.parent === id).map((t) => ({ id: t.id.replace(`${id}-`, ''), name: t.name, tabId: t.id })) })
-export const funTab = parentTab('fun', 'Fun')
 export const hairstyleTab = parentTab('hairstyle', 'Hairstyle')
 const folderStem = (file) => file.replace(/\.[^.]+$/, '')
 export const exploreFolderTemplates = Object.fromEntries(exploreTabs.map((tab) => {
   const used = new Set()
   const dir = tab.folders.find((d) => (exploreFolderFiles[d] || []).length) || tab.folders[0]
-  const items = (exploreFolderFiles[dir] || []).map((file, i) => {
+  const items = (exploreFolderFiles[dir] || []).filter((file) => !tab.exclude?.includes(folderStem(file))).map((file, i) => {
     const name = tab.title ? tab.title(folderStem(file)) : folderStem(file)
     let assetId = slug(name) || `${tab.id}-${i + 1}`
     while (used.has(assetId)) assetId = `${assetId}-${i + 1}`
@@ -95,7 +90,7 @@ export const folderTemplates = GALLERY_TABS.flatMap((id) => exploreFolderTemplat
 export const exploreAllTemplates = [...folderTemplates, ...exploreFolderTemplates.cartoon]
 
 // Explore "All": every portrait template in the project except Top Carousel - the gallery photos, Cartoon, LinkedIn Headshot, Beard,
-// Fun and Hairstyle (80's & 90's and Old Money are already inside the gallery photos). De-duplicated by image path, so a template that belongs to several
+// Hairstyle (80's & 90's and Old Money are already inside the gallery photos). De-duplicated by image path, so a template that belongs to several
 // categories is listed once. Any category added to exploreTabs later is included automatically.
 const dedupe = (list) => { const seen = new Set(); return list.filter((t) => !seen.has(t.image) && seen.add(t.image)) }
 export const exploreEverything = dedupe([...exploreAllTemplates, ...exploreTabs.flatMap((tab) => exploreFolderTemplates[tab.id])])
