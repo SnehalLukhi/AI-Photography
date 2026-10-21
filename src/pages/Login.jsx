@@ -3,11 +3,11 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
-import { loginWithGoogle, loadGoogle } from '../lib/aiPhotography.js'
+import { loginWithGoogle, prepareGoogle } from '../lib/aiPhotography.js'
 
 /**
- * Login / Sign Up (full screen, no header or footer). Calls the backend (POST /api/auth/login | register), keeps the returned token via
- * `signIn()` from StudioContext and goes to Home (/).
+ * Login (full screen, no header or footer). The only way in is "Continue with Google": the same button logs in a returning user and creates the account of a new one.
+ * The backend (POST /api/auth/google) checks the Google token and returns our own login token, which `signIn()` from StudioContext keeps, then goes to Home (/).
  */
 // Side-panel photos: Cartoon, LinkedIn Headshot, Beard, Old Money and 80's & 90's templates in a repeating sequence (one from each, then the next one from each, ...), spread over 4 columns.
 const PANEL_SOURCES = ['cartoon', 'linkedin-headshot', 'beard', 'old-money', '80s-and-90s'].map((id) => categoryItems(id))
@@ -34,45 +34,15 @@ export function Login() {
   const { signIn, signedIn } = useStudio()
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  useEffect(() => { loadGoogle() }, []) // so the Google window opens instantly on click
+  useEffect(() => { prepareGoogle() }, []) // loads Google's script and sets it up now, so the click can open the Google window immediately
 
   const google = async () => {
-    setBusy(true); setErrors({}); setNote('')
-    try { signIn(await loginWithGoogle()); nav('/') } catch (err) { setErrors({ form: err.message }); setBusy(false) }
+    setBusy(true); setError('')
+    try { signIn(await loginWithGoogle()); nav('/') } catch (err) { setError(err.message || 'Google sign-in failed. Please try again.'); setBusy(false) }
   }
-
-  const switchMode = () => { setMode(signup ? 'login' : 'signup'); setErrors({}); setNote(''); setConfirm('') }
-  const validate = () => {
-    const e = {}
-    if (signup && !name.trim()) e.name = 'Enter your name.'
-    if (!email.trim()) e.email = 'Enter your email address.'
-    else if (!EMAIL_RE.test(email.trim())) e.email = 'Enter a valid email address.'
-    if (!password) e.password = 'Enter your password.'
-    else if (password.length < 8) e.password = 'Password must be at least 8 characters.'
-    if (signup) {
-      if (!confirm) e.confirm = 'Confirm your password.'
-      else if (confirm !== password) e.confirm = 'Passwords do not match.'
-    }
-    return e
-  }
-  const submit = async (ev) => {
-    ev.preventDefault()
-    const e = validate()
-    setErrors(e); setNote('')
-    if (Object.keys(e).length) return
-    setBusy(true)
-    try {
-      const session = signup ? await register({ email: email.trim(), password, name: name.trim() }) : await login({ email: email.trim(), password })
-      signIn(session)
-      nav('/')
-    } catch (err) {
-      setErrors({ form: err.message || 'Something went wrong. Please try again.' })
-      setBusy(false)
-    }
-  }
-  const clear = (k, set) => (ev) => { set(ev.target.value); if (errors[k]) setErrors({ ...errors, [k]: '' }) }
 
   if (signedIn) return <Navigate to="/" replace /> // signed in (a fresh login or a restored session): always land on Home, never the previous page or Profile
+
   return (
     <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#000000] text-white lg:flex-row-reverse">
       {/* photo panel (desktop only): static, muted, no effects */}

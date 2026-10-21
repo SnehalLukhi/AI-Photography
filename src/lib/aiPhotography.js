@@ -178,19 +178,30 @@ export function loadGoogle() {
   return gisLoading
 }
 
-/** "Continue with Google": opens Google's window, then the backend checks the Google token and returns our own { token, user }. Rejects with a user-facing message. */
-export async function loginWithGoogle() {
-  if (!GOOGLE_CLIENT_ID) throw new Error('Google sign-in is not set up yet (VITE_GOOGLE_CLIENT_ID is missing).')
-  if (!(await loadGoogle())) throw new Error('Could not load Google sign-in. Check your connection and try again.')
-  const accessToken = await new Promise((resolve, reject) => {
-    window.google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: 'openid email profile',
-      callback: (r) => (r.access_token ? resolve(r.access_token) : reject(new Error('Google sign-in was cancelled.'))),
-      error_callback: (e) => reject(new Error(e?.type === 'popup_closed' ? 'Google sign-in was cancelled.' : 'Google sign-in failed. Please allow pop-ups and try again.')),
-    }).requestAccessToken()
+let tokenClient
+let waiting // { resolve, reject } of the sign-in that is currently open
+/** Loads Google's script and creates the sign-in client once. Call when the Login page opens: the click must open Google's window at once (browsers block pop-ups opened after a wait). */
+export async function prepareGoogle() {
+  if (!(await loadGoogle())) return false
+  tokenClient ||= window.google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: 'openid email profile',
+    callback: (r) => (r.access_token ? waiting?.resolve(r.access_token) : waiting?.reject(new Error(r.error_description || 'Google sign-in failed. Please try again.'))),
+    error_callback: (e) => waiting?.reject(new Error(e?.type === 'popup_closed' ? 'Google sign-in was cancelled.' : 'The Google window could not open. Please allow pop-ups for this site and try again.')),
   })
-  return authRequest('google', jsonPost({ accessToken }))
+  return true
+}
+
+/** "Continue with Google": opens Google's account chooser, then the backend checks the Google token and returns our own { token, user }. Rejects with a user-facing message. */
+export function loginWithGoogle() {
+  // everything up to requestAccessToken() runs synchronously inside the click, so the browser lets the pop-up open
+  const popup = new Promise((resolve, reject) => {
+    if (!GOOGLE_CLIENT_ID) return reject(new Error('Google sign-in is not set up yet (VITE_GOOGLE_CLIENT_ID is missing).'))
+    if (!tokenClient) return reject(new Error('Google sign-in is still loading. Please try again in a moment.'))
+    waiting = { resolve, reject }
+    tokenClient.requestAccessToken({ prompt: 'select_account' })
+  })
+  return popup.then((accessToken) => authRequest('google', jsonPost({ accessToken })))
 }
 
 /** The user a saved token belongs to ({ id, email, name }); rejects with status 401 when the token is no longer valid. */
