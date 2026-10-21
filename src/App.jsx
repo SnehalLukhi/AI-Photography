@@ -8,11 +8,16 @@ import Generate from './pages/Generate.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Creations from './pages/Creations.jsx'
 import Pricing from './pages/Pricing.jsx'
-import { Help, Feedback, Transfer, Legal } from './pages/Support.jsx'
+import { Help, Contact, Feedback, Transfer, Legal, Profile, Transactions } from './pages/Support.jsx'
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import Login from './pages/Login.jsx'
+import WelcomePopup from './components/WelcomePopup.jsx'
+import PremiumPopup from './components/PremiumPopup.jsx'
+import { useStudio } from './context/StudioContext.jsx'
 
 export default function App() {
   const { pathname } = useLocation()
+  const { signedIn, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer } = useStudio()
   const bare = pathname === '/login' // full-screen page without header/footer
   const generating = pathname === '/generate' // fixed-height page: no footer, no mobile chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
@@ -29,17 +34,21 @@ export default function App() {
           <Route path="/diy/*" element={<Navigate to="/explore" replace />} />
           <Route path="/creations" element={<Creations />} />
           <Route path="/pricing" element={<Pricing />} />
-          <Route path="/transactions" element={<Navigate to="/login" replace />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/transfer" element={<Transfer />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/contact-us" element={<Contact />} />
           <Route path="/feedback" element={<Feedback />} />
-          <Route path="/privacy-policy" element={<Legal kind="privacy" />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<Legal kind="terms" />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {!bare && !generating && <Footer />}
+      {signedIn && welcomeOffer && !bare && <WelcomePopup onClose={closeWelcomeOffer} />}
+      {signedIn && premiumOffer && !welcomeOffer && !bare && <PremiumPopup onClose={closePremiumOffer} />}
     </div>
   )
 }

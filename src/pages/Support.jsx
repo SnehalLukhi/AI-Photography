@@ -1,16 +1,20 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
+<<<<<<< HEAD
 import { redeemCode } from '../lib/aiPhotography.js'
+=======
+import { displayName } from '../components/Header.jsx'
+>>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
 
 const Hero = ({ eyebrow, title, sub }) => (
   <header className="mx-auto max-w-3xl px-4 pt-10 text-center">
-    <p className="text-xs font-semibold uppercase tracking-wide text-[#B070FA]">{eyebrow}</p>
+    <p className="text-xs font-semibold uppercase tracking-wide text-[#F066D8]">{eyebrow}</p>
     <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight text-[#ffffff] sm:text-5xl">{title}</h1>
-    <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#C4B5FD] sm:text-lg">{sub}</p>
+    <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#C4B5FD]/80 sm:text-lg">{sub}</p>
   </header>
 )
-const field = 'w-full rounded-xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-4 text-sm text-white outline-none transition placeholder:text-[#C4B5FD]/60 focus:border-[#B070FA]/60'
+const field = 'w-full rounded-xl border border-white/10 bg-[#1b1b24] px-4 text-sm text-white outline-none transition placeholder:text-[#C4B5FD]/50 focus:border-[#B070FA]/60'
 const submitBtn = 'grad-bg flex h-12 w-full cursor-pointer items-center justify-center rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50'
 
 const topics = [
@@ -27,12 +31,12 @@ export function Help() {
   return (
     <div className="px-4 pb-24 md:pb-16">
       <Hero eyebrow="Support" title="How Can We Help?" sub="Find answers, tutorials and troubleshooting guides." />
-      <div className="mx-auto mt-14 grid max-w-none gap-5 sm:grid-cols-2">
+      <div className="mx-auto mt-14 grid max-w-[1120px] gap-5 sm:grid-cols-2">
         {topics.map(([t, d, body], i) => (
-          <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer rounded-xl border bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#B070FA]/60 ${open === i ? 'border-[#B070FA]/60' : 'border-[#3A3552]'}`}>
+          <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer self-start rounded-[20px] border bg-[#121216] px-6 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#B070FA]/50 ${open === i ? 'border-[#B070FA]/50' : 'border-white/[0.06]'}`}>
             <span className="block text-[17px] font-semibold text-white">{t}</span>
-            <span className="mt-1.5 block text-sm text-[#C4B5FD]">{d}</span>
-            {open === i && <span className="mt-3 block border-t border-[#3A3552] pt-3 text-sm text-[#C4B5FD]">{body}</span>}
+            <span className="mt-1.5 block text-sm text-[#C4B5FD]/75">{d}</span>
+            {open === i && <span className="mt-3 block border-t border-white/10 pt-3 text-sm text-[#C4B5FD]">{body}</span>}
           </button>
         ))}
       </div>
@@ -40,7 +44,100 @@ export function Help() {
   )
 }
 
-const Card = ({ children, w = 'max-w-[760px]' }) => <div className={`mx-auto mt-10 w-full ${w} rounded-xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-6 shadow-2xl sm:p-8`}>{children}</div>
+const Card = ({ children, w = 'max-w-[760px]' }) => <div className={`mx-auto mt-10 w-full ${w} rounded-[28px] border border-white/[0.06] bg-[#121216] p-6 sm:p-8`}>{children}</div>
+
+export function Contact() {
+  const { userEmail } = useStudio()
+  const [title, setTitle] = useState('')
+  const [email, setEmail] = useState(userEmail || '')
+  const [text, setText] = useState('')
+  const [file, setFile] = useState(null)
+  const [err, setErr] = useState('')
+  const [sent, setSent] = useState(false)
+  const input = useRef(null)
+  const pick = (f) => {
+    setErr('')
+    if (!f) return
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(f.type)) { setErr('Please choose a JPG, JPEG, PNG or WEBP image.'); return }
+    if (f.size > 5 * 1024 * 1024) { setErr('This image is larger than 5 MB.'); return }
+    setFile(f)
+  }
+  const valid = title.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()) && text.trim()
+  return (
+    <div className="px-4 pb-24 md:pb-16">
+      <Hero eyebrow="Support Request" title="Contact Support" sub="Tell us what happened and our team will review it." />
+      <Card w="max-w-[760px]">
+        {sent ? (
+          <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Request noted</p><p className="mb-5 text-sm text-[#C4B5FD]/75">Demo only - nothing was sent anywhere yet, because support requests are not connected to a backend.</p><button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-grad">Write another</button></div>
+        ) : (
+          <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); if (valid) setSent(true) }}>
+            <label className="block text-sm font-semibold text-white">Title<input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Title" className={`${field} mt-2 h-12`} /></label>
+            <label className="block text-sm font-semibold text-white">Email<input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" className={`${field} mt-2 h-12`} /></label>
+            <label className="block text-sm font-semibold text-white">Description<textarea required value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} placeholder="Enter Description" className={`${field} mt-2 h-[150px] resize-none py-3`} /></label>
+            <div>
+              <p className="text-sm font-semibold text-white">Attachment (Optional)</p>
+              <div onClick={() => input.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); pick(e.dataTransfer.files?.[0]) }}
+                className="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 px-4 py-8 text-center transition hover:border-[#B070FA]/60">
+                <span className="inline-flex items-center gap-2 rounded-lg bg-white/[0.07] px-3.5 py-2 text-[13px] font-semibold text-white"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload Image</span>
+                <span className="text-sm text-white/90">{file ? file.name : 'Click or drag image here (Max 5MB)'}</span>
+                <span className="text-xs text-[#C4B5FD]/60">JPG, JPEG, PNG, and WEBP supported</span>
+                <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { pick(e.target.files?.[0]); e.target.value = '' }} />
+              </div>
+              {file && <button type="button" onClick={() => setFile(null)} className="mt-2 cursor-pointer text-xs text-[#C4B5FD] underline underline-offset-2 hover:text-white">Remove image</button>}
+              {err && <p role="alert" className="mt-2 text-xs text-red-400">{err}</p>}
+            </div>
+            <button className={submitBtn} disabled={!valid}>Submit Request</button>
+          </form>
+        )}
+      </Card>
+    </div>
+  )
+}
+
+export function Profile() {
+  const { signedIn, userEmail } = useStudio()
+  const name = displayName(userEmail || '')
+  return (
+    <div className="px-4 pb-24 md:pb-16">
+      <Hero eyebrow="Account" title="My Profile" sub="Your Pixora account details." />
+      <Card w="max-w-[640px]">
+        {signedIn ? (
+          <>
+            <div className="flex items-center gap-4">
+              <span className="grid size-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#B070FA] to-[#F066D8] text-2xl font-bold text-white">{(name[0] || 'P').toUpperCase()}</span>
+              <div className="min-w-0"><p className="truncate text-lg font-semibold text-white">{name}</p><p className="truncate text-sm text-[#C4B5FD]" title={userEmail}>{userEmail}</p></div>
+            </div>
+            <p className="mt-6 rounded-xl border border-[#3A3552] bg-black/30 px-4 py-3 text-sm text-[#C4B5FD]/85">This is a demo sign-in: it exists only in this browser. The name is taken from your email, and editing your profile is not available yet.</p>
+          </>
+        ) : (
+          <div className="py-8 text-center"><p className="mb-5 text-lg font-medium">Sign in to see your profile</p><Link to="/login" className="btn-grad">Sign in to Pixora</Link></div>
+        )}
+      </Card>
+    </div>
+  )
+}
+
+export function Transactions() {
+  const { signedIn } = useStudio()
+  return (
+    <div className="px-4 pb-24 md:pb-16">
+      <Hero eyebrow="Billing" title="Transactions" sub="Your payment and coin history." />
+      <Card w="max-w-[640px]">
+        <div className="py-8 text-center">
+          {signedIn ? (
+            <>
+              <p className="mb-1 text-lg font-medium">No transactions yet</p>
+              <p className="mb-5 text-sm text-[#C4B5FD]/75">Payments are not connected yet, so there is nothing to show. Purchases will appear here once they are available.</p>
+              <Link to="/pricing" className="btn-grad">View plans</Link>
+            </>
+          ) : (
+            <><p className="mb-5 text-lg font-medium">Sign in to see your transactions</p><Link to="/login" className="btn-grad">Sign in to Pixora</Link></>
+          )}
+        </div>
+      </Card>
+    </div>
+  )
+}
 
 export function Feedback() {
   const [stars, setStars] = useState(0)

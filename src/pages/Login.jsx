@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+=======
+import { useEffect, useRef, useState } from 'react'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+>>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
@@ -52,7 +57,7 @@ function Field({ id, label, error, right, ...props }) {
 
 export function Login() {
   const nav = useNavigate()
-  const { signIn } = useStudio()
+  const { signIn, signedIn } = useStudio()
   const [mode, setMode] = useState('login') // 'login' | 'signup'
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -90,6 +95,7 @@ export function Login() {
     setErrors(e); setNote('')
     if (Object.keys(e).length) return
     setBusy(true)
+<<<<<<< HEAD
     try {
       const session = signup ? await register({ email: email.trim(), password, name: name.trim() }) : await login({ email: email.trim(), password })
       signIn(session)
@@ -98,9 +104,13 @@ export function Login() {
       setErrors({ form: err.message || 'Something went wrong. Please try again.' })
       setBusy(false)
     }
+=======
+    timer.current = setTimeout(() => { signIn(email.trim()); nav('/creations') }, 600) // demo: no real authentication
+>>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
   }
   const clear = (k, set) => (ev) => { set(ev.target.value); if (errors[k]) setErrors({ ...errors, [k]: '' }) }
 
+  if (signedIn) return <Navigate to="/creations" replace /> // already signed in (restored session): no Login page
   return (
     <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#000000] text-white lg:flex-row-reverse">
       {/* photo panel (desktop only): static, muted, no effects */}

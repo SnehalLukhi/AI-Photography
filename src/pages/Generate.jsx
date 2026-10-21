@@ -1,10 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
-import { findAsset, siblingsOf, generateUrl } from '../data/templates.js'
+import { findAsset, siblingsOf, generateUrl, plans } from '../data/templates.js'
 
-// Beard / Hairstyle photos fill the whole card (no empty bands above and below); every other category keeps showing the full image.
-const fitOf = (t) => (t.categoryId === 'beard' || /^hairstyle-/.test(t.categoryId) ? 'object-cover' : 'object-contain')
+// Beard / LinkedIn Headshot / Hairstyle photos fill the whole card (no empty bands above and below); every other category keeps showing the full image.
+// Display-only coin pill beside the Generate button: coins needed for one image, read from the plans' "Cost per image" (same value the Pricing page shows). Not the user's balance; nothing is deducted here.
+const IMAGE_COST = parseInt(plans[0].details.find(([label]) => label === 'Cost per image')?.[1], 10)
+const CoinPill = ({ className = '' }) => (
+  <span className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-[#B070FA]/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-2.5 text-[12px] font-semibold text-white shadow-[0_0_18px_rgba(176,112,250,0.2)] ${className}`}>
+    <img src={brandImages.coin} alt="" width="20" height="20" className="size-5 shrink-0 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />{IMAGE_COST} Coins
+  </span>
+)
+const fitOf = (t) => (t.categoryId === 'beard' || t.categoryId === 'linkedin-headshot' || /^hairstyle-/.test(t.categoryId) ? 'object-cover' : 'object-contain')
 import { SparkIcon } from './../components/Header.jsx'
+import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { promptFor, inspectUpload, generatePhoto, getPlans } from '../lib/aiPhotography.js'
 
@@ -174,10 +182,17 @@ function Generator({ asset }) {
               <div className={`grid gap-3 ${multi ? 'grid-cols-2' : ''}`}>
                 {slots.map((k, i) => <Slot key={k} sheet kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}
               </div>
-              <button type="button" disabled={!ready} onClick={next} className="mt-5 flex h-[50px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-bold text-white shadow-[0_8px_28px_rgba(176,112,250,0.4)] transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60" style={{ background: 'linear-gradient(90deg, #B070FA 0%, #F066D8 100%)' }}>
+              <div className="mt-5 flex items-center gap-2">
+              <button type="button" disabled={!ready} onClick={next} className="flex h-[50px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-bold text-white shadow-[0_8px_28px_rgba(176,112,250,0.4)] transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60" style={{ background: 'linear-gradient(90deg, #B070FA 0%, #F066D8 100%)' }}>
                 <span>✨</span><span>{ctaLabel}</span><span>→</span>
               </button>
+<<<<<<< HEAD
               <p className="mt-3 text-center text-xs text-[#C4B5FD]/75">{real ? `${cost} coins per generation · returned if it fails` : 'Demo preview · no coins are used'}</p>
+=======
+              <CoinPill className="h-[50px]" />
+              </div>
+              <p className="mt-3 text-center text-xs text-[#C4B5FD]/75">Coins deducted only after generation complete</p>
+>>>>>>> cc72fa45a8496ff7bc337414c4fbb34f7d355ace
             </div>
           </div>
         )}
@@ -212,9 +227,12 @@ function Generator({ asset }) {
                       {slots.map((k, i) => <Slot key={k} kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}
                     </div>
                     <div className="relative flex w-full shrink-0 flex-col items-center gap-1">
-                      <button type="button" disabled={!ready} onClick={next} className="grad-bg flex h-[48px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-bold text-white shadow-[0_8px_28px_rgba(176,112,250,0.4)] transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60">
+                      <div className="flex w-full items-center gap-2">
+                      <button type="button" disabled={!ready} onClick={next} className="grad-bg flex h-[48px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xl text-[14px] font-bold text-white shadow-[0_8px_28px_rgba(176,112,250,0.4)] transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60">
                         <div className="flex items-center gap-1.5"><span className="text-base">✨</span><span>{ctaLabel}</span><span className="ml-0.5 text-base font-bold">→</span></div>
                       </button>
+                      <CoinPill className="h-[48px]" />
+                      </div>
                     </div>
                   </div>
                 </article>
