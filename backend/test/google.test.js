@@ -55,9 +55,10 @@ test('the same email as a password account links to it instead of creating a dup
   assert.ok(body.user.coins >= 50)
 })
 
-test('Google-only accounts have no password; bad, foreign and unverified tokens are refused', async () => {
-  const login = await fetch(`${app.base}/api/auth/login`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: '' }, body: JSON.stringify({ email: 'gina@example.com', password: '' }) })
-  assert.equal(login.status, 401)
+test('bad, foreign and unverified tokens are refused, and there are no password endpoints any more', async () => {
+  for (const path of ['login', 'register', 'forgot-password', 'reset-password']) {
+    assert.equal((await fetch(`${app.base}/api/auth/${path}`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: '' }, body: '{}' })).status, 404, path)
+  }
   for (const t of ['garbage', 'foreign', 'unverified']) {
     const res = await google(t)
     assert.equal(res.status, 401, t)

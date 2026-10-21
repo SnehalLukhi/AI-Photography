@@ -8,11 +8,10 @@ import Generate from './pages/Generate.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Creations from './pages/Creations.jsx'
 import Pricing from './pages/Pricing.jsx'
+import Coins from './pages/Coins.jsx'
 import { Help, Contact, Feedback, Legal, Profile, Transactions } from './pages/Support.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import Login from './pages/Login.jsx'
-import ForgotPassword from './pages/ForgotPassword.jsx'
-import ResetPassword from './pages/ResetPassword.jsx'
 import WelcomePopup from './components/WelcomePopup.jsx'
 import PremiumPopup from './components/PremiumPopup.jsx'
 import { useStudio } from './context/StudioContext.jsx'
@@ -20,7 +19,7 @@ import { useStudio } from './context/StudioContext.jsx'
 export default function App() {
   const { pathname } = useLocation()
   const { signedIn, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer } = useStudio()
-  const bare = ['/login', '/forgot-password', '/reset-password'].includes(pathname) // full-screen pages without header/footer
+  const bare = pathname === '/login' // full-screen page without header/footer
   const generating = pathname === '/generate' // fixed-height page: no footer, no mobile chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
@@ -36,11 +35,10 @@ export default function App() {
           <Route path="/diy/*" element={<Navigate to="/explore" replace />} />
           <Route path="/creations" element={<Creations />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/coins" element={<Coins />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route path="/help" element={<Help />} />
           <Route path="/contact-us" element={<Contact />} />

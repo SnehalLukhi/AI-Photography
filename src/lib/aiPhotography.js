@@ -22,7 +22,7 @@ export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 export const MAX_BYTES = 10 * 1024 * 1024
 const POLL_MS = 5000
 
-// Login token from POST /api/auth/login | register, sent as `Authorization: Bearer` on every backend call. Kept in localStorage so a refresh stays logged in.
+// Login token from POST /api/auth/google, sent as `Authorization: Bearer` on every backend call. Kept in localStorage so a refresh stays logged in.
 const TOKEN_KEY = 'ai-photo-token'
 let token = ''
 try { token = localStorage.getItem(TOKEN_KEY) || '' } catch { /* storage blocked: the login lasts until the page is closed */ }
@@ -162,10 +162,6 @@ async function authRequest(path, init) {
 }
 const jsonPost = (data) => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
 
-/** Create an account. Resolves with { token, user }. */
-export const register = (data) => authRequest('register', jsonPost(data))
-/** Log in. Resolves with { token, user }. */
-export const login = (data) => authRequest('login', jsonPost(data))
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 let gisLoading
 /** Loads Google's sign-in script once. Call early (e.g. when the Login page opens) so the later click can open the Google window without a delay. */
@@ -197,11 +193,6 @@ export async function loginWithGoogle() {
   return authRequest('google', jsonPost({ accessToken }))
 }
 
-/** Asks the backend to e-mail a password reset link. The answer is always the same, whether or not the address has an account. */
-export const forgotPassword = (email) => authRequest('forgot-password', jsonPost({ email }))
-/** Sets a new password with the token from the reset e-mail. Rejects with the backend's message when the link is invalid or expired. */
-export const resetPassword = (token, password) => authRequest('reset-password', jsonPost({ token, password }))
-
 /** The user a saved token belongs to ({ id, email, name }); rejects with status 401 when the token is no longer valid. */
 export const fetchMe = async () => (await authRequest('me', { headers: headers() })).user
 
@@ -217,7 +208,7 @@ function pickImage(body) {
   return { url, original: g?.original?.url || '', generationId: g?.id || '' }
 }
 
-/** Coin plans for the Pricing page: { plans: [{ id, name, priceInr, per, coins, tier, popular? }], costPerGeneration }. Public. */
+/** Coin plans for the Pricing page: { plans: [{ id, name, price, currency, per, coins, popular? }], costPerGeneration }. Public. */
 export async function getPlans() {
   const res = await fetch(`${API_BASE}/api/plans`)
   const body = await readJson(res)
@@ -241,9 +232,17 @@ export async function redeemCode(code) {
   return body
 }
 
-/** Starts the payment for a plan. Rejects with the backend's message (503 while no payment gateway is connected). */
-export async function startCheckout(planId) {
-  const res = await fetch(`${API_BASE}/api/wallet/checkout`, { ...jsonPost({ planId }), headers: { 'Content-Type': 'application/json', ...headers() } })
+/** One-time coin packs for the Get Coins page: { packs: [{ id, name, coins, price (USD), currency, popular? }], costPerGeneration }. Public. */
+export async function getCoinPacks() {
+  const res = await fetch(`${API_BASE}/api/coin-packs`)
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body
+}
+
+/** Starts the payment for a plan or coin pack (`itemId`) in US dollars (`currency` is optional and can only be "USD"). Rejects with the backend's message (503 while no payment gateway is connected). */
+export async function startCheckout(itemId, currency) {
+  const res = await fetch(`${API_BASE}/api/wallet/checkout`, { ...jsonPost({ itemId, currency }), headers: { 'Content-Type': 'application/json', ...headers() } })
   const body = await readJson(res)
   if (!res.ok) throw failure(body, res)
   return body

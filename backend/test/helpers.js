@@ -4,8 +4,8 @@ const fs = require('node:fs')
 const sharp = require('sharp')
 const { UPLOAD_DIR } = require('../src/utils/tempFiles')
 
-// Test environment, set before the app is loaded: throw-away in-memory user database, fixed token secret, no login rate limit.
-process.env.DATABASE_PATH = ':memory:'
+// Test environment, set before the app is loaded: throw-away in-memory Postgres (PGlite), fixed token secret, no login rate limit.
+process.env.DATABASE_URL = 'pglite://memory'
 process.env.JWT_SECRET = 'test-secret'
 process.env.AUTH_RATE_LIMIT_MAX = '1000'
 process.env.DAILY_GENERATION_LIMIT = '100000'
@@ -59,14 +59,27 @@ async function startMockAilab(handlers) {
   return { url: `http://127.0.0.1:${server.address().port}`, calls, close: () => new Promise((r) => server.close(r)) }
 }
 
+/** Test-only: creates a user (with the signup coins, like a first Google sign-in) and a login token for it. */
+async function createUser(email, name = '') {
+  const db = require('../src/db')
+  const env = require('../src/config/env')
+  const wallet = require('../src/services/wallet.service')
+  const id = require('node:crypto').randomUUID()
+  await db.tx(async (d) => {
+    await d.query('INSERT INTO users (id, email, name) VALUES ($1, $2, $3)', [id, email, name])
+    await wallet.credit(id, env.coins.signupBonus, 'signup_bonus', id, d)
+  })
+  return { id, email, token: require('../src/services/auth.service').signToken(id) }
+}
+
 /**
- * Starts the app on a free port. Test-only convenience: registers a user and makes fetch() send that user's token to this app,
+ * Starts the app on a free port. Test-only convenience: creates a user and makes fetch() send that user's token to this app,
  * unless a request sets its own Authorization header (an empty one = not logged in).
  */
 async function startApp(app) {
   const server = await new Promise((r) => { const s = app.listen(0, '127.0.0.1', () => r(s)) })
   const base = `http://127.0.0.1:${server.address().port}`
-  const { token } = await (await rawFetch(`${base}/api/auth/register`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: 'tester@example.com', password: 'test-password-1' }) })).json()
+  const { token } = await createUser('tester@example.com')
   globalThis.fetch = (url, init = {}) => {
     if (!String(url).startsWith(base)) return rawFetch(url, init)
     const headers = new Headers(init.headers)
@@ -87,4 +100,4 @@ const tempFiles = () => fs.readdirSync(UPLOAD_DIR)
 /** Files that appeared in the upload dir since `before` (ignores leftovers from older runs). */
 const newTempFiles = (before) => tempFiles().filter((f) => !before.includes(f))
 
-module.exports = { solid, resultJpeg, parseMultipart, startMockAilab, startApp, form, tempFiles, newTempFiles }
+module.exports = { createUser, solid, resultJpeg, parseMultipart, startMockAilab, startApp, form, tempFiles, newTempFiles }

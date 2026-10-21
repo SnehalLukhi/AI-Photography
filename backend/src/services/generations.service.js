@@ -1,6 +1,6 @@
 const crypto = require('node:crypto')
 const AppError = require('../utils/AppError')
-const { getDb } = require('../db')
+const { query } = require('../db')
 const storage = require('./storage.service')
 const ailab = require('./ailab.service')
 const { sniffMime } = require('./image.service')
@@ -8,7 +8,7 @@ const { sniffMime } = require('./image.service')
 /**
  * One "generation" = the user's original photo + the AI result.
  *   DigitalOcean Spaces: ONLY the two images, public:  generations/<id>/original.<ext>  and  generations/<id>/result.<ext>
- *   SQLite (table `generations`): who owns it, the template, the AILabTools task id and the two image keys.
+ *   PostgreSQL (table `generations`): who owns it, the template, the AILabTools task id and the two image keys.
  */
 const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }
 const ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
@@ -20,9 +20,9 @@ function requireStorage() {
 }
 
 /** A generation row. With `owner`, someone else's generation looks the same as a missing one (404). */
-function load(id, owner) {
+async function load(id, owner) {
   if (!ID_RE.test(id)) throw new AppError(400, 'INVALID_GENERATION_ID', 'Invalid generation id.')
-  const row = getDb().prepare('SELECT * FROM generations WHERE id = ?').get(id)
+  const row = (await query('SELECT * FROM generations WHERE id = $1', [id])).rows[0]
   if (!row || (owner !== undefined && row.user_id !== owner)) throw new AppError(404, 'GENERATION_NOT_FOUND', 'No generation found for this id.')
   return row
 }
@@ -31,7 +31,7 @@ function load(id, owner) {
 function toView(row) {
   const image = (key, mimeType) => (key ? { url: storage.publicUrl(key), mimeType } : null)
   return {
-    id: row.id, status: row.result_key ? 'completed' : 'pending', createdAt: row.created_at, api: row.api, template: row.template || null,
+    id: row.id, status: row.result_key ? 'completed' : 'pending', createdAt: new Date(row.created_at).toISOString(), api: row.api, template: row.template || null,
     original: image(row.original_key, row.original_mime), result: image(row.result_key, row.result_mime),
   }
 }
@@ -45,8 +45,7 @@ async function begin(image, { api, template, owner } = {}) {
   const key = keyFor(id, 'original', image.mimeType)
   try {
     await storage.putImage(key, image.buffer, image.mimeType)
-    getDb().prepare('INSERT INTO generations (id, user_id, api, template, original_key, original_mime, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .run(id, owner, api ?? null, template ?? null, key, image.mimeType, new Date().toISOString())
+    await query('INSERT INTO generations (id, user_id, api, template, original_key, original_mime) VALUES ($1, $2, $3, $4, $5, $6)', [id, owner, api ?? null, template ?? null, key, image.mimeType])
     return id
   } catch (e) {
     console.error('[storage] could not save the original image', e.message)
@@ -56,9 +55,9 @@ async function begin(image, { api, template, owner } = {}) {
 }
 
 /** Remember which AILabTools task belongs to a generation (so polling can find it later). Never throws. */
-function linkTask(id, taskId) {
+async function linkTask(id, taskId) {
   if (!id || !taskId) return
-  try { getDb().prepare('UPDATE generations SET task_id = ? WHERE id = ?').run(taskId, id) } catch (e) { console.error('[storage] could not link task', e.message) }
+  try { await query('UPDATE generations SET task_id = $1 WHERE id = $2', [taskId, id]) } catch (e) { console.error('[storage] could not link task', e.message) }
 }
 
 /** The result URLs are not documented, so try them in order and keep the first one that really downloads as a JPEG / PNG / WebP image. */
@@ -76,7 +75,7 @@ async function downloadFirstImage(urls) {
 async function storeResult(id, image) {
   const key = keyFor(id, 'result', image.mimeType)
   await storage.putImage(key, image.buffer, image.mimeType)
-  getDb().prepare('UPDATE generations SET result_key = ?, result_mime = ? WHERE id = ?').run(key, image.mimeType, id)
+  await query('UPDATE generations SET result_key = $1, result_mime = $2 WHERE id = $3', [key, image.mimeType, id])
 }
 
 /**
@@ -86,13 +85,13 @@ async function storeResult(id, image) {
 async function complete(id, result) {
   if (!id) return null
   try {
-    let row = load(id)
+    let row = await load(id)
     if (!row.result_key && result.status === 'succeeded') {
       const image = result.images?.length ? await downloadFirstImage(result.images) : null
       if (!image) return { id, stored: false }
-      row = load(id) // a concurrent poll may have stored it already
+      row = await load(id) // a concurrent poll may have stored it already
       if (!row.result_key) await storeResult(id, image)
-      row = load(id)
+      row = await load(id)
     }
     return { stored: true, ...toView(row) }
   } catch (e) {
@@ -104,7 +103,7 @@ async function complete(id, result) {
 /** For GET /api/photos/tasks/:taskId: finish storing once the task is done (only for the user who started it). */
 async function completeByTask(taskId, result, owner) {
   if (!enabled()) return null
-  const row = getDb().prepare('SELECT id, user_id FROM generations WHERE task_id = ?').get(taskId)
+  const row = (await query('SELECT id, user_id FROM generations WHERE task_id = $1', [taskId])).rows[0]
   if (!row) return null
   if (row.user_id !== owner) throw new AppError(404, 'TASK_NOT_FOUND', 'No task found for this id.')
   return complete(row.id, result)
@@ -115,53 +114,54 @@ async function create(image, info) {
   requireStorage()
   const id = await begin(image, info)
   if (!id) throw new AppError(502, 'STORAGE_FAILED', 'Could not save the image to storage.')
-  return toView(load(id))
+  return toView(await load(id))
 }
 
 async function get(id, owner) {
   requireStorage()
-  return toView(load(id, owner))
+  return toView(await load(id, owner))
 }
 
 async function saveResult(id, owner, image) {
   requireStorage()
-  const row = load(id, owner)
+  const row = await load(id, owner)
   if (row.result_key) throw new AppError(409, 'RESULT_ALREADY_SAVED', 'This generation already has a result image.')
   await storeResult(id, image)
-  return toView(load(id))
+  return toView(await load(id))
 }
 
 /** GET /api/generations - one user's generations, newest first. `nextToken` continues the list. */
 async function list(owner, { limit = 20, token } = {}) {
   if (!enabled()) return { generations: [] } // storage off: nothing is saved, so there is nothing to list (not an error)
-  let cursor = []
+  let after = ''
+  const params = [owner, limit + 1]
   if (token) {
     const [at, id] = Buffer.from(token, 'base64url').toString('utf8').split('|')
-    if (!at || !ID_RE.test(id || '')) throw new AppError(400, 'INVALID_TOKEN', 'Invalid nextToken.')
-    cursor = [at, at, id]
+    if (!at || Number.isNaN(Date.parse(at)) || !ID_RE.test(id || '')) throw new AppError(400, 'INVALID_TOKEN', 'Invalid nextToken.')
+    params.push(at, id)
+    after = 'AND (created_at < $3::timestamptz OR (created_at = $3::timestamptz AND id < $4))'
   }
-  const rows = getDb().prepare(`SELECT * FROM generations WHERE user_id = ? ${cursor.length ? 'AND (created_at < ? OR (created_at = ? AND id < ?))' : ''} ORDER BY created_at DESC, id DESC LIMIT ?`)
-    .all(owner, ...cursor, limit + 1)
+  const rows = (await query(`SELECT * FROM generations WHERE user_id = $1 ${after} ORDER BY created_at DESC, id DESC LIMIT $2`, params)).rows
   const page = rows.slice(0, limit)
   const last = page.at(-1)
-  return { generations: page.map(toView), nextToken: rows.length > limit ? Buffer.from(`${last.created_at}|${last.id}`).toString('base64url') : undefined }
+  return { generations: page.map(toView), nextToken: rows.length > limit ? Buffer.from(`${new Date(last.created_at).toISOString()}|${last.id}`).toString('base64url') : undefined }
 }
 
 /** DELETE /api/generations/:id - only the user who created it. Removes both images and the record. */
 async function remove(id, owner) {
   requireStorage()
-  const row = load(id, owner)
+  const row = await load(id, owner)
   await Promise.all([row.original_key, row.result_key].filter(Boolean).map((k) => storage.deleteObject(k))) // if this fails the record stays, so the delete can be retried
-  getDb().prepare('DELETE FROM generations WHERE id = ?').run(id)
+  await query('DELETE FROM generations WHERE id = $1', [id])
 }
 
 /** Removes a generation that will never have a result (its job failed): the stored original and the record. Never throws. */
 async function discard(id) {
   if (!id) return
   try {
-    const row = load(id)
+    const row = await load(id)
     await Promise.all([row.original_key, row.result_key].filter(Boolean).map((k) => storage.deleteObject(k)))
-    getDb().prepare('DELETE FROM generations WHERE id = ?').run(id)
+    await query('DELETE FROM generations WHERE id = $1', [id])
   } catch (e) { console.error('[storage] could not remove an unfinished generation', e.message) }
 }
 

@@ -23,7 +23,7 @@ export default function Pricing() {
     if (!signedIn) { nav('/login'); return }
     setBusy(p.id); setNote('')
     try {
-      const out = await startCheckout(p.id)
+      const out = await startCheckout(p.id, 'USD')
       if (out.url) window.location.assign(out.url) // hosted payment page of the gateway
     } catch (e) { setNote(e.message) }
     setBusy('')
