@@ -129,7 +129,7 @@ export function Login() {
               )}
               {!signup && (
                 <div className="text-right text-sm">
-                  <button type="button" onClick={() => setNote('Password reset is not connected yet (demo).')} className="cursor-pointer text-[#C4B5FD]/75 transition-colors duration-200 hover:text-white">Forgot password?</button>
+                  <button type="button" onClick={() => setNote('Password reset is not connected yet.')} className="cursor-pointer text-[#C4B5FD]/75 transition-colors duration-200 hover:text-white">Forgot password?</button>
                 </div>
               )}
               {note && <p role="status" className="text-xs text-[#C4B5FD]/75">{note}</p>}

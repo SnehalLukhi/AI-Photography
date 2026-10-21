@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { categories, steps, features, exploreCategories, exploreTabs, byCategory, exploreList, folderTemplates, exploreEverything, categoryItems, generateUrl } from '../data/templates.js'
+import { categories, steps, exploreCategories, exploreTabs, byCategory, exploreList, folderTemplates, exploreEverything, categoryItems, generateUrl } from '../data/templates.js'
 import TemplateCard from '../components/TemplateCard.jsx'
 import { SparkIcon } from '../components/Header.jsx'
 
@@ -231,27 +231,6 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-2 min-[480px]:grid-cols-3 sm:gap-2.5 md:gap-3 xl:grid-cols-6">
               {trendingPicks.map((t) => <TemplateCard key={t.id} t={t} fit="cover" onSelect={pick} />)}
             </div>
-
-            {/* 7. Features */}
-            <div className="card-box mt-20 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-              {features.map((f, i) => (
-                <div key={f.title} className={`flex items-center gap-4 p-6 ${i < features.length - 1 ? 'lg:border-r lg:border-[#3A3552]' : ''}`}>
-                  <div className="flex size-10 shrink-0 items-center justify-center"><img src={f.image} alt={f.title} className="gold-img size-10 object-contain" /></div>
-                  <div>
-                    <h4 className="font-display text-[15px] font-semibold leading-tight text-[#ffffff]">{f.title}</h4>
-                    <p className="mt-1 text-[13px] leading-snug text-[#C4B5FD]/75">{f.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* 8. Call to action */}
-            <section className="card-box relative mt-8 overflow-hidden px-6 py-12 text-center sm:py-14">
-              <div className="pointer-events-none absolute inset-x-0 -bottom-24 mx-auto h-48 w-2/3 rounded-full bg-[#B070FA]/20 blur-[90px]" />
-              <h2 className="relative text-[30px] leading-[1.1] sm:text-[38px] lg:text-[46px]">Claim <span className="grad-text">50 Coins</span></h2>
-              <p className="relative mx-auto mt-4 max-w-xl text-base leading-relaxed text-[#C4B5FD] sm:text-lg">Choose a template, upload your photo, and let AI create stunning visuals in minutes.</p>
-              <Link to="/login" className="btn-grad relative mt-7"><span>Claim 50 Coins</span><span className="leading-none">→</span></Link>
-            </section>
           </div>
         </div>
       </div>

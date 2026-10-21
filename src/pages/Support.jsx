@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from '../components/Header.jsx'
+import { brandImages } from '../data/images.js'
 
 const Hero = ({ eyebrow, title, sub }) => (
   <header className="mx-auto max-w-3xl px-4 pt-10 text-center">
@@ -64,7 +65,7 @@ export function Contact() {
       <Hero eyebrow="Support Request" title="Contact Support" sub="Tell us what happened and our team will review it." />
       <Card w="max-w-[760px]">
         {sent ? (
-          <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Request noted</p><p className="mb-5 text-sm text-[#C4B5FD]/75">Demo only - nothing was sent anywhere yet, because support requests are not connected to a backend.</p><button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-grad">Write another</button></div>
+          <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Request noted</p><button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-grad">Write another</button></div>
         ) : (
           <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); if (valid) setSent(true) }}>
             <label className="block text-sm font-semibold text-white">Title<input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Title" className={`${field} mt-2 h-12`} /></label>
@@ -93,44 +94,76 @@ export function Contact() {
 export function Profile() {
   const { signedIn, userEmail } = useStudio()
   const name = displayName(userEmail || '')
+  const [first, ...rest] = name.split(' ')
+  const last = rest.join(' ')
+  const lbl = 'mb-2 block text-[13px] font-bold text-white'
+  const box = 'h-12 w-full min-w-0 truncate rounded-2xl border border-white/[0.06] bg-[#15151d] px-[18px] text-[13px] outline-none'
   return (
-    <div className="px-4 pb-24 md:pb-16">
-      <Hero eyebrow="Account" title="My Profile" sub="Your Pixora account details." />
-      <Card w="max-w-[640px]">
-        {signedIn ? (
-          <>
-            <div className="flex items-center gap-4">
-              <span className="grid size-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#B070FA] to-[#F066D8] text-2xl font-bold text-white">{(name[0] || 'P').toUpperCase()}</span>
-              <div className="min-w-0"><p className="truncate text-lg font-semibold text-white">{name}</p><p className="truncate text-sm text-[#C4B5FD]" title={userEmail}>{userEmail}</p></div>
-            </div>
-            <p className="mt-6 rounded-xl border border-[#3A3552] bg-black/30 px-4 py-3 text-sm text-[#C4B5FD]/85">This is a demo sign-in: it exists only in this browser. The name is taken from your email, and editing your profile is not available yet.</p>
-          </>
-        ) : (
-          <div className="py-8 text-center"><p className="mb-5 text-lg font-medium">Sign in to see your profile</p><Link to="/login" className="btn-grad">Sign in to Pixora</Link></div>
-        )}
-      </Card>
+    <div className="px-4 pb-24 pt-8 md:pb-16 md:pt-10">
+      <div className="mx-auto w-full max-w-[750px]">
+        <h1 className="text-[34px] font-bold leading-[1.05] tracking-tight text-white sm:text-[38px]">Profile Settings</h1>
+        <p className="mt-2 text-[13px] text-[#9CA3C8]">Manage your personal information and account details.</p>
+        <div className="mt-9 rounded-[32px] border border-white/[0.07] bg-[#0f1016] p-6 sm:p-[37px]">
+          {signedIn ? (
+            <>
+              <div className="flex items-center gap-[22px] border-b border-white/[0.08] pb-7">
+                <span className="grid size-[88px] shrink-0 place-items-center rounded-full border-[3px] border-[#1c1b22] bg-[#8d7468] text-[44px] font-light leading-none text-white">{(name[0] || 'P').toUpperCase()}</span>
+                <div className="min-w-0"><p className="truncate text-xl font-bold text-white sm:text-[22px]">{name}</p><p className="mt-1.5 truncate text-[13px] text-[#9CA3C8]" title={userEmail}>{userEmail}</p></div>
+              </div>
+              <div className="mt-[38px] grid gap-[26px] sm:grid-cols-2 sm:gap-x-[18px]">
+                <div><label htmlFor="pf-first" className={lbl}>First name</label><input id="pf-first" readOnly value={first || ''} placeholder="Not set" className={`${box} font-bold text-white`} /></div>
+                <div><label htmlFor="pf-last" className={lbl}>Last name</label><input id="pf-last" readOnly value={last} placeholder="Not set" className={`${box} font-bold text-white`} /></div>
+              </div>
+              <div className="mt-[26px]"><label htmlFor="pf-email" className={lbl}>Email address</label><input id="pf-email" readOnly value={userEmail || ''} title={userEmail} className={`${box} text-[#9CA3C8]/70`} /></div>
+              <div className="mt-[26px]"><label htmlFor="pf-country" className={lbl}>Country</label><input id="pf-country" readOnly disabled placeholder="Not set" className={`${box} text-[#9CA3C8]/70 placeholder:text-[#9CA3C8]/55`} /></div>
+              <div className="mt-[26px]"><label htmlFor="pf-since" className={lbl}>Member since</label><input id="pf-since" readOnly disabled placeholder="Not available" className={`${box} text-[#9CA3C8]/70 placeholder:text-[#9CA3C8]/55`} /></div>
+              <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] h-[47px] cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #9B30E8 0%, #F0389A 60%, #FF7A2F 100%)' }}>Save Changes</button>
+            </>
+          ) : (
+            <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><Link to="/login" className="btn-grad">Sign in to Pixora</Link></div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
 
+// Receipt-with-coin illustration for the empty Transactions state (existing coin.svg + a drawn receipt and sparkles).
+const Sparkle = ({ className }) => <svg className={`absolute size-2.5 text-white/80 ${className}`} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.4 8.6L23 12l-8.6 2.4L12 23l-2.4-8.6L1 12l8.6-2.4z" /></svg>
+const EmptyReceipt = () => (
+  <div className="relative mx-auto h-[128px] w-[140px]" aria-hidden="true">
+    <svg className="absolute left-[24px] top-[10px] h-[100px] w-[80px]" viewBox="0 0 80 100" fill="none">
+      <defs><linearGradient id="rc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#34334a" /><stop offset="1" stopColor="#23222f" /></linearGradient></defs>
+      <path d="M8 2h64a6 6 0 016 6v70a10 10 0 01-10 10H18a10 10 0 01-10-10V8a6 6 0 016-6z" fill="url(#rc)" stroke="#3d3c55" strokeWidth="1.5" />
+      <rect x="14" y="16" width="32" height="5" rx="2.5" fill="#55546f" /><rect x="14" y="31" width="52" height="5" rx="2.5" fill="#55546f" /><rect x="14" y="46" width="42" height="5" rx="2.5" fill="#55546f" />
+      <path d="M8 74h40a10 10 0 000 .1" stroke="#3d3c55" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+    <img src={brandImages.coin} alt="" width="46" height="46" className="absolute bottom-[16px] right-[22px] size-[46px] object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
+    <Sparkle className="left-0 top-[44px]" /><Sparkle className="right-[2px] top-[4px]" /><Sparkle className="right-0 top-[44px]" /><Sparkle className="bottom-[22px] left-[12px]" /><Sparkle className="bottom-[6px] right-[8px]" />
+  </div>
+)
+
 export function Transactions() {
   const { signedIn } = useStudio()
   return (
-    <div className="px-4 pb-24 md:pb-16">
-      <Hero eyebrow="Billing" title="Transactions" sub="Your payment and coin history." />
-      <Card w="max-w-[640px]">
-        <div className="py-8 text-center">
+    <div className="px-4 pb-24 pt-8 md:pb-16 md:pt-10">
+      <div className="mx-auto w-full max-w-[1040px]">
+        <p className="text-xs font-bold uppercase tracking-wide text-[#F066D8]">Payments and Coins</p>
+        <h1 className="mt-3 text-[34px] font-bold leading-[1.05] tracking-tight text-white sm:text-[44px] lg:text-[48px]">Transaction History</h1>
+        <p className="mt-4 text-base text-[#9CA3C8]">Track subscriptions, coin purchases and refunds.</p>
+        <div className="mt-9 rounded-[24px] border border-white/[0.07] bg-[#121218] px-6 py-12 text-center">
           {signedIn ? (
             <>
-              <p className="mb-1 text-lg font-medium">No transactions yet</p>
-              <p className="mb-5 text-sm text-[#C4B5FD]/75">Payments are not connected yet, so there is nothing to show. Purchases will appear here once they are available.</p>
-              <Link to="/pricing" className="btn-grad">View plans</Link>
+              <EmptyReceipt />
+              <p className="mt-5 text-[15px] font-bold text-white">No transactions yet</p>
+              <p className="mt-2 text-[13px] text-[#9CA3C8]/80">Subscriptions and coin purchases will show up here.</p>
+              <Link to="/pricing" className="grad-bg mt-6 inline-flex h-10 items-center justify-center rounded-[10px] px-5 text-[13px] font-bold">View pricing</Link>
             </>
           ) : (
-            <><p className="mb-5 text-lg font-medium">Sign in to see your transactions</p><Link to="/login" className="btn-grad">Sign in to Pixora</Link></>
+            <><p className="mb-5 text-lg font-medium text-white">Sign in to see your transactions</p><Link to="/login" className="btn-grad">Sign in to Pixora</Link></>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   )
 }
@@ -145,7 +178,7 @@ export function Feedback() {
       <Hero eyebrow="Product Feedback" title="Share Your Feedback" sub="Tell us about your experience and how we can make Pixora better for you." />
       <Card w="max-w-[640px]">
         {sent ? (
-          <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Thanks for your feedback</p><p className="mb-5 text-sm text-[#C4B5FD]/75">Demo only - nothing was sent anywhere.</p><button className="btn-dark" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
+          <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Thanks for your feedback</p><button className="btn-dark" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
         ) : (
           <form onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
             <div className="flex justify-center gap-5 py-8" onMouseLeave={() => setHover(0)}>
@@ -160,25 +193,6 @@ export function Feedback() {
             <button className={`${submitBtn} mt-8`} disabled={!stars || !text.trim()}>Submit Feedback</button>
           </form>
         )}
-      </Card>
-    </div>
-  )
-}
-
-export function Transfer() {
-  const [code, setCode] = useState('')
-  const [msg, setMsg] = useState('')
-  const { signedIn } = useStudio()
-  return (
-    <div className="px-4 pb-24 md:pb-16">
-      <Hero eyebrow="Connect App Account" title="Move coins from your app" sub="Paste the one-time code from the Pixora app. Coins leave the app only when redeem succeeds on the website." />
-      <Card w="max-w-[640px]">
-        <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); setMsg(signedIn ? 'Demo only - redeeming is not connected yet.' : 'Please log in first.') }}>
-          {!signedIn && <div className="rounded-xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-4 py-3 text-sm text-white">Log in to redeem your code. <Link to="/login" className="font-semibold underline">Login</Link></div>}
-          <label className="block text-sm font-semibold text-white">Transfer code<input value={code} onChange={(e) => setCode(e.target.value)} placeholder="GLY-XXXX-XXXX" className={`${field} mt-3 h-[52px] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] font-normal`} /></label>
-          <button className={`${submitBtn} h-[52px] rounded-full`}>Redeem code</button>
-          {msg && <p role="status" className="text-center text-sm text-[#C4B5FD]">{msg}</p>}
-        </form>
       </Card>
     </div>
   )

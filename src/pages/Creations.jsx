@@ -37,7 +37,7 @@ export default function Creations() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                   <div className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-1 text-xs">
                     <span className="min-w-0"><span className="block truncate font-semibold">{c.name}</span><span className="text-[#C4B5FD]/75">{c.date}</span></span>
-                    <button onClick={() => alert('Demo only - download is not enabled.')} aria-label="Download" className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-white/15 opacity-0 transition hover:bg-[#B070FA] group-hover:opacity-100 max-md:opacity-100">⬇</button>
+                    <button aria-label="Download" className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-white/15 opacity-0 transition hover:bg-[#B070FA] group-hover:opacity-100 max-md:opacity-100">⬇</button>
                   </div>
                 </div>
               ))}

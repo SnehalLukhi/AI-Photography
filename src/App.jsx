@@ -8,7 +8,7 @@ import Generate from './pages/Generate.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Creations from './pages/Creations.jsx'
 import Pricing from './pages/Pricing.jsx'
-import { Help, Contact, Feedback, Transfer, Legal, Profile, Transactions } from './pages/Support.jsx'
+import { Help, Contact, Feedback, Legal, Profile, Transactions } from './pages/Support.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import Login from './pages/Login.jsx'
 import WelcomePopup from './components/WelcomePopup.jsx'
@@ -37,7 +37,6 @@ export default function App() {
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/transfer" element={<Transfer />} />
           <Route path="/help" element={<Help />} />
           <Route path="/contact-us" element={<Contact />} />
           <Route path="/feedback" element={<Feedback />} />

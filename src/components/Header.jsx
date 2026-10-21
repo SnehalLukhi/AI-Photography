@@ -80,7 +80,6 @@ const CoinBadge = ({ className = '' }) => (
 // from the e-mail. Every item opens an existing route; Log out clears the saved demo session (there is no real auth provider).
 const PROFILE_ITEMS = [
   ['/transactions', 'Transactions', 'M4 7h16M4 12h16M4 17h10'],
-  ['/transfer', 'Connect App Account', 'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1'],
   ['/help', 'Help', 'M9.5 9a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17.2v.1M12 21a9 9 0 100-18 9 9 0 000 18z'],
   ['/contact-us', 'Contact Support', 'M4 6h16v12H4zM4 7l8 6 8-6'],
   ['/feedback', 'Share Your Feedback', 'M4 5h16v11H9l-5 4z'],
@@ -178,7 +177,7 @@ const DLink = ({ to, children }) => (
   </NavLink>
 )
 
-const accountLinks = [['/transactions', 'Transactions'], ['/transfer', 'Connect App Account'], ['/help', 'Help'], ['/feedback', 'Share Your Feedback'], ['/privacy-policy', 'Privacy Policy']]
+const accountLinks = [['/transactions', 'Transactions'], ['/help', 'Help'], ['/feedback', 'Share Your Feedback'], ['/privacy-policy', 'Privacy Policy']]
 
 export default function Header({ generating = false }) {
   const [menu, setMenu] = useState(false)
@@ -273,7 +272,7 @@ export default function Header({ generating = false }) {
 const tabs = [
   { to: '/', label: 'Home', match: (p) => p === '/', d: 'M3 11l9-8 9 8v10h-6v-6H9v6H3z' },
   { to: '/explore', label: 'Explore', match: (p) => p === '/explore', d: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z' },
-  { to: '/creations', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/contact-us', '/feedback', '/transactions', '/transfer', '/profile'].includes(p), d: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0' },
+  { to: '/creations', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/contact-us', '/feedback', '/transactions', '/profile'].includes(p), d: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0' },
 ]
 
 function MobileTabs({ pathname }) {
