@@ -30,6 +30,7 @@ module.exports = {
     pollTimeoutMs: int(process.env.AILAB_POLL_TIMEOUT_MS, 120_000),
   },
 
+  webUrl: (process.env.WEB_URL || '').trim(), // Vercel Services binding to the frontend service: beard reference images are fetched from it (the api function has no /public folder)
   beardTemplateDir: process.env.BEARD_TEMPLATE_DIR || path.join(__dirname, '..', '..', '..', 'public', 'images', 'explore', 'beard'), // preview images sent as `image_template`
 
   // DigitalOcean Spaces (S3-compatible object storage) for the user's original photo and the AI result. Storage is skipped when not configured.
@@ -46,7 +47,7 @@ module.exports = {
   },
 
   // Accounts: email + password, SQLite file, JWT bearer tokens.
-  databasePath: process.env.DATABASE_PATH === ':memory:' ? ':memory:' : path.resolve(process.env.DATABASE_PATH || path.join(__dirname, '..', '..', 'data', 'app.db')),
+  databasePath: process.env.DATABASE_PATH === ':memory:' ? ':memory:' : path.resolve(process.env.DATABASE_PATH || (process.env.VERCEL ? path.join(require('node:os').tmpdir(), 'app.db') : path.join(__dirname, '..', '..', 'data', 'app.db'))),
   auth: {
     jwtSecret: (process.env.JWT_SECRET || '').trim(),
     googleClientId: (process.env.GOOGLE_CLIENT_ID || '').trim(), // OAuth client id for "Continue with Google" (same value as the frontend's VITE_GOOGLE_CLIENT_ID)
