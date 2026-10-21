@@ -29,7 +29,7 @@ before(async () => {
   require('../src/services/ailab.service').downloadImage = async () => ({ buffer: await h.resultJpeg(), mimeType: 'image/jpeg' })
 
   app = await h.startApp(require('../src/app'))
-  other = (await (await fetch(`${app.base}/api/auth/register`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: 'other@example.com', password: 'other-password-1' }) })).json()).token
+  other = (await h.createUser('other@example.com')).token
 })
 after(async () => { await app.close(); await mock.close() })
 

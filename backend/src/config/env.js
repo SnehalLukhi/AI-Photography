@@ -45,27 +45,14 @@ module.exports = {
     publicUrl: (process.env.SPACES_PUBLIC_URL || `https://${(process.env.SPACES_BUCKET || '').trim()}.${(process.env.SPACES_REGION || 'nyc3').trim()}.digitaloceanspaces.com`).trim().replace(/\/+$/, ''),
   },
 
-  // Accounts: email + password, SQLite file, JWT bearer tokens.
-  databasePath: process.env.DATABASE_PATH === ':memory:' ? ':memory:' : path.resolve(process.env.DATABASE_PATH || path.join(__dirname, '..', '..', 'data', 'app.db')),
+  // Accounts: email + password / Google, PostgreSQL (Supabase) database, JWT bearer tokens.
+  databaseUrl: (process.env.DATABASE_URL || '').trim(), // Supabase: Project Settings > Database > Connection string (pooler). 'pglite://memory' = throw-away in-memory database (tests)
   auth: {
     jwtSecret: (process.env.JWT_SECRET || '').trim(),
     googleClientId: (process.env.GOOGLE_CLIENT_ID || '').trim(), // OAuth client id for "Continue with Google" (same value as the frontend's VITE_GOOGLE_CLIENT_ID)
     tokenTtlSeconds: int(process.env.TOKEN_TTL_SECONDS, 7 * 24 * 3600),
     dailyLimit: int(process.env.DAILY_GENERATION_LIMIT, 100), // generations per user per day (abuse cap; the coin balance is the normal limit)
     rateLimitMax: int(process.env.AUTH_RATE_LIMIT_MAX, 20), // login / register attempts per IP per 15 minutes
-  },
-
-  // Outgoing e-mail (password reset links). Any SMTP server; port 465 = TLS, other ports (587) = STARTTLS.
-  smtp: {
-    host: (process.env.SMTP_HOST || '').trim(),
-    port: int(process.env.SMTP_PORT, 587),
-    user: (process.env.SMTP_USER || '').trim(),
-    password: process.env.SMTP_PASSWORD || '',
-    from: (process.env.SMTP_FROM || '').trim(),
-  },
-  passwordReset: {
-    expireMinutes: int(process.env.PASSWORD_RESET_EXPIRE_MINUTES, 30),
-    frontendUrl: (process.env.FRONTEND_BASE_URL || list(process.env.CORS_ORIGIN, ['http://localhost:5173'])[0]).replace(/\/+$/, ''), // where the reset link in the e-mail points
   },
 
   coins: {

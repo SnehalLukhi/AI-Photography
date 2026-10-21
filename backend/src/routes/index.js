@@ -35,15 +35,12 @@ const authLimiter = rateLimit({
 router.get('/health', health)
 
 // Accounts
-router.post('/auth/register', authLimiter, authCtl.register)
-router.post('/auth/login', authLimiter, authCtl.login)
 router.post('/auth/google', authLimiter, authCtl.google)
-router.post('/auth/forgot-password', authLimiter, authCtl.forgotPassword)
-router.post('/auth/reset-password', authLimiter, authCtl.resetPassword)
 router.get('/auth/me', requireAuth, authCtl.me)
 
 // Coins
 router.get('/plans', walletCtl.listPlans)
+router.get('/coin-packs', walletCtl.listPacks)
 router.get('/wallet', requireAuth, walletCtl.getWallet)
 router.post('/wallet/redeem', authLimiter, requireAuth, walletCtl.redeem) // limited like login: codes must not be guessable by trying
 router.post('/wallet/checkout', requireAuth, walletCtl.checkout)

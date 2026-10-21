@@ -20,15 +20,15 @@ before(async () => {
   process.env.COIN_COST_PER_GENERATION = '15' // the real defaults
   process.env.SIGNUP_BONUS_COINS = '50'
   app = await h.startApp(require('../src/app'))
-  db = require('../src/db').getDb()
+  db = require('../src/db')
   wallet = require('../src/services/wallet.service')
   payments = require('../src/services/payments.service')
 })
 after(async () => { await app.close(); await mock.close() })
 
 const newUser = async (email) => {
-  const body = await (await post('/auth/register', { email, password: 'long-enough-1' })).json()
-  return { token: body.token, id: body.user.id, coins: body.user.coins }
+  const u = await h.createUser(email)
+  return { token: u.token, id: u.id, coins: await wallet.balance(u.id) }
 }
 const generate = async (token, fields = { style_title: 'a', style_desc: 'b' }) => fetch(`${app.base}/api/photos/generate`, {
   method: 'POST', headers: { authorization: `Bearer ${token}` },
@@ -47,6 +47,10 @@ test('a new account gets the 50 free coins; plans are public; wallet needs a log
   const plans = await (await get('/plans')).json()
   assert.deepEqual(plans.plans.map((p) => [p.id, p.price, p.currency, p.coins]), [['weekly', 4.99, 'USD', 110], ['monthly', 9.99, 'USD', 220], ['yearly', 39.99, 'USD', 2700]])
   assert.equal((await get('/wallet')).status, 401)
+
+  const packs = await (await get('/coin-packs')).json()
+  assert.deepEqual(packs.packs.map((p) => [p.id, p.coins, p.price, p.currency]), [['starter', 45, 2.99, 'USD'], ['small', 90, 4.99, 'USD'], ['popular', 195, 9.99, 'USD'], ['value', 420, 19.99, 'USD'], ['mega', 1080, 49.99, 'USD']])
+  assert.equal(packs.costPerGeneration, 15)
 })
 
 test('a generation costs 15 coins; a failed one is refunded; an empty wallet gets 402 before any work is done', async () => {
@@ -71,7 +75,7 @@ test('a generation costs 15 coins; a failed one is refunded; an empty wallet get
 
 test('redeem codes work once, case-insensitively, and unknown codes are refused', async () => {
   const u = await newUser('coins3@example.com')
-  db.prepare("INSERT INTO redeem_codes (code, coins, created_at) VALUES ('GLY-TEST-0001', 100, 'now')").run()
+  await db.query("INSERT INTO redeem_codes (code, coins) VALUES ('GLY-TEST-0001', 100)")
   const ok = await post('/wallet/redeem', { code: ' gly-test-0001 ' }, u.token)
   assert.equal(ok.status, 200)
   assert.deepEqual(await ok.json(), { success: true, coins: 100, balance: 150 })
@@ -89,11 +93,15 @@ test('checkout is refused until a payment gateway is connected; a verified payme
   assert.equal(res.status, 503)
   assert.equal((await res.json()).error.code, 'PAYMENTS_NOT_CONFIGURED')
   assert.equal((await post('/wallet/checkout', { planId: 'gold' }, u.token)).status, 400)
+  assert.equal((await post('/wallet/checkout', { itemId: 'popular', currency: 'USD' }, u.token)).status, 503) // coin packs too
+  assert.equal((await post('/wallet/checkout', { itemId: 'popular', currency: 'INR' }, u.token)).status, 400)
   assert.equal(await coins(u.token), 50) // nothing was credited for free
 
-  assert.equal(payments.grantPurchase(u.id, 'weekly', 'pay_123'), true)
-  assert.equal(payments.grantPurchase(u.id, 'weekly', 'pay_123'), false) // same payment again (webhook retry)
+  assert.equal(await payments.grantPurchase(u.id, 'weekly', 'pay_123'), true)
+  assert.equal(await payments.grantPurchase(u.id, 'weekly', 'pay_123'), false) // same payment again (webhook retry)
   assert.equal(await coins(u.token), 160)
+  assert.equal(await payments.grantPurchase(u.id, 'popular', 'pay_456'), true) // a coin pack: +195
+  assert.equal(await coins(u.token), 355)
   assert.throws(() => payments.grantPurchase(u.id, 'weekly', ''), { code: 'INVALID_PAYMENT' })
-  assert.equal(wallet.balance(u.id), 160)
+  assert.equal(await wallet.balance(u.id), 355)
 })
