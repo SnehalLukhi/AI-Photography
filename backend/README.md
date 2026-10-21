@@ -151,30 +151,34 @@ To connect a gateway: make `createCheckout` in `src/services/payments.service.js
 `grantPurchase(userId, planId, paymentId)` - it credits the plan's coins once per payment id, so webhook retries are safe.
 
 ### Stored images (DigitalOcean Spaces)
-Set `SPACES_KEY`, `SPACES_SECRET`, `SPACES_BUCKET` (+ `SPACES_REGION`, e.g. `nyc3`) in `.env`; keep the Space **private**. Then every call to the four
-`/generate` endpoints saves the user's original photo, and the AI result once it has finished, as one *generation*
-(`generations/<uuid>/original.jpg`, `result.jpg`, `meta.json`). Responses get an extra `generation` field; if storage is off or fails,
-generation still works and `generation` is missing / `stored: false`. If the job was still running (`202`), polling `GET /api/photos/tasks/:taskId`
+Set `SPACES_KEY` (a key with Read/Write/Delete permission), `SPACES_SECRET`, `SPACES_BUCKET` and `SPACES_REGION` (e.g. `blr1`) in `.env`. Then every call to the four
+`/generate` endpoints saves the user's original photo, and the AI result once it has finished, as one *generation*. Responses get an extra `generation` field; if storage
+is off or fails, generation still works and `generation` is missing / `stored: false`. If the job was still running (`202`), polling `GET /api/photos/tasks/:taskId`
 saves the result when it finishes and returns `generation` as well.
+
+- **Only images are stored in the Space**: `generations/<id>/original.<ext>` and `generations/<id>/result.<ext>`. Nothing else is written there.
+- **The images are public**: every image is uploaded `public-read`, so anyone who has its URL can view it (the URL contains a random id, so it can't be guessed, but it is not secret).
+  Keep the Space's "File Listing" on *Restricted* so nobody can browse the folder. `SPACES_PUBLIC_URL` can point to the Space's CDN address.
+- **Who owns which image** (user, template, AILabTools task id, the two image keys) is kept in the SQLite database (table `generations`), not in the Space.
 
 A `generation` looks like:
 ```json
-{ "id": "5c1e...-uuid", "status": "completed", "createdAt": "...", "api": "ai-photography", "template": "Golden hour...",
-  "original": { "url": "https://...signed...", "mimeType": "image/jpeg" },
-  "result":   { "url": "https://...signed...", "mimeType": "image/jpeg" }, "urlExpiresInSeconds": 3600 }
+{ "id": "5c1e...-uuid", "status": "completed", "createdAt": "...", "api": "ai-photography", "template": "Retro Vibes",
+  "original": { "url": "https://aiphoto.blr1.digitaloceanspaces.com/generations/5c1e.../original.jpg", "mimeType": "image/jpeg" },
+  "result":   { "url": "https://aiphoto.blr1.digitaloceanspaces.com/generations/5c1e.../result.jpg", "mimeType": "image/jpeg" } }
 ```
-`status` is `pending` (no result yet; `result` is `null`) or `completed`. URLs are signed and expire - call `GET` again for fresh ones.
+`status` is `pending` (no result yet; `result` is `null`) or `completed`.
 
 | Endpoint | Purpose |
 |---|---|
-| `POST /api/generations` | multipart `image` (+ optional `template` text): save an original photo, returns `201` + `generation` |
+| `POST /api/generations` | multipart `image` (+ optional `template_name`): save an original photo, returns `201` + `generation` |
 | `POST /api/generations/:id/result` | multipart `image`: save an AI image for that generation (`409` if it already has one) |
-| `GET /api/generations/:id` | the original + AI image of one generation (signed URLs) - use this to show both side by side |
-| `GET /api/generations?limit=20&nextToken=` | this browser's generations, newest first  |
-| `DELETE /api/generations/:id` | delete both images; only for the browser that created it (`403` otherwise) |
+| `GET /api/generations/:id` | the original + AI image of one generation (login required, owner only) |
+| `GET /api/generations?limit=24&nextToken=` | the logged-in user's generations, newest first |
+| `DELETE /api/generations/:id` | delete both images and the record; only for the user who created it |
 
 Errors: `503 STORAGE_NOT_CONFIGURED`, `404 GENERATION_NOT_FOUND`, `400 INVALID_GENERATION_ID`, `409 RESULT_ALREADY_SAVED`.
-Generations are tied to the logged-in user. The optional form field `template_name` (all generate endpoints and `POST /api/generations`) is the display name saved with a generation.
+Generations are tied to the logged-in user; other users get `404`. The optional form field `template_name` (all generate endpoints and `POST /api/generations`) is the display name saved with a generation.
 
 ## 4. Verified against the official documentation
 

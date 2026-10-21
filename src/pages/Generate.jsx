@@ -92,6 +92,7 @@ function Generator({ asset }) {
   const [sheet, setSheet] = useState(false)
   const [phase, setPhase] = useState('idle') // idle | loading | done | error
   const [result, setResult] = useState('') // real generated image URL (templates with a JSON catalogue only)
+  const [resultOriginal, setResultOriginal] = useState('') // the stored copy of the uploaded photo (the local preview is used first)
   const [apiError, setApiError] = useState('')
   const [needCoins, setNeedCoins] = useState(false) // the last failure was 'not enough coins'
   const timer = useRef()
@@ -125,7 +126,7 @@ function Generator({ asset }) {
       const { url, original, generationId } = await generatePhoto({ file, title: prompt.title, desc: prompt.desc, cartoonType: prompt.cartoonType, beardTemplate: prompt.beardTemplate, hairTemplate: prompt.hairTemplate, hairColor: prompt.hairColor, name: asset.name, signal: ctrl.signal })
       addCreation({ type: asset.type, name: asset.name, image: url, original, generationId })
       refreshUser() // new coin balance
-      setResult(url); setPhase('done')
+      setResult(url); setResultOriginal(original); setPhase('done')
     } catch (e) {
       if (e.name === 'AbortError') return
       if (e.status === 401) { signOut(); nav('/login'); return } // login expired
@@ -246,10 +247,17 @@ function Generator({ asset }) {
       {phase === 'done' && real && result && (
         <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-black/80 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
           {/* The card is as wide as the largest 9:16 image that still lets the whole card fit the screen height (--chrome = everything that is not the image: card padding, text, buttons, outer margin), capped at 24 rem. Screens under 640 px tall use a compact version (--pad / --chrome / gaps). */}
-          <div className="mx-auto flex w-[min(100%,24rem,calc((100dvh-var(--chrome))*9/16+var(--pad)))] min-w-[13.5rem] flex-col rounded-2xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-[calc(var(--pad)/2)] text-center shadow-2xl [--chrome:16.5rem] [--pad:2.5rem] [&_button]:px-4 [@media(max-height:640px)]:[--chrome:12.5rem] [@media(max-height:640px)]:[--pad:1.5rem] [@media(max-height:640px)]:[&_.gap-3]:gap-2 [@media(max-height:640px)]:[&_button]:py-2" onClick={(e) => e.stopPropagation()}>
-            <div className="relative mb-5 [@media(max-height:640px)]:mb-3 aspect-[9/16] w-full overflow-hidden rounded-xl border border-[#B070FA] bg-[#000000] shadow-[0_0_40px_rgba(176,112,250,0.3)]">
-              {/* Results can have any shape (Cartoon and Beard keep the uploaded photo's own shape), so every category fills the 9:16 card with object-cover: no bars, no stretching (the overflow is cropped) */}
-              <img src={result} alt={`${asset.name} result`} className="absolute inset-0 size-full object-cover object-center" />
+          <div className="mx-auto flex w-[min(100%,40rem,calc((100dvh-var(--chrome))*18/16+var(--pad)))] min-w-[18rem] flex-col rounded-2xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-[calc(var(--pad)/2)] text-center shadow-2xl [--chrome:17.75rem] [--pad:2.5rem] [&_button]:px-4 [@media(max-height:640px)]:[--chrome:13.75rem] [@media(max-height:640px)]:[--pad:1.5rem] [@media(max-height:640px)]:[&_.gap-3]:gap-2 [@media(max-height:640px)]:[&_button]:py-2" onClick={(e) => e.stopPropagation()}>
+            {/* the uploaded photo next to the AI result. Results can have any shape (Cartoon and Beard keep the uploaded photo's own shape), so both fill a 9:16 card with object-cover: no bars, no stretching (the overflow is cropped) */}
+            <div className="mb-5 grid grid-cols-2 gap-3 [@media(max-height:640px)]:mb-3">
+              {[['Original', photos[0]?.url || resultOriginal], ['AI generated', result]].map(([label, src], i) => (
+                <figure key={label}>
+                  <div className={`relative aspect-[9/16] w-full overflow-hidden rounded-xl border bg-[#000000] ${i ? 'border-[#B070FA] shadow-[0_0_40px_rgba(176,112,250,0.3)]' : 'border-[#B070FA]/40'}`}>
+                    {src && <img src={src} alt={i ? `${asset.name} result` : 'Your original photo'} className="absolute inset-0 size-full object-cover object-center" />}
+                  </div>
+                  <figcaption className="mt-1.5 text-xs text-[#C4B5FD]">{label}</figcaption>
+                </figure>
+              ))}
             </div>
             <p className="mb-1 font-medium">Your photo is ready</p>
             <p className="mb-5 text-xs text-[#C4B5FD]/75 [@media(max-height:640px)]:mb-3">It was added to My Creations.</p>

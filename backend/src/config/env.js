@@ -41,7 +41,8 @@ module.exports = {
     endpoint: spacesEndpoint(),
     bucket: (process.env.SPACES_BUCKET || '').trim(),
     prefix: (process.env.SPACES_PREFIX || '').trim().replace(/^\/+|\/+$/g, ''),
-    signedUrlTtlSeconds: int(process.env.SPACES_SIGNED_URL_TTL_SECONDS, 3600),
+    // base address of the public image URLs: the Space's CDN address if you enabled the CDN (SPACES_PUBLIC_URL), else the Space's own address
+    publicUrl: (process.env.SPACES_PUBLIC_URL || `https://${(process.env.SPACES_BUCKET || '').trim()}.${(process.env.SPACES_REGION || 'nyc3').trim()}.digitaloceanspaces.com`).trim().replace(/\/+$/, ''),
   },
 
   // Accounts: email + password, SQLite file, JWT bearer tokens.

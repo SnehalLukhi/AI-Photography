@@ -48,6 +48,21 @@ function getDb() {
       created_at INTEGER NOT NULL
     );
     CREATE INDEX IF NOT EXISTS password_resets_user ON password_resets (user_id, created_at);
+    -- one row per generation: the user's original photo + the AI result (both are public images in the Space; only their keys are kept here)
+    CREATE TABLE IF NOT EXISTS generations (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      api TEXT,
+      template TEXT,
+      task_id TEXT,
+      original_key TEXT NOT NULL,
+      original_mime TEXT NOT NULL,
+      result_key TEXT,
+      result_mime TEXT,
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS generations_user ON generations (user_id, created_at DESC, id DESC);
+    CREATE INDEX IF NOT EXISTS generations_task ON generations (task_id);
     CREATE TABLE IF NOT EXISTS redeem_codes (
       code TEXT PRIMARY KEY,
       coins INTEGER NOT NULL,
