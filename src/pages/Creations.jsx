@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
-import { listGenerations, getGeneration, deleteGeneration } from '../lib/aiPhotography.js'
+import { listGenerations, deleteGeneration } from '../lib/aiPhotography.js'
 import { SparkIcon } from '../components/Header.jsx'
 
 const toCreation = (g) => ({
@@ -58,14 +58,6 @@ export default function Creations() {
     } catch (e) { if (e.status === 401) signOut(); else setLoadError('Could not load more creations.') }
     setLoadingMore(false)
   }
-  // signed image links last an hour: opening a creation asks the backend for fresh ones, so an old page never shows broken images
-  const openItem = (c) => {
-    setOpen(c)
-    if (!c.generationId) return
-    getGeneration(c.generationId)
-      .then((g) => { const fresh = toCreation(g); setOpen((o) => (o && o.id === c.id ? { ...o, image: fresh.image, original: fresh.original } : o)) })
-      .catch(() => {})
-  }
   const remove = async (c) => {
     try { await deleteGeneration(c.generationId); setCreations((cur) => cur.filter((x) => x.id !== c.id)); setOpen(null) } catch (e) { setLoadError(e.message) }
   }
@@ -96,7 +88,7 @@ export default function Creations() {
           ) : (
             <div className="mt-8 grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {list.map((c) => (
-                <div key={c.id} onClick={() => c.original && openItem(c)} className={`group relative aspect-[9/16] animate-fade-in overflow-hidden rounded-[20px] border border-white/5 bg-[#121216] transition-transform duration-300 hover:-translate-y-1 ${c.original ? 'cursor-pointer' : ''}`}>
+                <div key={c.id} onClick={() => c.original && setOpen(c)} className={`group relative aspect-[9/16] animate-fade-in overflow-hidden rounded-[20px] border border-white/5 bg-[#121216] transition-transform duration-300 hover:-translate-y-1 ${c.original ? 'cursor-pointer' : ''}`}>
                   {/* every generated picture fills the whole 9:16 card (cropped evenly, never stretched): results from the AI Photography API are almost 9:16, Cartoon results keep the photo's own shape */}
                   <img src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />

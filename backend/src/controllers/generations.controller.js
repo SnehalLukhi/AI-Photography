@@ -14,7 +14,7 @@ async function readUpload(req) {
   }
 }
 
-/** POST /api/generations - multipart: image. Saves the user's original photo to Spaces and returns the new generation (id + signed URL). */
+/** POST /api/generations - multipart: image. Saves the user's original photo to Spaces and returns the new generation (id + public image URL). */
 async function create(req, res) {
   const generation = await generations.create(await readUpload(req), { api: 'upload', template: generations.label(req), owner: req.user.id })
   res.status(201).set('Cache-Control', 'no-store').json({ success: true, generation })
@@ -26,7 +26,7 @@ async function saveResult(req, res) {
   res.status(201).set('Cache-Control', 'no-store').json({ success: true, generation })
 }
 
-/** GET /api/generations/:id - the original and the AI-generated image (signed URLs, valid for `urlExpiresInSeconds`). */
+/** GET /api/generations/:id - the original and the AI-generated image (public, permanent image URLs). */
 async function get(req, res) {
   res.set('Cache-Control', 'no-store').json({ success: true, generation: await generations.get(req.params.id, req.user.id) })
 }

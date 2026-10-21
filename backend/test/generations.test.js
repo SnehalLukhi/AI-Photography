@@ -23,11 +23,9 @@ before(async () => {
 
   const storage = require('../src/services/storage.service')
   storage.isConfigured = () => storageUp
-  storage.putObject = async (key, body) => { if (!storageUp) throw new Error('down'); store.set(key, Buffer.from(body)) }
-  storage.getObject = async (key) => store.get(key) || null
+  storage.putImage = async (key, body) => { if (!storageUp) throw new Error('down'); store.set(key, Buffer.from(body)) }
   storage.deleteObject = async (key) => { store.delete(key) }
-  storage.listKeys = async (prefix) => ({ keys: [...store.keys()].filter((k) => k.startsWith(prefix)).sort(), nextToken: undefined })
-  storage.signedUrl = async (key) => `https://signed.invalid/${key}?sig=1`
+  storage.publicUrl = (key) => `https://public.invalid/${key}`
   require('../src/services/ailab.service').downloadImage = async () => ({ buffer: await h.resultJpeg(), mimeType: 'image/jpeg' })
 
   app = await h.startApp(require('../src/app'))
@@ -45,9 +43,9 @@ test('generate saves the original and the AI result and returns both signed URLs
   const { generation } = await res.json()
   assert.equal(generation.status, 'completed')
   assert.equal(generation.template, 'Retro Vibes')
-  assert.match(generation.original.url, /original\.jpg\?sig=1$/)
-  assert.match(generation.result.url, /result\.jpg\?sig=1$/)
-  assert.ok(store.has(`generations/${generation.id}/original.jpg`) && store.has(`generations/${generation.id}/result.jpg`))
+  assert.equal(generation.original.url, `https://public.invalid/generations/${generation.id}/original.jpg`)
+  assert.equal(generation.result.url, `https://public.invalid/generations/${generation.id}/result.jpg`)
+  assert.deepEqual([...store.keys()].sort(), [`generations/${generation.id}/original.jpg`, `generations/${generation.id}/result.jpg`]) // ONLY the two images are stored
 
   const got = await (await api(`/generations/${generation.id}`)).json()
   assert.equal(got.generation.id, generation.id)
@@ -65,7 +63,7 @@ test('GET /api/generations lists only the user\'s own generations; others cannot
   assert.equal((await api(`/generations/${id}`)).status, 200)
   assert.equal((await api(`/generations/${id}`, { method: 'DELETE' })).status, 200)
   assert.equal((await api(`/generations/${id}`)).status, 404)
-  assert.equal([...store.keys()].filter((k) => k.includes(id)).length, 0)
+  assert.equal(store.size, 0) // both images are gone from storage
   assert.equal((await (await api('/generations')).json()).generations.length, 0)
 })
 
@@ -94,4 +92,20 @@ test('a storage outage never breaks generation', async () => {
   assert.equal(body.generation, undefined)
   assert.deepEqual(await (await api('/generations')).json(), { success: true, generations: [] }) // nothing to list while storage is off
   storageUp = true
+})
+
+test('listing pages through the newest generations first', async () => {
+  const ids = []
+  for (let i = 0; i < 3; i++) {
+    const res = await api('/generations', { method: 'POST', body: h.form({ image: await img() }, { template_name: `t${i}` }) })
+    ids.push((await res.json()).generation.id)
+    await new Promise((r) => setTimeout(r, 5)) // distinct creation times
+  }
+  const first = await (await api('/generations?limit=2')).json()
+  assert.deepEqual(first.generations.map((g) => g.template), ['t2', 't1'])
+  assert.ok(first.nextToken)
+  const second = await (await api(`/generations?limit=2&nextToken=${first.nextToken}`)).json()
+  assert.ok(second.generations.map((g) => g.template).includes('t0'))
+  assert.equal(second.nextToken, undefined)
+  assert.equal((await api('/generations?nextToken=garbage')).status, 400)
 })

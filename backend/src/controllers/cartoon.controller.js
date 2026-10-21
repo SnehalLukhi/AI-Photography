@@ -26,10 +26,11 @@ async function generate(req, res) {
     const image = await prepareImage(req.file.path, 'image', LIMITS)
     await removeFiles(tmp) // the upload is in memory now: delete it before the (slow) API call
 
-    const gen = await generations.begin(image, { api: 'cartoon-yourself', template: generations.label(req, type), owner: req.user.id }) // original photo -> Spaces (null when storage is off)
     const submitted = await ailab.submitCartoon({ image, type })
-    await generations.linkTask(gen, submitted.taskId)
-    const result = await ailab.waitForTask(submitted.taskId) // asynchronous API: poll every 5 s
+    const gen = await generations.begin(image, { api: 'cartoon-yourself', template: generations.label(req, type), owner: req.user.id }) // original photo -> Spaces, only for a job AILabTools accepted (null when storage is off)
+    generations.linkTask(gen, submitted.taskId)
+    let result
+    try { result = await ailab.waitForTask(submitted.taskId) } catch (e) { await generations.discard(gen); throw e } // asynchronous API: poll every 5 s; a failed job leaves no stored photo behind
     const full = { ...result, requestId: result.requestId || submitted.requestId, logId: result.logId || submitted.logId }
     full.generation = await generations.complete(gen, full) // AI result -> Spaces
 
