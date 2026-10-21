@@ -6,8 +6,13 @@ const photos = require('../controllers/photos.controller')
 const cartoon = require('../controllers/cartoon.controller')
 const beard = require('../controllers/beard.controller')
 const hairstyle = require('../controllers/hairstyle.controller')
+const generationsCtl = require('../controllers/generations.controller')
 const requireApiKey = require('../middleware/requireApiKey')
 const { uploadImage } = require('../middleware/upload')
+const { requireAuth, dailyQuota } = require('../middleware/requireAuth')
+const authCtl = require('../controllers/auth.controller')
+const chargeCoins = require('../middleware/chargeCoins')
+const walletCtl = require('../controllers/wallet.controller')
 
 const router = express.Router()
 
@@ -19,13 +24,40 @@ const generateLimiter = rateLimit({
   handler: (_req, res) => res.status(429).json({ success: false, error: { code: 'RATE_LIMITED', message: 'Too many requests. Please wait a moment and try again.' } }),
 })
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: env.auth.rateLimitMax,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: (_req, res) => res.status(429).json({ success: false, error: { code: 'RATE_LIMITED', message: 'Too many attempts. Please wait a few minutes and try again.' } }),
+})
+
 router.get('/health', health)
 
+// Accounts
+router.post('/auth/register', authLimiter, authCtl.register)
+router.post('/auth/login', authLimiter, authCtl.login)
+router.post('/auth/google', authLimiter, authCtl.google)
+router.get('/auth/me', requireAuth, authCtl.me)
+
+// Coins
+router.get('/plans', walletCtl.listPlans)
+router.get('/wallet', requireAuth, walletCtl.getWallet)
+router.post('/wallet/redeem', authLimiter, requireAuth, walletCtl.redeem) // limited like login: codes must not be guessable by trying
+router.post('/wallet/checkout', requireAuth, walletCtl.checkout)
+
 // requireApiKey runs first so uploads are not even read when the server is not configured.
-router.post('/photos/generate', generateLimiter, requireApiKey, uploadImage, photos.generate)
-router.post('/cartoon/generate', generateLimiter, requireApiKey, uploadImage, cartoon.generate) // Cartoon Yourself (separate from AI Photography)
-router.post('/beard/generate', generateLimiter, requireApiKey, uploadImage, beard.generate) // AI Beard Styling (separate from AI Photography)
-router.post('/hairstyle/generate', generateLimiter, requireApiKey, uploadImage, hairstyle.generate) // Hairstyle Changer Premium (Fun: Baby / Men / Woman)
-router.get('/photos/tasks/:taskId', requireApiKey, photos.taskStatus)
+router.post('/photos/generate', generateLimiter, requireAuth, requireApiKey, dailyQuota, chargeCoins, uploadImage, photos.generate)
+router.post('/cartoon/generate', generateLimiter, requireAuth, requireApiKey, dailyQuota, chargeCoins, uploadImage, cartoon.generate) // Cartoon Yourself (separate from AI Photography)
+router.post('/beard/generate', generateLimiter, requireAuth, requireApiKey, dailyQuota, chargeCoins, uploadImage, beard.generate) // AI Beard Styling (separate from AI Photography)
+router.post('/hairstyle/generate', generateLimiter, requireAuth, requireApiKey, dailyQuota, chargeCoins, uploadImage, hairstyle.generate) // Hairstyle Changer Premium (Fun: Baby / Men / Woman)
+
+// Stored images (DigitalOcean Spaces): original photo + AI result of one generation. Only the user who created a generation can read or change it.
+router.post('/generations', generateLimiter, requireAuth, uploadImage, generationsCtl.create)
+router.post('/generations/:id/result', generateLimiter, requireAuth, uploadImage, generationsCtl.saveResult)
+router.get('/generations', requireAuth, generationsCtl.list) // the logged-in user's generations
+router.get('/generations/:id', requireAuth, generationsCtl.get)
+router.delete('/generations/:id', requireAuth, generationsCtl.remove)
+router.get('/photos/tasks/:taskId', requireAuth, requireApiKey, photos.taskStatus)
 
 module.exports = router

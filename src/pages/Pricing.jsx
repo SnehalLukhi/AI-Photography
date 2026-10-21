@@ -1,10 +1,30 @@
-import { useState } from 'react'
-import { plans, planPerks } from '../data/templates.js'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { plans as fallbackPlans, planPerks } from '../data/templates.js'
+import { getPlans, startCheckout } from '../lib/aiPhotography.js'
+import { useStudio } from '../context/StudioContext.jsx'
 import { brandImages } from '../data/images.js'
 import { SparkIcon } from '../components/Header.jsx'
 
 export default function Pricing() {
+  const nav = useNavigate()
+  const { signedIn } = useStudio()
   const [note, setNote] = useState('')
+  const [busy, setBusy] = useState('')
+  // the plans come from the backend (single source of prices and coins); the built-in list is only shown if the backend cannot be reached
+  const [plans, setPlans] = useState(() => fallbackPlans.map((p) => ({ ...p, priceInr: Number(p.price.replace(/\D/g, '')), coinCount: Number(p.coins.split(' ')[0].replace(/,/g, '')) })))
+  useEffect(() => {
+    getPlans().then((r) => setPlans(r.plans.map((p) => ({ ...p, price: `₹${p.priceInr.toLocaleString('en-IN')}`, coinCount: p.coins, coins: `${p.coins.toLocaleString('en-US')} Coins · ${p.tier}` })))).catch(() => {})
+  }, [])
+  const choose = async (p) => {
+    if (!signedIn) { nav('/login'); return }
+    setBusy(p.id); setNote('')
+    try {
+      const out = await startCheckout(p.id)
+      if (out.url) window.location.assign(out.url) // hosted payment page of the gateway
+    } catch (e) { setNote(e.message) }
+    setBusy('')
+  }
   return (
     <div className="mx-auto w-full max-w-none px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12 xl:px-16">
       <header className="max-w-3xl">
@@ -31,15 +51,14 @@ export default function Pricing() {
               <ul className="mt-6 flex flex-1 flex-col gap-3 text-[13px] text-[#C4B5FD] sm:mt-8 sm:gap-4 sm:text-[14px]">
                 {planPerks.map((x) => <li key={x} className="flex items-start gap-2"><span className="mt-0.5 text-[#C4B5FD]">✓</span><span className="leading-snug">{x}</span></li>)}
               </ul>
-              <button type="button" onClick={() => setNote(`Demo only - "${p.name}" is not connected to a payment gateway yet.`)}
+              <button type="button" disabled={busy === p.id} onClick={() => choose(p)}
                 className={`group relative mt-6 flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl text-[14px] font-semibold text-white transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] sm:mt-8 sm:h-[52px] sm:rounded-xl sm:text-[15px] ${p.popular ? 'grad-bg shadow-[0_0_28px_rgba(176,112,250,0.35)] hover:shadow-[0_0_36px_rgba(176,112,250,0.45)]' : 'border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] hover:border-transparent hover:shadow-[0_0_28px_rgba(176,112,250,0.35)]'}`}>
                 {!p.popular && <span className="grad-bg pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />}
-                <span className="relative z-10">Choose {p.name}</span>
+                <span className="relative z-10">{busy === p.id ? 'Please wait…' : `Choose ${p.name}`}</span>
               </button>
             </article>
           ))}
         </div>
-        <p className="mt-6 text-center text-[11px] text-[#C4B5FD] sm:hidden">Auto-renewable subscription. Cancel anytime.</p>
         {note && <p role="status" className="mt-4 rounded-xl border border-[#B070FA]/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-4 py-3 text-center text-sm text-[#C4B5FD]">{note}</p>}
       </section>
     </div>

@@ -3,6 +3,7 @@ const AppError = require('../utils/AppError')
 const { removeFiles } = require('../utils/tempFiles')
 const { prepareImage } = require('../services/image.service')
 const ailab = require('../services/ailab.service')
+const generations = require('../services/generations.service')
 
 const TASK_ID_RE = /^[A-Za-z0-9_-]{6,128}$/
 // Documented limits: style_title <= 500 chars, style_desc <= 1000 chars, English only. AILabTools truncates extra text itself.
@@ -34,9 +35,9 @@ function sendImage(res, { buffer, mimeType }) {
 function payload(result) {
   const base = { success: true, status: result.status, provider: env.ailab.provider, taskId: result.taskId, requestId: result.requestId, logId: result.logId }
   if (result.status === 'succeeded') {
-    return { ...base, expiresInHours: result.expiresInHours, images: result.images, data: result.data }
+    return generations.attach({ ...base, expiresInHours: result.expiresInHours, images: result.images, data: result.data }, result.generation)
   }
-  return { ...base, pollUrl: `/api/photos/tasks/${encodeURIComponent(result.taskId)}` }
+  return generations.attach({ ...base, pollUrl: `/api/photos/tasks/${encodeURIComponent(result.taskId)}` }, result.generation)
 }
 
 async function respond(req, res, result) {
@@ -66,9 +67,12 @@ async function generate(req, res) {
     const image = await prepareImage(req.file.path, 'image')
     await removeFiles(tmp) // the upload is in memory now: delete it before the (slow) API call
 
+    const gen = await generations.begin(image, { api: 'ai-photography', template: generations.label(req, styleTitle), owner: req.user.id }) // original photo -> Spaces (null when storage is off)
     const submitted = await ailab.submitPhotography({ image, styleTitle, styleDesc, imageSize })
+    await generations.linkTask(gen, submitted.taskId)
     const result = await ailab.waitForTask(submitted.taskId) // asynchronous API: poll every 5 s
-    return await respond(req, res, { ...result, requestId: result.requestId || submitted.requestId, logId: result.logId || submitted.logId })
+    const full = { ...result, requestId: result.requestId || submitted.requestId, logId: result.logId || submitted.logId }
+    return await respond(req, res, { ...full, generation: await generations.complete(gen, full) }) // AI result -> Spaces
   } finally {
     await removeFiles(tmp)
   }
@@ -78,7 +82,8 @@ async function generate(req, res) {
 async function taskStatus(req, res) {
   const { taskId } = req.params
   if (!TASK_ID_RE.test(taskId)) throw new AppError(400, 'INVALID_TASK_ID', 'Invalid task id.')
-  return respond(req, res, await ailab.getTask(taskId))
+  const result = await ailab.getTask(taskId)
+  return respond(req, res, { ...result, generation: await generations.completeByTask(taskId, result, req.user.id) })
 }
 
 module.exports = { generate, taskStatus }

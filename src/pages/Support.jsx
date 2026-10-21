@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
+import { redeemCode } from '../lib/aiPhotography.js'
 
 const Hero = ({ eyebrow, title, sub }) => (
   <header className="mx-auto max-w-3xl px-4 pt-10 text-center">
@@ -74,15 +75,23 @@ export function Feedback() {
 export function Transfer() {
   const [code, setCode] = useState('')
   const [msg, setMsg] = useState('')
-  const { signedIn } = useStudio()
+  const { signedIn, refreshUser } = useStudio()
+  const [busy, setBusy] = useState(false)
+  const redeem = async (e) => {
+    e.preventDefault()
+    if (!signedIn) { setMsg('Please log in first.'); return }
+    setBusy(true); setMsg('')
+    try { const r = await redeemCode(code); setMsg(`Done - ${r.coins.toLocaleString()} coins added. Your balance is ${r.balance.toLocaleString()} coins.`); setCode(''); refreshUser() } catch (err) { setMsg(err.message) }
+    setBusy(false)
+  }
   return (
     <div className="px-4 pb-24 md:pb-16">
       <Hero eyebrow="Connect App Account" title="Move coins from your app" sub="Paste the one-time code from the Pixora app. Coins leave the app only when redeem succeeds on the website." />
       <Card w="max-w-[640px]">
-        <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); setMsg(signedIn ? 'Demo only - redeeming is not connected yet.' : 'Please log in first.') }}>
+        <form className="space-y-5" onSubmit={redeem}>
           {!signedIn && <div className="rounded-xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-4 py-3 text-sm text-white">Log in to redeem your code. <Link to="/login" className="font-semibold underline">Login</Link></div>}
           <label className="block text-sm font-semibold text-white">Transfer code<input value={code} onChange={(e) => setCode(e.target.value)} placeholder="GLY-XXXX-XXXX" className={`${field} mt-3 h-[52px] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] font-normal`} /></label>
-          <button className={`${submitBtn} h-[52px] rounded-full`}>Redeem code</button>
+          <button disabled={busy || !code.trim()} className={`${submitBtn} h-[52px] rounded-full disabled:opacity-60`}>{busy ? 'Redeeming…' : 'Redeem code'}</button>
           {msg && <p role="status" className="text-center text-sm text-[#C4B5FD]">{msg}</p>}
         </form>
       </Card>

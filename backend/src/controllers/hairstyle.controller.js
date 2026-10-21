@@ -4,6 +4,7 @@ const { COLORS } = require('../config/hairstyleOptions')
 const { removeFiles } = require('../utils/tempFiles')
 const { prepareImage } = require('../services/image.service')
 const ailab = require('../services/ailab.service')
+const generations = require('../services/generations.service')
 
 // Hairstyle Changer Premium image requirements (official docs): JPEG / JPG / PNG, <= 5 MB, larger than 200 x 200 px and smaller than 4090 x 4090 px.
 const LIMITS = { formats: ['jpeg', 'png'], maxBytes: 5 * 1024 * 1024, maxSide: 4089 }
@@ -11,8 +12,8 @@ const MIN_SIDE = 200
 
 function payload(result) {
   const base = { success: true, status: result.status, provider: 'hairstyle-changer-premium', taskId: result.taskId, requestId: result.requestId, logId: result.logId }
-  if (result.status === 'succeeded') return { ...base, expiresInHours: result.expiresInHours, images: result.images, data: result.data }
-  return { ...base, pollUrl: `/api/photos/tasks/${encodeURIComponent(result.taskId)}` } // same async task-result API as the other categories
+  if (result.status === 'succeeded') return generations.attach({ ...base, expiresInHours: result.expiresInHours, images: result.images, data: result.data }, result.generation)
+  return generations.attach({ ...base, pollUrl: `/api/photos/tasks/${encodeURIComponent(result.taskId)}` }, result.generation) // same async task-result API as the other categories
 }
 
 /**
@@ -33,9 +34,12 @@ async function generate(req, res) {
     await removeFiles(tmp)
     if (Math.min(image.width, image.height) <= MIN_SIDE) throw new AppError(422, 'IMAGE_TOO_SMALL', `"image" must be larger than ${MIN_SIDE} x ${MIN_SIDE} pixels.`)
 
+    const gen = await generations.begin(image, { api: 'hairstyle-changer-premium', template: generations.label(req, id), owner: req.user.id }) // original photo -> Spaces (null when storage is off)
     const submitted = await ailab.submitHairstyle({ image, hairStyle: TEMPLATES[id], color })
+    await generations.linkTask(gen, submitted.taskId)
     const result = await ailab.waitForTask(submitted.taskId) // asynchronous API: poll every 5 s
     const full = { ...result, requestId: result.requestId || submitted.requestId, logId: result.logId || submitted.logId }
+    full.generation = await generations.complete(gen, full) // AI result -> Spaces
     return res.status(full.status === 'succeeded' ? 200 : 202).set('Cache-Control', 'no-store').json(payload(full))
   } finally {
     await removeFiles(tmp)

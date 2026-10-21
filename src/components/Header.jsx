@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
+import { useStudio } from '../context/StudioContext.jsx'
 
 export const SparkIcon = ({ className = 'size-3.5 text-[#B070FA]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
@@ -66,12 +67,20 @@ function GetApp({ small }) {
   )
 }
 
-const Claim = ({ small }) => (
-  <Link to="/login" className={`group btn-grad shrink-0 ${small ? '!h-8 !gap-1.5 !px-3 !py-0 !text-[11px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}>
-    <SparkIcon className="size-3.5 text-white transition-transform group-hover:scale-110" />
-    <span className="whitespace-nowrap">Claim 50 Coins</span>
-  </Link>
-)
+/** Logged out: invites to sign up for the free coins. Logged in: shows the coin balance and links to Pricing. */
+const useCoinLink = () => {
+  const { signedIn, coins } = useStudio()
+  return signedIn ? { to: '/pricing', label: `${coins.toLocaleString()} Coins` } : { to: '/login', label: 'Claim 50 Coins' }
+}
+const Claim = ({ small }) => {
+  const { to, label } = useCoinLink()
+  return (
+    <Link to={to} className={`group btn-grad shrink-0 ${small ? '!h-8 !gap-1.5 !px-3 !py-0 !text-[11px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}>
+      <SparkIcon className="size-3.5 text-white transition-transform group-hover:scale-110" />
+      <span className="whitespace-nowrap">{label}</span>
+    </Link>
+  )
+}
 
 const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-[#B070FA]/15 text-white ring-1 ring-inset ring-[#B070FA]/30' : 'text-[#C4B5FD] hover:bg-white/[0.06] hover:text-white'}`
 const Underline = () => null
@@ -89,6 +98,7 @@ export default function Header({ generating = false }) {
   useEffect(() => { setMenu(false) }, [pathname])
   const scrolled = useScrolled()
   const xl = useXl()
+  const coinLink = useCoinLink()
 
   return (
     <>
@@ -138,8 +148,8 @@ export default function Header({ generating = false }) {
                 <div className="!mt-2 space-y-0.5 border-t border-white/10 pt-2">
                   <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4B5FD]/75">Account &amp; Support</div>
                   {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#C4B5FD] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
-                  <Link to="/login" className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#B070FA]/50 bg-[#B070FA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#B070FA] hover:bg-[#B070FA]/20">
-                    <SparkIcon className="size-3.5 text-[#B070FA]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
+                  <Link to={coinLink.to} className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#B070FA]/50 bg-[#B070FA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#B070FA] hover:bg-[#B070FA]/20">
+                    <SparkIcon className="size-3.5 text-[#B070FA]" /><span className="whitespace-nowrap">{coinLink.label}</span>
                   </Link>
                 </div>
               </div>

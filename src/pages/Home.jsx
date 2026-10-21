@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { categories, steps, features, exploreCategories, exploreTabs, byCategory, exploreList, folderTemplates, exploreEverything, categoryItems, generateUrl } from '../data/templates.js'
 import TemplateCard from '../components/TemplateCard.jsx'
 import { SparkIcon } from '../components/Header.jsx'
+import { useStudio } from '../context/StudioContext.jsx'
 
 // Hero showcase, built to a 725 x 335 reference mock-up (all numbers below are px inside that stage). The stage is scaled
 // uniformly to the width of its column, so proportions stay exact on desktop, tablet and phone.
@@ -137,6 +138,7 @@ function Coverflow({ items, render, widthCls, aspect, overlap, pad = 'py-2' }) {
 
 export default function Home() {
   const nav = useNavigate()
+  const { signedIn, coins } = useStudio()
   const pick = (t) => nav(generateUrl(t))
   // Hero marquee: 5 templates per category, mixed (see below). One "half" is the full list
   // (repeated only if there are fewer than 12, so the strip is always wider than the box); the strip shows two identical halves,
@@ -248,9 +250,9 @@ export default function Home() {
             {/* 8. Call to action */}
             <section className="card-box relative mt-8 overflow-hidden px-6 py-12 text-center sm:py-14">
               <div className="pointer-events-none absolute inset-x-0 -bottom-24 mx-auto h-48 w-2/3 rounded-full bg-[#B070FA]/20 blur-[90px]" />
-              <h2 className="relative text-[30px] leading-[1.1] sm:text-[38px] lg:text-[46px]">Claim <span className="grad-text">50 Coins</span></h2>
+              <h2 className="relative text-[30px] leading-[1.1] sm:text-[38px] lg:text-[46px]">{signedIn ? <>You have <span className="grad-text">{coins.toLocaleString()} Coins</span></> : <>Claim <span className="grad-text">50 Coins</span></>}</h2>
               <p className="relative mx-auto mt-4 max-w-xl text-base leading-relaxed text-[#C4B5FD] sm:text-lg">Choose a template, upload your photo, and let AI create stunning visuals in minutes.</p>
-              <Link to="/login" className="btn-grad relative mt-7"><span>Claim 50 Coins</span><span className="leading-none">→</span></Link>
+              <Link to={signedIn ? '/explore' : '/login'} className="btn-grad relative mt-7"><span>{signedIn ? 'Start Creating' : 'Claim 50 Coins'}</span><span className="leading-none">→</span></Link>
             </section>
           </div>
         </div>

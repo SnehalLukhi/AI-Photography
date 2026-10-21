@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
+import { login, register, loginWithGoogle, loadGoogle } from '../lib/aiPhotography.js'
 
 /**
- * Minimal Login / Sign Up (full screen, no header or footer). Frontend demo only: a valid form calls the existing
- * `signIn()` flag from StudioContext and goes to /creations - no real authentication yet.
+ * Login / Sign Up (full screen, no header or footer). Calls the backend (POST /api/auth/login | register), keeps the returned token via
+ * `signIn()` from StudioContext and goes to /creations.
  */
 // Side-panel photos: Cartoon, LinkedIn Headshot, Beard, Old Money and 80's & 90's templates in a repeating sequence (one from each, then the next one from each, ...), spread over 4 columns.
 const PANEL_SOURCES = ['cartoon', 'linkedin-headshot', 'beard', 'old-money', '80s-and-90s'].map((id) => categoryItems(id))
@@ -24,6 +25,15 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const Eye = ({ off }) => (
   <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />{off && <path d="M4 4l16 16" />}
+  </svg>
+)
+
+const GoogleLogo = () => (
+  <svg className="size-5" viewBox="0 0 48 48" aria-hidden="true">
+    <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z" />
+    <path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z" />
+    <path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 010-9.4l-7.9-6.1a24 24 0 000 21.6l7.9-6.1z" />
+    <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2 1.4-4.7 2.3-8.5 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z" />
   </svg>
 )
 
@@ -53,9 +63,12 @@ export function Login() {
   const [errors, setErrors] = useState({})
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState('')
-  const timer = useRef()
-  useEffect(() => () => clearTimeout(timer.current), [])
   const signup = mode === 'signup'
+  useEffect(() => { loadGoogle() }, []) // so the Google window opens instantly on click
+  const google = async () => {
+    setBusy(true); setErrors({}); setNote('')
+    try { signIn(await loginWithGoogle()); nav('/creations') } catch (err) { setErrors({ form: err.message }); setBusy(false) }
+  }
 
   const switchMode = () => { setMode(signup ? 'login' : 'signup'); setErrors({}); setNote(''); setConfirm('') }
   const validate = () => {
@@ -64,20 +77,27 @@ export function Login() {
     if (!email.trim()) e.email = 'Enter your email address.'
     else if (!EMAIL_RE.test(email.trim())) e.email = 'Enter a valid email address.'
     if (!password) e.password = 'Enter your password.'
-    else if (password.length < 6) e.password = 'Password must be at least 6 characters.'
+    else if (password.length < 8) e.password = 'Password must be at least 8 characters.'
     if (signup) {
       if (!confirm) e.confirm = 'Confirm your password.'
       else if (confirm !== password) e.confirm = 'Passwords do not match.'
     }
     return e
   }
-  const submit = (ev) => {
+  const submit = async (ev) => {
     ev.preventDefault()
     const e = validate()
     setErrors(e); setNote('')
     if (Object.keys(e).length) return
     setBusy(true)
-    timer.current = setTimeout(() => { signIn(); nav('/creations') }, 600) // demo: no real authentication
+    try {
+      const session = signup ? await register({ email: email.trim(), password, name: name.trim() }) : await login({ email: email.trim(), password })
+      signIn(session)
+      nav('/creations')
+    } catch (err) {
+      setErrors({ form: err.message || 'Something went wrong. Please try again.' })
+      setBusy(false)
+    }
   }
   const clear = (k, set) => (ev) => { set(ev.target.value); if (errors[k]) setErrors({ ...errors, [k]: '' }) }
 
@@ -117,6 +137,11 @@ export function Login() {
             <h1 className="text-[26px] font-bold tracking-tight">{signup ? 'Create your account' : 'Welcome back'}</h1>
             <p className="mb-7 mt-2 text-sm leading-relaxed text-[#C4B5FD]/75">{signup ? 'Sign up to start creating AI photos.' : 'Log in to your AI Photography account.'}</p>
 
+            <button type="button" onClick={google} disabled={busy} className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
+              <GoogleLogo /><span>Continue with Google</span>
+            </button>
+            <div className="my-5 flex items-center gap-3 text-xs text-[#C4B5FD]/75" aria-hidden="true"><span className="h-px flex-1 bg-[#3A3552]" />or<span className="h-px flex-1 bg-[#3A3552]" /></div>
+
             <form onSubmit={submit} noValidate className="space-y-4">
               {signup && <Field id="auth-name" label="Name" type="text" autoComplete="name" placeholder="Your name" value={name} error={errors.name} onChange={clear('name', setName)} />}
               <Field id="auth-email" label="Email" type="email" autoComplete="email" placeholder="you@example.com" value={email} error={errors.email} onChange={clear('email', setEmail)} />
@@ -131,6 +156,7 @@ export function Login() {
                   <button type="button" onClick={() => setNote('Password reset is not connected yet (demo).')} className="cursor-pointer text-[#C4B5FD]/75 transition-colors duration-200 hover:text-white">Forgot password?</button>
                 </div>
               )}
+              {errors.form && <p role="alert" className="text-sm text-red-400">{errors.form}</p>}
               {note && <p role="status" className="text-xs text-[#C4B5FD]/75">{note}</p>}
               <button type="submit" disabled={busy} className="grad-bg h-12 w-full cursor-pointer rounded-xl text-[15px] font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(176,112,250,0.35)] hover:brightness-110 active:translate-y-0 active:scale-[0.98] disabled:translate-y-0 disabled:cursor-wait disabled:opacity-70">
                 {busy ? 'Please wait…' : signup ? 'Sign Up' : 'Login'}
