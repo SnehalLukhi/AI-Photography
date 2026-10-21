@@ -42,12 +42,12 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
         </div>
       </div>
       {fav && <Fav on={liked} toggle={() => setLiked(!liked)} />}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex h-full flex-col overflow-hidden rounded-[6px] border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] opacity-0 shadow-[0_20px_35px_rgba(0,0,0,0.6)] transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:h-[calc(100%+92px)] group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:h-[calc(100%+92px)] group-focus-within:opacity-100">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex h-full flex-col overflow-hidden rounded-[6px] border border-[#3A3552] bg-gradient-to-br from-[#322D4D] to-[#272339] opacity-0 shadow-[0_20px_35px_rgba(0,0,0,0.6)] transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:h-[calc(100%+92px)] group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:h-[calc(100%+92px)] group-focus-within:opacity-100">
         <div style={{ aspectRatio: ratio }} className="relative w-full shrink-0 overflow-hidden rounded-t-[6px] bg-[#000000]">
           <img src={t.image} alt="" draggable="false" className={img} style={imgStyle} />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[12%] bg-gradient-to-t from-[#1A284F] to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[12%] bg-gradient-to-t from-[#322D4D] to-transparent" />
         </div>
-        <div className="flex min-h-[92px] flex-1 flex-col justify-between bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-3">
+        <div className="flex min-h-[92px] flex-1 flex-col justify-between bg-gradient-to-br from-[#322D4D] to-[#272339] p-3">
           <h3 className="w-full truncate px-0.5 text-left font-sans text-[13px] font-medium leading-tight !text-[#ffffff] sm:text-[14px]">{t.name}</h3>
           <button type="button" onClick={use} tabIndex={-1} className="grad-bg mt-2 flex h-[38px] w-full cursor-pointer items-center justify-center rounded-[8px] text-[13px] font-semibold shadow-[0px_0px_15px_0px_rgba(176,112,250,0.2)]">
             {selected ? 'Selected ✓' : 'Use Template'}

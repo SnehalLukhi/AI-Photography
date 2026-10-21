@@ -29,7 +29,7 @@ export default function Pricing() {
     setBusy('')
   }
   return (
-    <div className="mx-auto w-full max-w-none px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12 xl:px-16">
+    <div className="mx-auto w-full max-w-[1408px] px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12">
       <header className="max-w-3xl">
         <div className="inline-flex items-center gap-2 rounded-full border border-[#B070FA]/50 bg-[#B070FA]/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#B070FA]" /><span>Flexible plans</span></div>
         <h1 className="mt-6 text-[32px] font-bold leading-[1.05] tracking-tight sm:text-[44px] lg:text-[48px]"><span className="text-[#ffffff]">Choose </span> <span className="grad-text">Your Plan</span></h1>
@@ -38,9 +38,9 @@ export default function Pricing() {
 
       <section className="mt-8 sm:mt-10 lg:mt-12">
         <h2 className="sr-only">Subscription plans</h2>
-        <div className="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:gap-6 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:grid-cols-3 lg:gap-6">
           {plans.map((p) => (
-            <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 ${p.popular ? 'border-[#B070FA]/30 bg-[#170E21]' : 'border-white/[0.08] bg-[#12121A]'}`}>
+            <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-[#B070FA]/30 bg-[#170E21]' : 'border-white/[0.08] bg-[#12121A]'}`}>
               {p.popular && <span className="grad-bg absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-[11px]">Most Popular</span>}
               <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -62,6 +62,7 @@ export default function Pricing() {
             </article>
           ))}
         </div>
+        <p className="mt-6 text-center text-[11px] text-[#C4B5FD] sm:hidden">Auto-renewable subscription. Cancel anytime.</p>
         {note && <p role="status" className="mt-4 rounded-xl border border-[#B070FA]/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-4 py-3 text-center text-sm text-[#C4B5FD]">{note}</p>}
       </section>
     </div>

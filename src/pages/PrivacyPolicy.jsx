@@ -13,7 +13,7 @@ const sections = [
     ['Account and Profile Information', [
       P('When you sign in, we may collect:'),
       L('Email address', 'Name or display name, if you provide one when you sign up', 'Sign-in session details (your email and when the session expires)'),
-      P('Pixora is currently a demo sign-in: your session is kept in your own browser, and your password is never saved by the app.'),
+      P('Your sign-in session is kept in your own browser, and your password is never saved by the app.'),
     ]],
     ['Payment and Billing Information', [
       P('Paid plans and payments are not available in Pixora yet, so we do not collect payment or billing information. If paid plans are added, payments will be handled by a third-party payment processor, and this policy will be updated before that happens.'),

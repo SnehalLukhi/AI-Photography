@@ -16,7 +16,7 @@ import hairstyleChanger from '../data/ai-hairstyle-changer_templates.json'
  * Hairstyle templates (Baby / Man / Woman) use the Hairstyle Changer Premium API through POST /api/hairstyle/generate: the confirmed JSON `id` of the template is sent as
  * `template` (the Hairstyle cards carry no colour); the backend turns the id into the API's `hair_style`. The JSON prompts are not used by that API.
  */
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001').replace(/\/+$/, '')
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? (import.meta.env.DEV ? 'http://localhost:5001' : '')).replace(/\/+$/, '')
 export const IMAGE_SIZE = '9:16'
 export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 export const MAX_BYTES = 10 * 1024 * 1024

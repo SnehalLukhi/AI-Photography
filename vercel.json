@@ -1,0 +1,20 @@
+{
+  "services": {
+    "web": {
+      "root": ".",
+      "framework": "vite"
+    },
+    "api": {
+      "root": "backend/",
+      "framework": "express",
+      "entrypoint": "src/app.js",
+      "bindings": [
+        { "type": "service", "service": "web", "format": "url", "env": "WEB_URL" }
+      ]
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": { "service": "api" } },
+    { "source": "/(.*)", "destination": { "service": "web" } }
+  ]
+}

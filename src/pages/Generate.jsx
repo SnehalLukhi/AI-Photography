@@ -241,7 +241,7 @@ function Generator({ asset }) {
 
       {phase === 'loading' && (
         <div className="fixed inset-0 z-[120] grid place-items-center bg-black/85 backdrop-blur">
-          <div className="text-center"><div className="mx-auto mb-4 size-14 animate-spin rounded-full border-4 border-[#3A3552] border-t-[#B070FA]" /><p className="font-medium">AI is creating magic ✦</p><p className="text-sm text-[#C4B5FD]/75">{real ? 'This can take a minute…' : 'Demo preview'}</p></div>
+          <div className="text-center"><div className="mx-auto mb-4 size-14 animate-spin rounded-full border-4 border-[#3A3552] border-t-[#B070FA]" /><p className="font-medium">AI is creating magic ✦</p><p className="text-sm text-[#C4B5FD]/75">{real ? 'This can take a minute…' : ''}</p></div>
         </div>
       )}
       {phase === 'done' && real && result && (
@@ -279,11 +279,8 @@ function Generator({ asset }) {
           <div className="w-full max-w-sm rounded-xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="relative mb-4 aspect-[9/16] max-h-[60vh] overflow-hidden rounded-xl border border-[#B070FA] shadow-[0_0_40px_rgba(176,112,250,0.3)]">
               <img src={asset.image} alt="" className={`absolute inset-0 size-full ${fitOf(asset)}`} />
-              <img src={photos[0].url} alt="Demo result" className="absolute inset-0 size-full object-cover opacity-50 mix-blend-overlay" />
-              <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs">DEMO</span>
+              <img src={photos[0].url} alt="" className="absolute inset-0 size-full object-cover opacity-50 mix-blend-overlay" />
             </div>
-            <p className="mb-1 font-medium">Demo result ready</p>
-            <p className="mb-4 text-xs text-[#C4B5FD]/75">Real AI generation isn't connected yet for this template, so nothing was added to My Creations.</p>
             <div className="flex flex-col gap-2"><button className="btn-grad" onClick={() => nav('/creations')}>View in My Creations</button><button className="btn-dark" onClick={() => setPhase('idle')}>Try another photo</button></div>
           </div>
         </div>
