@@ -17,8 +17,8 @@ const { sniffMime } = require('./image.service')
  *          "It is recommended that asynchronous task results be queried every 5 seconds."
  *          "Asynchronous task results are valid for 24 hours."
  *          `data` is the "result payload, available when task_status is 2; structure depends on the async API".
- *          The docs do not define the fields of `data` for AI Photography, so it is passed through untouched and
- *          any http(s) URLs found inside it are listed in `images` (see collectUrls).
+ *          The docs do not define the fields of `data` for AI Photography. Observed on a real completed task: { cost_time, result_urls: [<https image URL>] }.
+ *          `data` is passed through untouched and any http(s) URLs found inside it are listed in `images` (see collectUrls).
  *
  *  Errors  A request succeeded only if the HTTP status is 200 (docs: "Response Description"); otherwise
  *          error_detail.code / .code_message / .message describe the failure.
@@ -75,12 +75,23 @@ function assertOk(res, body) {
   if (body?.error_detail?.code) throw mapAilabError(422, body) // error reported inside a 200 payload
 }
 
-/** Collect every http(s) URL inside the (undocumented-shape) result payload, in order, without duplicates. */
-function collectUrls(value, out = new Set()) {
-  if (typeof value === 'string') { if (/^https?:\/\//i.test(value)) out.add(value) }
-  else if (Array.isArray(value)) value.forEach((v) => collectUrls(v, out))
-  else if (value && typeof value === 'object') Object.values(value).forEach((v) => collectUrls(v, out))
-  return [...out]
+/**
+ * Every http(s) URL inside the result payload (its shape is not documented for AI Photography), without duplicates, most likely result image first:
+ * URLs under a key that looks like a result (image, result, output, photo, url) and URLs that end in an image extension rank ahead of the rest
+ * (an echo of the input image or a link to documentation must not be taken as the result). Same-rank URLs keep their order.
+ */
+function collectUrls(value) {
+  const found = new Map() // url -> score (lower = better)
+  const visit = (v, key = '') => {
+    if (typeof v === 'string') {
+      if (!/^https?:\/\//i.test(v)) return
+      const score = (/\.(png|jpe?g|webp)(\?|#|$)/i.test(v) ? 0 : 2) + (/image|result|output|photo|url/i.test(key) ? 0 : 1)
+      if (!found.has(v) || found.get(v) > score) found.set(v, score)
+    } else if (Array.isArray(v)) v.forEach((x) => visit(x, key))
+    else if (v && typeof v === 'object') Object.entries(v).forEach(([k, x]) => visit(x, k))
+  }
+  visit(value)
+  return [...found.entries()].sort((a, b) => a[1] - b[1]).map(([url]) => url) // Array.sort is stable
 }
 
 /**
@@ -187,7 +198,9 @@ async function getTask(taskId) {
   if (!status) throw new AppError(502, 'AILAB_UNEXPECTED_RESPONSE', `AILabTools returned an unknown task_status (${body.task_status}).`, { requestId: body.request_id })
   const base = { status, taskId, requestId: body.request_id, logId: body.log_id }
   if (status !== 'succeeded') return base
-  return { ...base, data: body.data ?? {}, images: collectUrls(body.data), expiresInHours: 24 }
+  const images = collectUrls(body.data)
+  if (!images.length) console.warn('[ailab] task finished without any image URL; data keys:', Object.keys(body.data ?? {}).join(', ') || '(none)') // lets the real shape be seen in the logs
+  return { ...base, data: body.data ?? {}, images, expiresInHours: 24 }
 }
 
 /** Poll every pollIntervalMs until the task completes or pollTimeoutMs passes (then returns the last state). */

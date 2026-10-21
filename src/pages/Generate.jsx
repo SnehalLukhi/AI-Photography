@@ -5,16 +5,16 @@ import { findAsset, siblingsOf, generateUrl, plans } from '../data/templates.js'
 // Beard / LinkedIn Headshot / Hairstyle photos fill the whole card (no empty bands above and below); every other category keeps showing the full image.
 // Display-only coin pill beside the Generate button: coins needed for one image, read from the plans' "Cost per image" (same value the Pricing page shows). Not the user's balance; nothing is deducted here.
 const IMAGE_COST = parseInt(plans[0].details.find(([label]) => label === 'Cost per image')?.[1], 10)
-const CoinPill = ({ className = '' }) => (
+const CoinPill = ({ className = '', cost = IMAGE_COST }) => (
   <span className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-[#B070FA]/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-2.5 text-[12px] font-semibold text-white shadow-[0_0_18px_rgba(176,112,250,0.2)] ${className}`}>
-    <img src={brandImages.coin} alt="" width="20" height="20" className="size-5 shrink-0 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />{IMAGE_COST} Coins
+    <img src={brandImages.coin} alt="" width="20" height="20" className="size-5 shrink-0 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />{cost} Coins
   </span>
 )
 const fitOf = (t) => (t.categoryId === 'beard' || t.categoryId === 'linkedin-headshot' || /^hairstyle-/.test(t.categoryId) ? 'object-cover' : 'object-contain')
 import { SparkIcon } from './../components/Header.jsx'
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
-import { promptFor, inspectUpload, generatePhoto } from '../lib/aiPhotography.js'
+import { promptFor, inspectUpload, generatePhoto, getPlans } from '../lib/aiPhotography.js'
 
 const ICON_PATHS = {
   Female: 'M12 12a4 4 0 100-8 4 4 0 000 8zM6 21c0-3.5 2.5-6 6-6s6 2.500 6 6M7.500 7C8 4.500 10 3 12 3s4 1.500 4.500 4',
@@ -83,7 +83,9 @@ function Slot({ kind, photo, onPick, onClear, error, sheet }) {
 
 function Generator({ asset }) {
   const nav = useNavigate()
-  const { signedIn, addCreation } = useStudio()
+  const { signedIn, addCreation, signOut, coins, refreshUser } = useStudio()
+  const [cost, setCost] = useState(15) // coins per generation (from the backend)
+  useEffect(() => { getPlans().then((r) => setCost(r.costPerGeneration)).catch(() => {}) }, [])
   const slots = asset.slots
   const [photos, setPhotos] = useState(() => slots.map(() => null))
   const [errors, setErrors] = useState(() => slots.map(() => ''))
@@ -91,6 +93,7 @@ function Generator({ asset }) {
   const [phase, setPhase] = useState('idle') // idle | loading | done | error
   const [result, setResult] = useState('') // real generated image URL (templates with a JSON catalogue only)
   const [apiError, setApiError] = useState('')
+  const [needCoins, setNeedCoins] = useState(false) // the last failure was 'not enough coins'
   const timer = useRef()
   const abort = useRef()
   const info = promptFor(asset)
@@ -114,15 +117,19 @@ function Generator({ asset }) {
     if (error) { setApiError(error); setPhase('error'); return }
     // dev-only trace: which template was selected and exactly which JSON entry / values go out (visible in the browser console, never in production)
     if (import.meta.env.DEV) console.info('[generate]', { template: asset.name, templateId: asset.assetId, category: asset.categoryId, api: prompt.cartoonType ? 'cartoon-yourself' : 'ai-photography', jsonId: prompt.id, jsonName: prompt.name, type: prompt.cartoonType, style_title: prompt.title, style_desc: prompt.desc })
-    setApiError(''); setResult(''); setPhase('loading')
+    if (coins < cost) { setApiError(`You need ${cost} coins to generate, and you have ${coins}. Get more coins to continue.`); setNeedCoins(true); setPhase('error'); return }
+    setApiError(''); setNeedCoins(false); setResult(''); setPhase('loading')
     abort.current?.abort()
     const ctrl = new AbortController(); abort.current = ctrl
     try {
-      const url = await generatePhoto({ file, title: prompt.title, desc: prompt.desc, cartoonType: prompt.cartoonType, beardTemplate: prompt.beardTemplate, hairTemplate: prompt.hairTemplate, hairColor: prompt.hairColor, signal: ctrl.signal })
-      addCreation({ type: asset.type, name: asset.name, image: url })
+      const { url, original, generationId } = await generatePhoto({ file, title: prompt.title, desc: prompt.desc, cartoonType: prompt.cartoonType, beardTemplate: prompt.beardTemplate, hairTemplate: prompt.hairTemplate, hairColor: prompt.hairColor, name: asset.name, signal: ctrl.signal })
+      addCreation({ type: asset.type, name: asset.name, image: url, original, generationId })
+      refreshUser() // new coin balance
       setResult(url); setPhase('done')
     } catch (e) {
       if (e.name === 'AbortError') return
+      if (e.status === 401) { signOut(); nav('/login'); return } // login expired
+      setNeedCoins(e.code === 'INSUFFICIENT_COINS'); refreshUser()
       setApiError(e.message || 'Generation failed. Please try again.'); setPhase('error')
     }
   }
@@ -179,9 +186,9 @@ function Generator({ asset }) {
               <button type="button" disabled={!ready} onClick={next} className="flex h-[50px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-bold text-white shadow-[0_8px_28px_rgba(176,112,250,0.4)] transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60" style={{ background: 'linear-gradient(90deg, #B070FA 0%, #F066D8 100%)' }}>
                 <span>✨</span><span>{ctaLabel}</span><span>→</span>
               </button>
-              <CoinPill className="h-[50px]" />
+              <CoinPill cost={cost} className="h-[50px]" />
               </div>
-              <p className="mt-3 text-center text-xs text-[#C4B5FD]/75">Coins deducted only after generation complete</p>
+              <p className="mt-3 text-center text-xs text-[#C4B5FD]/75">{real ? `${cost} coins per generation · returned if it fails` : 'Demo preview · no coins are used'}</p>
             </div>
           </div>
         )}
@@ -220,7 +227,7 @@ function Generator({ asset }) {
                       <button type="button" disabled={!ready} onClick={next} className="grad-bg flex h-[48px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xl text-[14px] font-bold text-white shadow-[0_8px_28px_rgba(176,112,250,0.4)] transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60">
                         <div className="flex items-center gap-1.5"><span className="text-base">✨</span><span>{ctaLabel}</span><span className="ml-0.5 text-base font-bold">→</span></div>
                       </button>
-                      <CoinPill className="h-[48px]" />
+                      <CoinPill cost={cost} className="h-[48px]" />
                       </div>
                     </div>
                   </div>
@@ -255,7 +262,7 @@ function Generator({ asset }) {
           <div role="alert" className="w-full max-w-sm rounded-xl border border-red-500/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <p className="mb-1 font-medium">Generation failed</p>
             <p className="mb-4 text-sm text-[#C4B5FD]">{apiError || 'Something went wrong. Please try again.'}</p>
-            <div className="flex flex-col gap-2"><button className="btn-grad" onClick={() => setPhase('idle')}>Try again</button></div>
+            <div className="flex flex-col gap-2">{needCoins && <button className="btn-grad" onClick={() => nav('/pricing')}>Get coins</button>}<button className={needCoins ? 'btn-dark' : 'btn-grad'} onClick={() => setPhase('idle')}>{needCoins ? 'Close' : 'Try again'}</button></div>
           </div>
         </div>
       )}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { createPortal } from 'react-dom'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
-import { useStudio, WELCOME_COINS } from '../context/StudioContext.jsx'
+import { useStudio } from '../context/StudioContext.jsx'
 
 export const SparkIcon = ({ className = 'size-3.5 text-[#B070FA]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
@@ -69,12 +69,15 @@ function GetApp({ small }) {
 }
 
 /** Compact coin badge (74 x 32, border-box) for signed-in users: the existing coin.svg + the welcome-coin amount. Display only - there is no coin balance in the app. The whole badge links to the Pricing page. */
-const CoinBadge = ({ className = '' }) => (
-  <Link to="/pricing" aria-label={`${WELCOME_COINS} coins - view pricing`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-[#34343c] bg-[#17171c] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#B070FA]/60 hover:bg-[#1d1b26] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(176,112,250,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${className}`}>
+const CoinBadge = ({ className = '' }) => {
+  const { coins } = useStudio()
+  return (
+  <Link to="/pricing" aria-label={`${coins} coins - view pricing`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-[#34343c] bg-[#17171c] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#B070FA]/60 hover:bg-[#1d1b26] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(176,112,250,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${className}`}>
     <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] shrink-0 object-contain" />
-    <span className="text-[15px] font-bold leading-none tabular-nums text-white">{WELCOME_COINS}</span>
+    <span className="text-[15px] font-bold leading-none tabular-nums text-white">{coins.toLocaleString()}</span>
   </Link>
-)
+  )
+}
 
 // Profile dropdown (signed-in users). Name / e-mail come from the saved demo session: there is no profile page and no stored display name, so the name is derived
 // from the e-mail. Every item opens an existing route; Log out clears the saved demo session (there is no real auth provider).

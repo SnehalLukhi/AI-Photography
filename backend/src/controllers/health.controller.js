@@ -10,6 +10,7 @@ function health(_req, res) {
     uptimeSeconds: Math.round(process.uptime()),
     timestamp: new Date().toISOString(),
     ailab: { provider: env.ailab.provider, apiKeyConfigured: Boolean(env.ailab.apiKey) },
+    storage: { provider: 'digitalocean-spaces', configured: Boolean(env.spaces.key && env.spaces.secret && env.spaces.bucket) },
   })
 }
 module.exports = { health }
