@@ -3,6 +3,7 @@ const env = require('../config/env')
 const AppError = require('../utils/AppError')
 const plans = require('../config/plans')
 const packs = require('../config/packs')
+const offers = require('../config/offers')
 const wallet = require('./wallet.service')
 const { query, tx } = require('../db')
 
@@ -17,7 +18,7 @@ const ORDERS_URL = 'https://api.razorpay.com/v1/orders'
 
 /** A subscription plan (config/plans.js) or a one-time coin pack (config/packs.js) by id. */
 function itemById(id) {
-  const item = plans.find((p) => p.id === id) || packs.find((p) => p.id === id)
+  const item = plans.find((p) => p.id === id) || packs.find((p) => p.id === id) || offers.find((p) => p.id === id)
   if (!item) throw new AppError(400, 'INVALID_ITEM', 'Unknown plan or coin pack.')
   return item
 }

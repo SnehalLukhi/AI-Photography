@@ -1,12 +1,13 @@
 const env = require('../config/env')
 const plans = require('../config/plans')
 const packs = require('../config/packs')
+const offers = require('../config/offers')
 const wallet = require('../services/wallet.service')
 const payments = require('../services/payments.service')
 
 /** GET /api/plans - public: the coin plans for the Pricing page. */
 function listPlans(_req, res) {
-  res.json({ success: true, plans, costPerGeneration: env.coins.perGeneration })
+  res.json({ success: true, plans, offer: offers[0], costPerGeneration: env.coins.perGeneration })
 }
 
 /** GET /api/coin-packs - public: the one-time coin packs for the Get Coins page. */

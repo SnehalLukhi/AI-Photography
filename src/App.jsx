@@ -14,16 +14,17 @@ import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import Login from './pages/Login.jsx'
 import WelcomePopup from './components/WelcomePopup.jsx'
 import PremiumPopup from './components/PremiumPopup.jsx'
+import OfferPopup from './components/OfferPopup.jsx'
 import { useStudio } from './context/StudioContext.jsx'
 
 export default function App() {
   const { pathname } = useLocation()
-  const { signedIn, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer } = useStudio()
+  const { signedIn, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer, offerPopup, closeOfferPopup } = useStudio()
   const bare = pathname === '/login' // full-screen page without header/footer
   const generating = pathname === '/generate' // fixed-height page: no footer, no mobile chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
-    <div className="flex min-h-screen w-full flex-col overflow-x-clip bg-[#0F0433] selection:bg-[#B070FA]/30">
+    <div className="flex min-h-screen w-full flex-col overflow-x-clip bg-[#0B071B] selection:bg-[#B070FA]/30">
       {!bare && <Header generating={generating} />}
       <main className="flex-1 bg-page">
         <Routes>
@@ -51,6 +52,7 @@ export default function App() {
       {!bare && !generating && <Footer />}
       {signedIn && welcomeOffer && !bare && <WelcomePopup onClose={closeWelcomeOffer} />}
       {signedIn && premiumOffer && !welcomeOffer && !bare && <PremiumPopup onClose={closePremiumOffer} />}
+      {signedIn && offerPopup && !welcomeOffer && !premiumOffer && !bare && <OfferPopup onClose={closeOfferPopup} />}
     </div>
   )
 }

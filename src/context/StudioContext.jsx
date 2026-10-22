@@ -16,7 +16,17 @@ function firstSignIn(email) {
   return true
 }
 
+// The last known user, kept so a refresh renders the logged-in UI on the very first paint (no logged-out flash while /me is checked). It is only trusted
+// together with a saved login token, and is replaced by the server's answer right after.
+const USER_KEY = 'ai-photo-user'
+const cachedUser = () => {
+  if (!getAuthToken()) return null
+  try { return JSON.parse(localStorage.getItem(USER_KEY) || 'null') } catch { return null }
+}
+const cacheUser = (u) => { try { u ? localStorage.setItem(USER_KEY, JSON.stringify(u)) : localStorage.removeItem(USER_KEY) } catch { /* storage blocked */ } }
+
 const PREMIUM_DELAY_MS = 2000
+const OFFER_DELAY_MS = 600 // pause between dismissing the premium popup and the special-offer popup
 
 // The welcome-coin amount shown by the Welcome popup (a new account really gets this many coins from the backend: SIGNUP_BONUS_COINS).
 export const WELCOME_COINS = 50
@@ -26,16 +36,19 @@ export function StudioProvider({ children }) {
   const [photo, setPhotoState] = useState(null) // { url, name }
 
   const [gender, setGender] = useState('All') // UI-only filter state
-  const [user, setUser] = useState(null) // { id, email, name, coins } of the logged-in user (real login: see src/lib/aiPhotography.js)
+  const [user, setUser] = useState(cachedUser) // { id, email, name, coins } of the logged-in user (real login: see src/lib/aiPhotography.js)
   const [authReady, setAuthReady] = useState(!getAuthToken()) // false while a saved login token is being checked
   useEffect(() => { // a token saved by an earlier visit: still valid?
     if (!getAuthToken()) return
-    fetchMe().then(setUser).catch((e) => { if (e.status === 401) setAuthToken('') }).finally(() => setAuthReady(true))
+    fetchMe().then(setUser).catch((e) => { if (e.status === 401) { setAuthToken(''); setUser(null) } }).finally(() => setAuthReady(true))
   }, [])
+  useEffect(() => { if (authReady || user) cacheUser(user) }, [user, authReady])
   const [welcomeOffer, setWelcomeOffer] = useState(false) // welcome popup: opened right after a FIRST sign-in only, closed by the user
   const [premiumOffer, setPremiumOffer] = useState(false) // premium pricing popup: opens PREMIUM_DELAY_MS after the welcome popup has been closed, never at the same time
+  const [offerPopup, setOfferPopup] = useState(false) // special-offer popup: opens OFFER_DELAY_MS after the premium popup is dismissed (not after a purchase)
   const premiumTimer = useRef(null)
-  const clearPremiumTimer = () => { clearTimeout(premiumTimer.current); premiumTimer.current = null }
+  const offerTimer = useRef(null)
+  const clearPremiumTimer = () => { clearTimeout(premiumTimer.current); premiumTimer.current = null; clearTimeout(offerTimer.current); offerTimer.current = null }
   useEffect(() => clearPremiumTimer, [])
   const closeWelcomeOffer = () => {
     setWelcomeOffer(false)
@@ -47,7 +60,7 @@ export function StudioProvider({ children }) {
 
   const signIn = ({ token, user: u }) => { setAuthToken(token); setUser(u); if (firstSignIn(u.email)) setWelcomeOffer(true) }
   const refreshUser = () => fetchMe().then(setUser).catch(() => {}) // coin balance after a generation, a redeem or a purchase
-  const signOut = () => { setAuthToken(''); clearPremiumTimer(); setUser(null); setCreations([]); setWelcomeOffer(false); setPremiumOffer(false) }
+  const signOut = () => { setAuthToken(''); clearPremiumTimer(); setUser(null); setCreations([]); setWelcomeOffer(false); setPremiumOffer(false); setOfferPopup(false) }
 
   const setPhoto = (file) => {
     if (photo) URL.revokeObjectURL(photo.url)
@@ -57,6 +70,10 @@ export function StudioProvider({ children }) {
   return <Ctx.Provider value={{
     template, setTemplate, photo, setPhoto, creations, setCreations, addCreation, gender, setGender,
     signedIn: !!user, user, userEmail: user?.email || '', coins: user?.coins ?? 0, refreshUser, authReady, signIn, signOut,
-    welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer: () => setPremiumOffer(false),
+    welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer: (purchased = false) => {
+      setPremiumOffer(false)
+      if (purchased !== true && !offerTimer.current) offerTimer.current = setTimeout(() => { offerTimer.current = null; setOfferPopup(true) }, OFFER_DELAY_MS)
+    },
+    offerPopup, closeOfferPopup: () => setOfferPopup(false),
   }}>{children}</Ctx.Provider>
 }

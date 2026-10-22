@@ -137,6 +137,5 @@ export const termsSections = [
     `For questions about these Terms, payments, subscriptions, or account issues, please contact:`,
     { kv: ['Email:', 'support@pictrify.com'] },
     { kv: ['Website:', 'https://pictrify.com', 'https://pictrify.com'] },
-    `Please replace the contact details above if your actual support email or website URL is different.`,
   ]],
 ]

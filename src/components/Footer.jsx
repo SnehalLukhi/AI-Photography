@@ -10,7 +10,7 @@ const cols = {
 }
 export function FeatureStrip({ className = '' }) {
   return (
-    <div className={`rounded-xl border border-[#262631] bg-[#0F0433] p-4 shadow-xl sm:p-5 ${className}`}>
+    <div className={`rounded-xl border border-[#262631] bg-[#0B071B] p-4 shadow-xl sm:p-5 ${className}`}>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {features.map((f, i) => (
           <div key={f.title} className={`flex items-center gap-3.5 ${i < 3 ? 'lg:border-r lg:border-[#262631] lg:pr-4' : ''}`}>
@@ -28,10 +28,10 @@ export function FeatureStrip({ className = '' }) {
 
 export default function Footer() {
   return (
-    <footer className="relative z-0 mt-10 overflow-hidden border-t border-[#241a3d] bg-[#0F0433] pb-28 pt-0 text-white md:pb-4">
+    <footer className="relative z-0 mt-10 overflow-hidden border-t border-[#241a3d] bg-[#0B071B] pb-28 pt-0 text-white md:pb-4">
       <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[350px] w-full max-w-[1200px] -translate-x-1/2 bg-gradient-to-b from-[#B070FA]/10 via-[#B070FA]/5 to-transparent opacity-70 blur-3xl" />
       <div className="w-full">
-        <div className="relative w-full border-b border-[#241a3d] bg-[#0F0433]/95 px-4 py-6 shadow-[0_10px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:px-8 sm:py-7 lg:px-12 xl:px-16">
+        <div className="relative w-full border-b border-[#241a3d] bg-[#0B071B]/95 px-4 py-6 shadow-[0_10px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:px-8 sm:py-7 lg:px-12 xl:px-16">
           <div className="grid grid-cols-1 gap-6 border-b border-[#262631] pb-6 lg:grid-cols-12 lg:gap-6">
             <div className="flex flex-col justify-between gap-4 lg:col-span-3 lg:border-r lg:border-[#262631] lg:pr-6">
               <div className="space-y-2.5">
@@ -39,7 +39,7 @@ export default function Footer() {
                 <p className="max-w-sm text-sm font-normal leading-relaxed text-[#A9A9B8]">AI-powered photo &amp; video creation platform. Turn your ideas into stunning visuals in seconds.</p>
                 <div className="relative w-fit pt-1">
                   <div className="rounded-full bg-gradient-to-r from-[#B070FA] to-[#F066D8] p-[1.5px] shadow-[0_0_12px_rgba(176,112,250,0.3)]">
-                    <div className="flex select-none items-center gap-2 rounded-full bg-[#0F0433] px-4 py-1.5 text-xs font-medium text-white">
+                    <div className="flex select-none items-center gap-2 rounded-full bg-[#0B071B] px-4 py-1.5 text-xs font-medium text-white">
                       <SparkIcon className="size-3.5 text-[#B070FA]" /><span>AI-Powered</span>
                       <span className="bg-gradient-to-r from-[#B070FA] to-[#F066D8] bg-clip-text font-medium text-transparent">Creation</span>
                     </div>
