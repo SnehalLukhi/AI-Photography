@@ -4,12 +4,12 @@
 
 body {
   @apply bg-[#0A0809] text-[#ffffff] font-sans font-normal antialiased overflow-x-hidden;
-  background-image: radial-gradient(620px 520px at 12% 180px, rgba(112,92,255,0.07), rgba(112,92,255,0) 72%), radial-gradient(640px 600px at 88% 320px, rgba(112,92,255,0.07), rgba(112,92,255,0) 72%);
+  background-image: radial-gradient(620px 520px at 12% 180px, rgba(255,85,170,0.07), rgba(255,85,170,0) 72%), radial-gradient(640px 600px at 88% 320px, rgba(255,85,170,0.07), rgba(255,85,170,0) 72%);
   background-repeat: no-repeat;
 }
-::selection { background: #705CFF; color: #ffffff; }
+::selection { background: #FF55AA; color: #ffffff; }
 
-/* Pictrify theme: page #0A0809, cards #2B2B2B, text #FFFFFF / #A0A0A0, accent #705CFF, dark purple #0C032A, soft gradient #705CFF 7% to 0% */
+/* Pictrify theme: page #0A0809, cards #2B2B2B, text #FFFFFF / #A0A0A0, accent #FF55AA, card grey #2B2B2B, soft gradient #FF55AA 7% to 0% */
 @layer base {
   h1, h2, h3 { color: #ffffff; font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif; letter-spacing: -0.03em; line-height: 1.04; }
   h1, h2 { font-weight: 700; }
@@ -18,20 +18,20 @@ body {
 .font-display { font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif; font-weight: 600; letter-spacing: -0.02em; text-transform: none; }
 
 @layer components {
-  .btn-grad { @apply cursor-pointer inline-flex items-center justify-center gap-2.5 rounded-full bg-[#705CFF] hover:brightness-110 px-6 py-3 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(112,92,255,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-10px_rgba(112,92,255,0.65)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0; }
-  .btn-grad { background-image: linear-gradient(90deg, #705CFF 0%, #FC48E7 100%); text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
-  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 text-[15px] font-medium text-[#ffffff] transition-all duration-300 hover:border-[#705CFF]/50 hover:bg-[#705CFF]/[0.06] disabled:cursor-not-allowed disabled:opacity-40; }
-  .grad-text { color: #705CFF; background-image: linear-gradient(90deg, #705CFF 0%, #FC48E7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-  .grad-bg { background-color: #705CFF; background-image: linear-gradient(90deg, #705CFF 0%, #FC48E7 100%); color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+  .btn-grad { @apply cursor-pointer inline-flex items-center justify-center gap-2.5 rounded-full bg-[#FF88C7] hover:brightness-110 px-6 py-3 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(255,85,170,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-10px_rgba(255,85,170,0.65)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0; }
+  .btn-grad { background-image: linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%); text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 text-[15px] font-medium text-[#ffffff] transition-all duration-300 hover:border-[#FF55AA]/50 hover:bg-[#FF55AA]/[0.06] disabled:cursor-not-allowed disabled:opacity-40; }
+  .grad-text { color: #FF88C7; background-image: linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .grad-bg { background-color: #FF88C7; background-image: linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%); color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
   .grad-bg:hover { filter: brightness(1.1); }
   /* second gradient (#FF88C7 to #FF55AA): offer / discount / "Popular" highlights */
   .grad-alt-text { color: #FF88C7; background-image: linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
   .grad-alt-bg { background-color: #FF88C7; background-image: linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%); color: #0A0809 !important; font-weight: 700; }
   .grad-alt-border { border-color: #FF55AA !important; }
-  .card-box { @apply rounded-[24px] border border-white/[0.08] bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0; }
-  .pill-tag { @apply inline-flex items-center gap-2 rounded-full border border-[#705CFF]/25 bg-[#705CFF]/[0.07] px-3.5 py-1.5 text-[11px] font-medium text-[#A0A0A0]; }
-  .eyebrow { @apply inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#705CFF]; }
-  .eyebrow::before { content: ''; @apply size-1.5 rounded-full bg-[#705CFF] shadow-[0_0_10px_#705CFF]; }
+  .card-box { @apply rounded-[24px] border border-white/[0.08] bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0; }
+  .pill-tag { @apply inline-flex items-center gap-2 rounded-full border border-[#FF55AA]/25 bg-[#FF55AA]/[0.07] px-3.5 py-1.5 text-[11px] font-medium text-[#A0A0A0]; }
+  .eyebrow { @apply inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FF88C7]; }
+  .eyebrow::before { content: ''; @apply size-1.5 rounded-full bg-[#FF55AA] shadow-[0_0_10px_#FF55AA]; }
   .mono { @apply text-[11px] font-medium text-[#A0A0A0]; }
   /* hairline divider */
   .sprockets { height: 1px; background: rgba(255,255,255,0.08); }
@@ -59,16 +59,16 @@ body {
 @media (prefers-reduced-motion: reduce) { .login-col { animation: none !important; } }
 
 /* recolours the existing coral brand/feature icons toward the lavender accent (images themselves are untouched) */
-.gold-img { filter: hue-rotate(263deg) saturate(0.95); }
+.gold-img { filter: hue-rotate(315deg) saturate(0.95); }
 
 /* Hero orbit: one thin gradient ellipse behind the framed prints, plus a soft colour wash */
 .orbit { position: absolute; left: 50%; top: 52%; width: 100%; height: 66%; transform: translate(-50%, -50%) rotate(-8deg); border-radius: 9999px; pointer-events: none;
-  border: 1px solid rgba(112,92,255,0.55); box-shadow: 0 0 18px rgba(112,92,255,0.18); }
+  border: 1px solid rgba(255,85,170,0.55); box-shadow: 0 0 18px rgba(255,85,170,0.18); }
 .orbit-glow { position: absolute; left: 50%; top: 50%; width: 70%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 9999px; pointer-events: none; filter: blur(90px); opacity: .28;
-  background: radial-gradient(circle at 35% 40%, #705CFF, transparent 60%), radial-gradient(circle at 70% 60%, #705CFF, transparent 60%); }
+  background: radial-gradient(circle at 35% 40%, #FF55AA, transparent 60%), radial-gradient(circle at 70% 60%, #FF55AA, transparent 60%); }
 
 /* recolours the coral phone-frame artwork on the Home hero toward the lavender accent (the photos inside the frames are separate and untouched) */
-.tint-frame { filter: hue-rotate(263deg) saturate(0.95); }
+.tint-frame { filter: hue-rotate(315deg) saturate(0.95); }
 
 /* Hero image cards: soft lift + slight scale on hover (mouse devices only; touch keeps the normal state). Uses the independent `translate` /
    `scale` properties so each card keeps its own tilt (`transform: rotate`). No glow, shadow or border change. */

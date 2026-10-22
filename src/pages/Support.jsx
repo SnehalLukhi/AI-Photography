@@ -9,12 +9,12 @@ import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
 const Hero = ({ eyebrow, title, sub }) => (
   <header className="mx-auto max-w-3xl px-4 pt-10 text-center">
-    <p className="text-xs font-semibold uppercase tracking-wide text-[#705CFF]">{eyebrow}</p>
+    <p className="text-xs font-semibold uppercase tracking-wide text-[#FF55AA]">{eyebrow}</p>
     <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight text-[#ffffff] sm:text-5xl">{title}</h1>
     <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#A0A0A0] sm:text-lg">{sub}</p>
   </header>
 )
-const field = 'w-full rounded-xl border border-white/10 bg-[#2B2B2B] px-4 text-sm text-white outline-none transition placeholder:text-[#A0A0A0] focus:border-[#705CFF]/60'
+const field = 'w-full rounded-xl border border-white/10 bg-[#2B2B2B] px-4 text-sm text-white outline-none transition placeholder:text-[#A0A0A0] focus:border-[#FF55AA]/60'
 const submitBtn = 'grad-bg flex h-12 w-full cursor-pointer items-center justify-center rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50'
 
 const topics = [
@@ -33,7 +33,7 @@ export function Help() {
       <Hero eyebrow="Support" title="How Can We Help?" sub="Find answers, tutorials and troubleshooting guides." />
       <div className="mx-auto mt-14 grid max-w-[1120px] gap-5 sm:grid-cols-2">
         {topics.map(([t, d, body], i) => (
-          <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer self-start rounded-[20px] border bg-[#2B2B2B] px-6 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#705CFF]/50 ${open === i ? 'border-[#705CFF]/50' : 'border-white/[0.06]'}`}>
+          <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer self-start rounded-[20px] border bg-[#2B2B2B] px-6 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#FF55AA]/50 ${open === i ? 'border-[#FF55AA]/50' : 'border-white/[0.06]'}`}>
             <span className="block text-[17px] font-semibold text-white">{t}</span>
             <span className="mt-1.5 block text-sm text-[#A0A0A0]">{d}</span>
             {open === i && <span className="mt-3 block border-t border-white/10 pt-3 text-sm text-[#A0A0A0]">{body}</span>}
@@ -77,7 +77,7 @@ export function Contact() {
             <div>
               <p className="text-sm font-semibold text-white">Attachment (Optional)</p>
               <div onClick={() => input.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); pick(e.dataTransfer.files?.[0]) }}
-                className="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 px-4 py-8 text-center transition hover:border-[#705CFF]/60">
+                className="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 px-4 py-8 text-center transition hover:border-[#FF55AA]/60">
                 <span className="inline-flex items-center gap-2 rounded-lg bg-white/[0.07] px-3.5 py-2 text-[13px] font-semibold text-white"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload Image</span>
                 <span className="text-sm text-white/90">{file ? file.name : 'Click or drag image here (Max 5MB)'}</span>
                 <span className="text-xs text-[#A0A0A0]">JPG, JPEG, PNG, and WEBP supported</span>
@@ -150,7 +150,7 @@ export function Profile() {
                 )}
                 <Link to="/transactions" className="mt-4 inline-block text-[13px] font-semibold text-[#A0A0A0] underline">View all transactions</Link>
               </div>
-              <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] h-[47px] cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #705CFF 0%, #FC48E7 100%)' }}>Save Changes</button>
+              <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] h-[47px] cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>Save Changes</button>
             </>
           ) : (
             <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><Link to="/login" className="btn-grad">Sign in to Pictrify</Link></div>
@@ -182,7 +182,7 @@ export function Transactions() {
   return (
     <div className="px-4 pb-24 pt-8 md:pb-16 md:pt-10">
       <div className="mx-auto w-full max-w-[1040px]">
-        <p className="text-xs font-bold uppercase tracking-wide text-[#705CFF]">Payments and Coins</p>
+        <p className="text-xs font-bold uppercase tracking-wide text-[#FF55AA]">Payments and Coins</p>
         <h1 className="mt-3 text-[34px] font-bold leading-[1.05] tracking-tight text-white sm:text-[44px] lg:text-[48px]">Transaction History</h1>
         <p className="mt-4 text-base text-[#A0A0A0]">Track subscriptions, coin purchases and refunds.</p>
         <div className="mt-9 rounded-[24px] border border-white/[0.07] bg-[#2B2B2B] px-6 py-12 text-center">
@@ -252,7 +252,7 @@ const legal = {
 // One block of a legal page: a string = paragraph, { ul } = bullet list, { kv } = bold label + value (optionally a link)
 const legalBlock = (b, i) => {
   if (typeof b === 'string') return <p key={i} className="mb-4 leading-relaxed text-[#A0A0A0]">{b}</p>
-  if (b.ul) return <ul key={i} className="mb-4 list-disc space-y-2 pl-6 leading-relaxed text-[#A0A0A0] marker:text-[#705CFF]">{b.ul.map((x, j) => <li key={j}>{typeof x === 'string' ? x : <><strong className="font-semibold text-white">{x.b}</strong>{x.t}</>}</li>)}</ul>
+  if (b.ul) return <ul key={i} className="mb-4 list-disc space-y-2 pl-6 leading-relaxed text-[#A0A0A0] marker:text-[#FF55AA]">{b.ul.map((x, j) => <li key={j}>{typeof x === 'string' ? x : <><strong className="font-semibold text-white">{x.b}</strong>{x.t}</>}</li>)}</ul>
   return <p key={i} className="mb-4 leading-relaxed text-[#A0A0A0]"><strong className="font-semibold text-white">{b.kv[0]}</strong> {b.kv[2] ? <a href={b.kv[2]} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-white">{b.kv[1]}</a> : b.kv[1]}</p>
 }
 export function Legal({ kind }) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
-import { useStudio } from '../context/StudioContext.jsx'
+import { useStudio, WELCOME_COINS } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
 import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '../lib/aiPhotography.js'
 
@@ -84,19 +84,28 @@ export function Login() {
         </header>
 
         <div className="m-auto w-full max-w-[440px] py-8">
-          <div className="login-rise rounded-xl border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-8">
-            <h1 className="text-[26px] font-bold tracking-tight">Welcome to Pixora</h1>
-            <p className="mb-7 mt-2 text-sm leading-relaxed text-[#A0A0A0]">Log in or create your account with Google or Apple to start creating AI photos.</p>
+          <div className="login-rise rounded-xl border border-[#2B2B2B] p-6 text-center sm:p-8">
+            <h1 className="text-[30px] font-extrabold leading-tight tracking-tight text-white sm:text-[36px]">Create Your Account</h1>
+            <p className="mt-3 text-[15px] leading-snug text-white sm:text-base"><span className="grad-text text-[22px] font-extrabold">{WELCOME_COINS}</span> Free Credit are waiting for you.<br />Sign up and generate your first <strong className="font-extrabold">Trending Image!</strong></p>
 
-            <button type="button" onClick={google} disabled={!!busy} className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#2B2B2B] bg-[#2B2B2B] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#705CFF]/60 hover:bg-[#2B2B2B] disabled:cursor-wait disabled:opacity-70">
+            <div className="mt-6 grid grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/10 bg-white/[0.04] py-4">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="flex flex-col items-center gap-2 px-2">
+                  <svg className="size-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
+                  <p className="text-[11px] font-semibold leading-tight text-white">Save your creation History</p>
+                </div>
+              ))}
+            </div>
+
+            <button type="button" onClick={google} disabled={!!busy} className="mt-8 flex h-14 w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-white text-[16px] font-semibold text-[#0A0809] transition-opacity duration-200 hover:opacity-90 disabled:cursor-wait disabled:opacity-70">
               <GoogleLogo /><span>{busy === 'google' ? 'Please wait…' : 'Continue with Google'}</span>
             </button>
-            <button type="button" onClick={apple} disabled={!!busy} className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#2B2B2B] bg-[#2B2B2B] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#705CFF]/60 hover:bg-[#2B2B2B] disabled:cursor-wait disabled:opacity-70">
+            <button type="button" onClick={apple} disabled={!!busy} className="mt-3 flex h-14 w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-white text-[16px] font-semibold text-[#0A0809] transition-opacity duration-200 hover:opacity-90 disabled:cursor-wait disabled:opacity-70">
               <AppleLogo /><span>{busy === 'apple' ? 'Please wait…' : 'Continue with Apple'}</span>
             </button>
             {error && <p role="alert" className="mt-4 text-sm text-red-400">{error}</p>}
 
-            <p className="mt-6 border-t border-[#2B2B2B] pt-5 text-center text-xs leading-relaxed text-[#A0A0A0]">
+            <p className="mt-7 text-center text-xs leading-relaxed text-[#A0A0A0]">
               By continuing, you agree to our <Link to="/privacy-policy" className="underline hover:text-white">Privacy Policy</Link> and <Link to="/terms-conditions" className="underline hover:text-white">Terms of Service</Link>.
             </p>
           </div>

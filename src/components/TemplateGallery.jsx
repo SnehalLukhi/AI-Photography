@@ -11,7 +11,7 @@ export default function TemplateGallery({ selected, onSelect, initial = 'all', c
       <div className="no-scrollbar -mx-4 mb-5 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
         {chips.map((c) => (
           <button key={c.id} onClick={() => setCat(c.id)}
-            className={`shrink-0 rounded-full border px-4 py-2 text-sm transition ${cat === c.id ? 'border-transparent bg-gradient-to-r from-[#705CFF] to-[#FC48E7] font-semibold text-white' : 'border-accent/40 bg-panel text-[#A0A0A0] hover:border-accent'}`}>
+            className={`shrink-0 rounded-full border px-4 py-2 text-sm transition ${cat === c.id ? 'border-transparent bg-gradient-to-r from-[#FF88C7] to-[#FF55AA] font-semibold text-white' : 'border-accent/40 bg-panel text-[#A0A0A0] hover:border-accent'}`}>
             {c.name}
           </button>
         ))}

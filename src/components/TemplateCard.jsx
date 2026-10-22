@@ -2,7 +2,7 @@ import { useState } from 'react'
 import PImage from './PImage.jsx'
 
 const HeartIcon = ({ on }) => (
-  <svg viewBox="0 0 24 24" className={`relative z-10 h-[18px] w-5 ${on ? 'fill-[#705CFF] text-[#705CFF]' : 'fill-none text-white'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg viewBox="0 0 24 24" className={`relative z-10 h-[18px] w-5 ${on ? 'fill-[#FF55AA] text-[#FF55AA]' : 'fill-none text-white'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" />
   </svg>
 )
@@ -34,8 +34,8 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
   const info = [t.index ? `FR ${pad(t.index)}` : '', cat].filter(Boolean).join(' · ')
   return (
     <article tabIndex={0} title={info ? `${t.name} - ${info}` : t.name} onClick={() => onSelect?.(t)} onKeyDown={(e) => e.key === 'Enter' && onSelect?.(t)}
-      className={`group relative z-10 w-full animate-fade-in cursor-pointer overflow-visible rounded-[6px] outline-none hover:z-30 focus-within:z-30 focus-visible:ring-2 focus-visible:ring-[#705CFF]/60 ${className}`}>
-      <div style={{ aspectRatio: ratio }} className={`relative w-full overflow-hidden rounded-[6px] border bg-[#0A0809] ${selected ? 'border-[#705CFF] ring-1 ring-[#705CFF]' : 'border-[#2B2B2B]'}`}>
+      className={`group relative z-10 w-full animate-fade-in cursor-pointer overflow-visible rounded-[6px] outline-none hover:z-30 focus-within:z-30 focus-visible:ring-2 focus-visible:ring-[#FF55AA]/60 ${className}`}>
+      <div style={{ aspectRatio: ratio }} className={`relative w-full overflow-hidden rounded-[6px] border bg-[#0A0809] ${selected ? 'border-[#FF55AA] ring-1 ring-[#FF55AA]' : 'border-[#2B2B2B]'}`}>
         <PImage src={t.image} alt={t.name} loading="lazy" draggable="false" className={img} style={imgStyle} />
         {selected && <span className="grad-bg absolute left-2 top-2 z-10 grid size-6 place-items-center rounded-full text-xs">✓</span>}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-[#0A0809]/80 to-transparent px-2 pb-2 pt-8 [@media(hover:none)]:block">
@@ -50,7 +50,7 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
         </div>
         <div className="flex min-h-[92px] flex-1 flex-col justify-between bg-gradient-to-br from-[#2B2B2B] to-[#2B2B2B] p-3">
           <h3 className="w-full truncate px-0.5 text-left font-sans text-[13px] font-medium leading-tight !text-[#ffffff] sm:text-[14px]">{t.name}</h3>
-          <button type="button" onClick={use} tabIndex={-1} className="grad-bg mt-2 flex h-[38px] w-full cursor-pointer items-center justify-center rounded-[8px] text-[13px] font-semibold shadow-[0px_0px_15px_0px_rgba(112,92,255,0.2)]">
+          <button type="button" onClick={use} tabIndex={-1} className="grad-bg mt-2 flex h-[38px] w-full cursor-pointer items-center justify-center rounded-[8px] text-[13px] font-semibold shadow-[0px_0px_15px_0px_rgba(255,85,170,0.2)]">
             {selected ? 'Selected ✓' : 'Use Template'}
           </button>
         </div>

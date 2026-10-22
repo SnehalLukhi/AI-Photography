@@ -33,7 +33,7 @@ export default function Pricing() {
   return (
     <div className="mx-auto w-full max-w-[1408px] px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12">
       <header className="max-w-3xl">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#705CFF]/50 bg-[#705CFF]/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#705CFF]" /><span>Flexible plans</span></div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#FF55AA]" /><span>Flexible plans</span></div>
         <h1 className="mt-6 text-[32px] font-bold leading-[1.05] tracking-tight sm:text-[44px] lg:text-[48px]"><span className="text-[#ffffff]">Choose </span> <span className="grad-text">Your Plan</span></h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-[#A0A0A0] sm:mt-4">Unlock premium templates, faster generation and more creative freedom.</p>
       </header>
@@ -42,7 +42,7 @@ export default function Pricing() {
         <h2 className="sr-only">Subscription plans</h2>
         <div className="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:grid-cols-3 lg:gap-6">
           {plans.map((p) => (
-            <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-[#705CFF]/30 bg-[#0C032A]' : 'border-white/[0.08] bg-[#2B2B2B]'}`}>
+            <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-[#FF55AA]/30 bg-[#2B2B2B]' : 'border-white/[0.08] bg-[#2B2B2B]'}`}>
               {p.popular && <span className="grad-alt-bg absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full px-3 py-1 text-[10px] uppercase tracking-wide sm:text-[11px]">Most Popular</span>}
               <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -57,7 +57,7 @@ export default function Pricing() {
                 {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="mt-px text-[#A0A0A0]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold leading-snug text-white">{value}</dd></div>)}
               </dl>
               <button type="button" disabled={busy === p.id} onClick={() => choose(p)}
-                className={`group relative mt-8 flex h-[52px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl text-[15px] font-semibold text-white transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#705CFF] ${p.popular ? 'grad-bg shadow-[0_0_28px_rgba(112,92,255,0.35)] hover:shadow-[0_0_36px_rgba(112,92,255,0.45)]' : 'border border-white/[0.08] bg-[#2B2B2B] hover:border-transparent hover:shadow-[0_0_28px_rgba(112,92,255,0.35)]'}`}>
+                className={`group relative mt-8 flex h-[52px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl text-[15px] font-semibold text-white transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] ${p.popular ? 'grad-bg shadow-[0_0_28px_rgba(255,85,170,0.35)] hover:shadow-[0_0_36px_rgba(255,85,170,0.45)]' : 'border border-white/[0.08] bg-[#2B2B2B] hover:border-transparent hover:shadow-[0_0_28px_rgba(255,85,170,0.35)]'}`}>
                 {!p.popular && <span className="grad-bg pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />}
                 <span className="relative z-10">{busy === p.id ? 'Please wait…' : `Choose ${p.name}`}</span>
               </button>
@@ -65,7 +65,7 @@ export default function Pricing() {
           ))}
         </div>
         <p className="mt-6 text-center text-[11px] text-[#A0A0A0] sm:hidden">Auto-renewable subscription. Cancel anytime.</p>
-        {note && <p role="status" className="mt-4 rounded-xl border border-[#705CFF]/40 bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0 px-4 py-3 text-center text-sm text-[#A0A0A0]">{note}</p>}
+        {note && <p role="status" className="mt-4 rounded-xl border border-[#FF55AA]/40 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-4 py-3 text-center text-sm text-[#A0A0A0]">{note}</p>}
       </section>
     </div>
   )

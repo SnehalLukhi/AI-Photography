@@ -20,7 +20,7 @@ function RingHalf({ ring, half, z, clipFrom = 0 }) {
     <svg className="pointer-events-none absolute inset-0 overflow-visible" style={{ zIndex: z, clipPath: clipFrom ? `inset(-40px -40px -40px ${clipFrom}px)` : undefined }} width={STAGE_W} height={STAGE_H} viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} aria-hidden="true">
       <defs>
         <linearGradient id={`${id}-s`} gradientUnits="userSpaceOnUse" x1={cx - rx} y1="0" x2={cx + rx} y2="0">
-          <stop offset="0" stopColor="#705CFF" stopOpacity="0.85" /><stop offset="0.55" stopColor="#A0A0A0" stopOpacity="0.9" /><stop offset="1" stopColor="#705CFF" stopOpacity="1" />
+          <stop offset="0" stopColor="#FF55AA" stopOpacity="0.85" /><stop offset="0.55" stopColor="#A0A0A0" stopOpacity="0.9" /><stop offset="1" stopColor="#FF55AA" stopOpacity="1" />
         </linearGradient>
         <filter id={`${clip}-g`} x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur stdDeviation="1.6" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
         <clipPath id={clip}><rect x={cx - rx - 20} y={half === 'back' ? cy - ry - 20 : cy} width={rx * 2 + 40} height={ry + 20} /></clipPath>
@@ -51,12 +51,12 @@ function HeroShowcase({ items }) {
   }, [])
   const [left, center, right] = [items[0], items[1] || items[0], items[2] || items[0]]
   if (!center) return null
-  const side = 'hero-card group absolute block overflow-hidden rounded-[12px] border border-white/15 bg-[#0A0809] shadow-[0_18px_34px_-12px_rgba(0,0,0,0.9),0_0_22px_-8px_rgba(112,92,255,0.55)]'
+  const side = 'hero-card group absolute block overflow-hidden rounded-[12px] border border-white/15 bg-[#0A0809] shadow-[0_18px_34px_-12px_rgba(0,0,0,0.9),0_0_22px_-8px_rgba(255,85,170,0.55)]'
   return (
     <div ref={wrap} className="relative mx-auto w-full max-w-[860px] lg:-mr-4 lg:ml-0 lg:justify-self-start xl:max-w-none" style={{ height: BOX_H * scale }}>
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: STAGE_W, height: STAGE_H, transform: `translate(${-BOX_X * scale}px, ${-BOX_Y * scale}px) scale(${scale})` }}>
         {/* soft glow + thin orbit rings passing behind the side cards */}
-        <div className="pointer-events-none absolute left-[120px] top-[60px] h-[230px] w-[420px] rounded-full bg-[#705CFF]/20 blur-[70px]" />
+        <div className="pointer-events-none absolute left-[120px] top-[60px] h-[230px] w-[420px] rounded-full bg-[#FF55AA]/20 blur-[70px]" />
         {/* rings: back halves sit under the cards, front halves come round over them */}
         <RingHalf ring={ringA} half="back" z={0} />
         {/* left card (tilted back) */}
@@ -69,20 +69,20 @@ function HeroShowcase({ items }) {
         </Link>
 
         {/* centre card with gradient border */}
-        <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-gradient-to-br from-[#705CFF] to-[#FC48E7] p-[2px] shadow-[0_0_34px_rgba(112,92,255,0.45),0_24px_44px_-16px_rgba(0,0,0,0.9)]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
+        <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] p-[2px] shadow-[0_0_34px_rgba(255,85,170,0.45),0_24px_44px_-16px_rgba(0,0,0,0.9)]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
           <span className="relative block h-full w-full overflow-hidden rounded-[12px] bg-[#0A0809]">
             <img src={center.image} alt={center.name} className="absolute inset-0 h-full w-full object-cover object-[50%_18%]" draggable="false" />
           </span>
         </Link>
 
         {/* AI badge on the centre card's top-left corner */}
-        <div className="absolute z-20 flex items-center justify-center gap-1 rounded-[10px] bg-gradient-to-br from-[#705CFF] to-[#FC48E7] text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(112,92,255,0.6)]" style={{ left: 221, top: 40, width: 49, height: 37 }}>
+        <div className="absolute z-20 flex items-center justify-center gap-1 rounded-[10px] bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(255,85,170,0.6)]" style={{ left: 221, top: 40, width: 49, height: 37 }}>
           <svg className="size-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>AI
         </div>
 
         {/* glass caption card, bottom right of the centre card */}
-        <div className="absolute z-20 flex items-center gap-2.5 rounded-[12px] border border-white/10 bg-gradient-to-br bg-[#2B2B2B]/80 from-[#705CFF]/[0.07] to-[#705CFF]/0 px-3 shadow-[0_14px_30px_-12px_rgba(0,0,0,0.9)] backdrop-blur-md" style={{ left: 380, top: 231, width: 167, height: 59 }}>
-          <svg className="size-6 shrink-0 text-[#705CFF]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>
+        <div className="absolute z-20 flex items-center gap-2.5 rounded-[12px] border border-white/10 bg-gradient-to-br bg-[#2B2B2B]/80 from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-3 shadow-[0_14px_30px_-12px_rgba(0,0,0,0.9)] backdrop-blur-md" style={{ left: 380, top: 231, width: 167, height: 59 }}>
+          <svg className="size-6 shrink-0 text-[#FF88C7]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>
           <span className="whitespace-nowrap text-[10px] font-medium leading-[1.35] text-[#ffffff]">Turn your imagination<br />into reality</span>
         </div>
         <RingHalf ring={ringA} half="front" z={5} />
@@ -103,11 +103,11 @@ function SectionHead({ id, a, b, text, to, cta, mt, button = false }) {
           <p className="mt-3 max-w-3xl text-base leading-relaxed text-[#A0A0A0] sm:text-lg">{text}</p>
         </div>
         {button ? (
-          <Link to={to} className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-[#705CFF]/60 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#705CFF]/10 sm:self-auto">
+          <Link to={to} className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-[#FF55AA]/60 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#FF55AA]/10 sm:self-auto">
             {cta} <span aria-hidden="true">→</span>
           </Link>
         ) : (
-          <Link to={to} className="shrink-0 self-start text-[15px] font-medium text-[#705CFF] transition-colors hover:text-white sm:self-auto sm:text-base">
+          <Link to={to} className="shrink-0 self-start text-[15px] font-medium text-[#FF55AA] transition-colors hover:text-white sm:self-auto sm:text-base">
             {cta} →
           </Link>
         )}
@@ -229,7 +229,7 @@ function MobileHome() {
         <section key={r.id} className="mt-[34px] space-y-3 first:mt-4">
           <div className="flex items-center justify-between px-4">
             <h2 className="text-base font-normal tracking-wide text-white">{r.title}</h2>
-            <Link to={r.to} className="flex cursor-pointer items-center gap-1 rounded-full border border-[#705CFF]/30 bg-[#705CFF]/5 px-3 py-1 text-[11px] font-bold text-[#705CFF] shadow-[0_0_8px_rgba(150,137,240,0.1)] transition-all hover:bg-[#705CFF]/15">
+            <Link to={r.to} className="flex cursor-pointer items-center gap-1 rounded-full border border-[#FF55AA]/30 bg-[#FF55AA]/5 px-3 py-1 text-[11px] font-bold text-[#FF55AA] shadow-[0_0_8px_rgba(150,137,240,0.1)] transition-all hover:bg-[#FF55AA]/15">
               More <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </Link>
           </div>
@@ -283,8 +283,8 @@ export default function Home() {
       {/* ---------- Desktop / tablet home ---------- */}
       <div className="hidden md:block">
         <div className="relative z-20 w-full overflow-visible pb-6 text-white sm:pb-8 lg:pb-10">
-          <div className="pointer-events-none absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#705CFF]/[0.07] blur-[140px]" />
-          <div className="pointer-events-none absolute right-1/4 top-1/3 h-[600px] w-[600px] rounded-full bg-[#705CFF]/[0.08] blur-[160px]" />
+          <div className="pointer-events-none absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF55AA]/[0.07] blur-[140px]" />
+          <div className="pointer-events-none absolute right-1/4 top-1/3 h-[600px] w-[600px] rounded-full bg-[#FF55AA]/[0.08] blur-[160px]" />
 
           <div className="relative z-10 mx-auto w-full max-w-none px-6 lg:px-8">
             {/* 1. Hero: big headline left, staggered print collage right */}
@@ -298,7 +298,7 @@ export default function Home() {
                 <p className="mb-9 max-w-md text-left text-base leading-relaxed text-[#A0A0A0] xl:text-[17px]">Choose a template, upload your photo, and let AI create stunning visuals in minutes.</p>
                 <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
                   <Link to="/explore" className="btn-grad !px-7 !py-3.5"><span>Start Creating</span><span className="leading-none">→</span></Link>
-                  <Link to="/explore" className="btn-dark !px-7 !py-3.5">Explore Templates</Link>
+                  <Link to="/explore" className="btn-dark !border-white/10 !bg-[#2B2B2B] !px-7 !py-3.5 hover:!border-[#FF55AA]/50 hover:!bg-[#2B2B2B]">Explore Templates</Link>
                 </div>
               </div>
 
@@ -309,7 +309,7 @@ export default function Home() {
             <div className="relative w-full overflow-hidden border-y border-[#2B2B2B] py-5 [mask-image:linear-gradient(to_right,transparent_0%,black_8%,black_92%,transparent_100%)]">
               <div className="flex w-max animate-marquee-slow gap-3 pr-3 will-change-transform hover:[animation-play-state:paused]" style={{ animationDuration: `${marqueeSeconds}s` }}>
                 {marquee.map((c, k) => (
-                  <Link key={k} to={c.assetId ? generateUrl(c) : '/explore'} className="group relative aspect-[3/4] w-[130px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0 transition-all duration-300 hover:border-[#705CFF]/60 sm:w-[145px]">
+                  <Link key={k} to={c.assetId ? generateUrl(c) : '/explore'} className="group relative aspect-[3/4] w-[130px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 transition-all duration-300 hover:border-[#FF55AA]/60 sm:w-[145px]">
                     {/* the photo fills the whole card image area (object-cover): no empty space left or right of it */}
                     <span className="absolute inset-0 overflow-hidden"><img src={c.image} alt={c.name} loading="lazy" className="size-full object-cover object-center" /></span>
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/70 via-transparent to-transparent" />
@@ -325,10 +325,10 @@ export default function Home() {
               <h2 className="mb-9 text-[30px] leading-[1.1] sm:text-[38px] lg:text-[46px]">Create in <span className="grad-text">3 Steps</span></h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {steps.map((st, k) => (
-                  <div key={st.n} className="group relative overflow-hidden rounded-[24px] border border-[#705CFF]/20 bg-gradient-to-br from-[#0C032A] to-[#0C032A] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#705CFF]/55 hover:shadow-[0_12px_40px_-16px_rgba(112,92,255,0.45)] sm:p-7">
+                  <div key={st.n} className="group relative overflow-hidden rounded-[24px] bg-white/[0.05] p-5 sm:p-7">
                     <div className="flex items-start justify-between">
-                      <span className="font-display text-[44px] font-bold leading-none sm:text-[64px] grad-text">0{st.n}</span>
-                      <span className="grid size-12 place-items-center rounded-full border border-[#705CFF]/30 bg-[#705CFF]/10 text-[#705CFF]">
+                      <span className="font-display text-[44px] font-bold leading-none sm:text-[64px] text-[#A0A0A0]">0{st.n}</span>
+                      <span className="grid size-12 place-items-center rounded-full bg-[#2B2B2B] text-[#FF55AA]">
                         <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round"><path d={stepIcons[k]} /></svg>
                       </span>
                     </div>

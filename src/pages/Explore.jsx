@@ -57,7 +57,7 @@ export default function Explore() {
   return (
     <div className={pageWrap}>
       <PageHeader pill="Discover AI styles" a="Explore" b="Templates" sub="Find the perfect AI photo for start creating in seconds."
-        right={<div className="hidden shrink-0 border-l-2 border-[#705CFF] pl-4"><div className="font-display text-[40px] leading-none text-white tabular-nums sm:text-[52px]">{pad(list.length)}</div><div className="mono mt-1">{chip.id === null ? 'frames on the sheet' : `frames in ${sub ? `${chip.name} · ${sub.name}` : chip.name}`}</div></div>} />
+        right={<div className="hidden shrink-0 border-l-2 border-[#FF55AA] pl-4"><div className="font-display text-[40px] leading-none text-white tabular-nums sm:text-[52px]">{pad(list.length)}</div><div className="mono mt-1">{chip.id === null ? 'frames on the sheet' : `frames in ${sub ? `${chip.name} · ${sub.name}` : chip.name}`}</div></div>} />
 
       <div className="mt-8 sprockets" />
 
@@ -72,10 +72,10 @@ export default function Explore() {
               const on = chip.id === c.id
               return (
                 <button key={c.name} type="button" role="tab" aria-selected={on} onClick={() => setChip(c)}
-                  className={`relative flex h-12 shrink-0 cursor-pointer select-none items-center gap-2 px-3 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors focus-visible:text-white ${on ? 'font-bold text-[#705CFF]' : 'text-[#A0A0A0] hover:text-white'}`}>
+                  className={`relative flex h-12 shrink-0 cursor-pointer select-none items-center gap-2 px-3 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors focus-visible:text-white ${on ? 'font-bold text-[#FF55AA]' : 'text-[#A0A0A0] hover:text-white'}`}>
                   <span className="pointer-events-none">{c.name}</span>
                   <span className="pointer-events-none hidden text-[10px] tabular-nums opacity-70">{countOf(c)}</span>
-                  <span className={`absolute inset-x-2 -bottom-px h-[3px] bg-gradient-to-r from-[#705CFF] to-[#FC48E7] shadow-[0_0_10px_rgba(112,92,255,0.7)] transition-opacity ${on ? 'opacity-100' : 'opacity-0'}`} />
+                  <span className={`absolute inset-x-2 -bottom-px h-[3px] bg-gradient-to-r from-[#FF88C7] to-[#FF55AA] shadow-[0_0_10px_rgba(255,85,170,0.7)] transition-opacity ${on ? 'opacity-100' : 'opacity-0'}`} />
                 </button>
               )
             })}
@@ -87,7 +87,7 @@ export default function Explore() {
               const son = sub?.id === sc.id
               return (
                 <button key={sc.id} type="button" role="tab" aria-selected={son} onClick={() => setSub(sc)}
-                  className={`h-8 cursor-pointer rounded-full border px-4 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors ${son ? 'border-[#705CFF] bg-[#705CFF]/15 font-bold text-[#705CFF]' : 'border-[#2B2B2B] text-[#A0A0A0] hover:text-white'}`}>{sc.name}</button>
+                  className={`h-8 cursor-pointer rounded-full border px-4 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors ${son ? 'border-[#FF55AA] bg-[#FF55AA]/15 font-bold text-[#FF55AA]' : 'border-[#2B2B2B] text-[#A0A0A0] hover:text-white'}`}>{sc.name}</button>
               )
             })}
           </div>
@@ -106,14 +106,14 @@ export default function Explore() {
                   <li key={c.name}>
                     <button type="button" role="tab" aria-selected={on} aria-expanded={c.subs ? openSub === c.id : undefined}
                       onClick={() => { if (!c.subs) return setChip(c); if (!on) { setChip(c); setOpenSub(c.id) } else setOpenSub((o) => (o === c.id ? null : c.id)) }}
-                      className={`group/r relative flex w-full cursor-pointer items-baseline gap-3 border-b border-[#2B2B2B] py-3 pl-3 pr-2 text-left outline-none transition-colors focus-visible:bg-white/5 ${on ? 'bg-[#705CFF]/10' : 'hover:bg-gradient-to-br hover:from-[#2B2B2B] hover:to-[#2B2B2B]'}`}>
-                      <span className={`absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-[#705CFF] to-[#FC48E7] shadow-[0_0_10px_rgba(112,92,255,0.7)] transition-opacity ${on ? 'opacity-100' : 'opacity-0 group-hover/r:opacity-40'}`} />
+                      className={`group/r relative flex w-full cursor-pointer items-baseline gap-3 border-b border-[#2B2B2B] py-3 pl-3 pr-2 text-left outline-none transition-colors focus-visible:bg-white/5 ${on ? 'bg-[#FF55AA]/10' : 'hover:bg-gradient-to-br hover:from-[#2B2B2B] hover:to-[#2B2B2B]'}`}>
+                      <span className={`absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-[#FF88C7] to-[#FF55AA] shadow-[0_0_10px_rgba(255,85,170,0.7)] transition-opacity ${on ? 'opacity-100' : 'opacity-0 group-hover/r:opacity-40'}`} />
                       <span className="mono w-6 shrink-0 !tracking-[0.1em]">{pad(i + 1)}</span>
-                      <span className={`font-display min-w-0 flex-1 truncate text-[16px] font-medium leading-none ${on ? 'text-[#705CFF]' : 'text-white'}`}>{c.name}</span>
+                      <span className={`font-display min-w-0 flex-1 truncate text-[16px] font-medium leading-none ${on ? 'text-[#FF55AA]' : 'text-white'}`}>{c.name}</span>
                       <span className="mono hidden tabular-nums">{countOf(c)}</span>
                       {c.subs && (
                         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                          className={`size-4 shrink-0 self-center transition-transform duration-300 ease-out ${openSub === c.id ? 'rotate-180' : ''} ${on ? 'text-[#705CFF]' : 'text-[#A0A0A0] group-hover/r:text-white'}`}><path d="M6 9l6 6 6-6" /></svg>
+                          className={`size-4 shrink-0 self-center transition-transform duration-300 ease-out ${openSub === c.id ? 'rotate-180' : ''} ${on ? 'text-[#FF55AA]' : 'text-[#A0A0A0] group-hover/r:text-white'}`}><path d="M6 9l6 6 6-6" /></svg>
                       )}
                     </button>
                     {c.subs && (
@@ -124,10 +124,10 @@ export default function Explore() {
                             return (
                               <li key={sc.id}>
                                 <button type="button" role="tab" aria-selected={son} tabIndex={openSub === c.id ? 0 : -1} onClick={() => setSub(sc)}
-                                  className={`group/s relative flex w-full cursor-pointer items-center gap-3 py-2.5 pl-[3.25rem] pr-3 text-left outline-none transition-colors focus-visible:bg-white/5 ${son ? 'bg-[#705CFF]/10' : 'hover:bg-gradient-to-br hover:from-[#2B2B2B] hover:to-[#2B2B2B]'}`}>
-                                  <span className={`absolute left-[1.6rem] top-1/2 h-px w-3 -translate-y-1/2 transition-colors ${son ? 'bg-[#705CFF]' : 'bg-[#2B2B2B] group-hover/s:bg-[#A0A0A0]'}`} />
-                                  <span className={`font-display min-w-0 flex-1 truncate text-[14px] font-medium leading-none ${son ? 'text-[#705CFF]' : 'text-[#A0A0A0] group-hover/s:text-white'}`}>{sc.name}</span>
-                                  <span className={`size-1.5 shrink-0 rounded-full bg-[#705CFF] shadow-[0_0_8px_rgba(112,92,255,0.8)] transition-opacity ${son ? 'opacity-100' : 'opacity-0'}`} />
+                                  className={`group/s relative flex w-full cursor-pointer items-center gap-3 py-2.5 pl-[3.25rem] pr-3 text-left outline-none transition-colors focus-visible:bg-white/5 ${son ? 'bg-[#FF55AA]/10' : 'hover:bg-gradient-to-br hover:from-[#2B2B2B] hover:to-[#2B2B2B]'}`}>
+                                  <span className={`absolute left-[1.6rem] top-1/2 h-px w-3 -translate-y-1/2 transition-colors ${son ? 'bg-[#FF55AA]' : 'bg-[#2B2B2B] group-hover/s:bg-[#A0A0A0]'}`} />
+                                  <span className={`font-display min-w-0 flex-1 truncate text-[14px] font-medium leading-none ${son ? 'text-[#FF55AA]' : 'text-[#A0A0A0] group-hover/s:text-white'}`}>{sc.name}</span>
+                                  <span className={`size-1.5 shrink-0 rounded-full bg-[#FF55AA] shadow-[0_0_8px_rgba(255,85,170,0.8)] transition-opacity ${son ? 'opacity-100' : 'opacity-0'}`} />
                                 </button>
                               </li>
                             )
@@ -157,7 +157,7 @@ export default function Explore() {
               {/* one row of equal portrait cards on the right (3 x 2 on phones); full image, never cropped */}
               <div className={`grid min-w-0 grid-cols-3 gap-2.5 sm:grid-cols-6 xl:flex-1 ${isTrending ? 'xl:grid-cols-7' : '2xl:grid-cols-7'}`}>
                 {thumbs.slice(0, 7).map((t, i) => (
-                  <button key={t.id} type="button" onClick={() => pick(t)} aria-label={t.name} title={t.name} className={`group relative aspect-[9/16] min-w-0 cursor-pointer overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809] transition-all duration-300 hover:-translate-y-1 hover:border-[#705CFF]/70 ${i === 6 ? (isTrending ? 'hidden xl:block' : 'hidden 2xl:block') : ''}`}>
+                  <button key={t.id} type="button" onClick={() => pick(t)} aria-label={t.name} title={t.name} className={`group relative aspect-[9/16] min-w-0 cursor-pointer overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809] transition-all duration-300 hover:-translate-y-1 hover:border-[#FF55AA]/70 ${i === 6 ? (isTrending ? 'hidden xl:block' : 'hidden 2xl:block') : ''}`}>
                     <img src={t.image} alt={t.name} loading="lazy" className={`absolute inset-0 h-full w-full object-center ${isTrending ? 'object-cover' : 'object-contain'}`} />
                   </button>
                 ))}
@@ -179,7 +179,7 @@ export default function Explore() {
                 {list.map((t) => card(t))}
               </div>
             ) : (
-              <div className="mt-6 rounded-[18px] border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0 px-6 py-16 text-center text-[#A0A0A0]">No templates in this style yet.</div>
+              <div className="mt-6 rounded-[18px] border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-6 py-16 text-center text-[#A0A0A0]">No templates in this style yet.</div>
             )}
           </section>
         </div>

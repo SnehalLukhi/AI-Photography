@@ -28,7 +28,7 @@ export default function PaymentSuccess() {
         <h1 className="mt-6 text-[28px] font-bold leading-tight tracking-tight text-white sm:text-[32px]">Payment successful</h1>
         <p className="mt-2 text-sm text-[#A0A0A0]">Thank you! Your coins have been added to your account.</p>
 
-        <div className="mt-6 flex items-center justify-center gap-2.5 rounded-2xl border border-[#705CFF]/30 bg-[#0C032A] px-4 py-4">
+        <div className="mt-6 flex items-center justify-center gap-2.5 rounded-2xl border border-[#FF55AA]/30 bg-[#2B2B2B] px-4 py-4">
           <img src={brandImages.coin} alt="" width="44" height="44" className="size-9 shrink-0 object-contain drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]" />
           <p className="text-[15px] text-[#A0A0A0]">New balance <strong className="ml-1 text-[22px] font-bold text-white">{balance.toLocaleString('en-US')}</strong> <span className="text-sm">coins</span></p>
         </div>

@@ -69,8 +69,8 @@ export default function OfferPopup({ onClose: finish }) {
     <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#0A0809]/80 p-4`} onClick={() => onClose()}>
       <StarBurst />
       <div role="dialog" aria-modal="true" aria-labelledby="offer-title" onClick={(e) => e.stopPropagation()}
-        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[28px] border border-white/10 bg-[#0C032A] px-5 pb-7 pt-7 text-center shadow-[0_24px_80px_rgba(0,0,0,0.65)] sm:px-7">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(112,92,255,0.07),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(112,92,255,0.07),transparent_55%)]" />
+        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[28px] border border-white/10 bg-[#2B2B2B] px-5 pb-7 pt-7 text-center shadow-[0_24px_80px_rgba(0,0,0,0.65)] sm:px-7">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(255,85,170,0.07),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(255,85,170,0.07),transparent_55%)]" />
         <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/[0.07] text-lg leading-none text-[#A0A0A0] transition hover:bg-white/15 hover:text-white">×</button>
 
         <span className="welcome-rise welcome-rise-1 relative inline-block rounded-full border border-[#FF55AA]/40 bg-[#FF55AA]/10 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider"><span className="grad-alt-text">Special Offer</span></span>
@@ -93,7 +93,7 @@ export default function OfferPopup({ onClose: finish }) {
         </div>
 
         <div className="welcome-rise welcome-rise-3 relative mt-5 flex items-center justify-center gap-2 text-sm font-semibold text-white" role="timer" aria-label="Offer expires in">
-          <svg className="size-4 text-[#705CFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+          <svg className="size-4 text-[#FF55AA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
           <span className="text-[13px]">Offer expires in:</span>
           {clock.map((n, i) => (
             <span key={i} className="flex items-center gap-2">
@@ -104,10 +104,10 @@ export default function OfferPopup({ onClose: finish }) {
         </div>
 
         <button type="button" onClick={claim} disabled={busy}
-          className="welcome-rise welcome-rise-3 relative mt-5 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-2xl bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)] text-base font-bold text-white shadow-[0_8px_30px_rgba(112,92,255,0.3)] transition-shadow hover:shadow-[0_8px_40px_rgba(112,92,255,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#705CFF] disabled:cursor-wait disabled:opacity-70">
+          className="welcome-rise welcome-rise-3 relative mt-5 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-2xl bg-[linear-gradient(90deg,#FF88C7_0%,#FF55AA_100%)] text-base font-bold text-white shadow-[0_8px_30px_rgba(255,85,170,0.3)] transition-shadow hover:shadow-[0_8px_40px_rgba(255,85,170,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] disabled:cursor-wait disabled:opacity-70">
           {busy ? 'Please wait…' : `Claim ${name} Offer`}
         </button>
-        {note && <p role="status" className="relative mt-3 rounded-xl border border-[#705CFF]/40 bg-[#2B2B2B] px-4 py-2.5 text-sm text-[#FFFFFF]">{note}</p>}
+        {note && <p role="status" className="relative mt-3 rounded-xl border border-[#FF55AA]/40 bg-[#2B2B2B] px-4 py-2.5 text-sm text-[#FFFFFF]">{note}</p>}
         <button type="button" onClick={() => onClose()} className="welcome-rise welcome-rise-3 relative mt-4 cursor-pointer text-xs text-[#A0A0A0] underline underline-offset-2 hover:text-white">No Thanks, I'll Decide Later</button>
       </div>
     </div>

@@ -14,12 +14,12 @@ const toCreation = (g) => ({
 function Compare({ item, onClose, onDelete }) {
   return (
     <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0A0809]/85 p-4 backdrop-blur" onClick={onClose}>
-      <div className="welcome-card w-full max-w-3xl rounded-2xl border border-[#705CFF]/30 bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0 p-4 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="welcome-card w-full max-w-3xl rounded-2xl border border-[#FF55AA]/30 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 p-4 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <p className="mb-3 font-semibold">{item.name}</p>
         <div className="grid grid-cols-2 gap-3">
           {[['Original', item.original], ['AI generated', item.image]].map(([label, src]) => (
             <figure key={label}>
-              <div className="aspect-[9/16] overflow-hidden rounded-xl border border-[#705CFF]/40 bg-[#0A0809]">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#A0A0A0]">Not available</div>}</div>
+              <div className="aspect-[9/16] overflow-hidden rounded-xl border border-[#FF55AA]/40 bg-[#0A0809]">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#A0A0A0]">Not available</div>}</div>
               <figcaption className="mt-1.5 text-xs text-[#A0A0A0]">{label}</figcaption>
             </figure>
           ))}
@@ -64,7 +64,7 @@ export default function Creations() {
   }
   return (
     <main className="relative z-10 mx-auto w-full max-w-none grow px-4 pb-24 pt-8 min-[375px]:px-5 sm:px-6 md:px-6 md:pb-16 lg:px-8 xl:pb-20 xl:pt-12">
-      <div className="inline-flex items-center gap-2 rounded-full border border-[#705CFF]/50 bg-[#705CFF]/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#705CFF]" /><span>Your AI Library</span></div>
+      <div className="inline-flex items-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#FF55AA]" /><span>Your AI Library</span></div>
       <h1 className="mt-6 text-[32px] font-bold leading-[1.05] tracking-tight text-[#ffffff] sm:text-[44px] lg:text-[48px]"><span>My </span><span className="grad-text">Creations</span></h1>
       <p className="mt-3 max-w-[620px] text-base font-normal leading-relaxed text-[#A0A0A0] sm:mt-4">Your generated content, all in one place.</p>
 
@@ -95,7 +95,7 @@ export default function Creations() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/70 via-transparent to-transparent" />
                   <div className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-1 text-xs">
                     <span className="min-w-0"><span className="block truncate font-semibold">{c.name}</span><span className="text-[#A0A0A0]">{c.date}</span></span>
-                    <button aria-label="Download" className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-white/15 opacity-0 transition hover:bg-[#705CFF] group-hover:opacity-100 max-md:opacity-100">⬇</button>
+                    <button aria-label="Download" className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-white/15 opacity-0 transition hover:bg-[#FF55AA] group-hover:opacity-100 max-md:opacity-100">⬇</button>
                   </div>
                 </div>
               ))}
