@@ -108,7 +108,7 @@ function usePurchases() {
 }
 
 export function Profile() {
-  const { signedIn, userEmail, coins } = useStudio()
+  const { signedIn, userEmail, coins, openLogin } = useStudio()
   const purchases = usePurchases()
   const lastPlan = purchases?.find((p) => p.kind === 'plan') // plans are one-time coin purchases: the latest one is "your plan"
   const name = displayName(userEmail || '')
@@ -153,7 +153,7 @@ export function Profile() {
               <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] h-[47px] cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>Save Changes</button>
             </>
           ) : (
-            <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><Link to="/login" className="btn-grad">Sign in to Pictrify</Link></div>
+            <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><button type="button" onClick={openLogin} className="btn-grad">Sign in to Pictrify</button></div>
           )}
         </div>
       </div>
@@ -177,7 +177,7 @@ const EmptyReceipt = () => (
 )
 
 export function Transactions() {
-  const { signedIn } = useStudio()
+  const { signedIn, openLogin } = useStudio()
   const purchases = usePurchases()
   return (
     <div className="px-4 pb-24 pt-8 md:pb-16 md:pt-10">
@@ -192,7 +192,7 @@ export function Transactions() {
                 {purchases.map((p) => (
                   <li key={p.paymentId} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-4">
                     <span className="min-w-0"><span className="block text-[15px] font-bold text-white">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}</span><span className="text-xs text-[#A0A0A0]">{formatDate(p.paidAt, true)} · Payment ID {p.paymentId}</span></span>
-                    <span className="text-right"><span className="block text-[15px] font-bold text-white">{formatMoney(p.amount, p.currency)}</span><span className="text-xs font-semibold text-emerald-300">+{p.coins.toLocaleString('en-US')} coins</span></span>
+                    <span className="text-right"><span className="block text-[15px] font-bold text-white">{formatMoney(p.amount, p.currency)}{p.offerPercent > 0 && <span className="ml-2 text-xs font-semibold text-[#FF88C7]">{p.offerPercent}% off</span>}</span><span className="text-xs font-semibold text-emerald-300">+{p.coins.toLocaleString('en-US')} coins</span></span>
                   </li>
                 ))}
               </ul>
@@ -207,7 +207,7 @@ export function Transactions() {
               </>
             )
           ) : (
-            <><p className="mb-5 text-lg font-medium text-white">Sign in to see your transactions</p><Link to="/login" className="btn-grad">Sign in to Pictrify</Link></>
+            <><p className="mb-5 text-lg font-medium text-white">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-grad">Sign in to Pictrify</button></>
           )}
         </div>
       </div>

@@ -12,6 +12,14 @@ async function requireAuth(req, _res, next) {
   next()
 }
 
+/** Like requireAuth, but a visitor without a (valid) token just continues with req.user undefined - for public pages that look different for a logged-in user (offers). */
+async function optionalAuth(req, _res, next) {
+  const m = /^Bearer (.+)$/.exec(req.get('authorization') || '')
+  const id = m && auth.verifyToken(m[1])
+  req.user = (id && await auth.getUser(id)) || undefined
+  next()
+}
+
 /** For the generate endpoints: counts the request against the user's daily limit and gives it back when the request fails (AILabTools does not bill failed requests). */
 async function dailyQuota(req, res, next) {
   const day = await quota.consume(req.user.id)
@@ -19,4 +27,4 @@ async function dailyQuota(req, res, next) {
   next()
 }
 
-module.exports = { requireAuth, dailyQuota }
+module.exports = { requireAuth, optionalAuth, dailyQuota }

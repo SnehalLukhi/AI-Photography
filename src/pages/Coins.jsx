@@ -10,7 +10,7 @@ const usd = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', curr
 /** "Get Coins": one-time coin packs (no subscription). Opened by the coin badge in the header. */
 export default function Coins() {
   const nav = useNavigate()
-  const { signedIn, coins, user, refreshUser } = useStudio()
+  const { signedIn, coins, user, refreshUser, openLogin } = useStudio()
   const [data, setData] = useState(null) // { packs, costPerGeneration }
   const [failed, setFailed] = useState(false)
   const [busy, setBusy] = useState('')
@@ -18,7 +18,7 @@ export default function Coins() {
   useEffect(() => { getCoinPacks().then(setData).catch(() => setFailed(true)) }, [])
 
   const buy = async (pack) => {
-    if (!signedIn) { nav('/login'); return }
+    if (!signedIn) { openLogin(); return }
     setBusy(pack.id); setNote('')
     try {
       const out = await buyCoins(pack.id, { name: user?.name, email: user?.email })
@@ -45,11 +45,15 @@ export default function Coins() {
         <div className="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-5">
           {(data?.packs || []).map((p) => {
             const photos = Math.floor(p.coins / data.costPerGeneration)
+            const list = typeof p.price === 'object' ? p.price.USD : p.price // regular price; with an offer the discounted price is what is charged
             return (
               <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-6 ${p.popular ? 'border-[#FF55AA]/30 bg-[#2B2B2B]' : 'border-white/[0.08] bg-[#2B2B2B]'}`}>
                 {p.popular && <span className="grad-alt-bg absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full px-3 py-1 text-[10px] uppercase tracking-wide sm:text-[11px]">Most Popular</span>}
                 <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
-                <p className="mt-5 text-[34px] font-bold leading-none text-white sm:text-[40px]">{usd(typeof p.price === 'object' ? p.price.USD : p.price)}</p>
+                <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <p className="text-[34px] font-bold leading-none text-white sm:text-[40px]">{usd(p.offer ? p.offer.price : list)}</p>
+                  {p.offer && <><span className="text-[15px] text-[#A0A0A0] line-through">{usd(list)}</span><span className="rounded-md bg-[#FF55AA]/15 px-2 py-0.5 text-[11px] font-bold text-[#FF88C7]">{p.offer.discountPercent}% OFF</span></>}
+                </div>
                 <div className="mt-4 flex items-center gap-2.5">
                   <img src={brandImages.coin} alt="" width="44" height="44" className="size-9 shrink-0 object-contain drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]" />
                   <p className="text-[14px] font-semibold text-white">{p.coins.toLocaleString('en-US')} Coins</p>

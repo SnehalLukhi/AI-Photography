@@ -259,7 +259,7 @@ function pickImage(body) {
 
 /** Coin plans for the Pricing page: { plans: [{ id, name, price, currency, per, coins, popular? }], costPerGeneration }. Public. */
 export async function getPlans() {
-  const res = await fetch(`${API_BASE}/api/plans`)
+  const res = await fetch(`${API_BASE}/api/plans`, { headers: headers() }) // the token lets the backend add the offers meant for this user
   const body = await readJson(res)
   if (!res.ok) throw failure(body, res)
   return body
@@ -283,7 +283,7 @@ export async function redeemCode(code) {
 
 /** One-time coin packs for the Get Coins page: { packs: [{ id, name, coins, price (USD), currency, popular? }], costPerGeneration }. Public. */
 export async function getCoinPacks() {
-  const res = await fetch(`${API_BASE}/api/coin-packs`)
+  const res = await fetch(`${API_BASE}/api/coin-packs`, { headers: headers() })
   const body = await readJson(res)
   if (!res.ok) throw failure(body, res)
   return body

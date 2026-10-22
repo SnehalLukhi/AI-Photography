@@ -35,7 +35,7 @@ function verifyToken(token) {
   } catch { return null }
 }
 
-const publicUser = (u) => ({ id: u.id, email: u.email, name: u.name, coins: u.coins })
+const publicUser = (u) => ({ id: u.id, email: u.email, name: u.name, coins: u.coins, createdAt: new Date(u.created_at).getTime() })
 
 const fetchJson = async (url, init) => {
   try {
@@ -83,7 +83,7 @@ function signInWith(provider, sub, mail, name) {
       await db.query(`INSERT INTO users (id, email, name, password_hash, ${col}) VALUES ($1, $2, $3, $4, $5)`, [u.id, mail, typeof name === 'string' ? name.trim().slice(0, 80) : '', '', sub])
       await wallet.credit(u.id, env.coins.signupBonus, 'signup_bonus', u.id, db)
     }
-    return publicUser((await db.query('SELECT id, email, name, coins FROM users WHERE id = $1', [u.id])).rows[0])
+    return publicUser((await db.query('SELECT id, email, name, coins, created_at FROM users WHERE id = $1', [u.id])).rows[0])
   })
 }
 
@@ -135,7 +135,7 @@ async function loginWithApple({ identityToken, nonce, name }) {
 }
 
 async function getUser(id) {
-  const u = (await query('SELECT id, email, name, coins FROM users WHERE id = $1', [id])).rows[0]
+  const u = (await query('SELECT id, email, name, coins, created_at FROM users WHERE id = $1', [id])).rows[0]
   return u ? publicUser(u) : null
 }
 

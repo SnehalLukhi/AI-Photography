@@ -22,7 +22,7 @@ const PERKS = [
 
 // the plans come from the backend (single source of prices and coins); the built-in list is only shown if it cannot be reached
 const fromFallback = (p) => ({ id: p.id, name: p.name, price: p.price, per: p.per, coins: Number(String(p.coins).replace(/[^\d]/g, '')), popular: !!p.popular })
-const fromApi = (p) => ({ id: p.id, name: p.name, price: new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.price), per: p.per, coins: p.coins, popular: !!p.popular })
+const fromApi = (p) => ({ id: p.id, name: p.name, price: new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.offer ? p.offer.price : p.price), was: p.offer ? new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.price) : '', per: p.per, coins: p.coins, popular: !!p.popular })
 
 /**
  * Premium subscription popup, shown after the Welcome popup has been closed (see StudioContext `premiumOffer`). Plans, prices and coin amounts come from the
@@ -98,7 +98,7 @@ export default function PremiumPopup({ onClose: finish }) {
                     <span className="min-w-0">
                       {p.popular && <span className="mb-1.5 inline-block grad-alt-bg rounded-md px-2 py-0.5 text-[10px]">Popular</span>}
                       <span className="block text-[17px] font-bold leading-tight text-white">{p.name.replace(/ Premium$/, '')}</span>
-                      <span className="mt-2 flex items-baseline gap-1.5"><span className="text-[24px] font-bold leading-none text-white">{p.price}</span><span className="text-[13px] text-[#A0A0A0]">{p.per.replace(/^\/\s*/, '/')}</span></span>
+                      <span className="mt-2 flex items-baseline gap-1.5"><span className="text-[24px] font-bold leading-none text-white">{p.price}</span>{p.was && <span className="text-[13px] text-[#A0A0A0] line-through">{p.was}</span>}<span className="text-[13px] text-[#A0A0A0]">{p.per.replace(/^\/\s*/, '/')}</span></span>
                     </span>
                     <span className="flex h-[88px] w-[88px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-white/[0.08] bg-[#2B2B2B]">
                       <img src={brandImages.coin} alt="" width="28" height="28" className="size-7 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />

@@ -83,7 +83,7 @@ function Slot({ kind, photo, onPick, onClear, error, sheet }) {
 
 function Generator({ asset }) {
   const nav = useNavigate()
-  const { signedIn, addCreation, signOut, coins, refreshUser } = useStudio()
+  const { signedIn, addCreation, signOut, coins, refreshUser, openLogin } = useStudio()
   const [cost, setCost] = useState(15) // coins per generation (from the backend)
   useEffect(() => { getPlans().then((r) => setCost(r.costPerGeneration)).catch(() => {}) }, [])
   const slots = asset.slots
@@ -129,14 +129,14 @@ function Generator({ asset }) {
       setResult(url); setResultOriginal(original); setPhase('done')
     } catch (e) {
       if (e.name === 'AbortError') return
-      if (e.status === 401) { signOut(); nav('/login'); return } // login expired
+      if (e.status === 401) { signOut(); openLogin(); return } // login expired
       setNeedCoins(e.code === 'INSUFFICIENT_COINS'); refreshUser()
       setApiError(e.message || 'Generation failed. Please try again.'); setPhase('error')
     }
   }
   const next = () => {
     if (!ready) return
-    if (!signedIn) { nav('/login'); return }
+    if (!signedIn) { openLogin(); return }
     const prompt = promptFor(asset)
     if (prompt?.error) { setApiError(prompt.error); setPhase('error'); return } // category with JSON data but no entry for this template: stop, never fall back to the demo flow
     if (prompt) { generateReal(prompt); return }

@@ -53,9 +53,13 @@ const SCHEMA = `
     currency TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'created',
     payment_id TEXT,
+    offer_id TEXT, -- the offer applied to this order, if any
+    list_amount INTEGER, -- the regular price in cents (amount is what was charged)
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     paid_at TIMESTAMPTZ
   );
+  ALTER TABLE payments ADD COLUMN IF NOT EXISTS offer_id TEXT; -- databases created before offers
+  ALTER TABLE payments ADD COLUMN IF NOT EXISTS list_amount INTEGER;
   CREATE INDEX IF NOT EXISTS payments_user ON payments (user_id, created_at DESC);
   -- one row per generation: the user's original photo + the AI result (both are public images in the Space; only their keys are kept here)
   CREATE TABLE IF NOT EXISTS generations (
