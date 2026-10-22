@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import PImage from './PImage.jsx'
 
 const HeartIcon = ({ on }) => (
   <svg viewBox="0 0 24 24" className={`relative z-10 h-[18px] w-5 ${on ? 'fill-[#B070FA] text-[#B070FA]' : 'fill-none text-white'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -35,7 +36,7 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
     <article tabIndex={0} title={info ? `${t.name} - ${info}` : t.name} onClick={() => onSelect?.(t)} onKeyDown={(e) => e.key === 'Enter' && onSelect?.(t)}
       className={`group relative z-10 w-full animate-fade-in cursor-pointer overflow-visible rounded-[6px] outline-none hover:z-30 focus-within:z-30 focus-visible:ring-2 focus-visible:ring-[#B070FA]/60 ${className}`}>
       <div style={{ aspectRatio: ratio }} className={`relative w-full overflow-hidden rounded-[6px] border bg-[#0B071B] ${selected ? 'border-[#B070FA] ring-1 ring-[#B070FA]' : 'border-[#3A3552]'}`}>
-        <img src={t.image} alt={t.name} loading="lazy" draggable="false" className={img} style={imgStyle} />
+        <PImage src={t.image} alt={t.name} loading="lazy" draggable="false" className={img} style={imgStyle} />
         {selected && <span className="grad-bg absolute left-2 top-2 z-10 grid size-6 place-items-center rounded-full text-xs">✓</span>}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-[#0B071B]/80 to-transparent px-2 pb-2 pt-8 [@media(hover:none)]:block">
           <span className="block truncate text-[11px] font-medium text-white">{t.name}</span>
@@ -44,7 +45,7 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
       {fav && <Fav on={liked} toggle={() => setLiked(!liked)} />}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex h-full flex-col overflow-hidden rounded-[6px] border border-[#3A3552] bg-gradient-to-br from-[#322D4D] to-[#272339] opacity-0 shadow-[0_20px_35px_rgba(0,0,0,0.6)] transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:h-[calc(100%+92px)] group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:h-[calc(100%+92px)] group-focus-within:opacity-100">
         <div style={{ aspectRatio: ratio }} className="relative w-full shrink-0 overflow-hidden rounded-t-[6px] bg-[#0B071B]">
-          <img src={t.image} alt="" draggable="false" className={img} style={imgStyle} />
+          <PImage src={t.image} alt="" draggable="false" className={img} style={imgStyle} />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[12%] bg-gradient-to-t from-[#322D4D] to-transparent" />
         </div>
         <div className="flex min-h-[92px] flex-1 flex-col justify-between bg-gradient-to-br from-[#322D4D] to-[#272339] p-3">

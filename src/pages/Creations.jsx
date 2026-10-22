@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
+import PImage from '../components/PImage.jsx'
 import { listGenerations, deleteGeneration } from '../lib/aiPhotography.js'
 import { SparkIcon } from '../components/Header.jsx'
 
@@ -90,7 +91,7 @@ export default function Creations() {
               {list.map((c) => (
                 <div key={c.id} onClick={() => c.original && setOpen(c)} className={`group relative aspect-[9/16] animate-fade-in overflow-hidden rounded-[20px] border border-white/5 bg-[#121216] transition-transform duration-300 hover:-translate-y-1 ${c.original ? 'cursor-pointer' : ''}`}>
                   {/* every generated picture fills the whole 9:16 card (cropped evenly, never stretched): results from the AI Photography API are almost 9:16, Cartoon results keep the photo's own shape */}
-                  <img src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" />
+                  <PImage src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B071B]/70 via-transparent to-transparent" />
                   <div className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-1 text-xs">
                     <span className="min-w-0"><span className="block truncate font-semibold">{c.name}</span><span className="text-[#C4B5FD]/75">{c.date}</span></span>

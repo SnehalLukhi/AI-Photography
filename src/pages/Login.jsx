@@ -39,16 +39,16 @@ export function Login() {
   const nav = useNavigate()
   const { signIn, signedIn } = useStudio()
   const [error, setError] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [busy, setBusy] = useState('') // '' | 'google' | 'apple': which sign-in is running (the other button is only disabled)
   useEffect(() => { prepareGoogle(); prepareApple() }, []) // loads the sign-in scripts now, so the click can open the Google / Apple window immediately
 
   // both buttons call their sign-in straight from the click (browsers only open the pop-up then) and share the busy / error state
-  const social = (login, failed) => async () => {
-    setBusy(true); setError('')
-    try { signIn(await login()); nav('/') } catch (err) { setError(err.message || failed); setBusy(false) }
+  const social = (provider, login, failed) => async () => {
+    setBusy(provider); setError('')
+    try { signIn(await login()); nav('/') } catch (err) { setError(err.message || failed); setBusy('') }
   }
-  const google = social(loginWithGoogle, 'Google sign-in failed. Please try again.')
-  const apple = social(loginWithApple, 'Apple sign-in failed. Please try again.')
+  const google = social('google', loginWithGoogle, 'Google sign-in failed. Please try again.')
+  const apple = social('apple', loginWithApple, 'Apple sign-in failed. Please try again.')
 
   if (signedIn) return <Navigate to="/" replace /> // signed in (a fresh login or a restored session): always land on Home, never the previous page or Profile
 
@@ -88,11 +88,11 @@ export function Login() {
             <h1 className="text-[26px] font-bold tracking-tight">Welcome to Pixora</h1>
             <p className="mb-7 mt-2 text-sm leading-relaxed text-[#C4B5FD]/75">Log in or create your account with Google or Apple to start creating AI photos.</p>
 
-            <button type="button" onClick={google} disabled={busy} className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
-              <GoogleLogo /><span>{busy ? 'Please wait…' : 'Continue with Google'}</span>
+            <button type="button" onClick={google} disabled={!!busy} className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
+              <GoogleLogo /><span>{busy === 'google' ? 'Please wait…' : 'Continue with Google'}</span>
             </button>
-            <button type="button" onClick={apple} disabled={busy} className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
-              <AppleLogo /><span>{busy ? 'Please wait…' : 'Continue with Apple'}</span>
+            <button type="button" onClick={apple} disabled={!!busy} className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
+              <AppleLogo /><span>{busy === 'apple' ? 'Please wait…' : 'Continue with Apple'}</span>
             </button>
             {error && <p role="alert" className="mt-4 text-sm text-red-400">{error}</p>}
 
