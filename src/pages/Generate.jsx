@@ -54,7 +54,7 @@ function Slot({ kind, photo, onPick, onClear, error, sheet }) {
   const [drag, setDrag] = useState(false)
   const choose = (f) => f && onPick(f)
   return (
-    <div className={sheet ? 'relative h-[170px] w-full' : 'relative min-h-0 w-full flex-1'}>
+    <div className={sheet ? 'relative h-[132px] w-full max-[380px]:h-[116px]' : 'relative min-h-0 w-full flex-1'}>
       <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
       {photo ? (
         <div className="absolute inset-0 overflow-hidden rounded-[10px] border border-[#FF55AA]/45 bg-[#0A0809] sm:rounded-xl">
@@ -104,6 +104,8 @@ function Generator({ asset }) {
   useEffect(() => { stripRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ inline: 'center', block: 'nearest' }) }, [asset.id])
 
   const multi = slots.length > 1
+  const camRef = useRef(), galRef = useRef(), target = useRef(null) // mobile upload page: hidden camera / gallery inputs and the slot they fill
+  const nextSlot = () => Math.max(0, photos.findIndex((x) => !x))
   const ready = photos.every(Boolean)
   const pick = (i) => async (file) => {
     try {
@@ -152,51 +154,65 @@ function Generator({ asset }) {
 
   return (
     <>
-      {/* ---------- Mobile: full-screen template + bottom sheet ---------- */}
-      <div className="fixed inset-0 z-[60] flex h-dvh flex-col overflow-hidden bg-[#0A0809] sm:hidden">
-        <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between px-5 pb-6 pt-7" style={{ background: 'linear-gradient(rgba(10,8,9,0.7) 0%, transparent 100%)' }}>
-          <button type="button" aria-label="Back" onClick={() => nav(-1)} className="flex size-9 cursor-pointer items-center justify-center rounded-full bg-white/10 backdrop-blur-md active:scale-90"><svg className="size-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+      {/* ---------- Mobile: "Upload Photo" page (template card, big upload area, Camera / Gallery, Generate) ---------- */}
+      <div className="fixed inset-0 z-[60] flex h-dvh flex-col overflow-y-auto overscroll-contain bg-[#0A0809] sm:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        <div className="relative flex shrink-0 items-center justify-center px-4 pb-3 pt-4">
+          <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-4 flex size-10 cursor-pointer items-center justify-center rounded-full bg-[#2B2B2B] active:scale-90"><svg className="size-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+          <h1 className="text-[18px] font-semibold text-white">Upload {multi ? 'Photos' : 'Photo'}</h1>
         </div>
-        <div className="absolute inset-0 overflow-hidden">
-          <img key={asset.id} src={asset.image} alt={asset.name} className={`absolute inset-0 size-full animate-fade-in ${fitOf(asset)} object-center`} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0A0809]/30 via-transparent to-[#0A0809]/80" />
-        </div>
-        <div className="relative z-10 mt-auto px-5 pb-8 pt-6" style={{ background: 'linear-gradient(to top, rgba(10,8,9,0.95) 0%, rgba(10,8,9,0.6) 50%, transparent 100%)' }}>
-          <h1 className="mb-4 text-center text-[20px] font-semibold text-[#ffffff]">{asset.name}</h1>
-          <div ref={stripRef} className="no-scrollbar -mx-5 flex justify-start gap-2 overflow-x-auto px-5 pb-5">
-            {siblingsOf(asset).map((t) => (
-              <button key={t.id} data-active={t.id === asset.id} type="button" onClick={() => nav(generateUrl(t), { replace: true })}
-                className={`h-[120px] w-[68px] shrink-0 cursor-pointer overflow-hidden rounded-[12px] border bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 transition-all ${t.id === asset.id ? 'z-10 border-2 border-white opacity-100' : 'border-transparent opacity-60 hover:opacity-90'}`}>
-                <img src={t.image} alt={t.name} className={`size-full ${fitOf(t)} object-center`} />
+        <div className="flex min-h-0 flex-1 flex-col gap-3 px-4 pb-5">
+          {/* selected template */}
+          <div className="flex shrink-0 items-center gap-3.5 rounded-[22px] border border-white/[0.08] bg-[#121012] p-2.5 pr-3.5">
+            <img src={asset.image} alt={asset.name} className="h-[68px] w-[52px] shrink-0 rounded-xl object-cover object-top" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#A0A0A0]">Template</p>
+              <p className="truncate text-[17px] font-semibold text-white">{asset.name}</p>
+              <p className="truncate text-[13px] text-[#A0A0A0]">{asset.category}</p>
+            </div>
+            <Link to={/^hairstyle-/.test(asset.categoryId) ? `/explore?category=hairstyle&sub=${asset.categoryId.replace('hairstyle-', '')}` : `/explore?category=${asset.categoryId}`} replace className="shrink-0 rounded-full bg-[#2B2B2B] px-4 py-2.5 text-[13px] font-semibold text-white active:scale-95">Change</Link>
+          </div>
+          {/* upload area(s): shows the chosen photo as is */}
+          <div className={`grid min-h-[280px] flex-1 gap-3 ${multi ? 'grid-cols-2' : 'grid-cols-1'}`}>
+            {slots.map((k, i) => (
+              <div key={k} className="relative min-h-[220px]">
+                {photos[i] ? (
+                  <div className="absolute inset-0 overflow-hidden rounded-[28px] border border-[#FF55AA]/45 bg-[#121012]">
+                    <img src={photos[i].url} alt={`Your ${k} upload`} className="size-full object-contain" />
+                    <button type="button" aria-label="Remove photo" onClick={clear(i)} className="absolute right-3 top-3 grid size-9 cursor-pointer place-items-center rounded-full bg-[#2B2B2B]/90 text-white backdrop-blur">✕</button>
+                    <button type="button" onClick={() => { target.current = i; galRef.current.click() }} className="absolute bottom-3 right-3 cursor-pointer rounded-full bg-[#2B2B2B]/85 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur">Change Photo</button>
+                  </div>
+                ) : (
+                  <button type="button" onClick={() => { target.current = i; galRef.current.click() }} className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-[28px] border-[1.5px] border-dashed border-[#FF55AA]/45 bg-[#0A0809] px-4 text-center shadow-[inset_0_0_48px_rgba(255,85,170,0.07)]">
+                    <span className="grid size-[68px] place-items-center rounded-full bg-[#2B2B2B] text-white"><svg className="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h5L15 8h1M4 8v11h14v-4M4 8M18 4v4M16 6h4M11 17a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" /></svg></span>
+                    <span><span className="block text-[18px] font-semibold text-white">{multi ? `Add ${k === 'Photo' ? `photo ${i + 1}` : k}` : 'Add your photo'}</span><span className="mt-1 block text-[13px] text-[#A0A0A0]">Use a clear, front-facing selfie</span></span>
+                  </button>
+                )}
+                {errors[i] && <p role="alert" className="absolute inset-x-3 bottom-3 z-10 rounded-xl bg-[#0A0809]/80 px-2 py-1 text-center text-[11px] text-red-300">{errors[i]}</p>}
+              </div>
+            ))}
+          </div>
+          <input ref={camRef} type="file" hidden accept="image/*" capture="user" onChange={(e) => { const f = e.target.files[0]; e.target.value = ''; if (f) pick(nextSlot())(f) }} />
+          <input ref={galRef} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { const f = e.target.files[0]; e.target.value = ''; if (f) pick(target.current ?? nextSlot())(f); target.current = null }} />
+          <div className="grid shrink-0 grid-cols-2 gap-3">
+            {[['Camera', 'Take a selfie', () => camRef.current.click(), 'M4 8h3l1.5-2h7L17 8h3v11H4zM12 17a3.5 3.5 0 100-7 3.5 3.5 0 000 7z'], ['Gallery', 'Choose a photo', () => { target.current = null; galRef.current.click() }, 'M7 4h13v13H7zM4 7v13h13M10 14l3-3 3 3 2-2 2 2M11 8h.01']].map(([t, sub, fn, d]) => (
+              <button key={t} type="button" onClick={fn} className="flex cursor-pointer items-center gap-3 rounded-[20px] border border-white/[0.08] bg-[#121012] p-2.5 text-left active:scale-[0.98]">
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white text-[#0A0809]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
+                <span className="min-w-0"><span className="block text-[15px] font-semibold text-white">{t}</span><span className="block truncate text-[12px] text-[#A0A0A0]">{sub}</span></span>
               </button>
             ))}
           </div>
-          <button type="button" onClick={() => setSheet(true)} className="flex h-[48px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-[16px] font-semibold text-white shadow-[0_8px_28px_rgba(255,85,170,0.5)] active:scale-[0.98]" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>
-            <SparkIcon className="size-5 text-white" />Create Now
-          </button>
-        </div>
-        {sheet && (
-          <div className="absolute inset-0 z-30 flex flex-col justify-end bg-[#0A0809]/60 backdrop-blur-md" onClick={() => setSheet(false)}>
-            <div className="animate-fade-in rounded-t-[32px] border-t border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-5 pb-8 pt-3" onClick={(e) => e.stopPropagation()}>
-              <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/25" />
-              <h2 className="mb-4 text-center text-base font-semibold text-[#ffffff]">{ready ? 'Ready to generate' : multi ? 'Please select photos' : 'Please select a photo'}</h2>
-              <div className={`grid gap-3 ${multi ? 'grid-cols-2' : ''}`}>
-                {slots.map((k, i) => <Slot key={k} sheet kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}
-              </div>
-              <div className="mt-5 flex items-center gap-2">
-              <button type="button" disabled={!ready} onClick={next} className="flex h-[50px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-bold text-white shadow-[0_8px_28px_rgba(255,85,170,0.4)] transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>
-                <span>✨</span><span>{ctaLabel}</span><span>→</span>
-              </button>
-              <CoinPill cost={cost} className="h-[50px]" />
-              </div>
-              <p className="mt-3 text-center text-xs text-[#A0A0A0]">{real ? `${cost} coins per generation · returned if it fails` : 'Demo preview · no coins are used'}</p>
-            </div>
+          <div className="mt-1 flex shrink-0 items-center gap-2">
+            <button type="button" disabled={!ready} onClick={next} className="flex h-[54px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-full text-[16px] font-bold text-white shadow-[0_8px_28px_rgba(255,85,170,0.4)] transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#1C1A1C] disabled:text-white/35 disabled:shadow-none" style={ready ? { background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' } : undefined}>
+              <SparkIcon className="size-5" />{ctaLabel}
+            </button>
+            <CoinPill cost={cost} className="h-[54px] shrink-0" />
           </div>
-        )}
+          <p className="shrink-0 text-center text-xs text-[#A0A0A0]">{real ? `${cost} coins per generation · returned if it fails` : 'Demo preview · no coins are used'}</p>
+        </div>
       </div>
 
       {/* ---------- Tablet / desktop ---------- */}
-      <div className="relative hidden w-full overflow-hidden sm:block" style={{ background: 'radial-gradient(60% 50% at 0% 40%, rgba(255,85,170,0.35), transparent 70%), radial-gradient(50% 55% at 100% 70%, rgba(255,85,170,0.28), transparent 70%)' }}>
+      <div className="relative hidden w-full overflow-hidden sm:block">
         <div className="relative z-[1] mx-auto flex h-[calc(100dvh-5rem)] max-h-[calc(100dvh-5rem)] w-full max-w-[1440px] flex-col overflow-hidden px-6 pb-2 pt-3 md:px-8 lg:px-12 xl:px-16">
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="relative mx-auto mb-2 w-full max-w-[840px] shrink-0 px-2 sm:mb-3">

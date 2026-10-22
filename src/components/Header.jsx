@@ -254,7 +254,7 @@ export default function Header({ generating = false }) {
       <div className="hidden h-[92px] md:block" />
 
       {/* Mobile header */}
-      <header className={`sticky top-0 z-50 flex h-[61px] items-center justify-between border-b border-white/[0.08] bg-[#0A0809] px-4 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
+      <header className={`relative z-50 flex h-[61px] items-center justify-between border-b border-white/[0.08] bg-[#0A0809] px-4 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
         <Logo imgHeight={28} fontSize={22} />
         <div className="flex items-center gap-2.5">
           {signedIn ? <><CoinBadge /><ProfileMenu /></> : (
@@ -276,20 +276,20 @@ export default function Header({ generating = false }) {
 }
 
 const tabs = [
-  { to: '/', label: 'Home', match: (p) => p === '/', d: 'M3 11l9-8 9 8v10h-6v-6H9v6H3z' },
-  { to: '/explore', label: 'Explore', match: (p) => p === '/explore', d: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z' },
-  { to: '/creations', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/contact-us', '/feedback', '/transactions', '/profile'].includes(p), d: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0' },
+  { to: '/', label: 'Home', match: (p) => p === '/', d: 'M5 7v12a2 2 0 002 2h10M9 3h10a2 2 0 012 2v10a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2zM14 6.5l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
+  { to: '/explore', label: 'Diy', match: (p) => p === '/explore', d: 'M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 9l2.5-5 3 1.5L6 10.5M9.5 5.5l3 1.5L10 10.5M16 5.5l3 1.5-2.5 3.5M16 13l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
+  { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/contact-us', '/feedback', '/transactions', '/profile'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
 ]
 
 function MobileTabs({ pathname }) {
   const idx = Math.max(0, tabs.findIndex((t) => t.match(pathname)))
   return (
-    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[85%] max-w-[316px] -translate-x-1/2 select-none items-center justify-around rounded-[6px] bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 p-1 shadow-[0_10px_35px_rgba(0,0,0,0.9)] md:hidden" style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}>
-      <div className="pointer-events-none absolute top-1/2 z-[1] h-[54px] -translate-y-1/2 rounded-[4px] shadow-[0_4px_15px_rgba(255,85,170,0.25)] transition-all duration-300" style={{ width: 'calc((100% - 8px) / 3)', left: `calc(4px + ${idx} * (100% - 8px) / 3)`, background: 'linear-gradient(#2B2B2B, #2B2B2B) padding-box, linear-gradient(135deg, #FF88C7 0%, #FF55AA 100%) border-box', border: '1.5px solid transparent' }} />
+    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[68%] min-w-[280px] max-w-[320px] -translate-x-1/2 select-none items-center justify-around rounded-full border border-white/[0.06] bg-[#0F0D0F]/95 p-[5px] shadow-[0_10px_35px_rgba(0,0,0,0.9),0_0_24px_rgba(255,85,170,0.12)] backdrop-blur-xl md:hidden" style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="pointer-events-none absolute top-1/2 z-[1] h-[50px] -translate-y-1/2 rounded-full shadow-[0_0_18px_rgba(255,85,170,0.35)] transition-all duration-300" style={{ width: 'calc((100% - 10px) / 3)', left: `calc(5px + ${idx} * (100% - 10px) / 3)`, background: 'linear-gradient(#0A0809, #0A0809) padding-box, linear-gradient(135deg, #FF88C7 0%, #FF55AA 100%) border-box', border: '1.5px solid transparent' }} />
       {tabs.map((t, i) => (
         <Link key={t.label} to={t.to} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
-          <svg className={`size-5 transition-all duration-300 ${i === idx ? 'text-[#FF55AA] opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
-          <span className={`text-[11px] tracking-wider transition-all duration-300 ${i === idx ? 'font-medium text-[#FF55AA]' : 'font-normal text-white/50'}`}>{t.label}</span>
+          <svg className={`size-6 transition-all duration-300 ${i === idx ? 'text-[#FF55AA] opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <span className={`text-[11px] tracking-wide transition-all duration-300 ${i === idx ? 'font-semibold text-[#FF55AA]' : 'font-semibold text-white/50'}`}>{t.label}</span>
         </Link>
       ))}
     </div>

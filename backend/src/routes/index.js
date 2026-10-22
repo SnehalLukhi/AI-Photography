@@ -13,6 +13,7 @@ const { requireAuth, dailyQuota } = require('../middleware/requireAuth')
 const authCtl = require('../controllers/auth.controller')
 const chargeCoins = require('../middleware/chargeCoins')
 const walletCtl = require('../controllers/wallet.controller')
+const favoritesCtl = require('../controllers/favorites.controller')
 
 const router = express.Router()
 
@@ -40,6 +41,11 @@ router.post('/auth/apple', authLimiter, authCtl.apple)
 router.get('/auth/me', requireAuth, authCtl.me)
 
 // Coins
+// liked templates (per user)
+router.get('/favorites', requireAuth, favoritesCtl.list)
+router.post('/favorites', requireAuth, favoritesCtl.add) // idempotent: liking twice keeps one row
+router.delete('/favorites', requireAuth, favoritesCtl.remove) // ?templateId=... (ids contain a slash)
+
 router.get('/plans', walletCtl.listPlans)
 router.get('/coin-packs', walletCtl.listPacks)
 router.get('/wallet', requireAuth, walletCtl.getWallet)

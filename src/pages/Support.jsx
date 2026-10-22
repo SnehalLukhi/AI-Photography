@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from '../components/Header.jsx'
+import PlansSheet from '../components/PlansSheet.jsx'
 import { brandImages } from '../data/images.js'
 import { getPurchases } from '../lib/aiPhotography.js'
 import { formatDate, formatMoney } from '../lib/format.js'
@@ -107,6 +108,57 @@ function usePurchases() {
   return list
 }
 
+const I = (d) => <svg className="size-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+const meItems = [
+  ['Profile Settings', '/profile?view=settings', 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5'],
+  ['My Creations', '/creations', 'M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4'],
+  ['Coin Details', '/coins', 'M12 21a9 9 0 100-18 9 9 0 000 18zM14.5 9.5a3 3 0 100 5M14.5 12H12'],
+]
+const Chev = () => <svg className="size-4 shrink-0 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+
+/** Phone-only "Me" menu (Glymo layout): Premium card + list of existing pages. */
+function MobileMe() {
+  const { signedIn, userEmail, coins } = useStudio()
+  const purchases = usePurchases()
+  const lastPlan = purchases?.find((p) => p.kind === 'plan')
+  const [plansOpen, setPlansOpen] = useState(false)
+  const [planOpen, setPlanOpen] = useState(false) // Plan & Purchases dropdown
+  const row = 'flex h-[54px] w-full items-center gap-3.5 border-b border-white/[0.06] px-4 text-left text-[14px] text-white last:border-b-0'
+  return (
+    <div className="mx-auto w-full max-w-[560px] px-4 pb-32 pt-4 md:hidden">
+      {signedIn && <p className="mb-3 truncate px-1 text-[13px] text-[#A0A0A0]">{userEmail}</p>}
+      <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-br from-[#3a2c22] via-[#1d1815] to-[#141212] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+        <div className="absolute right-6 top-6 text-[#F8A85B]"><svg className="size-11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6.5" /><path d="M8.2 14.2V21.5l3.8-2.4 3.8 2.4V14.2" /><path d="M12 5.6l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3z" fill="currentColor" stroke="none" /></svg></div>
+        <h2 className="text-[26px] font-semibold text-[#F8A85B]">Premium</h2>
+        <p className="mt-2 text-[14px] text-white">Unlock ultimate creative power.</p>
+        <ul className="mt-4 space-y-2.5 text-[14px] text-white">
+          {['1000+ Templates', 'HD Quality Outputs'].map((t) => <li key={t} className="flex items-center gap-2.5"><span className="size-1.5 rounded-full bg-[#F8A85B]" />{t}</li>)}
+        </ul>
+        <button type="button" onClick={() => setPlansOpen(true)} className="mt-6 flex h-14 cursor-pointer w-full items-center justify-center rounded-full text-[16px] font-semibold text-[#1a1208] shadow-[0_6px_24px_rgba(240,140,40,0.35)]" style={{ background: 'linear-gradient(90deg, #FDB171 0%, #E07B0A 100%)' }}>Upgrade to Pro</button>
+      </div>
+      <div className="mt-4 overflow-hidden rounded-[24px] border border-white/10 bg-[#1C1C1C]">
+        <button type="button" onClick={() => setPlanOpen((o) => !o)} aria-expanded={planOpen} aria-controls="plan-purchases" className="flex h-[54px] w-full cursor-pointer items-center gap-3.5 px-4 text-left text-[14px] font-semibold text-white">
+          {I('M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z')}<span className="flex-1">Plan &amp; purchases</span>
+          <svg className={`size-4 shrink-0 text-white/50 transition-transform duration-300 ${planOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+        </button>
+        <div id="plan-purchases" className={`grid transition-[grid-template-rows] duration-300 ease-out ${planOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`} aria-hidden={!planOpen}>
+          <div className="min-h-0 overflow-hidden">
+            <div className="space-y-2 border-t border-white/[0.06] p-3.5">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-3.5 py-2.5"><p className="text-xs text-[#A0A0A0]">Current plan</p><p className="mt-1 text-[15px] font-bold text-white">{purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>{lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}</div>
+              <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-3.5 py-2.5"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" tabIndex={planOpen ? 0 : -1} className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
+              <Link to="/transactions" tabIndex={planOpen ? 0 : -1} className="inline-block pt-1 text-[13px] font-semibold text-[#A0A0A0] underline">View all transactions</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="mt-4 overflow-hidden rounded-[24px] border border-white/10 bg-[#1C1C1C]">
+        {meItems.map(([label, to, d]) => <Link key={label} to={to} className={row}>{I(d)}<span className="flex-1">{label}</span><Chev /></Link>)}
+      </div>
+      {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
+    </div>
+  )
+}
+
 export function Profile() {
   const { signedIn, userEmail, coins } = useStudio()
   const purchases = usePurchases()
@@ -114,32 +166,35 @@ export function Profile() {
   const name = displayName(userEmail || '')
   const [first, ...rest] = name.split(' ')
   const last = rest.join(' ')
-  const lbl = 'mb-2 block text-[13px] font-bold text-white'
-  const box = 'h-12 w-full min-w-0 truncate rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-[18px] text-[13px] outline-none'
+  const settings = useSearchParams()[0].get('view') === 'settings' // phones: the account menu is the default view, the form opens from "Profile Settings"
+  const lbl = 'mb-2 max-md:mb-1 block text-[13px] font-bold text-white'
+  const box = 'h-12 max-md:h-10 w-full min-w-0 truncate rounded-2xl max-md:rounded-xl max-md:px-3.5 border border-white/[0.06] bg-[#2B2B2B] px-[18px] text-[13px] outline-none'
   return (
-    <div className="px-4 pb-24 pt-8 md:pb-16 md:pt-10">
+    <>
+    {!settings && <MobileMe />}
+    <div className={`px-4 pb-32 pt-8 max-md:h-auto max-md:overflow-visible max-md:pb-[calc(9rem+env(safe-area-inset-bottom,0px))] max-md:pt-4 md:pb-16 md:pt-10 ${settings ? '' : 'max-md:hidden'}`}>
       <div className="mx-auto w-full max-w-[750px]">
         <h1 className="text-[34px] font-bold leading-[1.05] tracking-tight text-white sm:text-[38px]">Profile Settings</h1>
         <p className="mt-2 text-[13px] text-[#A0A0A0]">Manage your personal information and account details.</p>
-        <div className="mt-9 rounded-[32px] border border-white/[0.07] bg-[#2B2B2B] p-6 sm:p-[37px]">
+        <div className="mt-9 max-md:mt-5 rounded-[32px] max-md:rounded-[22px] border border-white/[0.07] bg-[#2B2B2B] p-6 max-md:p-4 sm:p-[37px]">
           {signedIn ? (
             <>
-              <div className="flex items-center gap-[22px] border-b border-white/[0.08] pb-7">
-                <span className="grid size-[88px] shrink-0 place-items-center rounded-full border-[3px] border-[#2B2B2B] bg-[#8d7468] text-[44px] font-light leading-none text-white">{(name[0] || 'P').toUpperCase()}</span>
+              <div className="flex items-center gap-[22px] max-md:gap-3.5 border-b border-white/[0.08] pb-7 max-md:pb-4">
+                <span className="grid size-[88px] max-md:size-14 shrink-0 place-items-center rounded-full border-[3px] border-[#2B2B2B] bg-[#8d7468] text-[44px] max-md:text-[26px] font-light leading-none text-white">{(name[0] || 'P').toUpperCase()}</span>
                 <div className="min-w-0"><p className="truncate text-xl font-bold text-white sm:text-[22px]">{name}</p><p className="mt-1.5 truncate text-[13px] text-[#A0A0A0]" title={userEmail}>{userEmail}</p></div>
               </div>
-              <div className="mt-[38px] grid gap-[26px] sm:grid-cols-2 sm:gap-x-[18px]">
+              <div className="mt-[38px] max-md:mt-4 grid gap-[26px] max-md:gap-3.5 sm:grid-cols-2 sm:gap-x-[18px]">
                 <div><label htmlFor="pf-first" className={lbl}>First name</label><input id="pf-first" readOnly value={first || ''} placeholder="Not set" className={`${box} font-bold text-white`} /></div>
                 <div><label htmlFor="pf-last" className={lbl}>Last name</label><input id="pf-last" readOnly value={last} placeholder="Not set" className={`${box} font-bold text-white`} /></div>
               </div>
-              <div className="mt-[26px]"><label htmlFor="pf-email" className={lbl}>Email address</label><input id="pf-email" readOnly value={userEmail || ''} title={userEmail} className={`${box} text-[#A0A0A0]/70`} /></div>
-              <div className="mt-[26px]"><label htmlFor="pf-country" className={lbl}>Country</label><input id="pf-country" readOnly disabled placeholder="Not set" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
-              <div className="mt-[26px]"><label htmlFor="pf-since" className={lbl}>Member since</label><input id="pf-since" readOnly disabled placeholder="Not available" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
-              <div className="mt-[34px] border-t border-white/[0.08] pt-7">
+              <div className="mt-[26px] max-md:mt-3.5"><label htmlFor="pf-email" className={lbl}>Email address</label><input id="pf-email" readOnly value={userEmail || ''} title={userEmail} className={`${box} text-[#A0A0A0]/70`} /></div>
+              <div className="mt-[26px] max-md:mt-3.5"><label htmlFor="pf-country" className={lbl}>Country</label><input id="pf-country" readOnly disabled placeholder="Not set" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
+              <div className="mt-[26px] max-md:mt-3.5"><label htmlFor="pf-since" className={lbl}>Member since</label><input id="pf-since" readOnly disabled placeholder="Not available" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
+              <div className="mt-[34px] max-md:hidden border-t border-white/[0.08] pt-7 max-md:rounded-2xl max-md:border max-md:border-white/[0.1] max-md:bg-black/20 max-md:p-3.5">
                 <h2 className="text-[15px] font-bold text-white">Plan &amp; purchases</h2>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-[18px] py-4"><p className="text-xs text-[#A0A0A0]">Current plan</p><p className="mt-1 text-[15px] font-bold text-white">{purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>{lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}</div>
-                  <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-[18px] py-4"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
+                <div className="mt-4 max-md:mt-3 grid gap-3 max-md:gap-2 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-[18px] py-4 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Current plan</p><p className="mt-1 text-[15px] font-bold text-white">{purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>{lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}</div>
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-[18px] py-4 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
                 </div>
                 {purchases?.length > 0 && (
                   <ul className="mt-4 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.06] bg-[#2B2B2B]">
@@ -150,7 +205,7 @@ export function Profile() {
                 )}
                 <Link to="/transactions" className="mt-4 inline-block text-[13px] font-semibold text-[#A0A0A0] underline">View all transactions</Link>
               </div>
-              <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] h-[47px] cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>Save Changes</button>
+              <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] max-md:mt-5 h-[47px] max-md:h-11 max-md:w-full cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>Save Changes</button>
             </>
           ) : (
             <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><Link to="/login" className="btn-grad">Sign in to Pictrify</Link></div>
@@ -158,6 +213,7 @@ export function Profile() {
         </div>
       </div>
     </div>
+    </>
   )
 }
 
@@ -221,26 +277,30 @@ export function Feedback() {
   const [text, setText] = useState('')
   const [sent, setSent] = useState(false)
   return (
-    <div className="px-4 pb-24 md:pb-16">
-      <Hero eyebrow="Product Feedback" title="Share Your Feedback" sub="Tell us about your experience and how we can make Pictrify better for you." />
-      <Card w="max-w-[640px]">
+    <div className="px-4 pb-32 md:pb-16">
+      <div className="mx-auto flex w-full max-w-[560px] items-center gap-4 pt-4 md:hidden">
+        <Link to="/profile" aria-label="Back" className="grid size-9 place-items-center text-white"><svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg></Link>
+        <h1 className="text-xl font-bold text-white">Feedback</h1>
+      </div>
+      <div className="max-md:hidden"><Hero eyebrow="Product Feedback" title="Share Your Feedback" sub="Tell us about your experience and how we can make Pictrify better for you." /></div>
+      <div className="mx-auto mt-6 w-full max-w-[560px] md:mt-10 md:max-w-[640px] md:rounded-[28px] md:border md:border-white/[0.06] md:bg-[#2B2B2B] md:p-8">
         {sent ? (
           <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Thanks for your feedback</p><button className="btn-dark" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
         ) : (
           <form onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
-            <div className="flex justify-center gap-5 py-8" onMouseLeave={() => setHover(0)}>
+            <div className="flex justify-center gap-3 py-6 min-[400px]:gap-5 md:py-8" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} type="button" aria-label={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setStars(n)} onMouseEnter={() => setHover(n)} className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                  <svg className={`size-11 transition-colors ${n <= (hover || stars) ? 'fill-[#fbbf24] text-[#fbbf24]' : 'fill-none text-[#2B2B2B]'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
+                  <svg className={`size-10 min-[400px]:size-11 transition-colors ${n <= (hover || stars) ? 'fill-[#fbbf24] text-[#fbbf24] max-md:fill-[#FF55AA] max-md:text-[#FF55AA]' : 'fill-none text-[#2B2B2B] max-md:text-white/25'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
                 </button>
               ))}
             </div>
-            <div className="mb-3 flex items-center justify-between text-sm"><label htmlFor="fb" className="font-semibold text-white">Description</label><span className="text-xs text-[#A0A0A0]">{text.length}/500</span></div>
-            <textarea id="fb" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder="Tell us what you like or how we can improve..." className={`${field} h-[150px] resize-none py-3`} />
-            <button className={`${submitBtn} mt-8`} disabled={!stars || !text.trim()}>Submit Feedback</button>
+            <div className="mb-3 flex items-center justify-between text-sm max-md:mb-2"><label htmlFor="fb" className="font-semibold text-white">Description</label><span className="text-xs text-[#A0A0A0]">{text.length}/500</span></div>
+            <textarea id="fb" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder="Tell us what you like or how we can improve..." className={`${field} h-[150px] resize-none py-3 max-md:rounded-2xl max-md:border-white/[0.08] max-md:bg-[#1A181A]`} />
+            <button className={`${submitBtn} mt-6 max-md:h-[52px] max-md:rounded-full max-md:shadow-[0_6px_24px_rgba(255,85,170,0.35)] md:mt-8`} disabled={!stars || !text.trim()}>Submit Feedback</button>
           </form>
         )}
-      </Card>
+      </div>
     </div>
   )
 }

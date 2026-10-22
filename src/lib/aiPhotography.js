@@ -356,6 +356,20 @@ export async function getGeneration(id, { signal } = {}) {
   return body.generation
 }
 
+/** Liked templates of the logged-in user (ids), saved in the database. */
+export async function listFavorites() {
+  const res = await fetch(`${API_BASE}/api/favorites`, { headers: headers() })
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body.favorites || []
+}
+export async function setFavorite(templateId, on) {
+  const res = on
+    ? await fetch(`${API_BASE}/api/favorites`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers() }, body: JSON.stringify({ templateId }) })
+    : await fetch(`${API_BASE}/api/favorites?templateId=${encodeURIComponent(templateId)}`, { method: 'DELETE', headers: headers() })
+  if (!res.ok) throw failure(await readJson(res), res)
+}
+
 /** Deletes both stored images of a generation (only works from the browser that created it). */
 export async function deleteGeneration(id) {
   const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}`, { method: 'DELETE', headers: headers() })

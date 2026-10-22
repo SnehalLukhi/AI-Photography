@@ -72,6 +72,13 @@ const SCHEMA = `
   );
   CREATE INDEX IF NOT EXISTS generations_user ON generations (user_id, created_at DESC, id DESC);
   CREATE INDEX IF NOT EXISTS generations_task ON generations (task_id);
+  -- templates a user has liked: the primary key makes a second like of the same template impossible
+  CREATE TABLE IF NOT EXISTS favorites (
+    user_id TEXT NOT NULL,
+    template_id TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (user_id, template_id)
+  );
   -- Supabase exposes every table through its public REST API. Row Level Security with NO policies shuts that door: only this backend
   -- (which connects directly as the database owner, and bypasses RLS) can read or write these tables.
   ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -80,6 +87,7 @@ const SCHEMA = `
   ALTER TABLE redeem_codes ENABLE ROW LEVEL SECURITY;
   ALTER TABLE generations ENABLE ROW LEVEL SECURITY;
   ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
 `
 
 let impl

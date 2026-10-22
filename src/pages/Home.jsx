@@ -136,35 +136,13 @@ function Coverflow({ items, render, widthCls, aspect, overlap, pad = 'py-2' }) {
   )
 }
 
-/** Mobile snap row (Glymo): swipe sideways, the card nearest the centre is full size, its neighbours are scaled to .82 and dimmed. */
+/** Mobile row: equal-size cards in one horizontal swipeable line (snaps card by card). */
 function SnapRow({ items, cardCls, rowCls, render }) {
-  const row = useRef(null)
-  const [active, setActive] = useState(0)
-  useLayoutEffect(() => {
-    const el = row.current
-    if (!el) return
-    let raf = 0
-    const find = () => {
-      raf = 0
-      const mid = el.getBoundingClientRect().left + el.clientWidth / 2
-      let best = 0, bestD = Infinity
-      for (let i = 0; i < el.children.length; i++) {
-        const b = el.children[i].getBoundingClientRect()
-        const d = Math.abs(b.left + b.width / 2 - mid)
-        if (d < bestD) { bestD = d; best = i }
-      }
-      setActive(best)
-    }
-    const on = () => { if (!raf) raf = requestAnimationFrame(find) }
-    el.addEventListener('scroll', on, { passive: true })
-    return () => { el.removeEventListener('scroll', on); cancelAnimationFrame(raf) }
-  }, [])
   return (
-    <div ref={row} className={`no-scrollbar flex snap-x snap-mandatory overflow-x-auto ${rowCls}`}>
-      {items.map((t, i) => (
-        <div key={t.id} className={`relative shrink-0 snap-center overflow-hidden border border-white/5 bg-[#2B2B2B] transition-all duration-300 ${cardCls} ${i === active ? 'z-20 scale-100' : 'z-10 scale-[0.82] opacity-80'}`}>
-          {render(t, i === active)}
-          <span className={`pointer-events-none absolute inset-0 z-10 bg-black transition-opacity duration-300 ${i === active ? 'opacity-0' : 'opacity-25'}`} />
+    <div className={`no-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth ${rowCls}`} style={{ WebkitOverflowScrolling: 'touch' }}>
+      {items.map((t) => (
+        <div key={t.id} className={`relative shrink-0 snap-start overflow-hidden border border-white/5 bg-[#2B2B2B] ${cardCls}`}>
+          {render(t)}
         </div>
       ))}
     </div>
@@ -216,7 +194,7 @@ function MobileHome() {
   const top = categoryItems('top-carousel')
   const rows = exploreTabs.filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
     id: tab.id, title: tab.category || tab.name, items: categoryItems(tab.id),
-    to: tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}` : `/explore?category=${tab.id}`,
+    to: tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}&from=home` : `/explore?category=${tab.id}&from=home`, // from=home: Explore shows a phone-only back-to-Home bar for this one category
   })).filter((r) => r.items.length)
   return (
     <div className="pb-32 text-white md:hidden">
@@ -233,12 +211,12 @@ function MobileHome() {
               More <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </Link>
           </div>
-          <SnapRow items={r.items} rowCls="px-[30vw] py-[7px]" cardCls="aspect-[9/16] w-[40vw] -mx-[0.8vw] rounded-2xl"
-            render={(t, on) => (
+          <SnapRow items={r.items} rowCls="scroll-px-4 gap-3 px-4 py-[7px]" cardCls="aspect-[9/16] w-[42vw] max-w-[190px] rounded-2xl"
+            render={(t) => (
               <Link to={generateUrl(t)} aria-label={t.name} className="block size-full">
                 <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <span className={`absolute inset-x-2 bottom-2.5 truncate text-center text-white/90 ${on ? 'text-[11px]' : 'text-[9px]'}`}>{t.name}</span>
+                <span className="absolute inset-x-2 bottom-2.5 truncate text-center text-[11px] text-white/90">{t.name}</span>
               </Link>
             )} />
         </section>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { getAuthToken, setAuthToken, fetchMe } from '../lib/aiPhotography.js'
+import { getAuthToken, setAuthToken, fetchMe, listFavorites, setFavorite } from '../lib/aiPhotography.js'
 
 const Ctx = createContext(null)
 export const useStudio = () => useContext(Ctx)
@@ -55,12 +55,34 @@ export function StudioProvider({ children }) {
     if (premiumTimer.current) return // already scheduled: never a second timer
     premiumTimer.current = setTimeout(() => { premiumTimer.current = null; setPremiumOffer(true) }, PREMIUM_DELAY_MS)
   }
+  // Liked templates: the database is the source of truth (loaded after login / refresh); the per-user copy in localStorage only fills the hearts
+  // on the first paint, and a failed load or save never wipes what is shown.
+  const favKey = (u) => `pictrify-favs-${u}`
+  const [favorites, setFavorites] = useState(() => { try { return new Set(JSON.parse(localStorage.getItem(favKey(cachedUser()?.id)) || '[]')) } catch { return new Set() } })
+  const [favoritesReady, setFavoritesReady] = useState(false)
+  const favUser = user?.id
+  const writeFavs = (u, set) => { try { localStorage.setItem(favKey(u), JSON.stringify([...set])) } catch { /* storage blocked */ } }
+  useEffect(() => {
+    if (!favUser || !authReady) { setFavoritesReady(false); return }
+    let live = true
+    try { setFavorites(new Set(JSON.parse(localStorage.getItem(favKey(favUser)) || '[]'))) } catch { /* ignore */ }
+    listFavorites().then((ids) => { if (!live) return; const set = new Set(ids); setFavorites(set); writeFavs(favUser, set); setFavoritesReady(true) }).catch(() => {})
+    return () => { live = false }
+  }, [favUser, authReady])
+  const toggleFavorite = async (templateId) => {
+    if (!favUser) return false
+    const on = !favorites.has(templateId)
+    const apply = (v) => setFavorites((cur) => { const n = new Set(cur); v ? n.add(templateId) : n.delete(templateId); writeFavs(favUser, n); return n })
+    apply(on) // instant, rolled back if the server says no
+    try { await setFavorite(templateId, on) } catch (e) { apply(!on); if (e.status === 401) { setAuthToken(''); setUser(null) } return false }
+    return true
+  }
   const [creations, setCreations] = useState([])
   const addCreation = (c) => setCreations((l) => [{ id: `new-${Date.now()}`, date: 'Just now', ...c }, ...l])
 
   const signIn = ({ token, user: u }) => { setAuthToken(token); setUser(u); if (firstSignIn(u.email)) setWelcomeOffer(true) }
   const refreshUser = () => fetchMe().then(setUser).catch(() => {}) // coin balance after a generation, a redeem or a purchase
-  const signOut = () => { setAuthToken(''); clearPremiumTimer(); setUser(null); setCreations([]); setWelcomeOffer(false); setPremiumOffer(false); setOfferPopup(false) }
+  const signOut = () => { setFavorites(new Set()); setFavoritesReady(false); setAuthToken(''); clearPremiumTimer(); setUser(null); setCreations([]); setWelcomeOffer(false); setPremiumOffer(false); setOfferPopup(false) }
 
   const setPhoto = (file) => {
     if (photo) URL.revokeObjectURL(photo.url)
@@ -68,6 +90,7 @@ export function StudioProvider({ children }) {
   }
 
   return <Ctx.Provider value={{
+    favorites, favoritesReady, toggleFavorite,
     template, setTemplate, photo, setPhoto, creations, setCreations, addCreation, gender, setGender,
     signedIn: !!user, user, userEmail: user?.email || '', coins: user?.coins ?? 0, refreshUser, authReady, signIn, signOut,
     welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer: (purchased = false) => {

@@ -14,7 +14,7 @@ export function FeatureStrip({ className = '' }) {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {features.map((f, i) => (
           <div key={f.title} className={`flex items-center gap-3.5 ${i < 3 ? 'lg:border-r lg:border-[#2B2B2B] lg:pr-4' : ''}`}>
-            <div className="flex size-11 shrink-0 items-center justify-center"><img src={f.image} alt={f.title} className="gold-img size-11 object-contain" style={{ filter: `hue-rotate(${[315, 315, 315, 315][i]}deg) saturate(0.95)` }} /></div>
+            <div className="flex size-11 shrink-0 items-center justify-center"><img src={f.image} alt={f.title} className="size-11 object-contain" /></div>
             <div>
               <h4 className="text-sm font-normal leading-tight text-[#ffffff]">{f.title}</h4>
               <p className="mt-0.5 text-xs font-normal text-[#A0A0A0]">{f.text}</p>
@@ -28,7 +28,7 @@ export function FeatureStrip({ className = '' }) {
 
 export default function Footer() {
   return (
-    <footer className="relative z-0 mt-10 overflow-hidden border-t border-[#2B2B2B] bg-[#0A0809] pb-28 pt-0 text-white md:pb-4">
+    <footer className="relative z-0 mt-10 max-md:hidden overflow-hidden border-t border-[#2B2B2B] bg-[#0A0809] pb-28 pt-0 text-white md:pb-4">
       <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[350px] w-full max-w-[1200px] -translate-x-1/2 bg-gradient-to-b from-[#FF55AA]/10 via-[#FF55AA]/5 to-transparent opacity-70 blur-3xl" />
       <div className="w-full">
         <div className="relative w-full border-b border-[#2B2B2B] bg-[#0A0809] px-4 py-6 shadow-[0_10px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:px-8 sm:py-7 lg:px-12 xl:px-16">

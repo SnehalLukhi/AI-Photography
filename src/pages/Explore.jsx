@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader, { pageWrap } from '../components/PageHeader.jsx'
 import TemplateCard from '../components/TemplateCard.jsx'
 import { exploreTabs, hairstyleTab, folderTemplates, exploreAllTemplates, exploreEverything, categoryItems, generateUrl } from '../data/templates.js'
@@ -29,11 +29,12 @@ export default function Explore() {
   const drag = useRef(null)
   const [openSub, setOpenSub] = useState(() => (['hairstyle'].includes(params.get('category')) ? params.get('category') : null)) // desktop sidebar accordion: the one parent (Hairstyle) that is expanded, or null
   const active = params.get('category') // null = All; 'trending' or a category slug
+  const fromHome = !!active && params.get('from') === 'home' // arrived through a Home category's "More" (phones show a back bar and only that category)
   const chips = [{ id: 'trending', name: 'Trending' }, ...exploreTabs.filter((t) => !t.parent && categoryItems(t.id).length), ...subsWithItems(hairstyleTab)] // a tab appears once its folder has images
   const chip = chips.find((c) => c.id === active) || chips[0]
   const sub = chip.subs ? (chip.subs.find((s) => s.id === params.get('sub')) || chip.subs[0]) : null // Hairstyle: the selected sub-category (Baby / Men / Woman)
   const setChip = (c) => setParams(c.id ? (c.subs ? { category: c.id, sub: c.subs[0].id } : { category: c.id }) : {}, { replace: false })
-  const setSub = (s) => setParams({ category: chip.id, sub: s.id }, { replace: false })
+  const setSub = (s) => setParams(fromHome ? { category: chip.id, sub: s.id, from: 'home' } : { category: chip.id, sub: s.id }, { replace: false })
   // "All" and "Trending" come from the template folder (same source as Home > Trending Templates); category chips keep their own lists.
   const list = chip.id === null ? exploreEverything : chip.id === 'trending' ? trendingGrid : sub ? categoryItems(sub.tabId) : categoryItems(chip.id)
   const allLandscape = list.length > 0 && list.every((t) => t.landscape) // e.g. Top Carousel: every photo is a horizontal 16:9 picture
@@ -56,14 +57,25 @@ export default function Explore() {
 
   return (
     <div className={pageWrap}>
+      {/* phone only, reached from a Home category's "More": a back-to-Home bar with the category name (the page below already lists only that category) */}
+      {fromHome && (
+        <div className="-mt-2 mb-4 flex items-center gap-3 md:hidden">
+          <Link to="/" aria-label="Back to Home" className="grid size-9 shrink-0 place-items-center rounded-full bg-[#2B2B2B] text-white transition-colors hover:text-[#FF55AA]">
+            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+          </Link>
+          <h1 className="truncate text-xl font-bold tracking-tight text-white">{chip.name}{sub ? ` · ${sub.name}` : ''}</h1>
+        </div>
+      )}
+      <div className={fromHome ? 'max-md:hidden' : undefined}>
       <PageHeader pill="Discover AI styles" a="Explore" b="Templates" sub="Find the perfect AI photo for start creating in seconds."
         right={<div className="hidden shrink-0 border-l-2 border-[#FF55AA] pl-4"><div className="font-display text-[40px] leading-none text-white tabular-nums sm:text-[52px]">{pad(list.length)}</div><div className="mono mt-1">{chip.id === null ? 'frames on the sheet' : `frames in ${sub ? `${chip.name} · ${sub.name}` : chip.name}`}</div></div>} />
 
       <div className="mt-8 sprockets" />
+      </div>
 
       {/* Tablet / phone: horizontal roll selector (drag to scroll) */}
-      <div className="sticky top-[56px] z-30 -mx-4 border-b border-[#2B2B2B] bg-[#0A0809]/90 px-4 backdrop-blur-xl min-[375px]:-mx-5 min-[375px]:px-5 sm:-mx-6 sm:px-6 md:top-[96px] lg:hidden">
-        <div className="cursor-grab select-none overflow-x-auto [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+      <div className="sticky top-0 z-30 -mx-4 border-b border-[#2B2B2B] bg-[#0A0809]/90 px-4 backdrop-blur-xl min-[375px]:-mx-5 min-[375px]:px-5 sm:-mx-6 sm:px-6 md:top-[96px] lg:hidden">
+        <div className={`cursor-grab select-none overflow-x-auto [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden ${fromHome ? 'max-md:hidden' : ''}`}
           onPointerDown={(e) => { drag.current = { x: e.clientX, left: e.currentTarget.scrollLeft } }}
           onPointerMove={(e) => { if (drag.current && e.buttons) e.currentTarget.scrollLeft = drag.current.left - (e.clientX - drag.current.x) }}
           onPointerUp={() => { drag.current = null }} onPointerLeave={() => { drag.current = null }}>
@@ -144,7 +156,7 @@ export default function Explore() {
 
         <div className="min-w-0">
           {(chip.id === null || chip.id === 'trending') && (
-          <section className="overflow-hidden rounded-[18px] border border-[#2B2B2B] bg-gradient-to-b from-white/[0.05] to-white/[0.015]">
+          <section className="overflow-hidden rounded-[18px] border border-[#2B2B2B] max-md:hidden bg-gradient-to-b from-white/[0.05] to-white/[0.015]">
             <div className="sprockets" />
             <div className="flex flex-col gap-6 p-5 sm:p-6 xl:flex-row xl:items-center xl:gap-8">
               {/* compact left column: title, description, button */}
@@ -167,7 +179,7 @@ export default function Explore() {
           </section>
           )}
 
-          <section id="all-templates" className={chip.id === null || chip.id === 'trending' ? 'mt-10' : ''}>
+          <section id="all-templates" className={chip.id === null || chip.id === 'trending' ? 'md:mt-10' : ''}>
             <div className="flex items-baseline gap-4">
               <h2 className="shrink-0 text-[30px] leading-[1.1] text-[#ffffff] sm:text-[38px] lg:text-[42px]">{chip.id === null ? 'All Templates' : chip.id === 'trending' ? 'Trending Templates' : 'Category Templates'}</h2>
               <span className="h-px flex-1 bg-[#2B2B2B]" />

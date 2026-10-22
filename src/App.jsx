@@ -52,6 +52,7 @@ export default function App() {
         </Routes>
       </main>
       {!bare && !generating && <Footer />}
+      {!bare && !generating && pathname !== '/' && <div className="h-24 md:hidden" aria-hidden="true" />} {/* phones: room for the fixed bottom nav now that the footer is hidden */}
       {signedIn && welcomeOffer && !bare && <WelcomePopup onClose={closeWelcomeOffer} />}
       {signedIn && premiumOffer && !welcomeOffer && !bare && <PremiumPopup onClose={closePremiumOffer} />}
       {signedIn && offerPopup && !welcomeOffer && !premiumOffer && !bare && <OfferPopup onClose={closeOfferPopup} />}
