@@ -240,14 +240,14 @@ function Generator({ asset }) {
       </div>
 
       {phase === 'loading' && (
-        <div className="fixed inset-0 z-[120] grid place-items-center bg-[#0B071B]/85 backdrop-blur">
-          <div className="text-center"><div className="mx-auto mb-4 size-14 animate-spin rounded-full border-4 border-[#3A3552] border-t-[#B070FA]" /><p className="font-medium">AI is creating magic ✦</p><p className="text-sm text-[#C4B5FD]/75">{real ? 'This can take a minute…' : ''}</p></div>
+        <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center bg-[#0B071B]/85 backdrop-blur">
+          <div className="welcome-card text-center"><div className="mx-auto mb-4 size-14 animate-spin rounded-full border-4 border-[#3A3552] border-t-[#B070FA]" /><p className="font-medium">AI is creating magic ✦</p><p className="text-sm text-[#C4B5FD]/75">{real ? 'This can take a minute…' : ''}</p></div>
         </div>
       )}
       {phase === 'done' && real && result && (
-        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0B071B]/80 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
+        <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0B071B]/80 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
           {/* The card is as wide as the largest 9:16 image that still lets the whole card fit the screen height (--chrome = everything that is not the image: card padding, text, buttons, outer margin), capped at 24 rem. Screens under 640 px tall use a compact version (--pad / --chrome / gaps). */}
-          <div className="mx-auto flex w-[min(100%,40rem,calc((100dvh-var(--chrome))*18/16+var(--pad)))] min-w-[18rem] flex-col rounded-2xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-[calc(var(--pad)/2)] text-center shadow-2xl [--chrome:17.75rem] [--pad:2.5rem] [&_button]:px-4 [@media(max-height:640px)]:[--chrome:13.75rem] [@media(max-height:640px)]:[--pad:1.5rem] [@media(max-height:640px)]:[&_.gap-3]:gap-2 [@media(max-height:640px)]:[&_button]:py-2" onClick={(e) => e.stopPropagation()}>
+          <div className="welcome-card mx-auto flex w-[min(100%,40rem,calc((100dvh-var(--chrome))*18/16+var(--pad)))] min-w-[18rem] flex-col rounded-2xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-[calc(var(--pad)/2)] text-center shadow-2xl [--chrome:17.75rem] [--pad:2.5rem] [&_button]:px-4 [@media(max-height:640px)]:[--chrome:13.75rem] [@media(max-height:640px)]:[--pad:1.5rem] [@media(max-height:640px)]:[&_.gap-3]:gap-2 [@media(max-height:640px)]:[&_button]:py-2" onClick={(e) => e.stopPropagation()}>
             {/* the uploaded photo next to the AI result. Results can have any shape (Cartoon and Beard keep the uploaded photo's own shape), so both fill a 9:16 card with object-cover: no bars, no stretching (the overflow is cropped) */}
             <div className="mb-5 grid grid-cols-2 gap-3 [@media(max-height:640px)]:mb-3">
               {[['Original', photos[0]?.url || resultOriginal], ['AI generated', result]].map(([label, src], i) => (
@@ -266,8 +266,8 @@ function Generator({ asset }) {
         </div>
       )}
       {phase === 'error' && (
-        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0B071B]/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
-          <div role="alert" className="w-full max-w-sm rounded-xl border border-red-500/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0B071B]/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
+          <div role="alert" className="welcome-card w-full max-w-sm rounded-xl border border-red-500/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <p className="mb-1 font-medium">Generation failed</p>
             <p className="mb-4 text-sm text-[#C4B5FD]">{apiError || 'Something went wrong. Please try again.'}</p>
             <div className="flex flex-col gap-2">{needCoins && <button className="btn-grad" onClick={() => nav('/coins')}>Get coins</button>}<button className={needCoins ? 'btn-dark' : 'btn-grad'} onClick={() => setPhase('idle')}>{needCoins ? 'Close' : 'Try again'}</button></div>
@@ -275,8 +275,8 @@ function Generator({ asset }) {
         </div>
       )}
       {phase === 'done' && !real && (
-        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0B071B]/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
-          <div className="w-full max-w-sm rounded-xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0B071B]/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
+          <div className="welcome-card w-full max-w-sm rounded-xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="relative mb-4 aspect-[9/16] max-h-[60vh] overflow-hidden rounded-xl border border-[#B070FA] shadow-[0_0_40px_rgba(176,112,250,0.3)]">
               <img src={asset.image} alt="" className={`absolute inset-0 size-full ${fitOf(asset)}`} />
               <img src={photos[0].url} alt="" className="absolute inset-0 size-full object-cover opacity-50 mix-blend-overlay" />
