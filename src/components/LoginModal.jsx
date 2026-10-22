@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useStudio, WELCOME_COINS } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
 import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '../lib/aiPhotography.js'
@@ -37,6 +37,7 @@ const GoogleLogo = () => (
 )
 
 export default function LoginModal() {
+  const nav = useNavigate()
   const { signIn, closeLogin } = useStudio()
   const [error, setError] = useState('')
   const [busy, setBusy] = useState('') // '' | 'google' | 'apple': which sign-in is running (the other button is only disabled)
@@ -52,7 +53,7 @@ export default function LoginModal() {
   // both buttons call their sign-in straight from the click (browsers only open the pop-up then) and share the busy / error state
   const social = (provider, login, failed) => async () => {
     setBusy(provider); setError('')
-    try { signIn(await login()) } catch (err) { setError(err.message || failed); setBusy('') } // signIn also closes this popup
+    try { signIn(await login()); nav('/') } catch (err) { setError(err.message || failed); setBusy('') } // signIn also closes this popup
   }
   const google = social('google', loginWithGoogle, 'Google sign-in failed. Please try again.')
   const apple = social('apple', loginWithApple, 'Apple sign-in failed. Please try again.')

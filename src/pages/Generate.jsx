@@ -6,7 +6,7 @@ import { findAsset, siblingsOf, generateUrl, plans } from '../data/templates.js'
 // Display-only coin pill beside the Generate button: coins needed for one image, read from the plans' "Cost per image" (same value the Pricing page shows). Not the user's balance; nothing is deducted here.
 const IMAGE_COST = parseInt(plans[0].details.find(([label]) => label === 'Cost per image')?.[1], 10)
 const CoinPill = ({ className = '', cost = IMAGE_COST }) => (
-  <span className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-[#FF55AA]/40 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-2.5 text-[12px] font-semibold text-white shadow-[0_0_18px_rgba(255,85,170,0.2)] ${className}`}>
+  <span className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.06] px-2.5 text-[12px] font-semibold text-white ${className}`}>
     <img src={brandImages.coin} alt="" width="20" height="20" className="size-5 shrink-0 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />{cost} Coins
   </span>
 )
@@ -57,7 +57,7 @@ function Slot({ kind, photo, onPick, onClear, error, sheet }) {
     <div className={sheet ? 'relative h-[132px] w-full max-[380px]:h-[116px]' : 'relative min-h-0 w-full flex-1'}>
       <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
       {photo ? (
-        <div className="absolute inset-0 overflow-hidden rounded-[10px] border border-[#FF55AA]/45 bg-[#0A0809] sm:rounded-xl">
+        <div className="absolute inset-0 overflow-hidden rounded-[10px] border border-white/15 bg-[#0A0809] sm:rounded-xl">
           <img src={photo.url} alt={`${kind} upload`} className="size-full object-cover" />
           <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-8 cursor-pointer place-items-center rounded-full bg-[#2B2B2B]/90 text-white backdrop-blur transition hover:bg-[#FF55AA]">✕</button>
           <button type="button" onClick={() => input.current.click()} className="absolute bottom-3 right-3 cursor-pointer rounded-full bg-[#2B2B2B]/80 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur transition hover:bg-[#2B2B2B]">Change Photo</button>
@@ -65,7 +65,7 @@ function Slot({ kind, photo, onPick, onClear, error, sheet }) {
       ) : (
         <div role="button" tabIndex={0} onClick={() => input.current.click()} onKeyDown={(e) => e.key === 'Enter' && input.current.click()}
           onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={(e) => { e.preventDefault(); setDrag(false); choose(e.dataTransfer.files[0]) }}
-          className={`absolute inset-0 flex min-h-[130px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[10px] border border-dashed bg-[#0A0809] shadow-[inset_0_0_48px_rgba(255,85,170,0.08)] transition-colors sm:min-h-0 sm:rounded-xl ${drag ? 'border-[#FF55AA]' : 'border-[#FF55AA]/45 hover:border-[#FF55AA]/55'}`}>
+          className={`absolute inset-0 flex min-h-[130px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[10px] border border-dashed bg-[#0A0809] transition-colors sm:min-h-0 sm:rounded-xl ${drag ? 'border-white/50' : 'border-white/20 hover:border-white/35'}`}>
           <div className="flex flex-col items-center justify-center gap-1.5 px-1.5 py-3 text-center sm:gap-2.5 sm:px-2 sm:py-6">
             <span className="inline-flex size-[52px] items-center justify-center rounded-full bg-white/10 sm:size-[68px]"><SlotIcon kind={kind} className="h-8 w-[26px] text-white sm:h-9 sm:w-[29px]" /></span>
             <div>
@@ -227,22 +227,22 @@ function Generator({ asset }) {
             </div>
             <div className="relative mt-3 flex min-h-0 flex-1 items-center justify-center sm:mt-4">
               <div className="flex h-full max-h-full w-full flex-col items-center justify-center gap-4 sm:flex-row sm:items-start lg:gap-5 xl:gap-6">
-                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-[#FF55AA]/35 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 shadow-[0_0_40px_rgba(255,85,170,0.16)]" style={{ width: W }}>
+                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#2B2B2B]" style={{ width: W }}>
                   <img src={asset.image} alt="" className="pointer-events-none absolute inset-0 size-full scale-110 object-cover object-center blur-2xl brightness-75 saturate-125" />
                   <div className="pointer-events-none absolute inset-0 bg-[#0A0809]/35" />
                   <img src={asset.image} alt={asset.name} width="1080" height="1920" className={`absolute inset-0 z-[1] size-full ${fitOf(asset)} object-center`} />
                   <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-20 bg-gradient-to-b from-[#0A0809]/55 to-transparent" />
                   <p className="absolute left-4 right-4 top-3.5 z-10 truncate text-[15px] font-semibold text-white">{asset.name}</p>
                 </article>
-                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-[#FF55AA]/35 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 shadow-[0_0_40px_rgba(255,85,170,0.12)]" style={{ width: `calc((${W}) * ${slots.length})`, aspectRatio: `${9 * slots.length} / 16` }}>
+                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#2B2B2B]" style={{ width: `calc((${W}) * ${slots.length})`, aspectRatio: `${9 * slots.length} / 16` }}>
                   <div className="absolute inset-0 flex flex-col gap-3 p-2.5 lg:gap-4 lg:p-3">
                     <div className={`relative grid min-h-0 flex-1 gap-2.5 ${multi ? 'grid-cols-2' : 'grid-cols-1'}`}>
                       {slots.map((k, i) => <Slot key={k} kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}
                     </div>
                     <div className="relative flex w-full shrink-0 flex-col items-center gap-1">
                       <div className="flex w-full items-center gap-2">
-                      <button type="button" disabled={!ready} onClick={next} className="grad-bg flex h-[48px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xl text-[14px] font-bold text-white shadow-[0_8px_28px_rgba(255,85,170,0.4)] transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60">
-                        <div className="flex items-center gap-1.5"><span className="text-base">✨</span><span>{ctaLabel}</span><span className="ml-0.5 text-base font-bold">→</span></div>
+                      <button type="button" disabled={!ready} onClick={next} className="grad-bg flex h-[48px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xl text-[14px] font-bold text-white transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60">
+                        <div className="flex items-center gap-1.5"><span className="text-base">✨</span><span>{ctaLabel}</span><span className="arrow ml-0.5" aria-hidden="true">→</span></div>
                       </button>
                       <CoinPill cost={cost} className="h-[48px]" />
                       </div>

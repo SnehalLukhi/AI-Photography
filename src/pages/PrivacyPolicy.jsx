@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 // Privacy Policy page. Layout follows the reference structure (title, effective date, numbered-style H2/H3 sections, bullet lists); the TEXT is written for Pictrify and only
 // states what the app actually does today (demo sign-in kept in this browser, photos sent to the AI processing provider, no payments yet). It has not been reviewed by a
 // lawyer: have it reviewed, and add a real contact e-mail address, before relying on it.
@@ -80,8 +81,10 @@ const Block = ({ b }) => (b.p
   : <ul className="mb-5 list-disc space-y-1.5 pl-6 text-[15px] leading-[1.6] text-[#FFFFFF]/85 marker:text-[#FF55AA]">{b.ul.map((i) => <li key={i}>{i}</li>)}</ul>)
 
 export default function PrivacyPolicy() {
+  const nav = useNavigate()
   return (
-    <div className="relative z-10 px-4 pb-24 pt-8 sm:px-6 sm:pt-14 md:pb-16 lg:px-8">
+    <div className="relative z-10 px-4 pb-32 pt-4 sm:px-6 sm:pt-14 md:pb-16 lg:px-8">
+      <button type="button" aria-label="Back" onClick={() => nav(-1)} className="mb-3 grid size-10 cursor-pointer place-items-center rounded-full bg-[#2B2B2B] text-white md:hidden"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
       <article className="mx-auto max-w-[900px]">
         <h1 className="text-[30px] font-bold leading-tight tracking-tight text-white sm:text-[36px]">Privacy Policy</h1>
         <p className="mb-2 mt-5 text-[16px] text-[#FFFFFF]/90"><strong className="font-semibold text-white">Effective Date:</strong> 21 October 2026</p>

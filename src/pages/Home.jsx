@@ -20,7 +20,7 @@ function RingHalf({ ring, half, z, clipFrom = 0 }) {
     <svg className="pointer-events-none absolute inset-0 overflow-visible" style={{ zIndex: z, clipPath: clipFrom ? `inset(-40px -40px -40px ${clipFrom}px)` : undefined }} width={STAGE_W} height={STAGE_H} viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} aria-hidden="true">
       <defs>
         <linearGradient id={`${id}-s`} gradientUnits="userSpaceOnUse" x1={cx - rx} y1="0" x2={cx + rx} y2="0">
-          <stop offset="0" stopColor="#FF55AA" stopOpacity="0.85" /><stop offset="0.55" stopColor="#A0A0A0" stopOpacity="0.9" /><stop offset="1" stopColor="#FF55AA" stopOpacity="1" />
+          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.5" /><stop offset="0.55" stopColor="#A0A0A0" stopOpacity="0.9" /><stop offset="1" stopColor="#FFFFFF" stopOpacity="0.7" />
         </linearGradient>
         <filter id={`${clip}-g`} x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur stdDeviation="1.6" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
         <clipPath id={clip}><rect x={cx - rx - 20} y={half === 'back' ? cy - ry - 20 : cy} width={rx * 2 + 40} height={ry + 20} /></clipPath>
@@ -56,7 +56,7 @@ function HeroShowcase({ items }) {
     <div ref={wrap} className="relative mx-auto w-full max-w-[860px] lg:-mr-4 lg:ml-0 lg:justify-self-start xl:max-w-none" style={{ height: BOX_H * scale }}>
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: STAGE_W, height: STAGE_H, transform: `translate(${-BOX_X * scale}px, ${-BOX_Y * scale}px) scale(${scale})` }}>
         {/* soft glow + thin orbit rings passing behind the side cards */}
-        <div className="pointer-events-none absolute left-[120px] top-[60px] h-[230px] w-[420px] rounded-full bg-[#FF55AA]/20 blur-[70px]" />
+        <div className="pointer-events-none absolute left-[120px] top-[60px] h-[230px] w-[420px] rounded-full bg-white/[0.06] blur-[70px]" />
         {/* rings: back halves sit under the cards, front halves come round over them */}
         <RingHalf ring={ringA} half="back" z={0} />
         {/* left card (tilted back) */}
@@ -69,20 +69,20 @@ function HeroShowcase({ items }) {
         </Link>
 
         {/* centre card with gradient border */}
-        <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] p-[2px]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
+        <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-white/25 p-[2px]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
           <span className="relative block h-full w-full overflow-hidden rounded-[12px] bg-[#0A0809]">
             <img src={center.image} alt={center.name} className="absolute inset-0 h-full w-full object-cover object-[50%_18%]" draggable="false" />
           </span>
         </Link>
 
         {/* AI badge on the centre card's top-left corner */}
-        <div className="absolute z-20 flex items-center justify-center gap-1 rounded-[10px] bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-[15px] font-semibold text-white" style={{ left: 221, top: 40, width: 49, height: 37 }}>
+        <div className="absolute z-20 flex items-center justify-center gap-1 rounded-[10px] border border-white/25 bg-white/15 text-[15px] font-semibold text-white backdrop-blur-md" style={{ left: 221, top: 40, width: 49, height: 37 }}>
           <svg className="size-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>AI
         </div>
 
         {/* glass caption card, bottom right of the centre card */}
-        <div className="absolute z-20 flex items-center gap-2.5 rounded-[12px] border border-white/10 bg-gradient-to-br bg-[#2B2B2B]/80 from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-3 backdrop-blur-md" style={{ left: 380, top: 231, width: 167, height: 59 }}>
-          <svg className="size-6 shrink-0 text-[#FF88C7]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>
+        <div className="absolute z-20 flex items-center gap-2.5 rounded-[12px] border border-white/10 bg-[#2B2B2B]/80 px-3 backdrop-blur-md" style={{ left: 380, top: 231, width: 167, height: 59 }}>
+          <svg className="size-6 shrink-0 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>
           <span className="whitespace-nowrap text-[10px] font-medium leading-[1.35] text-[#ffffff]">Turn your imagination<br />into reality</span>
         </div>
         <RingHalf ring={ringA} half="front" z={5} />
@@ -103,12 +103,12 @@ function SectionHead({ id, a, b, text, to, cta, mt, button = false }) {
           <p className="mt-3 max-w-3xl text-base leading-relaxed text-[#A0A0A0] sm:text-lg">{text}</p>
         </div>
         {button ? (
-          <Link to={to} className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-[#FF55AA]/60 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#FF55AA]/10 sm:self-auto">
-            {cta} <span aria-hidden="true">→</span>
+          <Link to={to} className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-white/15 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-white/[0.06] sm:self-auto">
+            {cta} <span className="arrow" aria-hidden="true">→</span>
           </Link>
         ) : (
           <Link to={to} className="shrink-0 self-start text-[15px] font-medium text-[#FF55AA] transition-colors hover:text-white sm:self-auto sm:text-base">
-            {cta} →
+            {cta} <span className="arrow" aria-hidden="true">→</span>
           </Link>
         )}
       </div>
@@ -149,31 +149,81 @@ function SnapRow({ items, cardCls, rowCls, render }) {
   )
 }
 
-/** Mobile top carousel: one full card at a time that slides left every 3 s and loops forever (a copy of the first card follows the last, then it snaps back unseen). Paused while touched. */
+/** Mobile top carousel: one full card at a time, endless in one direction. The row is [copy of last, ...cards, copy of first]; whenever it settles on a copy it is moved
+ *  (unseen, snapping off for that instant) onto the identical real card, so the loop never jumps, reverses or restarts. Slides on by itself every 3 s (0.7 s glide),
+ *  can be swiped by hand (pauses while touched and for a few seconds after); the dots follow the real card. */
 const SLIDE_MS = 3000
+const SLIDE_ANIM_MS = 700 // one slide takes 0.7 s
 function TopCarousel({ items }) {
+  const row = useRef(null)
+  const pausedUntil = useRef(0)
+  const gliding = useRef(false)
   const n = items.length
-  const [i, setI] = useState(0)
-  const [anim, setAnim] = useState(true)
-  const paused = useRef(false)
+  const loop = n > 1
+  const slides = loop ? [items[n - 1], ...items, items[0]] : items
+  const [active, setActive] = useState(0)
+  const pause = (ms = 6000) => { pausedUntil.current = Date.now() + ms }
+  const posOf = (el) => Math.round(el.scrollLeft / el.clientWidth)
+  const jump = (el, pos) => { el.style.scrollSnapType = 'none'; el.scrollLeft = pos * el.clientWidth; requestAnimationFrame(() => { el.style.scrollSnapType = '' }) }
+  // glide to slide position `pos` over SLIDE_ANIM_MS with an ease-in-out (snapping is off while it runs)
+  const slideTo = (pos) => {
+    const el = row.current
+    if (!el) return
+    const from = el.scrollLeft, d = pos * el.clientWidth - from
+    if (!d) return
+    gliding.current = true
+    const t0 = performance.now()
+    el.style.scrollSnapType = 'none'
+    const tick = (now) => {
+      const k = Math.min(1, (now - t0) / SLIDE_ANIM_MS)
+      el.scrollLeft = from + d * (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2)
+      if (k < 1) requestAnimationFrame(tick); else { gliding.current = false; el.style.scrollSnapType = ''; settle() }
+    }
+    requestAnimationFrame(tick)
+  }
+  // when at rest on a copy, move onto the real card it duplicates
+  const settle = () => {
+    const el = row.current
+    if (!el || !loop || gliding.current) return
+    const pos = posOf(el)
+    if (pos === 0) jump(el, n)
+    else if (pos === n + 1) jump(el, 1)
+  }
+  useLayoutEffect(() => {
+    const el = row.current
+    if (!el || !loop) return
+    jump(el, 1) // start on the first real card
+    const onResize = () => jump(el, Math.min(n, Math.max(1, posOf(el) || 1)))
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [n]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (n < 2) return
-    const t = setInterval(() => { if (!paused.current) { setAnim(true); setI((x) => (x >= n ? 1 : x + 1)) } }, SLIDE_MS)
+    if (!loop) return
+    const t = setInterval(() => {
+      const el = row.current
+      if (!el || gliding.current || Date.now() < pausedUntil.current) return
+      slideTo(posOf(el) + 1) // always forward; after the last card it lands on the copy of the first, then settles onto the real one
+    }, SLIDE_MS)
     return () => clearInterval(t)
-  }, [n])
-  useEffect(() => {
-    if (i < n || n < 2) return
-    const t = setTimeout(() => { setAnim(false); setI(0) }, 650) // after the slide onto the first-card copy ends: jump back to the real first card, unseen
-    return () => clearTimeout(t)
-  }, [i, n])
-  const slides = n > 1 ? [...items, items[0]] : items
+  }, [n]) // eslint-disable-line react-hooks/exhaustive-deps
+  const timer = useRef(0)
+  useEffect(() => () => clearTimeout(timer.current), [])
   return (
-    <div className="overflow-hidden py-3" onTouchStart={() => { paused.current = true }} onTouchEnd={() => { paused.current = false }} onTouchCancel={() => { paused.current = false }}>
-      <div className="flex" style={{ transform: `translateX(-${i * 100}%)`, transition: anim ? 'transform 600ms cubic-bezier(0.22, 1, 0.36, 1)' : 'none' }}>
-        {slides.map((t, k) => (
-          <div key={k === n ? `${t.id}-loop` : t.id} className="w-full shrink-0 px-4" aria-hidden={k === n ? 'true' : undefined}>
+    <>
+    <div ref={row} onTouchStart={() => pause(8000)} onPointerDown={() => pause(8000)} onWheel={() => pause()}
+      onScroll={(e) => {
+        const el = e.currentTarget
+        if (loop) setActive(((posOf(el) - 1) % n + n) % n)
+        clearTimeout(timer.current)
+        timer.current = setTimeout(settle, 120) // the swipe has come to rest
+      }}
+      className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto py-3">
+      {slides.map((t, k) => {
+        const copy = loop && (k === 0 || k === n + 1)
+        return (
+          <div key={copy ? `${t.id}-copy${k}` : t.id} className="w-full shrink-0 snap-start px-4" aria-hidden={copy ? 'true' : undefined}>
             <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[24px] border border-white/5 bg-[#2B2B2B] shadow-xl">
-              <Link to={generateUrl(t)} aria-label={t.name} tabIndex={k === n ? -1 : undefined} className="block size-full">
+              <Link to={generateUrl(t)} aria-label={t.name} tabIndex={copy ? -1 : undefined} className="block size-full">
                 <PImage src={t.image} alt={t.name} className="absolute inset-0 size-full object-cover" draggable="false" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <span className="absolute inset-x-3.5 bottom-3 flex items-center justify-between gap-2">
@@ -183,17 +233,39 @@ function TopCarousel({ items }) {
               </Link>
             </div>
           </div>
+        )
+      })}
+    </div>
+    {loop && (
+      <div className="flex items-center justify-center gap-2 pb-1 pt-1" role="tablist" aria-label="Carousel slides">
+        {items.map((t, i) => (
+          <button key={t.id} type="button" role="tab" aria-selected={i === active} aria-label={`Slide ${i + 1}`}
+            onClick={() => { pause(8000); if (!gliding.current) slideTo(i + 1) }}
+            className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${i === active ? 'w-6 bg-white' : 'w-2 bg-white/35'}`} />
         ))}
       </div>
-    </div>
+    )}
+    </>
   )
+}
+
+// One-line description under each category title on the phone home (keyed by the category tab id)
+const CATEGORY_INFO = {
+  '80s-and-90s': 'Explore retro styles inspired by the 80s and 90s.',
+  cartoon: 'Turn your photos into fun cartoon-style art.',
+  'linkedin-headshot': 'Create sharp, professional headshots for your profile.',
+  'old-money': 'Get a timeless, elegant old-money look.',
+  beard: 'Try different beard styles on your photo.',
+  'hairstyle-baby': 'Try cute hairstyles on baby photos.',
+  'hairstyle-man': 'Try new hairstyles for men.',
+  'hairstyle-woman': 'Try new hairstyles for women.',
 }
 
 /** Phone home, laid out like the Glymo reference: a top carousel, then one titled snap row per category. No hero or intro before the templates. */
 function MobileHome() {
   const top = categoryItems('top-carousel')
   const rows = exploreTabs.filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
-    id: tab.id, title: tab.category || tab.name, items: categoryItems(tab.id),
+    id: tab.id, title: tab.category || tab.name, info: CATEGORY_INFO[tab.id], items: categoryItems(tab.id),
     to: tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}&from=home` : `/explore?category=${tab.id}&from=home`, // from=home: Explore shows a phone-only back-to-Home bar for this one category
   })).filter((r) => r.items.length)
   return (
@@ -205,8 +277,8 @@ function MobileHome() {
       )}
       {rows.map((r) => (
         <section key={r.id} className="mt-[34px] space-y-3 first:mt-4">
-          <div className="flex items-center justify-between px-4">
-            <h2 className="text-base font-normal tracking-wide text-white">{r.title}</h2>
+          <div className="flex items-center justify-between gap-3 px-4">
+            <div className="min-w-0"><h2 className="text-base font-normal tracking-wide text-white">{r.title}</h2>{r.info && <p className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-[#A0A0A0]">{r.info}</p>}</div>
             <Link to={r.to} className="flex cursor-pointer items-center gap-1 rounded-full bg-white/[0.06] px-3 py-1 text-[11px] font-semibold text-white ring-1 ring-inset ring-white/15 transition-colors hover:bg-white/10">
               More <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </Link>
@@ -275,19 +347,19 @@ export default function Home() {
                 </h1>
                 <p className="mb-9 max-w-md text-left text-base leading-relaxed text-[#A0A0A0] xl:text-[17px]">Choose a template, upload your photo, and let AI create stunning visuals in minutes.</p>
                 <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
-                  <Link to="/explore" className="btn-grad !px-7 !py-3.5"><span>Start Creating</span><span className="leading-none">→</span></Link>
-                  <Link to="/explore" className="btn-dark !border-white/10 !bg-[#2B2B2B] !px-7 !py-3.5 hover:!border-[#FF55AA]/50 hover:!bg-[#2B2B2B]">Explore Templates</Link>
+                  <Link to="/explore" className="btn-grad !px-7 !py-3.5"><span>Start Creating</span><span className="arrow" aria-hidden="true">→</span></Link>
+                  <Link to="/explore" className="btn-dark !border-white/10 !bg-[#2B2B2B] !px-7 !py-3.5 hover:!border-white/30 hover:!bg-[#2B2B2B]">Explore Templates</Link>
                 </div>
               </div>
 
-              <HeroShowcase items={fan} />
+              <div className="hidden lg:contents"><HeroShowcase items={fan} /></div>
             </div>
 
             {/* template strip (scrolls slowly, pauses on hover) */}
             <div className="relative w-full overflow-hidden border-y border-[#2B2B2B] py-5 [mask-image:linear-gradient(to_right,transparent_0%,black_8%,black_92%,transparent_100%)]">
               <div className="flex w-max animate-marquee-slow gap-3 pr-3 will-change-transform hover:[animation-play-state:paused]" style={{ animationDuration: `${marqueeSeconds}s` }}>
                 {marquee.map((c, k) => (
-                  <Link key={k} to={c.assetId ? generateUrl(c) : '/explore'} className="group relative aspect-[3/4] w-[130px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 transition-all duration-300 hover:border-[#FF55AA]/60 sm:w-[145px]">
+                  <Link key={k} to={c.assetId ? generateUrl(c) : '/explore'} className="group relative aspect-[3/4] w-[130px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 transition-all duration-300 hover:border-white/40 sm:w-[145px]">
                     {/* the photo fills the whole card image area (object-cover): no empty space left or right of it */}
                     <span className="absolute inset-0 overflow-hidden"><img src={c.image} alt={c.name} loading="lazy" className="size-full object-cover object-center" /></span>
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/70 via-transparent to-transparent" />

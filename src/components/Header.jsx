@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
+import PlansSheet from './PlansSheet.jsx'
+import LastManPopup, { LastManButton } from './LastMan.jsx'
 
 export const SparkIcon = ({ className = 'size-3.5 text-[#FF55AA]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
@@ -16,9 +18,9 @@ const PhoneIcon = () => (
 
 const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
 export const Logo = ({ size = 'md', imgHeight, fontSize }) => (
-  <Link to="/" className="group inline-flex shrink-0 items-center gap-2.5">
-    <img src={brandImages.logo} alt="Logo" style={imgHeight ? { height: imgHeight, transition: `height 420ms ${EASE}` } : undefined} className={`w-auto rounded-[10px] object-contain ${imgHeight ? '' : size === 'lg' ? 'h-10' : 'h-8'}`} />
-    <span style={fontSize ? { fontSize, transition: `font-size 420ms ${EASE}` } : undefined} className={`whitespace-nowrap font-display font-bold tracking-tight text-white ${fontSize ? '' : size === 'lg' ? 'text-2xl' : 'text-xl'}`}>Pictrify</span>
+  <Link to="/" className={`group inline-flex shrink-0 items-center ${size === 'sm' ? 'gap-2' : 'gap-2.5'}`}>
+    <img src={brandImages.logo} alt="Logo" style={imgHeight ? { height: imgHeight, transition: `height 420ms ${EASE}` } : undefined} className={`w-auto rounded-[10px] object-contain ${imgHeight ? '' : size === 'lg' ? 'h-10' : size === 'sm' ? 'h-[26px]' : 'h-8'}`} />
+    <span style={fontSize ? { fontSize, transition: `font-size 420ms ${EASE}` } : undefined} className={`whitespace-nowrap font-display font-bold tracking-tight text-white ${fontSize ? '' : size === 'lg' ? 'text-2xl' : size === 'sm' ? 'text-[19px]' : 'text-xl'}`}>Pictrify</span>
   </Link>
 )
 
@@ -53,13 +55,13 @@ function GetApp({ small }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="relative shrink-0" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button type="button" onClick={() => setOpen(!open)} className={`flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] font-medium text-white transition-colors hover:border-[#FF55AA]/60 hover:bg-[#FF55AA]/10 ${small ? 'h-8 px-3 text-xs' : 'h-10 px-4 text-[13px]'}`}>
+      <button type="button" onClick={() => setOpen(!open)} className={`flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] font-medium text-white transition-colors hover:border-white/30 hover:bg-white/[0.08] ${small ? 'h-8 px-3 text-xs' : 'h-10 px-4 text-[13px]'}`}>
         <PhoneIcon /><span>Get App</span><Chevron open={open} />
       </button>
       <div className={`absolute right-0 top-full z-50 w-[200px] pt-2.5 transition-all duration-300 ${open ? 'visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
-        <div className="relative flex flex-col items-center space-y-2.5 rounded-2xl border border-[#FF55AA]/20 bg-gradient-to-br bg-[#2B2B2B]/95 from-[#FF55AA]/[0.07] to-[#FF55AA]/0 p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
-          <span aria-hidden="true" className="absolute -top-[6px] right-10 size-2.5 rotate-45 border-l border-t border-[#FF55AA]/20 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0" />
-          <div className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#FF55AA]/15 px-2 py-1 text-[11px] font-semibold text-white">Android App</div>
+        <div className="relative flex flex-col items-center space-y-2.5 rounded-2xl border border-white/15 bg-[#2B2B2B]/95 p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
+          <span aria-hidden="true" className="absolute -top-[6px] right-10 size-2.5 rotate-45 border-l border-t border-white/15 bg-[#2B2B2B]" />
+          <div className="flex w-full items-center justify-center gap-1.5 rounded-full bg-white/[0.08] px-2 py-1 text-[11px] font-semibold text-white">Android App</div>
           <div className="my-0.5 rounded-xl bg-white p-1.5 shadow-inner transition-transform hover:scale-105"><img src={brandImages.qr} alt="QR code" className="size-24 rounded-md object-contain" /></div>
           <p className="text-[10px] font-medium leading-tight text-[#A0A0A0]">Scan for the app</p>
         </div>
@@ -72,7 +74,7 @@ function GetApp({ small }) {
 const CoinBadge = ({ className = '' }) => {
   const { coins } = useStudio()
   return (
-  <Link to="/coins" aria-label={`${coins} coins - get more coins`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-white/10 bg-[#2B2B2B] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#FF55AA]/60 hover:bg-[#2B2B2B] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(255,85,170,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] ${className}`}>
+  <Link to="/coins" aria-label={`${coins} coins - get more coins`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-white/10 bg-[#2B2B2B] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-white/30 hover:bg-[#2B2B2B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] ${className}`}>
     <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] shrink-0 object-contain" />
     <span className="text-[15px] font-bold leading-none tabular-nums text-white">{coins.toLocaleString()}</span>
   </Link>
@@ -90,7 +92,7 @@ const PROFILE_ITEMS = [
 ]
 export const displayName = (email) => (email.split('@')[0] || '').split(/[._-]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') || 'Pictrify user'
 
-function ProfileMenu() {
+function ProfileMenu({ compact = false }) {
   const { userEmail, signOut } = useStudio()
   const nav = useNavigate()
   const { pathname } = useLocation()
@@ -130,7 +132,7 @@ function ProfileMenu() {
   return (
     <>
       <button ref={btn} type="button" onClick={toggle} aria-label="Open profile menu" aria-haspopup="menu" aria-expanded={open}
-        className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-[14px] font-bold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12)] transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] active:scale-95">{initial}</button>
+        className={`grid ${compact ? 'size-7 text-[12px]' : 'size-8 text-[14px]'} shrink-0 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] font-bold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12)] transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] active:scale-95`}>{initial}</button>
       {shown && createPortal(
         <div ref={panel} role="menu" aria-label="Profile" data-closing={!open} style={{ top: pos.top, right: pos.right }}
           className="profile-menu fixed z-[400] w-[300px] max-w-[calc(100vw-24px)] rounded-2xl border border-white/10 bg-[#2B2B2B] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.65)]">
@@ -143,9 +145,9 @@ function ProfileMenu() {
             <svg className="size-4 shrink-0 text-[#A0A0A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
           </Link>
           <div className="my-1.5 h-px bg-white/10" />
-          {PROFILE_ITEMS.map(([to, label, d]) => (
+          {[...PROFILE_ITEMS, ['/terms-conditions', 'Terms & Conditions', 'M7 3h8l4 4v14H7zM15 3v4h4M10 12h6M10 16h6']].map(([to, label, d]) => (
             <Link key={to} to={to} role="menuitem" onClick={() => close()}
-              className="flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-[14px] font-medium text-[#FFFFFF] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#FF55AA]">
+              className={`flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-[14px] font-medium text-[#FFFFFF] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#FF55AA]`}>
               <svg className="size-[18px] shrink-0 text-[#FF55AA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
               {label}
             </Link>
@@ -184,6 +186,7 @@ const accountLinks = [['/transactions', 'Transactions'], ['/help', 'Help'], ['/f
 
 export default function Header({ generating = false }) {
   const [menu, setMenu] = useState(false)
+  const [lastMan, setLastMan] = useState(null) // phone header crown: null | 'popup' | 'plans' (Unlock Now opens the existing plans sheet)
   const { pathname } = useLocation()
   const { signedIn, openLogin } = useStudio()
   useEffect(() => { setMenu(false) }, [pathname])
@@ -255,9 +258,9 @@ export default function Header({ generating = false }) {
 
       {/* Mobile header */}
       <header className={`relative z-50 flex h-[61px] items-center justify-between border-b border-white/[0.08] bg-[#0A0809] px-4 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
-        <Logo imgHeight={28} fontSize={22} />
-        <div className="flex items-center gap-2.5">
-          {signedIn ? <><CoinBadge /><ProfileMenu /></> : (
+        <Logo size="sm" />
+        <div className="flex items-center gap-2">
+          {signedIn ? <><CoinBadge className="!h-7 !min-w-0 !gap-1.5 !px-2" /><ProfileMenu compact /></> : (
             <>
               <button type="button" onClick={openLogin} aria-label="Claim 50 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
                 <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] object-contain" />
@@ -267,8 +270,11 @@ export default function Header({ generating = false }) {
               </button>
             </>
           )}
+          <LastManButton onClick={() => setLastMan('plans')} />
         </div>
       </header>
+      {lastMan === 'popup' && <LastManPopup onClose={() => setLastMan(null)} onUnlock={() => setLastMan('plans')} />}
+      {lastMan === 'plans' && <PlansSheet onClose={() => setLastMan(null)} />}
       {!generating && <MobileTabs pathname={pathname} />}
       {generating && <div className="hidden sm:block md:hidden"><MobileTabs pathname={pathname} /></div>}
     </>
@@ -282,12 +288,13 @@ const tabs = [
 ]
 
 function MobileTabs({ pathname }) {
+  const { signedIn, openLogin } = useStudio()
   const idx = Math.max(0, tabs.findIndex((t) => t.match(pathname)))
   return (
     <div className="fixed left-1/2 z-[99] flex h-[62px] w-[68%] min-w-[280px] max-w-[320px] -translate-x-1/2 select-none items-center justify-around rounded-full border border-white/[0.06] bg-[#0F0D0F]/95 p-[5px] shadow-[0_10px_35px_rgba(0,0,0,0.9)] backdrop-blur-xl md:hidden" style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
       <div className="pointer-events-none absolute top-1/2 z-[1] h-[50px] -translate-y-1/2 rounded-full bg-white/[0.06] ring-1 ring-inset ring-white/15 transition-all duration-300" style={{ width: 'calc((100% - 10px) / 3)', left: `calc(5px + ${idx} * (100% - 10px) / 3)` }} />
       {tabs.map((t, i) => (
-        <Link key={t.label} to={t.to} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
+        <Link key={t.label} to={t.to} onClick={t.to === '/profile' && !signedIn ? (e) => { e.preventDefault(); openLogin() } : undefined} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
           <svg className={`size-6 transition-all duration-300 ${i === idx ? 'text-white opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
           <span className={`text-[11px] tracking-wide transition-all duration-300 ${i === idx ? 'font-semibold text-white' : 'font-semibold text-white/50'}`}>{t.label}</span>
         </Link>
