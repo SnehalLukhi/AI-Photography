@@ -10,7 +10,7 @@ const perks = [['50%', 'Cost'], ['4K', 'Upscale'], ['No', 'Ads'], ['Pro', 'Tools
 /** Phone-only bottom sheet with the subscription plans (same plans and purchase call as the Pricing page). Slides up; closes by the X, tapping outside or dragging down. */
 export default function PlansSheet({ onClose }) {
   const nav = useNavigate()
-  const { signedIn, user, refreshUser } = useStudio()
+  const { signedIn, user, refreshUser, openLogin } = useStudio()
   const [plans, setPlans] = useState(fallbackPlans)
   const [sel, setSel] = useState(() => (fallbackPlans.find((p) => p.popular) || fallbackPlans[0])?.id)
   const [note, setNote] = useState('')
@@ -34,7 +34,7 @@ export default function PlansSheet({ onClose }) {
     return () => { cancelAnimationFrame(r); document.body.style.overflow = prev; window.removeEventListener('keydown', key) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const cont = async () => {
-    if (!signedIn) { nav('/login'); return }
+    if (!signedIn) { onClose(); openLogin(); return }
     setBusy(true); setNote('')
     try {
       const out = await buyCoins(sel, { name: user?.name, email: user?.email })

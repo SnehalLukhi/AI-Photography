@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import PImage from './PImage.jsx'
 
@@ -27,8 +26,7 @@ const pad = (n) => String(n).padStart(2, '0')
  * Touch screens (no hover) get a small name label on the tile instead. fav: show the favourite heart (Explore).
  */
 export default function TemplateCard({ t, selected, onSelect, fav = false, fit = 'contain', ratio = '9 / 16', objectPos = 'center', className = '' }) {
-  const nav = useNavigate()
-  const { signedIn, favorites, toggleFavorite } = useStudio()
+  const { signedIn, favorites, toggleFavorite, openLogin } = useStudio()
   const liked = favorites.has(t.id) // saved in the database, shared by every card of this template
   const img = `absolute inset-0 h-full w-full ${fit === 'cover' ? 'object-cover' : 'object-contain'}`
   const imgStyle = { objectPosition: objectPos }
@@ -45,7 +43,7 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
           <span className="block truncate text-[11px] font-medium text-white">{t.name}</span>
         </div>
       </div>
-      {fav && <Fav on={liked} toggle={() => (signedIn ? toggleFavorite(t.id) : nav('/login'))} />}
+      {fav && <Fav on={liked} toggle={() => (signedIn ? toggleFavorite(t.id) : openLogin())} />}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex h-full flex-col overflow-hidden rounded-[6px] border border-[#2B2B2B] bg-gradient-to-br from-[#2B2B2B] to-[#2B2B2B] opacity-0 shadow-[0_20px_35px_rgba(0,0,0,0.6)] transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:h-[calc(100%+92px)] group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:h-[calc(100%+92px)] group-focus-within:opacity-100">
         <div style={{ aspectRatio: ratio }} className="relative w-full shrink-0 overflow-hidden rounded-t-[6px] bg-[#0A0809]">
           <PImage src={t.image} alt="" draggable="false" className={img} style={imgStyle} />
