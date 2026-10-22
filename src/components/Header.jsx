@@ -194,7 +194,7 @@ export default function Header({ generating = false }) {
     <>
       {/* Tablet / desktop nav */}
       <div className="pointer-events-none fixed left-0 right-0 z-50 hidden justify-center md:flex" style={{ top: scrolled ? 10 : 14, transition: `top 400ms ${EASE}` }}>
-        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgba(15,4,51,0.78)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgba(15,4,51,0.97)]' : ''}`}
+        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgb(11,7,27)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgb(11,7,27)]' : ''}`}
           style={{
             width: `calc(100% - ${xl ? 48 : 32}px)`,
             maxWidth: '96rem',
@@ -254,7 +254,7 @@ export default function Header({ generating = false }) {
       <div className="hidden h-[92px] md:block" />
 
       {/* Mobile header */}
-      <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#0F0433]/95 px-4 py-3 backdrop-blur-md md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
+      <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#0B071B] px-4 py-3 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
         <Logo />
         {(
           <div className="flex items-center gap-2">

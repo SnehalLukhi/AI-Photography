@@ -50,7 +50,7 @@ function HeroShowcase({ items }) {
   }, [])
   const [left, center, right] = [items[0], items[1] || items[0], items[2] || items[0]]
   if (!center) return null
-  const side = 'hero-card group absolute block overflow-hidden rounded-[12px] border border-white/15 bg-[#0F0433] shadow-[0_18px_34px_-12px_rgba(0,0,0,0.9),0_0_22px_-8px_rgba(176,112,250,0.55)]'
+  const side = 'hero-card group absolute block overflow-hidden rounded-[12px] border border-white/15 bg-[#0B071B] shadow-[0_18px_34px_-12px_rgba(0,0,0,0.9),0_0_22px_-8px_rgba(176,112,250,0.55)]'
   return (
     <div ref={wrap} className="relative mx-auto w-full max-w-[860px] lg:-mr-4 lg:ml-0 lg:justify-self-start xl:max-w-none" style={{ height: BOX_H * scale }}>
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: STAGE_W, height: STAGE_H, transform: `translate(${-BOX_X * scale}px, ${-BOX_Y * scale}px) scale(${scale})` }}>
@@ -69,7 +69,7 @@ function HeroShowcase({ items }) {
 
         {/* centre card with gradient border */}
         <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-gradient-to-br from-[#B070FA] to-[#F066D8] p-[2px] shadow-[0_0_34px_rgba(176,112,250,0.45),0_24px_44px_-16px_rgba(0,0,0,0.9)]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
-          <span className="relative block h-full w-full overflow-hidden rounded-[12px] bg-[#0F0433]">
+          <span className="relative block h-full w-full overflow-hidden rounded-[12px] bg-[#0B071B]">
             <img src={center.image} alt={center.name} className="absolute inset-0 h-full w-full object-cover object-[50%_18%]" draggable="false" />
           </span>
         </Link>
@@ -199,7 +199,7 @@ export default function Home() {
                   <Link key={k} to={c.assetId ? generateUrl(c) : '/explore'} className="group relative aspect-[3/4] w-[130px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] transition-all duration-300 hover:border-[#B070FA]/60 sm:w-[145px]">
                     {/* the photo fills the whole card image area (object-cover): no empty space left or right of it */}
                     <span className="absolute inset-0 overflow-hidden"><img src={c.image} alt={c.name} loading="lazy" className="size-full object-cover object-center" /></span>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F0433]/70 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B071B]/70 via-transparent to-transparent" />
                     <div className="absolute inset-x-2 bottom-2 text-center"><span className="block break-words text-[11px] font-semibold leading-snug text-white/90 drop-shadow-md">{c.name}</span></div>
                   </Link>
                 ))}

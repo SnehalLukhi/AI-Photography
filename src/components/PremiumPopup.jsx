@@ -28,7 +28,7 @@ export default function PremiumPopup({ onClose }) {
   }, [onClose])
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-end justify-center bg-[#0F0433]/70 p-0 backdrop-blur-md sm:items-center sm:p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[300] flex items-end justify-center bg-[#0B071B]/70 p-0 backdrop-blur-md sm:items-center sm:p-4" onClick={onClose}>
       <div role="dialog" aria-modal="true" aria-label="Pictrify Premium" onClick={(e) => e.stopPropagation()}
         className="animate-fade-in relative flex max-h-[96dvh] w-full max-w-[1040px] flex-col overflow-y-auto overflow-x-hidden rounded-t-[28px] border border-white/10 bg-[#0B0B12] shadow-[0_0_90px_rgba(176,112,250,0.25)] sm:max-h-[94dvh] sm:rounded-[28px]">
         <div className="pointer-events-none absolute -left-24 -top-24 size-[360px] rounded-full bg-[#B070FA]/20 blur-[110px]" />
@@ -83,7 +83,7 @@ export default function PremiumPopup({ onClose }) {
                     <span className="mt-0.5 flex items-baseline gap-1.5"><span className="text-[22px] font-bold leading-none text-white sm:text-[26px]">{p.price}</span><span className="text-xs text-[#C4B5FD]/75">{p.per}</span></span>
                     <span className="mt-1 block text-xs text-[#C4B5FD]">{images(p)}{p.id === 'yearly' ? ` · ${detail(p, 'Monthly allocation')}` : ` · ${detail(p, 'Cost per image')} each`}</span>
                   </span>
-                  <span className="flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-[#0F0433]/40 px-2.5 py-1.5">
+                  <span className="flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-[#0B071B]/40 px-2.5 py-1.5">
                     <img src={brandImages.coin} alt="" width="28" height="28" className="size-7 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />
                     <span className="whitespace-nowrap text-sm font-bold text-white">{p.coins.replace(' Coins', '').replace(' / year', '')}<span className="block text-[10px] font-semibold uppercase tracking-wide text-[#C4B5FD]">{p.id === 'yearly' ? 'Coins / year' : 'Coins'}</span></span>
                   </span>

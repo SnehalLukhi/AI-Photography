@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from '../components/Header.jsx'
 import { brandImages } from '../data/images.js'
+import { getPurchases } from '../lib/aiPhotography.js'
+import { formatDate, formatMoney } from '../lib/format.js'
 import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
 const Hero = ({ eyebrow, title, sub }) => (

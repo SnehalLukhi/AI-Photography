@@ -53,7 +53,7 @@ export function Login() {
   if (signedIn) return <Navigate to="/" replace /> // signed in (a fresh login or a restored session): always land on Home, never the previous page or Profile
 
   return (
-    <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#0F0433] text-white lg:flex-row-reverse">
+    <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#0B071B] text-white lg:flex-row-reverse">
       {/* photo panel (desktop only): static, muted, no effects */}
       <aside className="relative hidden w-[58%] shrink-0 overflow-hidden lg:block">
         {/* tilted block of scrolling photo columns (16 degrees, bleeds past the panel edges) */}
@@ -62,7 +62,7 @@ export function Login() {
             <div key={ci} className="relative h-full min-w-0 flex-1 overflow-hidden">
               <div className="login-col flex w-full flex-col will-change-transform" style={{ animation: `${col.anim} ${col.secs}s linear infinite` }}>
                 {col.list.map((src, k) => (
-                  <div key={k} className="mb-3 aspect-[9/16] w-full shrink-0 overflow-hidden rounded-xl border border-[#3A3552] bg-[#0F0433]">
+                  <div key={k} className="mb-3 aspect-[9/16] w-full shrink-0 overflow-hidden rounded-xl border border-[#3A3552] bg-[#0B071B]">
                     <img src={src} alt="" loading="lazy" className="size-full object-cover object-center" draggable="false" />
                   </div>
                 ))}
@@ -71,10 +71,10 @@ export function Login() {
           ))}
         </div>
         {/* fade / blur-out toward the inner (form-facing) edge, as in the reference - confined to this panel */}
-        <div className="absolute inset-0 bg-[#0F0433]/15" />
-        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-[#0F0433]/35 to-[#0F0433]" />
+        <div className="absolute inset-0 bg-[#0B071B]/15" />
+        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-[#0B071B]/35 to-[#0B071B]" />
         <div className="pointer-events-none absolute inset-0 backdrop-blur-[5px] [mask-image:linear-gradient(to_left,transparent_35%,black_100%)] [-webkit-mask-image:linear-gradient(to_left,transparent_35%,black_100%)]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F0433]/90 via-transparent to-[#0F0433]/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B071B]/90 via-transparent to-[#0B071B]/25" />
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col px-5 sm:px-8">

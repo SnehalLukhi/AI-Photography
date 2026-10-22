@@ -26,7 +26,7 @@ export default function WelcomePopup({ onClose: finish }) {
   }, [onClose])
 
   return (
-    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#0F0433]/70 p-4`} onClick={onClose}>
+    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#0B071B]/70 p-4`} onClick={onClose}>
       <div role="dialog" aria-modal="true" aria-labelledby="welcome-title" onClick={(e) => e.stopPropagation()}
         className="welcome-card relative w-full max-w-[360px] overflow-hidden rounded-[24px] border border-white/10 bg-[#0B0B12] px-6 pb-7 pt-8 text-center shadow-[0_0_80px_rgba(176,112,250,0.22)]">
         <div className="welcome-glow pointer-events-none absolute -top-20 left-1/2 size-[260px] rounded-full bg-gradient-to-br from-[#B070FA]/20 to-[#F066D8]/10 blur-[90px]" />
