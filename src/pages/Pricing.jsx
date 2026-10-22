@@ -21,6 +21,8 @@ export default function Pricing() {
       return { ...card, ...p, price: money(p.offer ? p.offer.price : p.price), originalPrice: p.offer ? money(p.price) : '', discount: p.offer?.discountPercent || 0, coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
     }))).catch(() => {})
   }, [])
+  const [sel, setSel] = useState(null)
+  const selId = sel || (plans.find((p) => p.popular) || plans[0])?.id
   const choose = async (p) => {
     if (!signedIn) { openLogin(); return }
     setBusy(p.id); setNote('')
@@ -32,8 +34,50 @@ export default function Pricing() {
     } catch (e) { setNote(e.message) }
     setBusy('')
   }
+  const chosen = plans.find((p) => p.id === selId)
+  const mobile = (
+    <div className="px-4 pb-32 pt-4 sm:hidden">
+      <div className="relative flex items-center justify-center pb-3">
+        <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#2B2B2B] text-white"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+        <h1 className="text-[18px] font-semibold text-white">Choose Your Plan</h1>
+      </div>
+      <p className="mb-4 text-center text-[13px] text-[#A0A0A0]">Unlock premium templates, faster generation and more creative freedom.</p>
+      <div className="space-y-3" role="radiogroup" aria-label="Subscription plans">
+        {plans.map((p) => {
+          const on = p.id === selId
+          return (
+            <div key={p.id} role="radio" aria-checked={on} tabIndex={0} onClick={() => setSel(p.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(p.id)}
+              className={`relative cursor-pointer overflow-hidden rounded-[20px] border bg-[#121012] p-4 transition-colors ${on ? 'border-white/40 bg-[#171416]' : 'border-white/[0.08]'}`}>
+              {p.popular && <span className="absolute right-0 top-0 rounded-bl-xl bg-white/[0.12] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">Most Popular</span>}
+              <div className="flex items-center gap-3">
+                <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FF55AA]' : 'border-white/30'}`}>{on && <span className="size-2.5 rounded-full bg-[#FF55AA]" />}</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[15px] font-semibold text-white">{p.name}</p>
+                  <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#A0A0A0]"><img src={brandImages.coin} alt="" width="16" height="16" className="size-4 object-contain" />{p.coins}</p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="text-[20px] font-bold leading-none text-white">{p.price} <span className="text-[11px] font-normal text-[#A0A0A0]">{p.per}</span></p>
+                  {p.originalPrice && <p className="mt-1 text-[11px] text-[#A0A0A0]"><span className="line-through">{p.originalPrice}</span> <span className="font-bold text-[#FF88C7]">{p.discount}% OFF</span></p>}
+                </div>
+              </div>
+              {on && p.details?.length > 0 && (
+                <dl className="mt-3.5 space-y-2 border-t border-white/[0.08] pt-3 text-[12px] text-[#A0A0A0]">
+                  {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold text-white">{value}</dd></div>)}
+                </dl>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {note && <p role="status" className="mt-4 rounded-xl border border-white/15 bg-[#121012] px-4 py-3 text-center text-sm text-[#A0A0A0]">{note}</p>}
+      <button type="button" disabled={!chosen || busy === selId} onClick={() => chosen && choose(chosen)} className="mt-5 flex h-[54px] w-full cursor-pointer items-center justify-center rounded-full text-[16px] font-bold text-white shadow-[0_8px_28px_rgba(255,85,170,0.35)] transition-transform active:scale-[0.98] disabled:cursor-wait disabled:opacity-70" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>{busy === selId ? 'Please wait…' : chosen ? `Continue · ${chosen.price}` : 'Continue'}</button>
+      <p className="mt-3 text-center text-[11px] text-[#A0A0A0]">Auto-renewable subscription. Cancel anytime.</p>
+    </div>
+  )
   return (
-    <div className="mx-auto w-full max-w-[1408px] px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12">
+    <>
+    {mobile}
+    <div className="mx-auto w-full max-w-[1408px] max-sm:hidden px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12">
       <header className="max-w-3xl">
         <div className="inline-flex items-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#FF55AA]" /><span>Flexible plans</span></div>
         <h1 className="mt-6 text-[32px] font-bold leading-[1.05] tracking-tight sm:text-[44px] lg:text-[48px]"><span className="text-[#ffffff]">Choose </span> <span className="grad-text">Your Plan</span></h1>
@@ -72,5 +116,6 @@ export default function Pricing() {
         {note && <p role="status" className="mt-4 rounded-xl border border-[#FF55AA]/40 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-4 py-3 text-center text-sm text-[#A0A0A0]">{note}</p>}
       </section>
     </div>
+    </>
   )
 }
