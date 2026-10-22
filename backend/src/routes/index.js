@@ -36,6 +36,7 @@ router.get('/health', health)
 
 // Accounts
 router.post('/auth/google', authLimiter, authCtl.google)
+router.post('/auth/apple', authLimiter, authCtl.apple)
 router.get('/auth/me', requireAuth, authCtl.me)
 
 // Coins
@@ -44,6 +45,8 @@ router.get('/coin-packs', walletCtl.listPacks)
 router.get('/wallet', requireAuth, walletCtl.getWallet)
 router.post('/wallet/redeem', authLimiter, requireAuth, walletCtl.redeem) // limited like login: codes must not be guessable by trying
 router.post('/wallet/checkout', requireAuth, walletCtl.checkout)
+router.post('/wallet/verify-payment', requireAuth, walletCtl.verifyPayment)
+router.post('/webhooks/razorpay', walletCtl.razorpayWebhook) // public: Razorpay calls it, the signature header is the proof
 
 // requireApiKey runs first so uploads are not even read when the server is not configured.
 router.post('/photos/generate', generateLimiter, requireAuth, requireApiKey, dailyQuota, chargeCoins, uploadImage, photos.generate)

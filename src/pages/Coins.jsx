@@ -3,14 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 import { SparkIcon } from '../components/Header.jsx'
 import { useStudio } from '../context/StudioContext.jsx'
-import { getCoinPacks, startCheckout } from '../lib/aiPhotography.js'
+import { getCoinPacks, buyCoins } from '../lib/aiPhotography.js'
 
 const usd = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 
 /** "Get Coins": one-time coin packs (no subscription). Opened by the coin badge in the header. */
 export default function Coins() {
   const nav = useNavigate()
-  const { signedIn, coins } = useStudio()
+  const { signedIn, coins, user, refreshUser } = useStudio()
   const [data, setData] = useState(null) // { packs, costPerGeneration }
   const [failed, setFailed] = useState(false)
   const [busy, setBusy] = useState('')
@@ -21,8 +21,9 @@ export default function Coins() {
     if (!signedIn) { nav('/login'); return }
     setBusy(pack.id); setNote('')
     try {
-      const out = await startCheckout(pack.id, 'USD')
-      if (out.url) window.location.assign(out.url) // hosted payment page of the gateway
+      const out = await buyCoins(pack.id, { name: user?.name, email: user?.email })
+      setNote(`Payment successful. Your balance is now ${out.balance.toLocaleString()} coins.`)
+      refreshUser()
     } catch (e) { setNote(e.message) }
     setBusy('')
   }

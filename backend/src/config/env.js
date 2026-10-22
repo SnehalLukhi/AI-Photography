@@ -50,10 +50,18 @@ module.exports = {
   databaseUrl: (process.env.DATABASE_URL || '').trim(), // Supabase: Project Settings > Database > Connection string (pooler). 'pglite://memory' = throw-away in-memory database (tests)
   auth: {
     jwtSecret: (process.env.JWT_SECRET || '').trim(),
+    appleClientId: (process.env.APPLE_CLIENT_ID || '').trim(), // "Sign in with Apple": the Services ID (same value as the frontend's VITE_APPLE_CLIENT_ID)
     googleClientId: (process.env.GOOGLE_CLIENT_ID || '').trim(), // OAuth client id for "Continue with Google" (same value as the frontend's VITE_GOOGLE_CLIENT_ID)
     tokenTtlSeconds: int(process.env.TOKEN_TTL_SECONDS, 7 * 24 * 3600),
     dailyLimit: int(process.env.DAILY_GENERATION_LIMIT, 100), // generations per user per day (abuse cap; the coin balance is the normal limit)
     rateLimitMax: int(process.env.AUTH_RATE_LIMIT_MAX, 20), // sign-in attempts per IP per 15 minutes
+  },
+
+  // Razorpay (payments for coin packs / plans). Without the keys checkout answers 503.
+  razorpay: {
+    keyId: (process.env.RAZORPAY_KEY_ID || '').trim(), // public: also used by the browser's checkout window
+    keySecret: (process.env.RAZORPAY_KEY_SECRET || '').trim(), // secret: server only
+    webhookSecret: (process.env.RAZORPAY_WEBHOOK_SECRET || '').trim(), // the secret you type in Razorpay Dashboard > Webhooks
   },
 
   coins: {

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { plans as fallbackPlans } from '../data/templates.js'
-import { getPlans, startCheckout } from '../lib/aiPhotography.js'
+import { getPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { brandImages } from '../data/images.js'
 import { SparkIcon } from '../components/Header.jsx'
 
 export default function Pricing() {
   const nav = useNavigate()
-  const { signedIn } = useStudio()
+  const { signedIn, user, refreshUser } = useStudio()
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState('')
   // the plans come from the backend (single source of prices and coins); the built-in list is only shown if the backend cannot be reached
@@ -23,8 +23,9 @@ export default function Pricing() {
     if (!signedIn) { nav('/login'); return }
     setBusy(p.id); setNote('')
     try {
-      const out = await startCheckout(p.id, 'USD')
-      if (out.url) window.location.assign(out.url) // hosted payment page of the gateway
+      const out = await buyCoins(p.id, { name: user?.name, email: user?.email })
+      setNote(`Payment successful. Your balance is now ${out.balance.toLocaleString()} coins.`)
+      refreshUser()
     } catch (e) { setNote(e.message) }
     setBusy('')
   }

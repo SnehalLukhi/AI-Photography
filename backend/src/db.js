@@ -14,9 +14,12 @@ const SCHEMA = `
     password_hash TEXT NOT NULL DEFAULT '', -- unused: sign-in is Google only (older accounts may still have a value)
     coins INTEGER NOT NULL DEFAULT 0,
     google_sub TEXT,
+    apple_sub TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS apple_sub TEXT; -- databases created before Apple sign-in
   CREATE UNIQUE INDEX IF NOT EXISTS users_google_sub ON users (google_sub) WHERE google_sub IS NOT NULL;
+  CREATE UNIQUE INDEX IF NOT EXISTS users_apple_sub ON users (apple_sub) WHERE apple_sub IS NOT NULL;
   CREATE TABLE IF NOT EXISTS usage (
     user_id TEXT NOT NULL,
     day TEXT NOT NULL,
@@ -41,6 +44,19 @@ const SCHEMA = `
     redeemed_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
+  -- one row per Razorpay order (created when a user starts to pay; marked paid once the payment is verified)
+  CREATE TABLE IF NOT EXISTS payments (
+    order_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    item_id TEXT NOT NULL,
+    amount INTEGER NOT NULL, -- in the smallest unit (cents)
+    currency TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'created',
+    payment_id TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    paid_at TIMESTAMPTZ
+  );
+  CREATE INDEX IF NOT EXISTS payments_user ON payments (user_id, created_at DESC);
   -- one row per generation: the user's original photo + the AI result (both are public images in the Space; only their keys are kept here)
   CREATE TABLE IF NOT EXISTS generations (
     id TEXT PRIMARY KEY,
@@ -63,6 +79,7 @@ const SCHEMA = `
   ALTER TABLE coin_ledger ENABLE ROW LEVEL SECURITY;
   ALTER TABLE redeem_codes ENABLE ROW LEVEL SECURITY;
   ALTER TABLE generations ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 `
 
 let impl

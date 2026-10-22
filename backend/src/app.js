@@ -11,7 +11,7 @@ app.set('trust proxy', 1) // correct client IPs for rate limiting behind a rever
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } })) // allow the frontend to load returned images
 app.use(cors({ origin: env.corsOrigins, methods: ['GET', 'POST', 'DELETE'], maxAge: 600 }))
-app.use(express.json({ limit: '100kb' }))
+app.use(express.json({ limit: '100kb', verify: (req, _res, buf) => { if (req.originalUrl.startsWith('/api/webhooks/')) req.rawBody = buf } })) // webhooks are signed over the exact bytes received
 
 app.use('/api', routes)
 app.use(notFound)

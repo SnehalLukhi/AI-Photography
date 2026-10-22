@@ -207,6 +207,41 @@ export function loginWithGoogle() {
   return popup.then((accessToken) => authRequest('google', jsonPost({ accessToken })))
 }
 
+const APPLE_CLIENT_ID = import.meta.env.VITE_APPLE_CLIENT_ID || ''
+let appleLoading
+/** Loads Apple's sign-in script once (call when the Login page opens, so the click can open Apple's window at once). */
+export function prepareApple() {
+  if (!APPLE_CLIENT_ID) return Promise.resolve(false)
+  appleLoading ||= new Promise((resolve) => {
+    if (window.AppleID?.auth) return resolve(true)
+    const s = document.createElement('script')
+    s.src = 'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js'; s.async = true
+    s.onload = () => resolve(true)
+    s.onerror = () => { appleLoading = undefined; resolve(false) }
+    document.head.appendChild(s)
+  })
+  return appleLoading
+}
+
+/** "Continue with Apple": opens Apple's sign-in window, then the backend checks Apple's identity token and returns our own { token, user }. Rejects with a user-facing message. */
+export function loginWithApple() {
+  // init + signIn run synchronously inside the click, so the browser lets the pop-up open
+  const popup = new Promise((resolve, reject) => {
+    if (!APPLE_CLIENT_ID) return reject(new Error('Apple sign-in is not set up yet (VITE_APPLE_CLIENT_ID is missing).'))
+    if (!window.AppleID?.auth) return reject(new Error('Apple sign-in is still loading. Please try again in a moment.'))
+    const nonce = crypto.randomUUID() // ties the identity token to this sign-in; the backend checks it
+    window.AppleID.auth.init({ clientId: APPLE_CLIENT_ID, scope: 'name email', redirectURI: import.meta.env.VITE_APPLE_REDIRECT_URI || window.location.origin, state: nonce, nonce, usePopup: true })
+    window.AppleID.auth.signIn().then(
+      (r) => {
+        const n = r.user?.name // Apple shares the name only the first time
+        resolve({ identityToken: r.authorization?.id_token, nonce, name: n ? `${n.firstName || ''} ${n.lastName || ''}`.trim() : '' })
+      },
+      (e) => reject(new Error(e?.error === 'popup_closed_by_user' || e?.error === 'user_cancelled_authorize' ? 'Apple sign-in was cancelled.' : 'Apple sign-in failed. Please try again.')),
+    )
+  })
+  return popup.then((body) => authRequest('apple', jsonPost(body)))
+}
+
 /** The user a saved token belongs to ({ id, email, name }); rejects with status 401 when the token is no longer valid. */
 export const fetchMe = async () => (await authRequest('me', { headers: headers() })).user
 
@@ -254,12 +289,43 @@ export async function getCoinPacks() {
   return body
 }
 
-/** Starts the payment for a plan or coin pack (`itemId`) in US dollars (`currency` is optional and can only be "USD"). Rejects with the backend's message (503 while no payment gateway is connected). */
-export async function startCheckout(itemId, currency) {
-  const res = await fetch(`${API_BASE}/api/wallet/checkout`, { ...jsonPost({ itemId, currency }), headers: { 'Content-Type': 'application/json', ...headers() } })
+let razorpayLoading
+function loadRazorpay() {
+  razorpayLoading ||= new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true)
+    const s = document.createElement('script')
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js'; s.async = true
+    s.onload = () => resolve(true)
+    s.onerror = () => { razorpayLoading = undefined; resolve(false) }
+    document.head.appendChild(s)
+  })
+  return razorpayLoading
+}
+
+async function post(path, data) {
+  const res = await fetch(`${API_BASE}${path}`, { ...jsonPost(data), headers: { 'Content-Type': 'application/json', ...headers() } })
   const body = await readJson(res)
   if (!res.ok) throw failure(body, res)
   return body
+}
+
+/**
+ * Buys a plan or coin pack with Razorpay: the backend creates the order (the price comes from the server), Razorpay's payment window opens, and after paying the backend
+ * checks Razorpay's signature and adds the coins. Resolves with { credited, balance }; rejects with a message when the payment is cancelled, fails, or payments are not set up (503).
+ */
+export async function buyCoins(itemId, { name = '', email = '' } = {}) {
+  const [{ order }, loaded] = await Promise.all([post('/api/wallet/checkout', { itemId }), loadRazorpay()])
+  if (!loaded) throw new Error('Could not load the payment window. Check your connection and try again.')
+  return new Promise((resolve, reject) => {
+    const rzp = new window.Razorpay({
+      key: order.keyId, amount: order.amount, currency: order.currency, order_id: order.orderId, name: order.name, description: order.description,
+      prefill: { name, email }, theme: { color: '#B070FA' },
+      handler: (r) => post('/api/wallet/verify-payment', { orderId: r.razorpay_order_id, paymentId: r.razorpay_payment_id, signature: r.razorpay_signature }).then(resolve, reject),
+      modal: { ondismiss: () => reject(new Error('Payment cancelled.')) },
+    })
+    rzp.on('payment.failed', (r) => reject(new Error(r?.error?.description || 'The payment failed. Please try again.')))
+    rzp.open()
+  })
 }
 
 /**

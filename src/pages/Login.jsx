@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
-import { loginWithGoogle, prepareGoogle } from '../lib/aiPhotography.js'
+import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '../lib/aiPhotography.js'
 
 /**
  * Login (full screen, no header or footer). The only way in is "Continue with Google": the same button logs in a returning user and creates the account of a new one.
@@ -20,6 +20,12 @@ const COLUMNS = [ // [animation, seconds] - alternating directions, like the ref
   const list = Array.from({ length: n }, (_, k) => PANEL_IMAGES[(k + i * 2) % n]) // each column starts at a different photo
   return { anim, secs, list: [...list, ...list] }
 })
+const AppleLogo = () => (
+  <svg className="size-5" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+  </svg>
+)
+
 const GoogleLogo = () => (
   <svg className="size-5" viewBox="0 0 48 48" aria-hidden="true">
     <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z" />
@@ -34,12 +40,15 @@ export function Login() {
   const { signIn, signedIn } = useStudio()
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  useEffect(() => { prepareGoogle() }, []) // loads Google's script and sets it up now, so the click can open the Google window immediately
+  useEffect(() => { prepareGoogle(); prepareApple() }, []) // loads the sign-in scripts now, so the click can open the Google / Apple window immediately
 
-  const google = async () => {
+  // both buttons call their sign-in straight from the click (browsers only open the pop-up then) and share the busy / error state
+  const social = (login, failed) => async () => {
     setBusy(true); setError('')
-    try { signIn(await loginWithGoogle()); nav('/') } catch (err) { setError(err.message || 'Google sign-in failed. Please try again.'); setBusy(false) }
+    try { signIn(await login()); nav('/') } catch (err) { setError(err.message || failed); setBusy(false) }
   }
+  const google = social(loginWithGoogle, 'Google sign-in failed. Please try again.')
+  const apple = social(loginWithApple, 'Apple sign-in failed. Please try again.')
 
   if (signedIn) return <Navigate to="/" replace /> // signed in (a fresh login or a restored session): always land on Home, never the previous page or Profile
 
@@ -77,10 +86,13 @@ export function Login() {
         <div className="m-auto w-full max-w-[440px] py-8">
           <div className="login-rise rounded-xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-8">
             <h1 className="text-[26px] font-bold tracking-tight">Welcome to Pixora</h1>
-            <p className="mb-7 mt-2 text-sm leading-relaxed text-[#C4B5FD]/75">Log in or create your account with Google to start creating AI photos.</p>
+            <p className="mb-7 mt-2 text-sm leading-relaxed text-[#C4B5FD]/75">Log in or create your account with Google or Apple to start creating AI photos.</p>
 
             <button type="button" onClick={google} disabled={busy} className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
               <GoogleLogo /><span>{busy ? 'Please wait…' : 'Continue with Google'}</span>
+            </button>
+            <button type="button" onClick={apple} disabled={busy} className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
+              <AppleLogo /><span>{busy ? 'Please wait…' : 'Continue with Apple'}</span>
             </button>
             {error && <p role="alert" className="mt-4 text-sm text-red-400">{error}</p>}
 

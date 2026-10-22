@@ -24,9 +24,20 @@ async function redeem(req, res) {
   res.set('Cache-Control', 'no-store').json({ success: true, ...(await wallet.redeem(req.user.id, req.body?.code)) })
 }
 
-/** POST /api/wallet/checkout - JSON { itemId (plan or coin pack id), currency?: 'USD' } -> starts a payment (503 until a payment gateway is connected). */
-function checkout(req, res) {
-  res.json({ success: true, ...payments.createCheckout(req.user.id, req.body?.itemId ?? req.body?.planId, req.body?.currency) })
+/** POST /api/wallet/checkout - JSON { itemId (plan or coin pack id) } -> { order }: what the browser needs to open Razorpay's payment window (503 until the Razorpay keys are set). */
+async function checkout(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, order: await payments.createCheckout(req.user.id, req.body?.itemId ?? req.body?.planId, req.body?.currency) })
 }
 
-module.exports = { listPlans, listPacks, getWallet, redeem, checkout }
+/** POST /api/wallet/verify-payment - JSON { orderId, paymentId, signature } (from Razorpay's payment window) -> { credited, balance } */
+async function verifyPayment(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, ...(await payments.verifyPayment(req.user.id, req.body || {})) })
+}
+
+/** POST /api/webhooks/razorpay - called by Razorpay (not by the browser); the signature header proves it. */
+async function razorpayWebhook(req, res) {
+  await payments.handleWebhook(req.rawBody, req.get('x-razorpay-signature'))
+  res.json({ success: true }) // always 200 once the signature is valid, so Razorpay does not keep retrying events we ignore
+}
+
+module.exports = { listPlans, listPacks, getWallet, redeem, checkout, verifyPayment, razorpayWebhook }
