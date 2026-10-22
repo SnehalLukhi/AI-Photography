@@ -57,11 +57,15 @@ module.exports = {
     rateLimitMax: int(process.env.AUTH_RATE_LIMIT_MAX, 20), // sign-in attempts per IP per 15 minutes
   },
 
+  brandName: (process.env.BRAND_NAME || 'Pictrify').trim(), // the name of the site: shown at the top of Razorpay's payment window
+
   // Razorpay (payments for coin packs / plans). Without the keys checkout answers 503.
   razorpay: {
     keyId: (process.env.RAZORPAY_KEY_ID || '').trim(), // public: also used by the browser's checkout window
     keySecret: (process.env.RAZORPAY_KEY_SECRET || '').trim(), // secret: server only
     webhookSecret: (process.env.RAZORPAY_WEBHOOK_SECRET || '').trim(), // the secret you type in Razorpay Dashboard > Webhooks
+    // Razorpay Subscription Plans (Dashboard > Subscriptions > Plans, ids like plan_xxx). A plan with an id here is sold as an auto-renewing subscription; without one it is a one-time purchase.
+    planIds: { weekly: (process.env.RAZORPAY_PLAN_WEEKLY || '').trim(), monthly: (process.env.RAZORPAY_PLAN_MONTHLY || '').trim(), yearly: (process.env.RAZORPAY_PLAN_YEARLY || '').trim() },
   },
 
   coins: {

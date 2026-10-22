@@ -1,4 +1,5 @@
 const offers = require('../config/offers')
+const env = require('../config/env')
 const plans = require('../config/plans')
 const packs = require('../config/packs')
 
@@ -9,6 +10,8 @@ const HOUR = 3600 * 1000
 /** Is this offer valid right now for this user (user may be undefined = not logged in)? */
 function isActive(offer, user, now = Date.now()) {
   if (!itemOf(offer.itemId)) return false
+  // a plan that renews automatically (Razorpay Subscription) can only be discounted through an Offer created in the Razorpay dashboard: the offer entry must carry its id
+  if (env.razorpay.planIds[offer.itemId] && !offer.razorpayOfferId) return false
   if (offer.startsAt && now < Date.parse(offer.startsAt)) return false
   if (offer.endsAt && now > Date.parse(offer.endsAt)) return false
   if (offer.audience === 'new') return !!user && now < user.createdAt + (offer.windowHours || 24) * HOUR

@@ -54,12 +54,28 @@ const SCHEMA = `
     status TEXT NOT NULL DEFAULT 'created',
     payment_id TEXT,
     offer_id TEXT, -- the offer applied to this order, if any
+    subscription_id TEXT, -- set when this is one charge (the first or a renewal) of a subscription; order_id is then the payment id
     list_amount INTEGER, -- the regular price in cents (amount is what was charged)
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     paid_at TIMESTAMPTZ
   );
   ALTER TABLE payments ADD COLUMN IF NOT EXISTS offer_id TEXT; -- databases created before offers
   ALTER TABLE payments ADD COLUMN IF NOT EXISTS list_amount INTEGER;
+  ALTER TABLE payments ADD COLUMN IF NOT EXISTS subscription_id TEXT;
+  -- auto-renewing plans (Razorpay Subscriptions): one row per subscription; the coins of every charge are added by subscriptions.service
+  CREATE TABLE IF NOT EXISTS subscriptions (
+    subscription_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    item_id TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'created',
+    offer_id TEXT,
+    cancel_requested BOOLEAN NOT NULL DEFAULT false,
+    paid_count INTEGER NOT NULL DEFAULT 0,
+    current_end TIMESTAMPTZ,
+    charge_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  CREATE INDEX IF NOT EXISTS subscriptions_user ON subscriptions (user_id, created_at DESC);
   CREATE INDEX IF NOT EXISTS payments_user ON payments (user_id, created_at DESC);
   -- one row per generation: the user's original photo + the AI result (both are public images in the Space; only their keys are kept here)
   CREATE TABLE IF NOT EXISTS generations (
@@ -91,6 +107,7 @@ const SCHEMA = `
   ALTER TABLE redeem_codes ENABLE ROW LEVEL SECURITY;
   ALTER TABLE generations ENABLE ROW LEVEL SECURITY;
   ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
   ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
 `
 

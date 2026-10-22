@@ -324,16 +324,33 @@ export async function getPurchases() {
 export async function buyCoins(itemId, { name = '', email = '' } = {}) {
   const [{ order }, loaded] = await Promise.all([post('/api/wallet/checkout', { itemId }), loadRazorpay()])
   if (!loaded) throw new Error('Could not load the payment window. Check your connection and try again.')
+  const subscription = order.kind === 'subscription' // an auto-renewing plan: Razorpay's window gets the subscription id (the amount belongs to the plan)
   return new Promise((resolve, reject) => {
     const rzp = new window.Razorpay({
-      key: order.keyId, amount: order.amount, currency: order.currency, order_id: order.orderId, name: order.name, description: order.description,
-      prefill: { name, email }, theme: { color: '#FF55AA' },
-      handler: (r) => post('/api/wallet/verify-payment', { orderId: r.razorpay_order_id, paymentId: r.razorpay_payment_id, signature: r.razorpay_signature }).then(resolve, reject),
+      key: order.keyId, name: order.name, description: order.description, prefill: { name, email }, theme: { color: '#FF55AA' },
+      image: `${window.location.origin}/images/features/logo-256.png`, // the logo in Razorpay's payment window (it must be a small picture on a public address)
+      ...(subscription ? { subscription_id: order.subscriptionId } : { amount: order.amount, currency: order.currency, order_id: order.orderId }),
+      handler: (r) => post('/api/wallet/verify-payment', subscription
+        ? { subscriptionId: r.razorpay_subscription_id, paymentId: r.razorpay_payment_id, signature: r.razorpay_signature }
+        : { orderId: r.razorpay_order_id, paymentId: r.razorpay_payment_id, signature: r.razorpay_signature }).then(resolve, reject),
       modal: { ondismiss: () => reject(new Error('Payment cancelled.')) },
     })
     rzp.on('payment.failed', (r) => reject(new Error(r?.error?.description || 'The payment failed. Please try again.')))
     rzp.open()
   })
+}
+
+/** The plan the user has now (auto-renewing, or cancelled but still paid for): { id, name, coins, status, cancelRequested, renewsAt, endsAt } or null. */
+export async function getSubscription() {
+  const res = await fetch(`${API_BASE}/api/wallet/subscription`, { headers: headers() })
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body.subscription
+}
+
+/** Stops the renewals of the current plan; it stays until the end of the period already paid for. Resolves with the updated plan. */
+export async function cancelSubscription() {
+  return (await post('/api/wallet/subscription/cancel', {})).subscription
 }
 
 /**
