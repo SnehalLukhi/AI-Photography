@@ -199,7 +199,7 @@ export default function Header({ generating = false }) {
             width: `calc(100% - ${xl ? 48 : 32}px)`,
             maxWidth: '96rem',
             borderRadius: 9999,
-            borderColor: scrolled ? 'rgba(255,85,170, 0.22)' : 'rgba(255,85,170, 0.14)',
+            borderColor: 'rgba(255,255,255,0.15)',
             boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.06), ${scrolled ? '0 14px 40px rgba(0, 0, 0, 0.45)' : '0 6px 24px rgba(0, 0, 0, 0.25)'}`,
             transition: ['border-color', 'box-shadow'].map((p) => `${p} 400ms ${EASE}`).join(', '),
           }}>
@@ -284,12 +284,12 @@ const tabs = [
 function MobileTabs({ pathname }) {
   const idx = Math.max(0, tabs.findIndex((t) => t.match(pathname)))
   return (
-    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[68%] min-w-[280px] max-w-[320px] -translate-x-1/2 select-none items-center justify-around rounded-full border border-white/[0.06] bg-[#0F0D0F]/95 p-[5px] shadow-[0_10px_35px_rgba(0,0,0,0.9),0_0_24px_rgba(255,85,170,0.12)] backdrop-blur-xl md:hidden" style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
-      <div className="pointer-events-none absolute top-1/2 z-[1] h-[50px] -translate-y-1/2 rounded-full shadow-[0_0_18px_rgba(255,85,170,0.35)] transition-all duration-300" style={{ width: 'calc((100% - 10px) / 3)', left: `calc(5px + ${idx} * (100% - 10px) / 3)`, background: 'linear-gradient(#0A0809, #0A0809) padding-box, linear-gradient(135deg, #FF88C7 0%, #FF55AA 100%) border-box', border: '1.5px solid transparent' }} />
+    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[68%] min-w-[280px] max-w-[320px] -translate-x-1/2 select-none items-center justify-around rounded-full border border-white/[0.06] bg-[#0F0D0F]/95 p-[5px] shadow-[0_10px_35px_rgba(0,0,0,0.9)] backdrop-blur-xl md:hidden" style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="pointer-events-none absolute top-1/2 z-[1] h-[50px] -translate-y-1/2 rounded-full bg-white/[0.06] ring-1 ring-inset ring-white/15 transition-all duration-300" style={{ width: 'calc((100% - 10px) / 3)', left: `calc(5px + ${idx} * (100% - 10px) / 3)` }} />
       {tabs.map((t, i) => (
         <Link key={t.label} to={t.to} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
-          <svg className={`size-6 transition-all duration-300 ${i === idx ? 'text-[#FF55AA] opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
-          <span className={`text-[11px] tracking-wide transition-all duration-300 ${i === idx ? 'font-semibold text-[#FF55AA]' : 'font-semibold text-white/50'}`}>{t.label}</span>
+          <svg className={`size-6 transition-all duration-300 ${i === idx ? 'text-white opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <span className={`text-[11px] tracking-wide transition-all duration-300 ${i === idx ? 'font-semibold text-white' : 'font-semibold text-white/50'}`}>{t.label}</span>
         </Link>
       ))}
     </div>

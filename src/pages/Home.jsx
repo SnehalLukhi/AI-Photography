@@ -51,7 +51,7 @@ function HeroShowcase({ items }) {
   }, [])
   const [left, center, right] = [items[0], items[1] || items[0], items[2] || items[0]]
   if (!center) return null
-  const side = 'hero-card group absolute block overflow-hidden rounded-[12px] border border-white/15 bg-[#0A0809] shadow-[0_18px_34px_-12px_rgba(0,0,0,0.9),0_0_22px_-8px_rgba(255,85,170,0.55)]'
+  const side = 'hero-card group absolute block overflow-hidden rounded-[12px] border border-white/15 bg-[#0A0809]'
   return (
     <div ref={wrap} className="relative mx-auto w-full max-w-[860px] lg:-mr-4 lg:ml-0 lg:justify-self-start xl:max-w-none" style={{ height: BOX_H * scale }}>
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: STAGE_W, height: STAGE_H, transform: `translate(${-BOX_X * scale}px, ${-BOX_Y * scale}px) scale(${scale})` }}>
@@ -69,19 +69,19 @@ function HeroShowcase({ items }) {
         </Link>
 
         {/* centre card with gradient border */}
-        <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] p-[2px] shadow-[0_0_34px_rgba(255,85,170,0.45),0_24px_44px_-16px_rgba(0,0,0,0.9)]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
+        <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] p-[2px]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
           <span className="relative block h-full w-full overflow-hidden rounded-[12px] bg-[#0A0809]">
             <img src={center.image} alt={center.name} className="absolute inset-0 h-full w-full object-cover object-[50%_18%]" draggable="false" />
           </span>
         </Link>
 
         {/* AI badge on the centre card's top-left corner */}
-        <div className="absolute z-20 flex items-center justify-center gap-1 rounded-[10px] bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(255,85,170,0.6)]" style={{ left: 221, top: 40, width: 49, height: 37 }}>
+        <div className="absolute z-20 flex items-center justify-center gap-1 rounded-[10px] bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-[15px] font-semibold text-white" style={{ left: 221, top: 40, width: 49, height: 37 }}>
           <svg className="size-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>AI
         </div>
 
         {/* glass caption card, bottom right of the centre card */}
-        <div className="absolute z-20 flex items-center gap-2.5 rounded-[12px] border border-white/10 bg-gradient-to-br bg-[#2B2B2B]/80 from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-3 shadow-[0_14px_30px_-12px_rgba(0,0,0,0.9)] backdrop-blur-md" style={{ left: 380, top: 231, width: 167, height: 59 }}>
+        <div className="absolute z-20 flex items-center gap-2.5 rounded-[12px] border border-white/10 bg-gradient-to-br bg-[#2B2B2B]/80 from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-3 backdrop-blur-md" style={{ left: 380, top: 231, width: 167, height: 59 }}>
           <svg className="size-6 shrink-0 text-[#FF88C7]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>
           <span className="whitespace-nowrap text-[10px] font-medium leading-[1.35] text-[#ffffff]">Turn your imagination<br />into reality</span>
         </div>
@@ -207,7 +207,7 @@ function MobileHome() {
         <section key={r.id} className="mt-[34px] space-y-3 first:mt-4">
           <div className="flex items-center justify-between px-4">
             <h2 className="text-base font-normal tracking-wide text-white">{r.title}</h2>
-            <Link to={r.to} className="flex cursor-pointer items-center gap-1 rounded-full border border-[#FF55AA]/30 bg-[#FF55AA]/5 px-3 py-1 text-[11px] font-bold text-[#FF55AA] shadow-[0_0_8px_rgba(150,137,240,0.1)] transition-all hover:bg-[#FF55AA]/15">
+            <Link to={r.to} className="flex cursor-pointer items-center gap-1 rounded-full bg-white/[0.06] px-3 py-1 text-[11px] font-semibold text-white ring-1 ring-inset ring-white/15 transition-colors hover:bg-white/10">
               More <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
             </Link>
           </div>

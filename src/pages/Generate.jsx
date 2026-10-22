@@ -156,11 +156,11 @@ function Generator({ asset }) {
     <>
       {/* ---------- Mobile: "Upload Photo" page (template card, big upload area, Camera / Gallery, Generate) ---------- */}
       <div className="fixed inset-0 z-[60] flex h-dvh flex-col overflow-y-auto overscroll-contain bg-[#0A0809] sm:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        <div className="relative flex shrink-0 items-center justify-center px-4 pb-3 pt-4">
+        <div className="relative flex shrink-0 items-center justify-center px-4 pb-4 pt-6">
           <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-4 flex size-10 cursor-pointer items-center justify-center rounded-full bg-[#2B2B2B] active:scale-90"><svg className="size-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
           <h1 className="text-[18px] font-semibold text-white">Upload {multi ? 'Photos' : 'Photo'}</h1>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col gap-3 px-4 pb-5">
+        <div className="flex min-h-0 flex-1 flex-col gap-5 px-4 pb-6">
           {/* selected template */}
           <div className="flex shrink-0 items-center gap-3.5 rounded-[22px] border border-white/[0.08] bg-[#121012] p-2.5 pr-3.5">
             <img src={asset.image} alt={asset.name} className="h-[68px] w-[52px] shrink-0 rounded-xl object-cover object-top" />
@@ -176,13 +176,13 @@ function Generator({ asset }) {
             {slots.map((k, i) => (
               <div key={k} className="relative min-h-[220px]">
                 {photos[i] ? (
-                  <div className="absolute inset-0 overflow-hidden rounded-[28px] border border-[#FF55AA]/45 bg-[#121012]">
+                  <div className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/15 bg-[#121012]">
                     <img src={photos[i].url} alt={`Your ${k} upload`} className="size-full object-contain" />
                     <button type="button" aria-label="Remove photo" onClick={clear(i)} className="absolute right-3 top-3 grid size-9 cursor-pointer place-items-center rounded-full bg-[#2B2B2B]/90 text-white backdrop-blur">✕</button>
                     <button type="button" onClick={() => { target.current = i; galRef.current.click() }} className="absolute bottom-3 right-3 cursor-pointer rounded-full bg-[#2B2B2B]/85 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur">Change Photo</button>
                   </div>
                 ) : (
-                  <button type="button" onClick={() => { target.current = i; galRef.current.click() }} className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-[28px] border-[1.5px] border-dashed border-[#FF55AA]/45 bg-[#0A0809] px-4 text-center shadow-[inset_0_0_48px_rgba(255,85,170,0.07)]">
+                  <button type="button" onClick={() => { target.current = i; galRef.current.click() }} className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-[28px] border-[1.5px] border-dashed border-white/20 bg-[#0A0809] px-4 text-center">
                     <span className="grid size-[68px] place-items-center rounded-full bg-[#2B2B2B] text-white"><svg className="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h5L15 8h1M4 8v11h14v-4M4 8M18 4v4M16 6h4M11 17a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" /></svg></span>
                     <span><span className="block text-[18px] font-semibold text-white">{multi ? `Add ${k === 'Photo' ? `photo ${i + 1}` : k}` : 'Add your photo'}</span><span className="mt-1 block text-[13px] text-[#A0A0A0]">Use a clear, front-facing selfie</span></span>
                   </button>
@@ -202,10 +202,10 @@ function Generator({ asset }) {
             ))}
           </div>
           <div className="mt-1 flex shrink-0 items-center gap-2">
-            <button type="button" disabled={!ready} onClick={next} className="flex h-[54px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-full text-[16px] font-bold text-white shadow-[0_8px_28px_rgba(255,85,170,0.4)] transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#1C1A1C] disabled:text-white/35 disabled:shadow-none" style={ready ? { background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' } : undefined}>
+            <button type="button" disabled={!ready} onClick={next} className="flex h-[54px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-full text-[16px] font-bold text-white transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#1C1A1C] disabled:text-white/35 disabled:shadow-none" style={ready ? { background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' } : undefined}>
               <SparkIcon className="size-5" />{ctaLabel}
             </button>
-            <CoinPill cost={cost} className="h-[54px] shrink-0" />
+            <CoinPill cost={cost} className="h-[54px] shrink-0 !border-white/15 !bg-white/[0.06] !bg-none !shadow-none" />
           </div>
           <p className="shrink-0 text-center text-xs text-[#A0A0A0]">{real ? `${cost} coins per generation · returned if it fails` : 'Demo preview · no coins are used'}</p>
         </div>
