@@ -53,7 +53,7 @@ export function Login() {
   if (signedIn) return <Navigate to="/" replace /> // signed in (a fresh login or a restored session): always land on Home, never the previous page or Profile
 
   return (
-    <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#0B071B] text-white lg:flex-row-reverse">
+    <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#0A0809] text-white lg:flex-row-reverse">
       {/* photo panel (desktop only): static, muted, no effects */}
       <aside className="relative hidden w-[58%] shrink-0 overflow-hidden lg:block">
         {/* tilted block of scrolling photo columns (16 degrees, bleeds past the panel edges) */}
@@ -62,7 +62,7 @@ export function Login() {
             <div key={ci} className="relative h-full min-w-0 flex-1 overflow-hidden">
               <div className="login-col flex w-full flex-col will-change-transform" style={{ animation: `${col.anim} ${col.secs}s linear infinite` }}>
                 {col.list.map((src, k) => (
-                  <div key={k} className="mb-3 aspect-[9/16] w-full shrink-0 overflow-hidden rounded-xl border border-[#3A3552] bg-[#0B071B]">
+                  <div key={k} className="mb-3 aspect-[9/16] w-full shrink-0 overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809]">
                     <img src={src} alt="" loading="lazy" className="size-full object-cover object-center" draggable="false" />
                   </div>
                 ))}
@@ -71,32 +71,32 @@ export function Login() {
           ))}
         </div>
         {/* fade / blur-out toward the inner (form-facing) edge, as in the reference - confined to this panel */}
-        <div className="absolute inset-0 bg-[#0B071B]/15" />
-        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-[#0B071B]/35 to-[#0B071B]" />
+        <div className="absolute inset-0 bg-[#0A0809]/15" />
+        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-[#0A0809]/35 to-[#0A0809]" />
         <div className="pointer-events-none absolute inset-0 backdrop-blur-[5px] [mask-image:linear-gradient(to_left,transparent_35%,black_100%)] [-webkit-mask-image:linear-gradient(to_left,transparent_35%,black_100%)]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B071B]/90 via-transparent to-[#0B071B]/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/90 via-transparent to-[#0A0809]/25" />
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col px-5 sm:px-8">
         <header className="flex items-center justify-between py-6 lg:hidden">
           <Link to="/" className="flex items-center gap-2.5"><img src={brandImages.logo} alt="" className="size-8 rounded-xl" /><span className="text-lg font-semibold tracking-tight">Pictrify</span></Link>
-          <Link to="/" className="text-sm text-[#C4B5FD]/75 transition-colors duration-200 hover:text-white lg:hidden">Home</Link>
+          <Link to="/" className="text-sm text-[#A0A0A0] transition-colors duration-200 hover:text-white lg:hidden">Home</Link>
         </header>
 
         <div className="m-auto w-full max-w-[440px] py-8">
-          <div className="login-rise rounded-xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-8">
+          <div className="login-rise rounded-xl border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-8">
             <h1 className="text-[26px] font-bold tracking-tight">Welcome to Pixora</h1>
-            <p className="mb-7 mt-2 text-sm leading-relaxed text-[#C4B5FD]/75">Log in or create your account with Google or Apple to start creating AI photos.</p>
+            <p className="mb-7 mt-2 text-sm leading-relaxed text-[#A0A0A0]">Log in or create your account with Google or Apple to start creating AI photos.</p>
 
-            <button type="button" onClick={google} disabled={!!busy} className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
+            <button type="button" onClick={google} disabled={!!busy} className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#2B2B2B] bg-[#2B2B2B] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#705CFF]/60 hover:bg-[#2B2B2B] disabled:cursor-wait disabled:opacity-70">
               <GoogleLogo /><span>{busy === 'google' ? 'Please wait…' : 'Continue with Google'}</span>
             </button>
-            <button type="button" onClick={apple} disabled={!!busy} className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
+            <button type="button" onClick={apple} disabled={!!busy} className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#2B2B2B] bg-[#2B2B2B] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#705CFF]/60 hover:bg-[#2B2B2B] disabled:cursor-wait disabled:opacity-70">
               <AppleLogo /><span>{busy === 'apple' ? 'Please wait…' : 'Continue with Apple'}</span>
             </button>
             {error && <p role="alert" className="mt-4 text-sm text-red-400">{error}</p>}
 
-            <p className="mt-6 border-t border-[#3A3552] pt-5 text-center text-xs leading-relaxed text-[#C4B5FD]/75">
+            <p className="mt-6 border-t border-[#2B2B2B] pt-5 text-center text-xs leading-relaxed text-[#A0A0A0]">
               By continuing, you agree to our <Link to="/privacy-policy" className="underline hover:text-white">Privacy Policy</Link> and <Link to="/terms-conditions" className="underline hover:text-white">Terms of Service</Link>.
             </p>
           </div>

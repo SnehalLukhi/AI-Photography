@@ -327,7 +327,7 @@ export async function buyCoins(itemId, { name = '', email = '' } = {}) {
   return new Promise((resolve, reject) => {
     const rzp = new window.Razorpay({
       key: order.keyId, amount: order.amount, currency: order.currency, order_id: order.orderId, name: order.name, description: order.description,
-      prefill: { name, email }, theme: { color: '#B070FA' },
+      prefill: { name, email }, theme: { color: '#705CFF' },
       handler: (r) => post('/api/wallet/verify-payment', { orderId: r.razorpay_order_id, paymentId: r.razorpay_payment_id, signature: r.razorpay_signature }).then(resolve, reject),
       modal: { ondismiss: () => reject(new Error('Payment cancelled.')) },
     })

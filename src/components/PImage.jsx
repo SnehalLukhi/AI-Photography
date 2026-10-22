@@ -48,7 +48,7 @@ export default function PImage({ src, alt, className = '', style, ...rest }) {
   const t = `${FADE_MS}ms ${EASE}`
   return (
     <>
-      <span aria-hidden="true" className="pointer-events-none absolute inset-0 grid place-items-center bg-[#0B071B]" style={{ opacity: show ? 0 : 1, transition: `opacity ${t}` }}>
+      <span aria-hidden="true" className="pointer-events-none absolute inset-0 grid place-items-center bg-[#0A0809]" style={{ opacity: show ? 0 : 1, transition: `opacity ${t}` }}>
         <img src="/images/features/logo-mark.svg" alt="" draggable="false" className="pimage-pulse w-[40%] max-w-[130px]" />
       </span>
       <img ref={ref} src={src} alt={alt} onLoad={() => setLoaded(true)} className={className} {...rest}

@@ -4,14 +4,14 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 
-export const SparkIcon = ({ className = 'size-3.5 text-[#B070FA]' }) => (
+export const SparkIcon = ({ className = 'size-3.5 text-[#705CFF]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
 )
 const Chevron = ({ open }) => (
-  <svg className={`size-3 text-[#C4B5FD]/75 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+  <svg className={`size-3 text-[#A0A0A0] transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
 )
 const PhoneIcon = () => (
-  <svg className="size-3.5 text-[#B070FA]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" strokeLinecap="round" /></svg>
+  <svg className="size-3.5 text-[#705CFF]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" strokeLinecap="round" /></svg>
 )
 
 const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
@@ -53,15 +53,15 @@ function GetApp({ small }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="relative shrink-0" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button type="button" onClick={() => setOpen(!open)} className={`flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] font-medium text-white transition-colors hover:border-[#B070FA]/60 hover:bg-[#B070FA]/10 ${small ? 'h-8 px-3 text-xs' : 'h-10 px-4 text-[13px]'}`}>
+      <button type="button" onClick={() => setOpen(!open)} className={`flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] font-medium text-white transition-colors hover:border-[#705CFF]/60 hover:bg-[#705CFF]/10 ${small ? 'h-8 px-3 text-xs' : 'h-10 px-4 text-[13px]'}`}>
         <PhoneIcon /><span>Get App</span><Chevron open={open} />
       </button>
       <div className={`absolute right-0 top-full z-50 w-[200px] pt-2.5 transition-all duration-300 ${open ? 'visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
-        <div className="relative flex flex-col items-center space-y-2.5 rounded-2xl border border-[#B070FA]/20 bg-gradient-to-br from-[#2A1B52]/95 to-[#1A284F]/95 p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
-          <span aria-hidden="true" className="absolute -top-[6px] right-10 size-2.5 rotate-45 border-l border-t border-[#B070FA]/20 bg-gradient-to-br from-[#2A1B52] to-[#1A284F]" />
-          <div className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#B070FA]/15 px-2 py-1 text-[11px] font-semibold text-white">Android App</div>
+        <div className="relative flex flex-col items-center space-y-2.5 rounded-2xl border border-[#705CFF]/20 bg-gradient-to-br bg-[#2B2B2B]/95 from-[#705CFF]/[0.07] to-[#705CFF]/0 p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
+          <span aria-hidden="true" className="absolute -top-[6px] right-10 size-2.5 rotate-45 border-l border-t border-[#705CFF]/20 bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0" />
+          <div className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[#705CFF]/15 px-2 py-1 text-[11px] font-semibold text-white">Android App</div>
           <div className="my-0.5 rounded-xl bg-white p-1.5 shadow-inner transition-transform hover:scale-105"><img src={brandImages.qr} alt="QR code" className="size-24 rounded-md object-contain" /></div>
-          <p className="text-[10px] font-medium leading-tight text-[#C4B5FD]">Scan for the app</p>
+          <p className="text-[10px] font-medium leading-tight text-[#A0A0A0]">Scan for the app</p>
         </div>
       </div>
     </div>
@@ -72,7 +72,7 @@ function GetApp({ small }) {
 const CoinBadge = ({ className = '' }) => {
   const { coins } = useStudio()
   return (
-  <Link to="/coins" aria-label={`${coins} coins - get more coins`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-[#34343c] bg-[#17171c] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#B070FA]/60 hover:bg-[#1d1b26] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(176,112,250,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${className}`}>
+  <Link to="/coins" aria-label={`${coins} coins - get more coins`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-white/10 bg-[#2B2B2B] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#705CFF]/60 hover:bg-[#2B2B2B] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(112,92,255,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#705CFF] ${className}`}>
     <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] shrink-0 object-contain" />
     <span className="text-[15px] font-bold leading-none tabular-nums text-white">{coins.toLocaleString()}</span>
   </Link>
@@ -130,30 +130,30 @@ function ProfileMenu() {
   return (
     <>
       <button ref={btn} type="button" onClick={toggle} aria-label="Open profile menu" aria-haspopup="menu" aria-expanded={open}
-        className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-[#B070FA] to-[#F066D8] text-[14px] font-bold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12)] transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] active:scale-95">{initial}</button>
+        className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-[#705CFF] to-[#FC48E7] text-[14px] font-bold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12)] transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#705CFF] active:scale-95">{initial}</button>
       {shown && createPortal(
         <div ref={panel} role="menu" aria-label="Profile" data-closing={!open} style={{ top: pos.top, right: pos.right }}
-          className="profile-menu fixed z-[400] w-[300px] max-w-[calc(100vw-24px)] rounded-2xl border border-white/10 bg-[#16161c] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.65)]">
-          <Link to="/profile" role="menuitem" onClick={() => close()} className="flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors hover:bg-white/[0.07] focus-visible:bg-white/[0.07] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#B070FA]">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#B070FA] to-[#F066D8] text-[16px] font-bold text-white">{initial}</span>
+          className="profile-menu fixed z-[400] w-[300px] max-w-[calc(100vw-24px)] rounded-2xl border border-white/10 bg-[#2B2B2B] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.65)]">
+          <Link to="/profile" role="menuitem" onClick={() => close()} className="flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors hover:bg-white/[0.07] focus-visible:bg-white/[0.07] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#705CFF]">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#705CFF] to-[#FC48E7] text-[16px] font-bold text-white">{initial}</span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[15px] font-semibold text-white">{name}</span>
-              <span className="block truncate text-xs text-[#C4B5FD]/75" title={userEmail}>{userEmail}</span>
+              <span className="block truncate text-xs text-[#A0A0A0]" title={userEmail}>{userEmail}</span>
             </span>
-            <svg className="size-4 shrink-0 text-[#C4B5FD]/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            <svg className="size-4 shrink-0 text-[#A0A0A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
           </Link>
           <div className="my-1.5 h-px bg-white/10" />
           {PROFILE_ITEMS.map(([to, label, d]) => (
             <Link key={to} to={to} role="menuitem" onClick={() => close()}
-              className="flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-[14px] font-medium text-[#E4DDFB] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#B070FA]">
-              <svg className="size-[18px] shrink-0 text-[#B070FA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+              className="flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-[14px] font-medium text-[#FFFFFF] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#705CFF]">
+              <svg className="size-[18px] shrink-0 text-[#705CFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
               {label}
             </Link>
           ))}
           <div className="my-1.5 h-px bg-white/10" />
           <button type="button" role="menuitem" onClick={() => { close(); signOut(); nav('/login') }}
-            className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2.5 text-left text-[14px] font-medium text-[#E4DDFB] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#B070FA]">
-            <svg className="size-[18px] shrink-0 text-[#B070FA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9" /></svg>
+            className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2.5 text-left text-[14px] font-medium text-[#FFFFFF] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#705CFF]">
+            <svg className="size-[18px] shrink-0 text-[#705CFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9" /></svg>
             Log out
           </button>
         </div>, document.body)}
@@ -172,7 +172,7 @@ const Claim = ({ small }) => {
   )
 }
 
-const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-[#B070FA]/15 text-white ring-1 ring-inset ring-[#B070FA]/30' : 'text-[#C4B5FD] hover:bg-white/[0.06] hover:text-white'}`
+const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-[#705CFF]/15 text-white ring-1 ring-inset ring-[#705CFF]/30' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`
 const Underline = () => null
 const DLink = ({ to, children }) => (
   <NavLink to={to} end={to === '/'} className={navLink}>
@@ -194,12 +194,12 @@ export default function Header({ generating = false }) {
     <>
       {/* Tablet / desktop nav */}
       <div className="pointer-events-none fixed left-0 right-0 z-50 hidden justify-center md:flex" style={{ top: scrolled ? 10 : 14, transition: `top 400ms ${EASE}` }}>
-        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgb(11,7,27)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgb(11,7,27)]' : ''}`}
+        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgb(10,8,9)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgb(10,8,9)]' : ''}`}
           style={{
             width: `calc(100% - ${xl ? 48 : 32}px)`,
             maxWidth: '96rem',
             borderRadius: 9999,
-            borderColor: scrolled ? 'rgba(176,112,250, 0.22)' : 'rgba(176,112,250, 0.14)',
+            borderColor: scrolled ? 'rgba(112,92,255, 0.22)' : 'rgba(112,92,255, 0.14)',
             boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.06), ${scrolled ? '0 14px 40px rgba(0, 0, 0, 0.45)' : '0 6px 24px rgba(0, 0, 0, 0.25)'}`,
             transition: ['border-color', 'box-shadow'].map((p) => `${p} 400ms ${EASE}`).join(', '),
           }}>
@@ -222,7 +222,7 @@ export default function Header({ generating = false }) {
                 <GetApp small />
                 <Claim small />
                 {signedIn && <ProfileMenu />}
-                <button type="button" aria-label="Open main menu" aria-expanded={menu} onClick={() => setMenu(!menu)} className="inline-flex cursor-pointer items-center justify-center rounded-xl p-2 text-[#C4B5FD] transition-colors hover:text-white focus:outline-none">
+                <button type="button" aria-label="Open main menu" aria-expanded={menu} onClick={() => setMenu(!menu)} className="inline-flex cursor-pointer items-center justify-center rounded-xl p-2 text-[#A0A0A0] transition-colors hover:text-white focus:outline-none">
                   <svg className="block size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d={menu ? 'M6 6l12 12M6 18L18 6' : 'M4 6h16M4 12h16M4 18h16'} /></svg>
                 </button>
               </div>
@@ -232,17 +232,17 @@ export default function Header({ generating = false }) {
             <div className="no-scrollbar max-h-[70vh] overflow-y-auto border-t border-white/10">
               <div className="space-y-0.5 px-3 pb-3 pt-2">
                 {[...main, { to: '/creations', label: 'My Creations' }, { to: '/pricing', label: 'Pricing' }].slice(0, main.length).map((l) => (
-                  <NavLink key={l.to} to={l.to} end className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#B070FA]/15 text-white ring-1 ring-inset ring-[#B070FA]/30' : 'text-[#C4B5FD] hover:bg-white/[0.06] hover:text-white'}`}>{l.label}</NavLink>
+                  <NavLink key={l.to} to={l.to} end className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#705CFF]/15 text-white ring-1 ring-inset ring-[#705CFF]/30' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`}>{l.label}</NavLink>
                 ))}
                 {[['/creations', 'My Creations'], ['/pricing', 'Pricing']].map(([to, label]) => (
-                  <NavLink key={to} to={to} className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#B070FA]/15 text-white ring-1 ring-inset ring-[#B070FA]/30' : 'text-[#C4B5FD] hover:bg-white/[0.06] hover:text-white'}`}>{label}</NavLink>
+                  <NavLink key={to} to={to} className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#705CFF]/15 text-white ring-1 ring-inset ring-[#705CFF]/30' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`}>{label}</NavLink>
                 ))}
                 <div className="!mt-2 space-y-0.5 border-t border-white/10 pt-2">
-                  <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#C4B5FD]/75">Account &amp; Support</div>
-                  {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#C4B5FD] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
+                  <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#A0A0A0]">Account &amp; Support</div>
+                  {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#A0A0A0] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
                   {signedIn ? <CoinBadge className="!mt-2 w-full" /> : (
-                  <Link to="/login" className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#B070FA]/50 bg-[#B070FA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#B070FA] hover:bg-[#B070FA]/20">
-                    <SparkIcon className="size-3.5 text-[#B070FA]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
+                  <Link to="/login" className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#705CFF]/50 bg-[#705CFF]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#705CFF] hover:bg-[#705CFF]/20">
+                    <SparkIcon className="size-3.5 text-[#705CFF]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
                   </Link>
                   )}
                 </div>
@@ -254,17 +254,20 @@ export default function Header({ generating = false }) {
       <div className="hidden h-[92px] md:block" />
 
       {/* Mobile header */}
-      <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#0B071B] px-4 py-3 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
-        <Logo />
-        {(
-          <div className="flex items-center gap-2">
-            {signedIn && <CoinBadge />}
-            <GetApp small />
-            {signedIn ? <ProfileMenu /> : <Link to="/pricing" aria-label="Upgrade to Pro" className="p-1 text-[#D8B4FE] transition-transform active:scale-95">
-              <svg className="size-7" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" /></svg>
-            </Link>}
-          </div>
-        )}
+      <header className={`sticky top-0 z-50 flex h-[61px] items-center justify-between border-b border-white/[0.08] bg-[#0A0809] px-4 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
+        <Logo imgHeight={28} fontSize={22} />
+        <div className="flex items-center gap-2.5">
+          {signedIn ? <><CoinBadge /><ProfileMenu /></> : (
+            <>
+              <Link to="/login" aria-label="Claim 50 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
+                <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] object-contain" />
+              </Link>
+              <Link to="/login" aria-label="Log in" className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-[#705CFF] to-[#FC48E7] text-white transition-transform active:scale-95">
+                <svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0116 0" /></svg>
+              </Link>
+            </>
+          )}
+        </div>
       </header>
       {!generating && <MobileTabs pathname={pathname} />}
       {generating && <div className="hidden sm:block md:hidden"><MobileTabs pathname={pathname} /></div>}
@@ -281,12 +284,12 @@ const tabs = [
 function MobileTabs({ pathname }) {
   const idx = Math.max(0, tabs.findIndex((t) => t.match(pathname)))
   return (
-    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[85%] max-w-[316px] -translate-x-1/2 select-none items-center justify-around rounded-[6px] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-1 shadow-[0_10px_35px_rgba(0,0,0,0.9)] md:hidden" style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}>
-      <div className="pointer-events-none absolute top-1/2 z-[1] h-[54px] -translate-y-1/2 rounded-[4px] shadow-[0_4px_15px_rgba(176,112,250,0.25)] transition-all duration-300" style={{ width: 'calc((100% - 8px) / 3)', left: `calc(4px + ${idx} * (100% - 8px) / 3)`, background: 'linear-gradient(#2A1B52, #1A284F) padding-box, linear-gradient(135deg, #B070FA 0%, #F066D8 100%) border-box', border: '1.5px solid transparent' }} />
+    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[85%] max-w-[316px] -translate-x-1/2 select-none items-center justify-around rounded-[6px] bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0 p-1 shadow-[0_10px_35px_rgba(0,0,0,0.9)] md:hidden" style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}>
+      <div className="pointer-events-none absolute top-1/2 z-[1] h-[54px] -translate-y-1/2 rounded-[4px] shadow-[0_4px_15px_rgba(112,92,255,0.25)] transition-all duration-300" style={{ width: 'calc((100% - 8px) / 3)', left: `calc(4px + ${idx} * (100% - 8px) / 3)`, background: 'linear-gradient(#2B2B2B, #2B2B2B) padding-box, linear-gradient(135deg, #705CFF 0%, #FC48E7 100%) border-box', border: '1.5px solid transparent' }} />
       {tabs.map((t, i) => (
         <Link key={t.label} to={t.to} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
-          <svg className={`size-5 transition-all duration-300 ${i === idx ? 'text-[#B070FA] opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
-          <span className={`text-[11px] tracking-wider transition-all duration-300 ${i === idx ? 'font-medium text-[#B070FA]' : 'font-normal text-white/50'}`}>{t.label}</span>
+          <svg className={`size-5 transition-all duration-300 ${i === idx ? 'text-[#705CFF] opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <span className={`text-[11px] tracking-wider transition-all duration-300 ${i === idx ? 'font-medium text-[#705CFF]' : 'font-normal text-white/50'}`}>{t.label}</span>
         </Link>
       ))}
     </div>

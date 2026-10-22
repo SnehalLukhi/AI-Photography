@@ -76,15 +76,15 @@ const sections = [
 ]
 
 const Block = ({ b }) => (b.p
-  ? <p className="mb-4 text-[16px] leading-[1.65] text-[#E4DDFB]/90">{b.p}</p>
-  : <ul className="mb-5 list-disc space-y-1.5 pl-6 text-[15px] leading-[1.6] text-[#E4DDFB]/85 marker:text-[#B070FA]">{b.ul.map((i) => <li key={i}>{i}</li>)}</ul>)
+  ? <p className="mb-4 text-[16px] leading-[1.65] text-[#FFFFFF]/90">{b.p}</p>
+  : <ul className="mb-5 list-disc space-y-1.5 pl-6 text-[15px] leading-[1.6] text-[#FFFFFF]/85 marker:text-[#705CFF]">{b.ul.map((i) => <li key={i}>{i}</li>)}</ul>)
 
 export default function PrivacyPolicy() {
   return (
     <div className="relative z-10 px-4 pb-24 pt-8 sm:px-6 sm:pt-14 md:pb-16 lg:px-8">
       <article className="mx-auto max-w-[900px]">
         <h1 className="text-[30px] font-bold leading-tight tracking-tight text-white sm:text-[36px]">Privacy Policy</h1>
-        <p className="mb-2 mt-5 text-[16px] text-[#E4DDFB]/90"><strong className="font-semibold text-white">Effective Date:</strong> 21 October 2026</p>
+        <p className="mb-2 mt-5 text-[16px] text-[#FFFFFF]/90"><strong className="font-semibold text-white">Effective Date:</strong> 21 October 2026</p>
         {sections.map(([h, subs, blocks]) => (
           <section key={h}>
             <h2 className="mb-4 mt-10 text-[22px] font-semibold text-white sm:text-[24px]">{h}</h2>

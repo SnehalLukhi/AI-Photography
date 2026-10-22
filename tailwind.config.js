@@ -3,7 +3,7 @@ export default {
   theme: {
     extend: {
       fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], display: ['Bricolage Grotesque', 'Inter', 'system-ui', 'sans-serif'], mono: ['Inter', 'system-ui', 'sans-serif'] },
-      colors: { page: '#0B071B', panel: '#2A1B52', accent: '#B070FA', pink: '#B070FA', footer: '#0B071B' },
+      colors: { page: '#0A0809', panel: '#2B2B2B', accent: '#705CFF', pink: '#705CFF', footer: '#0A0809' },
       keyframes: {
         marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
         'card-float-3d': { '0%,100%': { transform: 'translateY(0) rotateY(-12deg) rotateX(6deg)' }, '50%': { transform: 'translateY(-14px) rotateY(-8deg) rotateX(10deg)' } },

@@ -10,7 +10,7 @@ import usePopupExit from './usePopupExit.js'
 // Collage photos: existing template photos (Cartoon, LinkedIn Headshot, Old Money, 80's & 90's, Beard), one from each, no new assets.
 const COLLAGE = ['cartoon', 'linkedin-headshot', 'old-money', '80s-and-90s', 'beard', 'cartoon'].map((id, i) => categoryItems(id)[id === 'cartoon' ? i % 5 : 0]).filter(Boolean)
 
-const BRAND_GRADIENT = 'bg-[linear-gradient(90deg,#8B1CFF_0%,#F0389A_62%,#FF7A2F_100%)]'
+const BRAND_GRADIENT = 'bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)]'
 
 const icon = (d) => <svg className="size-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
 const PERKS = [
@@ -51,9 +51,9 @@ export default function PremiumPopup({ onClose: finish }) {
   }
 
   return (
-    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-end justify-center bg-[#0B071B]/75 p-0 sm:items-center sm:p-4`} onClick={() => onClose()}>
+    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-end justify-center bg-[#0A0809]/75 p-0 sm:items-center sm:p-4`} onClick={() => onClose()}>
       <div role="dialog" aria-modal="true" aria-label="Pictrify Premium" onClick={(e) => e.stopPropagation()}
-        className="welcome-card relative flex max-h-[96dvh] w-full max-w-[980px] flex-col overflow-y-auto overflow-x-hidden rounded-t-[28px] border border-white/10 bg-[#0F0F16] shadow-[0_24px_90px_rgba(0,0,0,0.65)] sm:max-h-[94dvh] sm:rounded-[28px]">
+        className="welcome-card relative flex max-h-[96dvh] w-full max-w-[980px] flex-col overflow-y-auto overflow-x-hidden rounded-t-[28px] border border-white/10 bg-[#0C032A] shadow-[0_24px_90px_rgba(0,0,0,0.65)] sm:max-h-[94dvh] sm:rounded-[28px]">
         <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-3 top-3 z-20 grid size-9 cursor-pointer place-items-center rounded-full bg-white/[0.1] text-lg leading-none text-white transition hover:bg-white/20 sm:right-4 sm:top-4">×</button>
 
         <div className="relative grid gap-5 px-4 pb-4 pt-6 sm:px-10 sm:pt-12 lg:grid-cols-[1.2fr_0.8fr] lg:gap-8">
@@ -63,10 +63,10 @@ export default function PremiumPopup({ onClose: finish }) {
               <span className={`${BRAND_GRADIENT} rounded-full px-3 py-0.5 text-[12px] font-extrabold tracking-wider text-white`}>PRO</span>
             </div>
             <h2 className={`welcome-rise welcome-rise-2 mt-4 bg-clip-text text-[26px] font-extrabold leading-[1.1] tracking-tight text-transparent sm:text-[32px] ${BRAND_GRADIENT}`}>Unlock ultimate creative power</h2>
-            <p className="welcome-rise welcome-rise-3 mt-3 max-w-lg text-sm leading-relaxed text-[#A5A5B4] sm:text-base">Supercharge your creativity with premium tools, ultra HD quality, and unlimited inspiration.</p>
+            <p className="welcome-rise welcome-rise-3 mt-3 max-w-lg text-sm leading-relaxed text-[#A0A0A0] sm:text-base">Supercharge your creativity with premium tools, ultra HD quality, and unlimited inspiration.</p>
             <div className="welcome-rise welcome-rise-3 mt-5 grid grid-cols-4 gap-2 sm:mt-7 sm:gap-3">
               {PERKS.map((f) => (
-                <div key={f.label} className="flex min-w-0 flex-col items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-[#17171F] px-1 py-3 sm:h-[92px]">
+                <div key={f.label} className="flex min-w-0 flex-col items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-[#2B2B2B] px-1 py-3 sm:h-[92px]">
                   {f.icon}
                   <p className="text-center text-[11px] font-semibold leading-tight text-white">{f.label}</p>
                 </div>
@@ -83,7 +83,7 @@ export default function PremiumPopup({ onClose: finish }) {
                 </div>
               ))}
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F16] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0C032A] via-transparent to-transparent" />
           </div>
         </div>
 
@@ -93,32 +93,32 @@ export default function PremiumPopup({ onClose: finish }) {
               const on = p.id === selected
               return (
                 <button key={p.id} type="button" role="radio" aria-checked={on} onClick={() => setSelected(p.id)}
-                  className={`relative flex min-w-0 cursor-pointer flex-col rounded-[22px] border bg-[#12121A] p-4 text-left transition-all duration-200 sm:p-5 ${on ? 'border-[#B070FA] shadow-[0_0_26px_rgba(176,112,250,0.3)]' : 'border-white/[0.08] hover:border-white/25'}`}>
+                  className={`relative flex min-w-0 cursor-pointer flex-col rounded-[22px] border bg-[#2B2B2B] p-4 text-left transition-all duration-200 sm:p-5 ${on ? 'border-[#705CFF] shadow-[0_0_26px_rgba(112,92,255,0.3)]' : 'border-white/[0.08] hover:border-white/25'}`}>
                   <span className="flex items-center justify-between gap-3">
                     <span className="min-w-0">
-                      {p.popular && <span className="mb-1.5 inline-block rounded-md bg-gradient-to-r from-[#8B1CFF] to-[#D63AD6] px-2 py-0.5 text-[10px] font-bold text-white">Popular</span>}
+                      {p.popular && <span className="mb-1.5 inline-block grad-alt-bg rounded-md px-2 py-0.5 text-[10px]">Popular</span>}
                       <span className="block text-[17px] font-bold leading-tight text-white">{p.name.replace(/ Premium$/, '')}</span>
-                      <span className="mt-2 flex items-baseline gap-1.5"><span className="text-[24px] font-bold leading-none text-white">{p.price}</span><span className="text-[13px] text-[#A5A5B4]">{p.per.replace(/^\/\s*/, '/')}</span></span>
+                      <span className="mt-2 flex items-baseline gap-1.5"><span className="text-[24px] font-bold leading-none text-white">{p.price}</span><span className="text-[13px] text-[#A0A0A0]">{p.per.replace(/^\/\s*/, '/')}</span></span>
                     </span>
-                    <span className="flex h-[88px] w-[88px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-white/[0.08] bg-[#1A1A24]">
+                    <span className="flex h-[88px] w-[88px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-white/[0.08] bg-[#2B2B2B]">
                       <img src={brandImages.coin} alt="" width="28" height="28" className="size-7 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />
                       <span className="text-[14px] font-bold leading-none text-white">{p.coins.toLocaleString('en-US')}</span>
-                      <span className="text-[11px] font-semibold leading-none text-[#8B5CF6]">Coins</span>
+                      <span className="text-[11px] font-semibold leading-none text-[#705CFF]">Coins</span>
                     </span>
                   </span>
-                  <span className="mt-4 block border-t border-white/[0.08] pt-3 text-[12px] text-[#A5A5B4]">Premium templates</span>
+                  <span className="mt-4 block border-t border-white/[0.08] pt-3 text-[12px] text-[#A0A0A0]">Premium templates</span>
                 </button>
               )
             })}
           </div>
 
           <button type="button" onClick={pay} disabled={busy}
-            className={`${BRAND_GRADIENT} mx-auto mt-5 flex h-[46px] w-full max-w-[460px] cursor-pointer items-center justify-center gap-2 rounded-[14px] text-base font-bold text-white shadow-[0_8px_30px_rgba(240,56,154,0.3)] transition-shadow hover:shadow-[0_8px_40px_rgba(240,56,154,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] disabled:cursor-wait disabled:opacity-70`}>
+            className={`${BRAND_GRADIENT} mx-auto mt-5 flex h-[46px] w-full max-w-[460px] cursor-pointer items-center justify-center gap-2 rounded-[14px] text-base font-bold text-white shadow-[0_8px_30px_rgba(112,92,255,0.3)] transition-shadow hover:shadow-[0_8px_40px_rgba(112,92,255,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#705CFF] disabled:cursor-wait disabled:opacity-70`}>
             <SparkIcon className="size-4 text-white" />{busy ? 'Please wait…' : 'Continue'}
           </button>
-          {note && <p role="status" className="mx-auto mt-3 max-w-[460px] rounded-xl border border-[#B070FA]/40 bg-[#1A1A24] px-4 py-2.5 text-center text-sm text-[#D4D4DC]">{note}</p>}
-          <p className="mt-4 text-center text-[11px] text-[#8A8A99] sm:text-xs">Auto-renewable Subscription. Cancel anytime.</p>
-          <p className="mt-3 text-center"><Link to="/privacy-policy" onClick={() => finish(true)} className="text-xs font-semibold text-[#A5A5B4] hover:text-white">Privacy Policy</Link></p>
+          {note && <p role="status" className="mx-auto mt-3 max-w-[460px] rounded-xl border border-[#705CFF]/40 bg-[#2B2B2B] px-4 py-2.5 text-center text-sm text-[#FFFFFF]">{note}</p>}
+          <p className="mt-4 text-center text-[11px] text-[#A0A0A0] sm:text-xs">Auto-renewable Subscription. Cancel anytime.</p>
+          <p className="mt-3 text-center"><Link to="/privacy-policy" onClick={() => finish(true)} className="text-xs font-semibold text-[#A0A0A0] hover:text-white">Privacy Policy</Link></p>
         </div>
       </div>
     </div>

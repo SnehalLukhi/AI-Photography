@@ -66,49 +66,49 @@ export default function OfferPopup({ onClose: finish }) {
   const name = offer.name.replace(/ Premium$/, '')
 
   return (
-    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#0B071B]/80 p-4`} onClick={() => onClose()}>
+    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#0A0809]/80 p-4`} onClick={() => onClose()}>
       <StarBurst />
       <div role="dialog" aria-modal="true" aria-labelledby="offer-title" onClick={(e) => e.stopPropagation()}
-        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[28px] border border-white/10 bg-[#14141C] px-5 pb-7 pt-7 text-center shadow-[0_24px_80px_rgba(0,0,0,0.65)] sm:px-7">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(139,28,255,0.16),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(255,106,40,0.12),transparent_55%)]" />
-        <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/[0.07] text-lg leading-none text-[#C9C9D4] transition hover:bg-white/15 hover:text-white">×</button>
+        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[28px] border border-white/10 bg-[#0C032A] px-5 pb-7 pt-7 text-center shadow-[0_24px_80px_rgba(0,0,0,0.65)] sm:px-7">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(112,92,255,0.07),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(112,92,255,0.07),transparent_55%)]" />
+        <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/[0.07] text-lg leading-none text-[#A0A0A0] transition hover:bg-white/15 hover:text-white">×</button>
 
-        <span className="welcome-rise welcome-rise-1 relative inline-block rounded-full border border-[#FF5A36]/40 bg-[#FF5A36]/10 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#FF5A36]">Special Offer</span>
-        <h2 id="offer-title" className="welcome-rise welcome-rise-1 relative mt-4 text-[26px] font-extrabold leading-tight text-white sm:text-[30px]">Wait! Create <span className="text-[#FF6A28]">More</span> for Less</h2>
-        <p className="welcome-rise welcome-rise-2 relative mt-2 text-sm text-[#9A9AA8]">Limited-time premium trial reserved for you.</p>
+        <span className="welcome-rise welcome-rise-1 relative inline-block rounded-full border border-[#FF55AA]/40 bg-[#FF55AA]/10 px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider"><span className="grad-alt-text">Special Offer</span></span>
+        <h2 id="offer-title" className="welcome-rise welcome-rise-1 relative mt-4 text-[26px] font-extrabold leading-tight text-white sm:text-[30px]">Wait! Create <span className="grad-alt-text">More</span> for Less</h2>
+        <p className="welcome-rise welcome-rise-2 relative mt-2 text-sm text-[#A0A0A0]">Limited-time premium trial reserved for you.</p>
 
-        <div className="welcome-rise welcome-rise-2 relative mt-6 flex items-center gap-5 rounded-2xl border-2 border-dashed border-[#FF6A28] bg-[#1A1A24] px-5 py-5 text-left">
+        <div className="welcome-rise welcome-rise-2 relative mt-6 flex items-center gap-5 rounded-2xl border-2 border-dashed border-[#FF55AA] bg-[#2B2B2B] px-5 py-5 text-left">
           <div className="shrink-0 text-center">
-            <p className="text-[34px] font-extrabold leading-none text-[#FF6A28] sm:text-[40px]">{offer.discountPercent}%</p>
-            <p className="mt-1 text-xs font-extrabold tracking-wide text-[#FF6A28]">OFF</p>
+            <p className="text-[34px] font-extrabold leading-none sm:text-[40px] grad-alt-text">{offer.discountPercent}%</p>
+            <p className="mt-1 text-xs font-extrabold tracking-wide grad-alt-text">OFF</p>
           </div>
           <div className="min-w-0 border-l border-dashed border-white/20 pl-5">
             <p className="text-base font-bold text-white">{name}</p>
             <p className="mt-1 flex flex-wrap items-baseline gap-x-2">
-              <span className="text-xs text-[#8A8A99] line-through">{money(offer.original, offer.currency)}</span>
+              <span className="text-xs text-[#A0A0A0] line-through">{money(offer.original, offer.currency)}</span>
               <span className="text-[26px] font-extrabold leading-none text-white sm:text-[30px]">{money(offer.price, offer.currency)}</span>
-              <span className="text-xs text-[#8A8A99]">{offer.per.replace(/^\/\s*/, '/')}</span>
+              <span className="text-xs text-[#A0A0A0]">{offer.per.replace(/^\/\s*/, '/')}</span>
             </p>
           </div>
         </div>
 
         <div className="welcome-rise welcome-rise-3 relative mt-5 flex items-center justify-center gap-2 text-sm font-semibold text-white" role="timer" aria-label="Offer expires in">
-          <svg className="size-4 text-[#FF6A28]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+          <svg className="size-4 text-[#705CFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
           <span className="text-[13px]">Offer expires in:</span>
           {clock.map((n, i) => (
             <span key={i} className="flex items-center gap-2">
-              {i > 0 && <span className="text-[#8A8A99]">:</span>}
-              <span className="grid h-7 min-w-[34px] place-items-center rounded-md border border-white/10 bg-[#22222D] px-1.5 text-[13px] tabular-nums">{pad(n)}</span>
+              {i > 0 && <span className="text-[#A0A0A0]">:</span>}
+              <span className="grid h-7 min-w-[34px] place-items-center rounded-md border border-white/10 bg-[#2B2B2B] px-1.5 text-[13px] tabular-nums">{pad(n)}</span>
             </span>
           ))}
         </div>
 
         <button type="button" onClick={claim} disabled={busy}
-          className="welcome-rise welcome-rise-3 relative mt-5 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-2xl bg-[linear-gradient(90deg,#9B30E8_0%,#F0389A_60%,#FF7A2F_100%)] text-base font-bold text-white shadow-[0_8px_30px_rgba(240,56,154,0.3)] transition-shadow hover:shadow-[0_8px_40px_rgba(240,56,154,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] disabled:cursor-wait disabled:opacity-70">
+          className="welcome-rise welcome-rise-3 relative mt-5 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-2xl bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)] text-base font-bold text-white shadow-[0_8px_30px_rgba(112,92,255,0.3)] transition-shadow hover:shadow-[0_8px_40px_rgba(112,92,255,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#705CFF] disabled:cursor-wait disabled:opacity-70">
           {busy ? 'Please wait…' : `Claim ${name} Offer`}
         </button>
-        {note && <p role="status" className="relative mt-3 rounded-xl border border-[#B070FA]/40 bg-[#1A1A24] px-4 py-2.5 text-sm text-[#D4D4DC]">{note}</p>}
-        <button type="button" onClick={() => onClose()} className="welcome-rise welcome-rise-3 relative mt-4 cursor-pointer text-xs text-[#A5A5B4] underline underline-offset-2 hover:text-white">No Thanks, I'll Decide Later</button>
+        {note && <p role="status" className="relative mt-3 rounded-xl border border-[#705CFF]/40 bg-[#2B2B2B] px-4 py-2.5 text-sm text-[#FFFFFF]">{note}</p>}
+        <button type="button" onClick={() => onClose()} className="welcome-rise welcome-rise-3 relative mt-4 cursor-pointer text-xs text-[#A0A0A0] underline underline-offset-2 hover:text-white">No Thanks, I'll Decide Later</button>
       </div>
     </div>
   )

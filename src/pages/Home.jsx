@@ -1,7 +1,8 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { categories, steps, exploreCategories, exploreTabs, byCategory, exploreList, folderTemplates, exploreEverything, categoryItems, generateUrl } from '../data/templates.js'
 import TemplateCard from '../components/TemplateCard.jsx'
+import PImage from '../components/PImage.jsx'
 import { SparkIcon } from '../components/Header.jsx'
 
 // Hero showcase, built to a 725 x 335 reference mock-up (all numbers below are px inside that stage). The stage is scaled
@@ -19,7 +20,7 @@ function RingHalf({ ring, half, z, clipFrom = 0 }) {
     <svg className="pointer-events-none absolute inset-0 overflow-visible" style={{ zIndex: z, clipPath: clipFrom ? `inset(-40px -40px -40px ${clipFrom}px)` : undefined }} width={STAGE_W} height={STAGE_H} viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} aria-hidden="true">
       <defs>
         <linearGradient id={`${id}-s`} gradientUnits="userSpaceOnUse" x1={cx - rx} y1="0" x2={cx + rx} y2="0">
-          <stop offset="0" stopColor="#B070FA" stopOpacity="0.85" /><stop offset="0.55" stopColor="#C4B5FD" stopOpacity="0.9" /><stop offset="1" stopColor="#F066D8" stopOpacity="1" />
+          <stop offset="0" stopColor="#705CFF" stopOpacity="0.85" /><stop offset="0.55" stopColor="#A0A0A0" stopOpacity="0.9" /><stop offset="1" stopColor="#705CFF" stopOpacity="1" />
         </linearGradient>
         <filter id={`${clip}-g`} x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur stdDeviation="1.6" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
         <clipPath id={clip}><rect x={cx - rx - 20} y={half === 'back' ? cy - ry - 20 : cy} width={rx * 2 + 40} height={ry + 20} /></clipPath>
@@ -50,12 +51,12 @@ function HeroShowcase({ items }) {
   }, [])
   const [left, center, right] = [items[0], items[1] || items[0], items[2] || items[0]]
   if (!center) return null
-  const side = 'hero-card group absolute block overflow-hidden rounded-[12px] border border-white/15 bg-[#0B071B] shadow-[0_18px_34px_-12px_rgba(0,0,0,0.9),0_0_22px_-8px_rgba(176,112,250,0.55)]'
+  const side = 'hero-card group absolute block overflow-hidden rounded-[12px] border border-white/15 bg-[#0A0809] shadow-[0_18px_34px_-12px_rgba(0,0,0,0.9),0_0_22px_-8px_rgba(112,92,255,0.55)]'
   return (
     <div ref={wrap} className="relative mx-auto w-full max-w-[860px] lg:-mr-4 lg:ml-0 lg:justify-self-start xl:max-w-none" style={{ height: BOX_H * scale }}>
       <div className="absolute left-0 top-0 origin-top-left" style={{ width: STAGE_W, height: STAGE_H, transform: `translate(${-BOX_X * scale}px, ${-BOX_Y * scale}px) scale(${scale})` }}>
         {/* soft glow + thin orbit rings passing behind the side cards */}
-        <div className="pointer-events-none absolute left-[120px] top-[60px] h-[230px] w-[420px] rounded-full bg-[#B070FA]/20 blur-[70px]" />
+        <div className="pointer-events-none absolute left-[120px] top-[60px] h-[230px] w-[420px] rounded-full bg-[#705CFF]/20 blur-[70px]" />
         {/* rings: back halves sit under the cards, front halves come round over them */}
         <RingHalf ring={ringA} half="back" z={0} />
         {/* left card (tilted back) */}
@@ -68,20 +69,20 @@ function HeroShowcase({ items }) {
         </Link>
 
         {/* centre card with gradient border */}
-        <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-gradient-to-br from-[#B070FA] to-[#F066D8] p-[2px] shadow-[0_0_34px_rgba(176,112,250,0.45),0_24px_44px_-16px_rgba(0,0,0,0.9)]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
-          <span className="relative block h-full w-full overflow-hidden rounded-[12px] bg-[#0B071B]">
+        <Link to={generateUrl(center)} aria-label={center.name} className="hero-card group absolute z-10 block rounded-[14px] bg-gradient-to-br from-[#705CFF] to-[#FC48E7] p-[2px] shadow-[0_0_34px_rgba(112,92,255,0.45),0_24px_44px_-16px_rgba(0,0,0,0.9)]" style={{ left: 238, top: 27, width: 229, height: 272 }}>
+          <span className="relative block h-full w-full overflow-hidden rounded-[12px] bg-[#0A0809]">
             <img src={center.image} alt={center.name} className="absolute inset-0 h-full w-full object-cover object-[50%_18%]" draggable="false" />
           </span>
         </Link>
 
         {/* AI badge on the centre card's top-left corner */}
-        <div className="absolute z-20 flex items-center justify-center gap-1 rounded-[10px] bg-gradient-to-br from-[#B070FA] to-[#F066D8] text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(176,112,250,0.6)]" style={{ left: 221, top: 40, width: 49, height: 37 }}>
+        <div className="absolute z-20 flex items-center justify-center gap-1 rounded-[10px] bg-gradient-to-br from-[#705CFF] to-[#FC48E7] text-[15px] font-semibold text-white shadow-[0_6px_20px_rgba(112,92,255,0.6)]" style={{ left: 221, top: 40, width: 49, height: 37 }}>
           <svg className="size-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>AI
         </div>
 
         {/* glass caption card, bottom right of the centre card */}
-        <div className="absolute z-20 flex items-center gap-2.5 rounded-[12px] border border-white/10 bg-gradient-to-br from-[#2A1B52]/80 to-[#1A284F]/80 px-3 shadow-[0_14px_30px_-12px_rgba(0,0,0,0.9)] backdrop-blur-md" style={{ left: 380, top: 231, width: 167, height: 59 }}>
-          <svg className="size-6 shrink-0 text-[#B070FA]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>
+        <div className="absolute z-20 flex items-center gap-2.5 rounded-[12px] border border-white/10 bg-gradient-to-br bg-[#2B2B2B]/80 from-[#705CFF]/[0.07] to-[#705CFF]/0 px-3 shadow-[0_14px_30px_-12px_rgba(0,0,0,0.9)] backdrop-blur-md" style={{ left: 380, top: 231, width: 167, height: 59 }}>
+          <svg className="size-6 shrink-0 text-[#705CFF]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.3L21 10.5l-6.8 2.2L12 20l-2.2-7.3L3 10.5l6.8-2.2z" /></svg>
           <span className="whitespace-nowrap text-[10px] font-medium leading-[1.35] text-[#ffffff]">Turn your imagination<br />into reality</span>
         </div>
         <RingHalf ring={ringA} half="front" z={5} />
@@ -99,14 +100,14 @@ function SectionHead({ id, a, b, text, to, cta, mt, button = false }) {
           <h2 className="text-[30px] leading-[1.1] sm:text-[38px] lg:text-[46px]">
             <span className="text-white">{a}</span>{' '}<span className="grad-text">{b}</span>
           </h2>
-          <p className="mt-3 max-w-3xl text-base leading-relaxed text-[#C4B5FD] sm:text-lg">{text}</p>
+          <p className="mt-3 max-w-3xl text-base leading-relaxed text-[#A0A0A0] sm:text-lg">{text}</p>
         </div>
         {button ? (
-          <Link to={to} className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-[#B070FA]/60 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#B070FA]/10 sm:self-auto">
+          <Link to={to} className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-[#705CFF]/60 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#705CFF]/10 sm:self-auto">
             {cta} <span aria-hidden="true">→</span>
           </Link>
         ) : (
-          <Link to={to} className="shrink-0 self-start text-[15px] font-medium text-[#B070FA] transition-colors hover:text-white sm:self-auto sm:text-base">
+          <Link to={to} className="shrink-0 self-start text-[15px] font-medium text-[#705CFF] transition-colors hover:text-white sm:self-auto sm:text-base">
             {cta} →
           </Link>
         )}
@@ -130,6 +131,117 @@ function Coverflow({ items, render, widthCls, aspect, overlap, pad = 'py-2' }) {
         <div key={k} onClick={() => k !== 0 && go(k)} className={`${widthCls} ${aspect} shrink-0 transition-all duration-300 ${k === 0 ? 'z-20 scale-100' : 'z-10 scale-[0.82] opacity-80'} ${k !== 0 ? overlap : ''}`}>
           {render(at(k), k === 0)}
         </div>
+      ))}
+    </div>
+  )
+}
+
+/** Mobile snap row (Glymo): swipe sideways, the card nearest the centre is full size, its neighbours are scaled to .82 and dimmed. */
+function SnapRow({ items, cardCls, rowCls, render }) {
+  const row = useRef(null)
+  const [active, setActive] = useState(0)
+  useLayoutEffect(() => {
+    const el = row.current
+    if (!el) return
+    let raf = 0
+    const find = () => {
+      raf = 0
+      const mid = el.getBoundingClientRect().left + el.clientWidth / 2
+      let best = 0, bestD = Infinity
+      for (let i = 0; i < el.children.length; i++) {
+        const b = el.children[i].getBoundingClientRect()
+        const d = Math.abs(b.left + b.width / 2 - mid)
+        if (d < bestD) { bestD = d; best = i }
+      }
+      setActive(best)
+    }
+    const on = () => { if (!raf) raf = requestAnimationFrame(find) }
+    el.addEventListener('scroll', on, { passive: true })
+    return () => { el.removeEventListener('scroll', on); cancelAnimationFrame(raf) }
+  }, [])
+  return (
+    <div ref={row} className={`no-scrollbar flex snap-x snap-mandatory overflow-x-auto ${rowCls}`}>
+      {items.map((t, i) => (
+        <div key={t.id} className={`relative shrink-0 snap-center overflow-hidden border border-white/5 bg-[#2B2B2B] transition-all duration-300 ${cardCls} ${i === active ? 'z-20 scale-100' : 'z-10 scale-[0.82] opacity-80'}`}>
+          {render(t, i === active)}
+          <span className={`pointer-events-none absolute inset-0 z-10 bg-black transition-opacity duration-300 ${i === active ? 'opacity-0' : 'opacity-25'}`} />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** Mobile top carousel: one full card at a time that slides left every 3 s and loops forever (a copy of the first card follows the last, then it snaps back unseen). Paused while touched. */
+const SLIDE_MS = 3000
+function TopCarousel({ items }) {
+  const n = items.length
+  const [i, setI] = useState(0)
+  const [anim, setAnim] = useState(true)
+  const paused = useRef(false)
+  useEffect(() => {
+    if (n < 2) return
+    const t = setInterval(() => { if (!paused.current) { setAnim(true); setI((x) => (x >= n ? 1 : x + 1)) } }, SLIDE_MS)
+    return () => clearInterval(t)
+  }, [n])
+  useEffect(() => {
+    if (i < n || n < 2) return
+    const t = setTimeout(() => { setAnim(false); setI(0) }, 650) // after the slide onto the first-card copy ends: jump back to the real first card, unseen
+    return () => clearTimeout(t)
+  }, [i, n])
+  const slides = n > 1 ? [...items, items[0]] : items
+  return (
+    <div className="overflow-hidden py-3" onTouchStart={() => { paused.current = true }} onTouchEnd={() => { paused.current = false }} onTouchCancel={() => { paused.current = false }}>
+      <div className="flex" style={{ transform: `translateX(-${i * 100}%)`, transition: anim ? 'transform 600ms cubic-bezier(0.22, 1, 0.36, 1)' : 'none' }}>
+        {slides.map((t, k) => (
+          <div key={k === n ? `${t.id}-loop` : t.id} className="w-full shrink-0 px-4" aria-hidden={k === n ? 'true' : undefined}>
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[24px] border border-white/5 bg-[#2B2B2B] shadow-xl">
+              <Link to={generateUrl(t)} aria-label={t.name} tabIndex={k === n ? -1 : undefined} className="block size-full">
+                <PImage src={t.image} alt={t.name} className="absolute inset-0 size-full object-cover" draggable="false" />
+                <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <span className="absolute inset-x-3.5 bottom-3 flex items-center justify-between gap-2">
+                  <span className="truncate text-[15px] text-white/90">{t.name}</span>
+                  <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-[11px] text-white/50">Try It</span>
+                </span>
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** Phone home, laid out like the Glymo reference: a top carousel, then one titled snap row per category. No hero or intro before the templates. */
+function MobileHome() {
+  const top = categoryItems('top-carousel')
+  const rows = exploreTabs.filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
+    id: tab.id, title: tab.category || tab.name, items: categoryItems(tab.id),
+    to: tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}` : `/explore?category=${tab.id}`,
+  })).filter((r) => r.items.length)
+  return (
+    <div className="pb-32 text-white md:hidden">
+      {top.length > 0 && (
+        <div className="mt-1">
+          <TopCarousel items={top} />
+        </div>
+      )}
+      {rows.map((r) => (
+        <section key={r.id} className="mt-[34px] space-y-3 first:mt-4">
+          <div className="flex items-center justify-between px-4">
+            <h2 className="text-base font-normal tracking-wide text-white">{r.title}</h2>
+            <Link to={r.to} className="flex cursor-pointer items-center gap-1 rounded-full border border-[#705CFF]/30 bg-[#705CFF]/5 px-3 py-1 text-[11px] font-bold text-[#705CFF] shadow-[0_0_8px_rgba(150,137,240,0.1)] transition-all hover:bg-[#705CFF]/15">
+              More <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </Link>
+          </div>
+          <SnapRow items={r.items} rowCls="px-[30vw] py-[7px]" cardCls="aspect-[9/16] w-[40vw] -mx-[0.8vw] rounded-2xl"
+            render={(t, on) => (
+              <Link to={generateUrl(t)} aria-label={t.name} className="block size-full">
+                <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
+                <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <span className={`absolute inset-x-2 bottom-2.5 truncate text-center text-white/90 ${on ? 'text-[11px]' : 'text-[9px]'}`}>{t.name}</span>
+              </Link>
+            )} />
+        </section>
       ))}
     </div>
   )
@@ -167,11 +279,12 @@ export default function Home() {
 
   return (
     <>
+      <MobileHome />
       {/* ---------- Desktop / tablet home ---------- */}
-      <div className="block">
+      <div className="hidden md:block">
         <div className="relative z-20 w-full overflow-visible pb-6 text-white sm:pb-8 lg:pb-10">
-          <div className="pointer-events-none absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#B070FA]/[0.07] blur-[140px]" />
-          <div className="pointer-events-none absolute right-1/4 top-1/3 h-[600px] w-[600px] rounded-full bg-[#B070FA]/[0.08] blur-[160px]" />
+          <div className="pointer-events-none absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#705CFF]/[0.07] blur-[140px]" />
+          <div className="pointer-events-none absolute right-1/4 top-1/3 h-[600px] w-[600px] rounded-full bg-[#705CFF]/[0.08] blur-[160px]" />
 
           <div className="relative z-10 mx-auto w-full max-w-none px-6 lg:px-8">
             {/* 1. Hero: big headline left, staggered print collage right */}
@@ -182,7 +295,7 @@ export default function Home() {
                   <span className="text-[#ffffff]">Create Extraordinary</span>
                   <span className="grad-text block">AI Photos &amp; Videos</span>
                 </h1>
-                <p className="mb-9 max-w-md text-left text-base leading-relaxed text-[#C4B5FD] xl:text-[17px]">Choose a template, upload your photo, and let AI create stunning visuals in minutes.</p>
+                <p className="mb-9 max-w-md text-left text-base leading-relaxed text-[#A0A0A0] xl:text-[17px]">Choose a template, upload your photo, and let AI create stunning visuals in minutes.</p>
                 <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
                   <Link to="/explore" className="btn-grad !px-7 !py-3.5"><span>Start Creating</span><span className="leading-none">→</span></Link>
                   <Link to="/explore" className="btn-dark !px-7 !py-3.5">Explore Templates</Link>
@@ -193,13 +306,13 @@ export default function Home() {
             </div>
 
             {/* template strip (scrolls slowly, pauses on hover) */}
-            <div className="relative w-full overflow-hidden border-y border-[#3A3552] py-5 [mask-image:linear-gradient(to_right,transparent_0%,black_8%,black_92%,transparent_100%)]">
+            <div className="relative w-full overflow-hidden border-y border-[#2B2B2B] py-5 [mask-image:linear-gradient(to_right,transparent_0%,black_8%,black_92%,transparent_100%)]">
               <div className="flex w-max animate-marquee-slow gap-3 pr-3 will-change-transform hover:[animation-play-state:paused]" style={{ animationDuration: `${marqueeSeconds}s` }}>
                 {marquee.map((c, k) => (
-                  <Link key={k} to={c.assetId ? generateUrl(c) : '/explore'} className="group relative aspect-[3/4] w-[130px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] transition-all duration-300 hover:border-[#B070FA]/60 sm:w-[145px]">
+                  <Link key={k} to={c.assetId ? generateUrl(c) : '/explore'} className="group relative aspect-[3/4] w-[130px] shrink-0 cursor-pointer overflow-hidden rounded-2xl border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#705CFF]/[0.07] to-[#705CFF]/0 transition-all duration-300 hover:border-[#705CFF]/60 sm:w-[145px]">
                     {/* the photo fills the whole card image area (object-cover): no empty space left or right of it */}
                     <span className="absolute inset-0 overflow-hidden"><img src={c.image} alt={c.name} loading="lazy" className="size-full object-cover object-center" /></span>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B071B]/70 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/70 via-transparent to-transparent" />
                     <div className="absolute inset-x-2 bottom-2 text-center"><span className="block break-words text-[11px] font-semibold leading-snug text-white/90 drop-shadow-md">{c.name}</span></div>
                   </Link>
                 ))}
@@ -212,15 +325,15 @@ export default function Home() {
               <h2 className="mb-9 text-[30px] leading-[1.1] sm:text-[38px] lg:text-[46px]">Create in <span className="grad-text">3 Steps</span></h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {steps.map((st, k) => (
-                  <div key={st.n} className="group relative overflow-hidden rounded-[24px] border border-[#B070FA]/20 bg-gradient-to-br from-[#171030] to-[#0F0A22] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#B070FA]/55 hover:shadow-[0_12px_40px_-16px_rgba(176,112,250,0.45)] sm:p-7">
+                  <div key={st.n} className="group relative overflow-hidden rounded-[24px] border border-[#705CFF]/20 bg-gradient-to-br from-[#0C032A] to-[#0C032A] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#705CFF]/55 hover:shadow-[0_12px_40px_-16px_rgba(112,92,255,0.45)] sm:p-7">
                     <div className="flex items-start justify-between">
                       <span className="font-display text-[44px] font-bold leading-none sm:text-[64px] grad-text">0{st.n}</span>
-                      <span className="grid size-12 place-items-center rounded-full border border-[#B070FA]/30 bg-[#B070FA]/10 text-[#C9A0FF]">
+                      <span className="grid size-12 place-items-center rounded-full border border-[#705CFF]/30 bg-[#705CFF]/10 text-[#705CFF]">
                         <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round"><path d={stepIcons[k]} /></svg>
                       </span>
                     </div>
                     <div className="mt-4 font-display text-xl font-semibold text-[#ffffff] sm:mt-8">{st.title}</div>
-                    <div className="mt-1.5 text-sm leading-snug text-[#C4B5FD]/75">{st.text}</div>
+                    <div className="mt-1.5 text-sm leading-snug text-[#A0A0A0]">{st.text}</div>
                   </div>
                 ))}
               </div>
