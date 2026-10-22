@@ -7,15 +7,28 @@ import { getCoinPacks, buyCoins } from '../lib/aiPhotography.js'
 
 const usd = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 
+// The packs come from the backend; the last answer is kept in this browser so the cards appear at once on the next visit while a fresh copy loads.
+const CACHE_KEY = 'pictrify-coin-packs'
+const readCache = () => { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || 'null') } catch { return null } }
+
+// Opening or reloading /coins: the request starts the moment this file is loaded (before React has rendered anything), not after the first render.
+let early = typeof location !== 'undefined' && location.pathname.startsWith('/coins') ? getCoinPacks().catch(() => null) : null
+const loadPacks = () => { const p = early || getCoinPacks(); early = null; return p.then((d) => d || getCoinPacks()) } // the early request failed: try once more
+
+const Skel = ({ className = '' }) => <div className={`animate-pulse rounded-[20px] border border-white/[0.06] bg-white/[0.04] ${className}`} />
+
 /** "Get Coins": one-time coin packs (no subscription). Opened by the coin badge in the header. */
 export default function Coins() {
   const nav = useNavigate()
   const { signedIn, coins, user, refreshUser, openLogin } = useStudio()
-  const [data, setData] = useState(null) // { packs, costPerGeneration }
+  const [data, setData] = useState(readCache) // { packs, costPerGeneration }
   const [failed, setFailed] = useState(false)
   const [busy, setBusy] = useState('')
   const [note, setNote] = useState('')
-  useEffect(() => { getCoinPacks().then(setData).catch(() => setFailed(true)) }, [])
+  useEffect(() => {
+    loadPacks().then((d) => { setData(d); setFailed(false); try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)) } catch { /* storage blocked */ } }).catch(() => setFailed(true))
+  }, [])
+  const loading = !data && !failed // first visit: placeholders instead of an empty page
 
   const buy = async (pack) => {
     if (!signedIn) { openLogin(); return }
@@ -44,6 +57,7 @@ export default function Coins() {
       </div>
       {signedIn && <p className="mb-3 text-center text-[13px] text-[#A0A0A0]">You have <strong className="text-white">{coins.toLocaleString()}</strong> coins</p>}
       {failed && <p role="alert" className="mb-3 rounded-xl border border-red-500/40 bg-[#2B2B2B] px-4 py-3 text-sm text-red-300">Could not load the coin packs. Please check your connection and refresh.</p>}
+      {loading && <><Skel className="h-[132px]" /><div className="mt-5 grid grid-cols-2 gap-3">{[0, 1, 2, 3].map((k) => <Skel key={k} className="h-[230px]" />)}</div></>}
       {featured && (
         <div className="relative overflow-hidden rounded-[22px] border border-white/15 bg-gradient-to-br from-[#2a1a22] via-[#161214] to-[#0F0D0F] p-4 pt-5 text-center">
           <img src={brandImages.coin} alt="" width="56" height="56" className="absolute -left-1 -top-1 size-14 -rotate-12 object-contain" />
@@ -79,7 +93,7 @@ export default function Coins() {
     <div className="mx-auto w-full max-w-[1408px] px-4 max-sm:hidden pb-28 pt-4 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12">
       <header>
         <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#FF55AA]" /><span>Top up anytime</span></div>
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#FF55AA]" /><span>Top up anytime</span></div>
           <h1 className="mt-6 max-sm:mt-4 text-[32px] max-sm:text-[28px] font-bold leading-[1.05] tracking-tight sm:text-[44px] lg:text-[48px]"><span className="text-[#ffffff]">Get More </span><span className="grad-text">Coins</span></h1>
           <p className="mt-3 max-sm:mt-2 max-w-2xl text-base max-sm:text-[14px] leading-relaxed text-[#A0A0A0] sm:mt-4">Buy a coin pack once - no subscription. Coins never expire{signedIn ? <>, and you have <strong className="text-white">{coins.toLocaleString()}</strong> now.</> : '.'}</p>
         </div>
@@ -89,6 +103,7 @@ export default function Coins() {
         <h2 className="sr-only">Coin packs</h2>
         {failed && <p role="alert" className="rounded-xl border border-red-500/40 bg-[#2B2B2B] px-4 py-3 text-sm text-red-300">Could not load the coin packs. Please check your connection and refresh.</p>}
         <div className="grid grid-cols-1 gap-4 max-sm:gap-3.5 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-5">
+          {loading && [0, 1, 2, 3, 4].map((k) => <Skel key={k} className="h-[300px] !rounded-[24px]" />)}
           {(data?.packs || []).map((p) => {
             const photos = Math.floor(p.coins / data.costPerGeneration)
             const list = typeof p.price === 'object' ? p.price.USD : p.price // regular price; with an offer the discounted price is what is charged

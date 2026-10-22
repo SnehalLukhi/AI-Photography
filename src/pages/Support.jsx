@@ -34,7 +34,7 @@ export function Help() {
       <Hero eyebrow="Support" title="How Can We Help?" sub="Find answers, tutorials and troubleshooting guides." />
       <div className="mx-auto mt-14 grid max-w-[1120px] gap-5 sm:grid-cols-2">
         {topics.map(([t, d, body], i) => (
-          <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer self-start rounded-[20px] border bg-[#2B2B2B] px-6 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#FF55AA]/50 ${open === i ? 'border-[#FF55AA]/50' : 'border-white/[0.06]'}`}>
+          <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer self-start rounded-[20px] border bg-[#2B2B2B] px-6 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 ${open === i ? 'border-white/20' : 'border-white/[0.06]'}`}>
             <span className="block text-[17px] font-semibold text-white">{t}</span>
             <span className="mt-1.5 block text-sm text-[#A0A0A0]">{d}</span>
             {open === i && <span className="mt-3 block border-t border-white/10 pt-3 text-sm text-[#A0A0A0]">{body}</span>}
@@ -167,37 +167,37 @@ export function Profile() {
   const [first, ...rest] = name.split(' ')
   const last = rest.join(' ')
   const settings = useSearchParams()[0].get('view') === 'settings' // phones: the account menu is the default view, the form opens from "Profile Settings"
-  const lbl = 'mb-2 max-md:mb-1 block text-[13px] font-bold text-white'
-  const box = 'h-12 max-md:h-10 w-full min-w-0 truncate rounded-2xl max-md:rounded-xl max-md:px-3.5 border border-white/[0.06] bg-[#2B2B2B] px-[18px] text-[13px] outline-none'
+  const lbl = 'mb-1.5 max-md:mb-1 block text-[13px] font-bold text-white'
+  const box = 'h-11 max-md:h-10 w-full min-w-0 truncate rounded-2xl max-md:rounded-xl max-md:px-3.5 border border-white/10 bg-[#1D1B1D] px-4 text-[13px] outline-none'
   return (
     <>
     {!settings && <MobileMe />}
     <div className={`px-4 pb-32 pt-8 max-md:h-auto max-md:overflow-visible max-md:pb-[calc(9rem+env(safe-area-inset-bottom,0px))] max-md:pt-4 md:pb-16 md:pt-10 ${settings ? '' : 'max-md:hidden'}`}>
-      <div className="mx-auto w-full max-w-[750px]">
+      <div className="mx-auto w-full max-w-[640px]">
         <h1 className="text-[34px] font-bold leading-[1.05] tracking-tight text-white sm:text-[38px]">Profile Settings</h1>
         <p className="mt-2 text-[13px] text-[#A0A0A0]">Manage your personal information and account details.</p>
-        <div className="mt-9 max-md:mt-5 rounded-[32px] max-md:rounded-[22px] border border-white/[0.07] bg-[#2B2B2B] p-6 max-md:p-4 sm:p-[37px]">
+        <div className="mt-7 max-md:mt-5 rounded-[24px] max-md:rounded-[22px] border border-white/[0.07] bg-[#2B2B2B] p-6 max-md:p-4 sm:p-6">
           {signedIn ? (
             <>
-              <div className="flex items-center gap-[22px] max-md:gap-3.5 border-b border-white/[0.08] pb-7 max-md:pb-4">
-                <span className="grid size-[88px] max-md:size-14 shrink-0 place-items-center rounded-full border-[3px] border-[#2B2B2B] bg-[#8d7468] text-[44px] max-md:text-[26px] font-light leading-none text-white">{(name[0] || 'P').toUpperCase()}</span>
+              <div className="flex items-center gap-4 max-md:gap-3.5 border-b border-white/[0.08] pb-5 max-md:pb-4">
+                <span className="grid size-[68px] max-md:size-14 shrink-0 place-items-center rounded-full border-[3px] border-[#2B2B2B] bg-[#8d7468] text-[32px] max-md:text-[26px] font-light leading-none text-white">{(name[0] || 'P').toUpperCase()}</span>
                 <div className="min-w-0"><p className="truncate text-xl font-bold text-white sm:text-[22px]">{name}</p><p className="mt-1.5 truncate text-[13px] text-[#A0A0A0]" title={userEmail}>{userEmail}</p></div>
               </div>
-              <div className="mt-[38px] max-md:mt-4 grid gap-[26px] max-md:gap-3.5 sm:grid-cols-2 sm:gap-x-[18px]">
+              <div className="mt-6 max-md:mt-4 grid gap-4 max-md:gap-3.5 sm:grid-cols-2 sm:gap-x-4">
                 <div><label htmlFor="pf-first" className={lbl}>First name</label><input id="pf-first" readOnly value={first || ''} placeholder="Not set" className={`${box} font-bold text-white`} /></div>
                 <div><label htmlFor="pf-last" className={lbl}>Last name</label><input id="pf-last" readOnly value={last} placeholder="Not set" className={`${box} font-bold text-white`} /></div>
               </div>
-              <div className="mt-[26px] max-md:mt-3.5"><label htmlFor="pf-email" className={lbl}>Email address</label><input id="pf-email" readOnly value={userEmail || ''} title={userEmail} className={`${box} text-[#A0A0A0]/70`} /></div>
-              <div className="mt-[26px] max-md:mt-3.5"><label htmlFor="pf-country" className={lbl}>Country</label><input id="pf-country" readOnly disabled placeholder="Not set" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
-              <div className="mt-[26px] max-md:mt-3.5"><label htmlFor="pf-since" className={lbl}>Member since</label><input id="pf-since" readOnly disabled placeholder="Not available" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
-              <div className="mt-[34px] max-md:hidden border-t border-white/[0.08] pt-7 max-md:rounded-2xl max-md:border max-md:border-white/[0.1] max-md:bg-black/20 max-md:p-3.5">
+              <div className="mt-4 max-md:mt-3.5"><label htmlFor="pf-email" className={lbl}>Email address</label><input id="pf-email" readOnly value={userEmail || ''} title={userEmail} className={`${box} text-[#A0A0A0]/70`} /></div>
+              <div className="mt-4 max-md:mt-3.5"><label htmlFor="pf-country" className={lbl}>Country</label><input id="pf-country" readOnly disabled placeholder="Not set" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
+              <div className="mt-4 max-md:mt-3.5"><label htmlFor="pf-since" className={lbl}>Member since</label><input id="pf-since" readOnly disabled placeholder="Not available" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
+              <div className="mt-6 max-md:hidden border-t border-white/[0.08] pt-5 max-md:rounded-2xl max-md:border max-md:border-white/[0.1] max-md:bg-black/20 max-md:p-3.5">
                 <h2 className="text-[15px] font-bold text-white">Plan &amp; purchases</h2>
                 <div className="mt-4 max-md:mt-3 grid gap-3 max-md:gap-2 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-[18px] py-4 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Current plan</p><p className="mt-1 text-[15px] font-bold text-white">{purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>{lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}</div>
-                  <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-[18px] py-4 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
+                  <div className="rounded-2xl border border-white/10 bg-[#1D1B1D] px-4 py-3 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Current plan</p><p className="mt-1 text-[15px] font-bold text-white">{purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>{lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}</div>
+                  <div className="rounded-2xl border border-white/10 bg-[#1D1B1D] px-4 py-3 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
                 </div>
                 {purchases?.length > 0 && (
-                  <ul className="mt-4 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.06] bg-[#2B2B2B]">
+                  <ul className="mt-4 divide-y divide-white/[0.06] rounded-2xl border border-white/10 bg-[#1D1B1D]">
                     {purchases.slice(0, 3).map((p) => (
                       <li key={p.paymentId} className="flex items-center justify-between gap-3 px-[18px] py-3 text-[13px]"><span className="min-w-0"><span className="block truncate font-semibold text-white">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}</span><span className="text-xs text-[#A0A0A0]">{formatDate(p.paidAt)} · +{p.coins.toLocaleString('en-US')} coins</span></span><span className="shrink-0 font-semibold text-white">{formatMoney(p.amount, p.currency)}</span></li>
                     ))}
@@ -205,7 +205,7 @@ export function Profile() {
                 )}
                 <Link to="/transactions" className="mt-4 inline-block text-[13px] font-semibold text-[#A0A0A0] underline">View all transactions</Link>
               </div>
-              <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] max-md:mt-5 h-[47px] max-md:h-11 max-md:w-full cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>Save Changes</button>
+              <button type="button" disabled title="Editing your profile is not available yet" className="mt-6 max-md:mt-5 h-11 max-md:h-11 max-md:w-full cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>Save Changes</button>
             </>
           ) : (
             <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><button type="button" onClick={openLogin} className="btn-grad">Sign in to Pictrify</button></div>
@@ -279,7 +279,7 @@ export function Feedback() {
   return (
     <div className="px-4 pb-32 md:pb-16">
       <div className="mx-auto flex w-full max-w-[560px] items-center gap-4 pt-4 md:hidden">
-        <Link to="/profile" aria-label="Back" className="grid size-9 place-items-center text-white"><svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg></Link>
+        <Link to="/profile" aria-label="Back" className="grid size-10 cursor-pointer place-items-center rounded-full bg-[#2B2B2B] text-white"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></Link>
         <h1 className="text-xl font-bold text-white">Feedback</h1>
       </div>
       <div className="max-md:hidden"><Hero eyebrow="Product Feedback" title="Share Your Feedback" sub="Tell us about your experience and how we can make Pictrify better for you." /></div>
@@ -291,7 +291,7 @@ export function Feedback() {
             <div className="flex justify-center gap-3 py-6 min-[400px]:gap-5 md:py-8" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} type="button" aria-label={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setStars(n)} onMouseEnter={() => setHover(n)} className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                  <svg className={`size-10 min-[400px]:size-11 transition-colors ${n <= (hover || stars) ? 'fill-[#fbbf24] text-[#fbbf24] max-md:fill-[#FF55AA] max-md:text-[#FF55AA]' : 'fill-none text-[#2B2B2B] max-md:text-white/25'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
+                  <svg className={`size-10 min-[400px]:size-11 transition-colors ${n <= (hover || stars) ? 'fill-[#fbbf24] text-[#fbbf24] max-md:fill-[#FF55AA] max-md:text-[#FF55AA]' : 'fill-none text-white/25'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
                 </button>
               ))}
             </div>
@@ -317,9 +317,11 @@ const legalBlock = (b, i) => {
 }
 export function Legal({ kind }) {
   const [title, sections, date] = legal[kind]
+  const nav = useNavigate()
   return (
-    <div className="relative z-10 px-4 pb-24 pt-6 sm:px-6 sm:pt-16 md:pb-16 lg:px-8">
-      <div className="mx-auto max-w-4xl space-y-4 text-[#A0A0A0]">
+    <div className="relative z-10 px-4 pb-32 pt-4 sm:px-6 sm:pt-16 md:pb-16 lg:px-8">
+      <button type="button" aria-label="Back" onClick={() => nav(-1)} className="mb-3 grid size-10 cursor-pointer place-items-center rounded-full bg-[#2B2B2B] text-white md:hidden"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+      <div className="mx-auto max-w-4xl space-y-4 break-words text-[#A0A0A0]">
         <h1 className="mb-6 text-3xl font-bold text-[#ffffff] sm:mb-8 sm:text-4xl">{title}</h1>
         <p className="mb-4 leading-relaxed"><strong className="font-semibold text-white">Effective Date:</strong> {date || 'Placeholder'}</p>
         {sections.map(([h, blocks]) => (

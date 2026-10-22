@@ -79,7 +79,7 @@ export default function Pricing() {
     {mobile}
     <div className="mx-auto w-full max-w-[1408px] max-sm:hidden px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12">
       <header className="max-w-3xl">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#FF55AA]" /><span>Flexible plans</span></div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#FF55AA]" /><span>Flexible plans</span></div>
         <h1 className="mt-6 text-[32px] font-bold leading-[1.05] tracking-tight sm:text-[44px] lg:text-[48px]"><span className="text-[#ffffff]">Choose </span> <span className="grad-text">Your Plan</span></h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-[#A0A0A0] sm:mt-4">Unlock premium templates, faster generation and more creative freedom.</p>
       </header>

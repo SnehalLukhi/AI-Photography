@@ -20,7 +20,7 @@ body {
 @layer components {
   .btn-grad { @apply cursor-pointer inline-flex items-center justify-center gap-2.5 rounded-full bg-[#FF88C7] hover:brightness-110 px-6 py-3 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(255,85,170,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-10px_rgba(255,85,170,0.65)] active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0; }
   .btn-grad { background-image: linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%); text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
-  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 text-[15px] font-medium text-[#ffffff] transition-all duration-300 hover:border-[#FF55AA]/50 hover:bg-[#FF55AA]/[0.06] disabled:cursor-not-allowed disabled:opacity-40; }
+  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.03] px-6 py-3 text-[15px] font-medium text-[#ffffff] transition-all duration-300 hover:border-white/30 hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40; }
   .grad-text { color: #FF88C7; background-image: linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
   .grad-bg { background-color: #FF88C7; background-image: linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%); color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
   .grad-bg:hover { filter: brightness(1.1); }
@@ -32,6 +32,8 @@ body {
   .pill-tag { @apply inline-flex items-center gap-2 rounded-full border border-[#FF55AA]/25 bg-[#FF55AA]/[0.07] px-3.5 py-1.5 text-[11px] font-medium text-[#A0A0A0]; }
   .eyebrow { @apply inline-flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#FF88C7]; }
   .eyebrow::before { content: ''; @apply size-1.5 rounded-full bg-[#FF55AA] shadow-[0_0_10px_#FF55AA]; }
+  /* visible right arrow (→): larger and bolder than the text around it, same size/weight everywhere */
+  .arrow { display: inline-block; font-size: 1.5em; font-weight: 900; line-height: 1; vertical-align: -0.1em; -webkit-text-stroke: 1px currentColor; paint-order: stroke fill; } /* the stroke thickens the glyph: the font has no heavier arrow */
   .mono { @apply text-[11px] font-medium text-[#A0A0A0]; }
   /* hairline divider */
   .sprockets { height: 1px; background: rgba(255,255,255,0.08); }
