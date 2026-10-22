@@ -12,13 +12,13 @@ const toCreation = (g) => ({
 /** Original photo next to the AI-generated image. */
 function Compare({ item, onClose, onDelete }) {
   return (
-    <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-black/85 p-4 backdrop-blur" onClick={onClose}>
+    <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0F0433]/85 p-4 backdrop-blur" onClick={onClose}>
       <div className="w-full max-w-3xl rounded-2xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-4 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <p className="mb-3 font-semibold">{item.name}</p>
         <div className="grid grid-cols-2 gap-3">
           {[['Original', item.original], ['AI generated', item.image]].map(([label, src]) => (
             <figure key={label}>
-              <div className="aspect-[9/16] overflow-hidden rounded-xl border border-[#B070FA]/40 bg-black">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#C4B5FD]/75">Not available</div>}</div>
+              <div className="aspect-[9/16] overflow-hidden rounded-xl border border-[#B070FA]/40 bg-[#0F0433]">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#C4B5FD]/75">Not available</div>}</div>
               <figcaption className="mt-1.5 text-xs text-[#C4B5FD]">{label}</figcaption>
             </figure>
           ))}
@@ -75,7 +75,7 @@ export default function Creations() {
           </div>
           <h2 className="mb-2 text-2xl font-normal tracking-normal text-[#ffffff]/95 sm:text-[30px]">Sign in to view your creations</h2>
           <p className="mb-8 max-w-md text-sm font-normal text-[#C4B5FD]/75 sm:text-base">Join our community of creators to store and manage your AI generations permanently.</p>
-          <Link to="/login" className="btn-grad">Sign in to Pixora</Link>
+          <Link to="/login" className="btn-grad">Sign in to Pictrify</Link>
         </div>
       ) : (
         <>
@@ -91,7 +91,7 @@ export default function Creations() {
                 <div key={c.id} onClick={() => c.original && setOpen(c)} className={`group relative aspect-[9/16] animate-fade-in overflow-hidden rounded-[20px] border border-white/5 bg-[#121216] transition-transform duration-300 hover:-translate-y-1 ${c.original ? 'cursor-pointer' : ''}`}>
                   {/* every generated picture fills the whole 9:16 card (cropped evenly, never stretched): results from the AI Photography API are almost 9:16, Cartoon results keep the photo's own shape */}
                   <img src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0F0433]/70 via-transparent to-transparent" />
                   <div className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-1 text-xs">
                     <span className="min-w-0"><span className="block truncate font-semibold">{c.name}</span><span className="text-[#C4B5FD]/75">{c.date}</span></span>
                     <button aria-label="Download" className="grid size-8 shrink-0 cursor-pointer place-items-center rounded-full bg-white/15 opacity-0 transition hover:bg-[#B070FA] group-hover:opacity-100 max-md:opacity-100">⬇</button>

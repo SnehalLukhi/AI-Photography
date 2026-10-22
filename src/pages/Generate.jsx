@@ -57,7 +57,7 @@ function Slot({ kind, photo, onPick, onClear, error, sheet }) {
     <div className={sheet ? 'relative h-[170px] w-full' : 'relative min-h-0 w-full flex-1'}>
       <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
       {photo ? (
-        <div className="absolute inset-0 overflow-hidden rounded-[10px] border border-[#B070FA]/45 bg-[#000000] sm:rounded-xl">
+        <div className="absolute inset-0 overflow-hidden rounded-[10px] border border-[#B070FA]/45 bg-[#0F0433] sm:rounded-xl">
           <img src={photo.url} alt={`${kind} upload`} className="size-full object-cover" />
           <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-8 cursor-pointer place-items-center rounded-full bg-[#3A3552]/90 text-white backdrop-blur transition hover:bg-[#B070FA]">✕</button>
           <button type="button" onClick={() => input.current.click()} className="absolute bottom-3 right-3 cursor-pointer rounded-full bg-[#3A3552]/80 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur transition hover:bg-[#3A3552]">Change Photo</button>
@@ -65,7 +65,7 @@ function Slot({ kind, photo, onPick, onClear, error, sheet }) {
       ) : (
         <div role="button" tabIndex={0} onClick={() => input.current.click()} onKeyDown={(e) => e.key === 'Enter' && input.current.click()}
           onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={(e) => { e.preventDefault(); setDrag(false); choose(e.dataTransfer.files[0]) }}
-          className={`absolute inset-0 flex min-h-[130px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[10px] border border-dashed bg-[#000000] shadow-[inset_0_0_48px_rgba(176,112,250,0.08)] transition-colors sm:min-h-0 sm:rounded-xl ${drag ? 'border-[#B070FA]' : 'border-[#B070FA]/45 hover:border-[#B070FA]/55'}`}>
+          className={`absolute inset-0 flex min-h-[130px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[10px] border border-dashed bg-[#0F0433] shadow-[inset_0_0_48px_rgba(176,112,250,0.08)] transition-colors sm:min-h-0 sm:rounded-xl ${drag ? 'border-[#B070FA]' : 'border-[#B070FA]/45 hover:border-[#B070FA]/55'}`}>
           <div className="flex flex-col items-center justify-center gap-1.5 px-1.5 py-3 text-center sm:gap-2.5 sm:px-2 sm:py-6">
             <span className="inline-flex size-[52px] items-center justify-center rounded-full bg-white/10 sm:size-[68px]"><SlotIcon kind={kind} className="h-8 w-[26px] text-white sm:h-9 sm:w-[29px]" /></span>
             <div>
@@ -76,7 +76,7 @@ function Slot({ kind, photo, onPick, onClear, error, sheet }) {
           </div>
         </div>
       )}
-      {error && <p role="alert" className="absolute inset-x-2 bottom-2 z-10 rounded-xl bg-black/70 px-2 py-1 text-center text-[11px] text-red-300">{error}</p>}
+      {error && <p role="alert" className="absolute inset-x-2 bottom-2 z-10 rounded-xl bg-[#0F0433]/70 px-2 py-1 text-center text-[11px] text-red-300">{error}</p>}
     </div>
   )
 }
@@ -153,15 +153,15 @@ function Generator({ asset }) {
   return (
     <>
       {/* ---------- Mobile: full-screen template + bottom sheet ---------- */}
-      <div className="fixed inset-0 z-[60] flex h-dvh flex-col overflow-hidden bg-[#000000] sm:hidden">
-        <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between px-5 pb-6 pt-7" style={{ background: 'linear-gradient(rgba(0,0,0,0.7) 0%, transparent 100%)' }}>
+      <div className="fixed inset-0 z-[60] flex h-dvh flex-col overflow-hidden bg-[#0F0433] sm:hidden">
+        <div className="absolute left-0 right-0 top-0 z-20 flex items-center justify-between px-5 pb-6 pt-7" style={{ background: 'linear-gradient(rgba(15,4,51,0.7) 0%, transparent 100%)' }}>
           <button type="button" aria-label="Back" onClick={() => nav(-1)} className="flex size-9 cursor-pointer items-center justify-center rounded-full bg-white/10 backdrop-blur-md active:scale-90"><svg className="size-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
         </div>
         <div className="absolute inset-0 overflow-hidden">
           <img key={asset.id} src={asset.image} alt={asset.name} className={`absolute inset-0 size-full animate-fade-in ${fitOf(asset)} object-center`} />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0F0433]/30 via-transparent to-[#0F0433]/80" />
         </div>
-        <div className="relative z-10 mt-auto px-5 pb-8 pt-6" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, transparent 100%)' }}>
+        <div className="relative z-10 mt-auto px-5 pb-8 pt-6" style={{ background: 'linear-gradient(to top, rgba(15,4,51,0.95) 0%, rgba(15,4,51,0.6) 50%, transparent 100%)' }}>
           <h1 className="mb-4 text-center text-[20px] font-semibold text-[#ffffff]">{asset.name}</h1>
           <div ref={stripRef} className="no-scrollbar -mx-5 flex justify-start gap-2 overflow-x-auto px-5 pb-5">
             {siblingsOf(asset).map((t) => (
@@ -176,7 +176,7 @@ function Generator({ asset }) {
           </button>
         </div>
         {sheet && (
-          <div className="absolute inset-0 z-30 flex flex-col justify-end bg-black/60 backdrop-blur-md" onClick={() => setSheet(false)}>
+          <div className="absolute inset-0 z-30 flex flex-col justify-end bg-[#0F0433]/60 backdrop-blur-md" onClick={() => setSheet(false)}>
             <div className="animate-fade-in rounded-t-[32px] border-t border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] px-5 pb-8 pt-3" onClick={(e) => e.stopPropagation()}>
               <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-white/25" />
               <h2 className="mb-4 text-center text-base font-semibold text-[#ffffff]">{ready ? 'Ready to generate' : multi ? 'Please select photos' : 'Please select a photo'}</h2>
@@ -213,9 +213,9 @@ function Generator({ asset }) {
               <div className="flex h-full max-h-full w-full flex-col items-center justify-center gap-4 sm:flex-row sm:items-start lg:gap-5 xl:gap-6">
                 <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-[#B070FA]/35 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] shadow-[0_0_40px_rgba(176,112,250,0.16)]" style={{ width: W }}>
                   <img src={asset.image} alt="" className="pointer-events-none absolute inset-0 size-full scale-110 object-cover object-center blur-2xl brightness-75 saturate-125" />
-                  <div className="pointer-events-none absolute inset-0 bg-black/35" />
+                  <div className="pointer-events-none absolute inset-0 bg-[#0F0433]/35" />
                   <img src={asset.image} alt={asset.name} width="1080" height="1920" className={`absolute inset-0 z-[1] size-full ${fitOf(asset)} object-center`} />
-                  <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-20 bg-gradient-to-b from-black/55 to-transparent" />
+                  <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-20 bg-gradient-to-b from-[#0F0433]/55 to-transparent" />
                   <p className="absolute left-4 right-4 top-3.5 z-10 truncate text-[15px] font-semibold text-white">{asset.name}</p>
                 </article>
                 <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-[#B070FA]/35 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] shadow-[0_0_40px_rgba(176,112,250,0.12)]" style={{ width: `calc((${W}) * ${slots.length})`, aspectRatio: `${9 * slots.length} / 16` }}>
@@ -240,19 +240,19 @@ function Generator({ asset }) {
       </div>
 
       {phase === 'loading' && (
-        <div className="fixed inset-0 z-[120] grid place-items-center bg-black/85 backdrop-blur">
+        <div className="fixed inset-0 z-[120] grid place-items-center bg-[#0F0433]/85 backdrop-blur">
           <div className="text-center"><div className="mx-auto mb-4 size-14 animate-spin rounded-full border-4 border-[#3A3552] border-t-[#B070FA]" /><p className="font-medium">AI is creating magic ✦</p><p className="text-sm text-[#C4B5FD]/75">{real ? 'This can take a minute…' : ''}</p></div>
         </div>
       )}
       {phase === 'done' && real && result && (
-        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-black/80 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
+        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0F0433]/80 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
           {/* The card is as wide as the largest 9:16 image that still lets the whole card fit the screen height (--chrome = everything that is not the image: card padding, text, buttons, outer margin), capped at 24 rem. Screens under 640 px tall use a compact version (--pad / --chrome / gaps). */}
           <div className="mx-auto flex w-[min(100%,40rem,calc((100dvh-var(--chrome))*18/16+var(--pad)))] min-w-[18rem] flex-col rounded-2xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-[calc(var(--pad)/2)] text-center shadow-2xl [--chrome:17.75rem] [--pad:2.5rem] [&_button]:px-4 [@media(max-height:640px)]:[--chrome:13.75rem] [@media(max-height:640px)]:[--pad:1.5rem] [@media(max-height:640px)]:[&_.gap-3]:gap-2 [@media(max-height:640px)]:[&_button]:py-2" onClick={(e) => e.stopPropagation()}>
             {/* the uploaded photo next to the AI result. Results can have any shape (Cartoon and Beard keep the uploaded photo's own shape), so both fill a 9:16 card with object-cover: no bars, no stretching (the overflow is cropped) */}
             <div className="mb-5 grid grid-cols-2 gap-3 [@media(max-height:640px)]:mb-3">
               {[['Original', photos[0]?.url || resultOriginal], ['AI generated', result]].map(([label, src], i) => (
                 <figure key={label}>
-                  <div className={`relative aspect-[9/16] w-full overflow-hidden rounded-xl border bg-[#000000] ${i ? 'border-[#B070FA] shadow-[0_0_40px_rgba(176,112,250,0.3)]' : 'border-[#B070FA]/40'}`}>
+                  <div className={`relative aspect-[9/16] w-full overflow-hidden rounded-xl border bg-[#0F0433] ${i ? 'border-[#B070FA] shadow-[0_0_40px_rgba(176,112,250,0.3)]' : 'border-[#B070FA]/40'}`}>
                     {src && <img src={src} alt={i ? `${asset.name} result` : 'Your original photo'} className="absolute inset-0 size-full object-cover object-center" />}
                   </div>
                   <figcaption className="mt-1.5 text-xs text-[#C4B5FD]">{label}</figcaption>
@@ -266,7 +266,7 @@ function Generator({ asset }) {
         </div>
       )}
       {phase === 'error' && (
-        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-black/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
+        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0F0433]/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
           <div role="alert" className="w-full max-w-sm rounded-xl border border-red-500/40 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <p className="mb-1 font-medium">Generation failed</p>
             <p className="mb-4 text-sm text-[#C4B5FD]">{apiError || 'Something went wrong. Please try again.'}</p>
@@ -275,7 +275,7 @@ function Generator({ asset }) {
         </div>
       )}
       {phase === 'done' && !real && (
-        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-black/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
+        <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0F0433]/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
           <div className="w-full max-w-sm rounded-xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="relative mb-4 aspect-[9/16] max-h-[60vh] overflow-hidden rounded-xl border border-[#B070FA] shadow-[0_0_40px_rgba(176,112,250,0.3)]">
               <img src={asset.image} alt="" className={`absolute inset-0 size-full ${fitOf(asset)}`} />

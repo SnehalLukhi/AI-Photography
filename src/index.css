@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 body {
-  @apply bg-[#000000] text-[#ffffff] font-sans font-normal antialiased overflow-x-hidden;
+  @apply bg-[#0F0433] text-[#ffffff] font-sans font-normal antialiased overflow-x-hidden;
   background-image: radial-gradient(620px 520px at 12% 180px, rgba(176,112,250,0.07), transparent 72%), radial-gradient(640px 600px at 88% 320px, rgba(176,112,250,0.07), transparent 72%);
   background-repeat: no-repeat;
 }
 ::selection { background: #B070FA; color: #ffffff; }
 
-/* Pixora: black + purple palette (page #000000, cards #2A1B52 to #1A284F, accent #B070FA, button gradient #B070FA to #F066D8, borders #3A3552) */
+/* Pictrify: black + purple palette (page #0F0433, cards #2A1B52 to #1A284F, accent #B070FA, button gradient #B070FA to #F066D8, borders #3A3552) */
 @layer base {
   h1, h2, h3 { color: #ffffff; font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif; letter-spacing: -0.03em; line-height: 1.04; }
   h1, h2 { font-weight: 700; }

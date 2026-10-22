@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from '../components/Header.jsx'
 import { brandImages } from '../data/images.js'
+import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
 const Hero = ({ eyebrow, title, sub }) => (
   <header className="mx-auto max-w-3xl px-4 pt-10 text-center">
@@ -120,7 +121,7 @@ export function Profile() {
               <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] h-[47px] cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #9B30E8 0%, #F0389A 60%, #FF7A2F 100%)' }}>Save Changes</button>
             </>
           ) : (
-            <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><Link to="/login" className="btn-grad">Sign in to Pixora</Link></div>
+            <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><Link to="/login" className="btn-grad">Sign in to Pictrify</Link></div>
           )}
         </div>
       </div>
@@ -160,7 +161,7 @@ export function Transactions() {
               <Link to="/pricing" className="grad-bg mt-6 inline-flex h-10 items-center justify-center rounded-[10px] px-5 text-[13px] font-bold">View pricing</Link>
             </>
           ) : (
-            <><p className="mb-5 text-lg font-medium text-white">Sign in to see your transactions</p><Link to="/login" className="btn-grad">Sign in to Pixora</Link></>
+            <><p className="mb-5 text-lg font-medium text-white">Sign in to see your transactions</p><Link to="/login" className="btn-grad">Sign in to Pictrify</Link></>
           )}
         </div>
       </div>
@@ -175,7 +176,7 @@ export function Feedback() {
   const [sent, setSent] = useState(false)
   return (
     <div className="px-4 pb-24 md:pb-16">
-      <Hero eyebrow="Product Feedback" title="Share Your Feedback" sub="Tell us about your experience and how we can make Pixora better for you." />
+      <Hero eyebrow="Product Feedback" title="Share Your Feedback" sub="Tell us about your experience and how we can make Pictrify better for you." />
       <Card w="max-w-[640px]">
         {sent ? (
           <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Thanks for your feedback</p><button className="btn-dark" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
@@ -200,17 +201,23 @@ export function Feedback() {
 
 const legal = {
   privacy: ['Privacy Policy', [['Introduction', ['This is placeholder text. Replace it with your real privacy policy before launch.', 'It should explain how you collect, use, store and protect user information, uploaded media, and purchase data.']], ['Information We Collect', ['Account and profile information, uploaded photos and generated media, and purchase records. (Placeholder.)']], ['Your Choices', ['You can request deletion of your data at any time via Contact Support. (Placeholder.)']]]],
-  terms: ['Terms of Use', [['Acceptance', ['Placeholder terms. Replace with your real terms of use before launch.']], ['Acceptable Use', ['Do not upload content you do not have the right to use. (Placeholder.)']], ['Coins & Subscriptions', ['Plans auto-renew until cancelled; coins are non-refundable. (Placeholder.)']]]],
+  terms: [termsTitle, termsSections, termsDate], // full text of "Terms and Conditions.pdf" (src/data/termsContent.js)
+}
+// One block of a legal page: a string = paragraph, { ul } = bullet list, { kv } = bold label + value (optionally a link)
+const legalBlock = (b, i) => {
+  if (typeof b === 'string') return <p key={i} className="mb-4 leading-relaxed text-[#C4B5FD]">{b}</p>
+  if (b.ul) return <ul key={i} className="mb-4 list-disc space-y-2 pl-6 leading-relaxed text-[#C4B5FD] marker:text-[#B070FA]">{b.ul.map((x, j) => <li key={j}>{typeof x === 'string' ? x : <><strong className="font-semibold text-white">{x.b}</strong>{x.t}</>}</li>)}</ul>
+  return <p key={i} className="mb-4 leading-relaxed text-[#C4B5FD]"><strong className="font-semibold text-white">{b.kv[0]}</strong> {b.kv[2] ? <a href={b.kv[2]} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-white">{b.kv[1]}</a> : b.kv[1]}</p>
 }
 export function Legal({ kind }) {
-  const [title, sections] = legal[kind]
+  const [title, sections, date] = legal[kind]
   return (
     <div className="relative z-10 px-4 pb-24 pt-6 sm:px-6 sm:pt-16 md:pb-16 lg:px-8">
       <div className="mx-auto max-w-4xl space-y-4 text-[#C4B5FD]">
         <h1 className="mb-6 text-3xl font-bold text-[#ffffff] sm:mb-8 sm:text-4xl">{title}</h1>
-        <p className="mb-4 leading-relaxed"><strong className="font-semibold text-white">Effective Date:</strong> Placeholder</p>
-        {sections.map(([h, ps]) => (
-          <div key={h}><h2 className="mb-4 mt-8 text-xl font-semibold text-[#ffffff] sm:text-2xl">{h}</h2>{ps.map((p) => <p key={p} className="mb-4 leading-relaxed text-[#C4B5FD]">{p}</p>)}</div>
+        <p className="mb-4 leading-relaxed"><strong className="font-semibold text-white">Effective Date:</strong> {date || 'Placeholder'}</p>
+        {sections.map(([h, blocks]) => (
+          <div key={h}><h2 className="mb-4 mt-8 text-xl font-semibold text-[#ffffff] sm:text-2xl">{h}</h2>{blocks.map(legalBlock)}</div>
         ))}
       </div>
     </div>

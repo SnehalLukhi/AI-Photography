@@ -24,7 +24,7 @@ export default function App() {
   const generating = pathname === '/generate' // fixed-height page: no footer, no mobile chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
-    <div className="flex min-h-screen w-full flex-col overflow-x-clip bg-[#000000] selection:bg-[#B070FA]/30">
+    <div className="flex min-h-screen w-full flex-col overflow-x-clip bg-[#0F0433] selection:bg-[#B070FA]/30">
       {!bare && <Header generating={generating} />}
       <main className="flex-1 bg-page">
         <Routes>

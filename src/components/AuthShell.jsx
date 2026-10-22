@@ -4,10 +4,10 @@ import { brandImages } from '../data/images.js'
 /** Full-screen page for the account pages (forgot / reset password): same dark look and card as the Login page, without header and footer. */
 export default function AuthShell({ title, subtitle, children }) {
   return (
-    <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#000000] text-white">
+    <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#0F0433] text-white">
       <main className="flex min-w-0 flex-1 flex-col px-5 sm:px-8">
         <header className="flex items-center justify-between py-6">
-          <Link to="/" className="flex items-center gap-2.5"><img src={brandImages.logo} alt="" className="size-8 rounded-xl" /><span className="text-lg font-semibold tracking-tight">Pixora</span></Link>
+          <Link to="/" className="flex items-center gap-2.5"><img src={brandImages.logo} alt="" className="size-8 rounded-xl" /><span className="text-lg font-semibold tracking-tight">Pictrify</span></Link>
           <Link to="/login" className="text-sm text-[#C4B5FD]/75 transition-colors duration-200 hover:text-white">Back to login</Link>
         </header>
         <div className="m-auto w-full max-w-[440px] py-8">

@@ -28,8 +28,8 @@ export default function PremiumPopup({ onClose }) {
   }, [onClose])
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-end justify-center bg-black/70 p-0 backdrop-blur-md sm:items-center sm:p-4" onClick={onClose}>
-      <div role="dialog" aria-modal="true" aria-label="Pixora Premium" onClick={(e) => e.stopPropagation()}
+    <div className="fixed inset-0 z-[300] flex items-end justify-center bg-[#0F0433]/70 p-0 backdrop-blur-md sm:items-center sm:p-4" onClick={onClose}>
+      <div role="dialog" aria-modal="true" aria-label="Pictrify Premium" onClick={(e) => e.stopPropagation()}
         className="animate-fade-in relative flex max-h-[96dvh] w-full max-w-[1040px] flex-col overflow-y-auto overflow-x-hidden rounded-t-[28px] border border-white/10 bg-[#0B0B12] shadow-[0_0_90px_rgba(176,112,250,0.25)] sm:max-h-[94dvh] sm:rounded-[28px]">
         <div className="pointer-events-none absolute -left-24 -top-24 size-[360px] rounded-full bg-[#B070FA]/20 blur-[110px]" />
         <div className="pointer-events-none absolute -right-24 top-1/3 size-[320px] rounded-full bg-[#F066D8]/10 blur-[110px]" />
@@ -38,8 +38,8 @@ export default function PremiumPopup({ onClose }) {
         <div className="relative grid gap-5 px-4 pb-5 pt-5 sm:px-8 sm:pt-7 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8 lg:pb-6">
           <div className="min-w-0">
             <div className="flex items-center gap-2.5 pr-10">
-              <img src={brandImages.logo} alt="" className="gold-img h-8 w-auto rounded-[10px] object-contain" />
-              <span className="font-display text-xl font-bold tracking-tight text-white">Pixora</span>
+              <img src={brandImages.logo} alt="" className="h-8 w-auto rounded-[10px] object-contain" />
+              <span className="font-display text-xl font-bold tracking-tight text-white">Pictrify</span>
               <span className="grad-bg rounded-md px-2 py-0.5 text-[11px] font-extrabold tracking-wider">PRO</span>
             </div>
             <h2 className="mt-4 text-[26px] font-extrabold leading-[1.1] tracking-tight text-white sm:mt-5 sm:text-[36px] lg:text-[40px]">Unlock <span className="grad-text">Premium Creativity</span></h2>
@@ -83,7 +83,7 @@ export default function PremiumPopup({ onClose }) {
                     <span className="mt-0.5 flex items-baseline gap-1.5"><span className="text-[22px] font-bold leading-none text-white sm:text-[26px]">{p.price}</span><span className="text-xs text-[#C4B5FD]/75">{p.per}</span></span>
                     <span className="mt-1 block text-xs text-[#C4B5FD]">{images(p)}{p.id === 'yearly' ? ` · ${detail(p, 'Monthly allocation')}` : ` · ${detail(p, 'Cost per image')} each`}</span>
                   </span>
-                  <span className="flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-2.5 py-1.5">
+                  <span className="flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-[#0F0433]/40 px-2.5 py-1.5">
                     <img src={brandImages.coin} alt="" width="28" height="28" className="size-7 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />
                     <span className="whitespace-nowrap text-sm font-bold text-white">{p.coins.replace(' Coins', '').replace(' / year', '')}<span className="block text-[10px] font-semibold uppercase tracking-wide text-[#C4B5FD]">{p.id === 'yearly' ? 'Coins / year' : 'Coins'}</span></span>
                   </span>
