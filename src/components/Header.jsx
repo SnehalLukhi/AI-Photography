@@ -17,8 +17,8 @@ const PhoneIcon = () => (
 const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
 export const Logo = ({ size = 'md', imgHeight, fontSize }) => (
   <Link to="/" className="group inline-flex shrink-0 items-center gap-2.5">
-    <img src={brandImages.logo} alt="Logo" style={imgHeight ? { height: imgHeight, transition: `height 420ms ${EASE}` } : undefined} className={`gold-img w-auto rounded-[10px] object-contain ${imgHeight ? '' : size === 'lg' ? 'h-10' : 'h-8'}`} />
-    <span style={fontSize ? { fontSize, transition: `font-size 420ms ${EASE}` } : undefined} className={`whitespace-nowrap font-display font-bold tracking-tight text-white ${fontSize ? '' : size === 'lg' ? 'text-2xl' : 'text-xl'}`}>Pixora</span>
+    <img src={brandImages.logo} alt="Logo" style={imgHeight ? { height: imgHeight, transition: `height 420ms ${EASE}` } : undefined} className={`w-auto rounded-[10px] object-contain ${imgHeight ? '' : size === 'lg' ? 'h-10' : 'h-8'}`} />
+    <span style={fontSize ? { fontSize, transition: `font-size 420ms ${EASE}` } : undefined} className={`whitespace-nowrap font-display font-bold tracking-tight text-white ${fontSize ? '' : size === 'lg' ? 'text-2xl' : 'text-xl'}`}>Pictrify</span>
   </Link>
 )
 
@@ -88,7 +88,7 @@ const PROFILE_ITEMS = [
   ['/feedback', 'Share Your Feedback', 'M4 5h16v11H9l-5 4z'],
   ['/privacy-policy', 'Privacy Policy', 'M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z'],
 ]
-export const displayName = (email) => (email.split('@')[0] || '').split(/[._-]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') || 'Pixora user'
+export const displayName = (email) => (email.split('@')[0] || '').split(/[._-]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') || 'Pictrify user'
 
 function ProfileMenu() {
   const { userEmail, signOut } = useStudio()
@@ -194,7 +194,7 @@ export default function Header({ generating = false }) {
     <>
       {/* Tablet / desktop nav */}
       <div className="pointer-events-none fixed left-0 right-0 z-50 hidden justify-center md:flex" style={{ top: scrolled ? 10 : 14, transition: `top 400ms ${EASE}` }}>
-        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgba(0,0,0,0.78)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgba(0,0,0,0.97)]' : ''}`}
+        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgba(15,4,51,0.78)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgba(15,4,51,0.97)]' : ''}`}
           style={{
             width: `calc(100% - ${xl ? 48 : 32}px)`,
             maxWidth: '96rem',
@@ -254,7 +254,7 @@ export default function Header({ generating = false }) {
       <div className="hidden h-[92px] md:block" />
 
       {/* Mobile header */}
-      <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#000000]/95 px-4 py-3 backdrop-blur-md md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
+      <header className={`sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#0F0433]/95 px-4 py-3 backdrop-blur-md md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
         <Logo />
         {(
           <div className="flex items-center gap-2">

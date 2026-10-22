@@ -16,3 +16,5 @@ npm-debug.log*
 
 # local archive of backend/ (contains a copy of .env)
 *.zip
+
+.vercel

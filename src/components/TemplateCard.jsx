@@ -10,7 +10,7 @@ function Fav({ on, toggle }) {
   return (
     <div className="absolute right-2 top-2 z-40">
       <button type="button" aria-label={on ? 'Remove from favorites' : 'Add to favorites'} onClick={(e) => { e.stopPropagation(); toggle() }} className="relative flex size-9 shrink-0 cursor-pointer items-center justify-center transition-transform active:scale-90">
-        <span className="absolute inset-0 rounded-full bg-[rgba(0,0,0,0.7)] backdrop-blur-sm" />
+        <span className="absolute inset-0 rounded-full bg-[rgba(15,4,51,0.7)] backdrop-blur-sm" />
         <HeartIcon on={on} />
       </button>
     </div>
@@ -34,16 +34,16 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
   return (
     <article tabIndex={0} title={info ? `${t.name} - ${info}` : t.name} onClick={() => onSelect?.(t)} onKeyDown={(e) => e.key === 'Enter' && onSelect?.(t)}
       className={`group relative z-10 w-full animate-fade-in cursor-pointer overflow-visible rounded-[6px] outline-none hover:z-30 focus-within:z-30 focus-visible:ring-2 focus-visible:ring-[#B070FA]/60 ${className}`}>
-      <div style={{ aspectRatio: ratio }} className={`relative w-full overflow-hidden rounded-[6px] border bg-[#000000] ${selected ? 'border-[#B070FA] ring-1 ring-[#B070FA]' : 'border-[#3A3552]'}`}>
+      <div style={{ aspectRatio: ratio }} className={`relative w-full overflow-hidden rounded-[6px] border bg-[#0F0433] ${selected ? 'border-[#B070FA] ring-1 ring-[#B070FA]' : 'border-[#3A3552]'}`}>
         <img src={t.image} alt={t.name} loading="lazy" draggable="false" className={img} style={imgStyle} />
         {selected && <span className="grad-bg absolute left-2 top-2 z-10 grid size-6 place-items-center rounded-full text-xs">✓</span>}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/80 to-transparent px-2 pb-2 pt-8 [@media(hover:none)]:block">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-[#0F0433]/80 to-transparent px-2 pb-2 pt-8 [@media(hover:none)]:block">
           <span className="block truncate text-[11px] font-medium text-white">{t.name}</span>
         </div>
       </div>
       {fav && <Fav on={liked} toggle={() => setLiked(!liked)} />}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex h-full flex-col overflow-hidden rounded-[6px] border border-[#3A3552] bg-gradient-to-br from-[#322D4D] to-[#272339] opacity-0 shadow-[0_20px_35px_rgba(0,0,0,0.6)] transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:h-[calc(100%+92px)] group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:h-[calc(100%+92px)] group-focus-within:opacity-100">
-        <div style={{ aspectRatio: ratio }} className="relative w-full shrink-0 overflow-hidden rounded-t-[6px] bg-[#000000]">
+        <div style={{ aspectRatio: ratio }} className="relative w-full shrink-0 overflow-hidden rounded-t-[6px] bg-[#0F0433]">
           <img src={t.image} alt="" draggable="false" className={img} style={imgStyle} />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[12%] bg-gradient-to-t from-[#322D4D] to-transparent" />
         </div>

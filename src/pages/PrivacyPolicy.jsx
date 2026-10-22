@@ -1,4 +1,4 @@
-// Privacy Policy page. Layout follows the reference structure (title, effective date, numbered-style H2/H3 sections, bullet lists); the TEXT is written for Pixora and only
+// Privacy Policy page. Layout follows the reference structure (title, effective date, numbered-style H2/H3 sections, bullet lists); the TEXT is written for Pictrify and only
 // states what the app actually does today (demo sign-in kept in this browser, photos sent to the AI processing provider, no payments yet). It has not been reviewed by a
 // lawyer: have it reviewed, and add a real contact e-mail address, before relying on it.
 const P = (text) => ({ p: text })
@@ -6,8 +6,8 @@ const L = (...items) => ({ ul: items })
 
 const sections = [
   ['Introduction', null, [
-    P('Pixora (“Pixora,” “we,” “us,” or “our”) is an AI-powered platform for creating stylised photos from templates. This Privacy Policy explains how we collect, use, store, and protect information when you visit our website, sign in, upload a photo, or otherwise use Pixora.'),
-    P('By using Pixora, you agree to the practices described in this Privacy Policy.'),
+    P('Pictrify (“Pictrify,” “we,” “us,” or “our”) is an AI-powered platform for creating stylised photos from templates. This Privacy Policy explains how we collect, use, store, and protect information when you visit our website, sign in, upload a photo, or otherwise use Pictrify.'),
+    P('By using Pictrify, you agree to the practices described in this Privacy Policy.'),
   ]],
   ['Information We Collect', [
     ['Account and Profile Information', [
@@ -16,7 +16,7 @@ const sections = [
       P('Your sign-in session is kept in your own browser, and your password is never saved by the app.'),
     ]],
     ['Payment and Billing Information', [
-      P('Paid plans and payments are not available in Pixora yet, so we do not collect payment or billing information. If paid plans are added, payments will be handled by a third-party payment processor, and this policy will be updated before that happens.'),
+      P('Paid plans and payments are not available in Pictrify yet, so we do not collect payment or billing information. If paid plans are added, payments will be handled by a third-party payment processor, and this policy will be updated before that happens.'),
     ]],
     ['Content You Provide', [
       P('To generate AI results, you may upload or submit:'),
@@ -33,18 +33,18 @@ const sections = [
   ], null],
   ['How We Use Your Information', null, [
     P('We use the information we collect to:'),
-    L('Provide, maintain, and improve Pixora', 'Process your photo and return the generated image', 'Keep you signed in and remember your preferences', 'Respond to support requests and feedback', 'Detect, prevent, and address abuse, fraud, and technical problems', 'Comply with legal obligations'),
+    L('Provide, maintain, and improve Pictrify', 'Process your photo and return the generated image', 'Keep you signed in and remember your preferences', 'Respond to support requests and feedback', 'Detect, prevent, and address abuse, fraud, and technical problems', 'Comply with legal obligations'),
   ]],
   ['AI Generation and Uploaded Media', null, [
     P('When you generate an image, your photo is sent from the app to our server and then to a third-party AI processing provider (AILabTools) so that it can create the result. The generated image is shown to you in the app.'),
     P('Please upload only photos that you have the right to use, and do not upload photos of other people without their permission. Do not upload unlawful, abusive, or sexually explicit content, or images of minors.'),
   ]],
   ['Cookies and Similar Technologies', null, [
-    P('Pixora keeps small pieces of data in your browser’s local storage, for example to remember that you are signed in and whether you have already seen the welcome message. You can clear this data at any time in your browser settings; doing so will sign you out.'),
+    P('Pictrify keeps small pieces of data in your browser’s local storage, for example to remember that you are signed in and whether you have already seen the welcome message. You can clear this data at any time in your browser settings; doing so will sign you out.'),
   ]],
   ['How We Share Information', null, [
     P('We do not sell your personal information. We may share information only:'),
-    L('With the AI processing provider, to generate your images', 'With service providers that help us run Pixora, under appropriate confidentiality obligations', 'When required by law, or to protect the rights, safety, and security of Pixora and our users', 'In connection with a business transfer such as a merger or acquisition'),
+    L('With the AI processing provider, to generate your images', 'With service providers that help us run Pictrify, under appropriate confidentiality obligations', 'When required by law, or to protect the rights, safety, and security of Pictrify and our users', 'In connection with a business transfer such as a merger or acquisition'),
   ]],
   ['Data Retention', null, [
     P('Your uploaded photo is used to create your result and is not kept on our server after it has been processed. Generated images are made available through a link that the processing provider keeps for a limited time (currently about 24 hours). Your sign-in session in the browser lasts for up to 30 days unless the browser data is cleared.'),
@@ -59,16 +59,16 @@ const sections = [
     P('To make a request, please contact us using the details below.'),
   ]],
   ['Children’s Privacy', null, [
-    P('Pixora is not intended for children under 13 (or the minimum age required in your country), and we do not knowingly collect personal information from them. If you believe a child has provided us with information, please contact us so that we can remove it.'),
+    P('Pictrify is not intended for children under 13 (or the minimum age required in your country), and we do not knowingly collect personal information from them. If you believe a child has provided us with information, please contact us so that we can remove it.'),
   ]],
   ['International Users', null, [
-    P('Your information may be processed in countries other than your own, including by our AI processing provider. By using Pixora, you understand that your information may be transferred to and processed in these locations.'),
+    P('Your information may be processed in countries other than your own, including by our AI processing provider. By using Pictrify, you understand that your information may be transferred to and processed in these locations.'),
   ]],
   ['Third-Party Links', null, [
-    P('Pixora may link to websites or services that we do not operate. We are not responsible for their privacy practices, and we encourage you to read their policies.'),
+    P('Pictrify may link to websites or services that we do not operate. We are not responsible for their privacy practices, and we encourage you to read their policies.'),
   ]],
   ['Changes to This Privacy Policy', null, [
-    P('We may update this Privacy Policy from time to time. When we do, we will change the effective date at the top of this page. Your continued use of Pixora after a change means you accept the updated policy.'),
+    P('We may update this Privacy Policy from time to time. When we do, we will change the effective date at the top of this page. Your continued use of Pictrify after a change means you accept the updated policy.'),
   ]],
   ['Contact Us', null, [
     P('If you have questions about this Privacy Policy or want to make a privacy request, please reach out through the Contact Support page in the app.'),

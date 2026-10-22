@@ -62,7 +62,7 @@ export default function Explore() {
       <div className="mt-8 sprockets" />
 
       {/* Tablet / phone: horizontal roll selector (drag to scroll) */}
-      <div className="sticky top-[56px] z-30 -mx-4 border-b border-[#3A3552] bg-[#000000]/90 px-4 backdrop-blur-xl min-[375px]:-mx-5 min-[375px]:px-5 sm:-mx-6 sm:px-6 md:top-[96px] lg:hidden">
+      <div className="sticky top-[56px] z-30 -mx-4 border-b border-[#3A3552] bg-[#0F0433]/90 px-4 backdrop-blur-xl min-[375px]:-mx-5 min-[375px]:px-5 sm:-mx-6 sm:px-6 md:top-[96px] lg:hidden">
         <div className="cursor-grab select-none overflow-x-auto [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
           onPointerDown={(e) => { drag.current = { x: e.clientX, left: e.currentTarget.scrollLeft } }}
           onPointerMove={(e) => { if (drag.current && e.buttons) e.currentTarget.scrollLeft = drag.current.left - (e.clientX - drag.current.x) }}
@@ -157,7 +157,7 @@ export default function Explore() {
               {/* one row of equal portrait cards on the right (3 x 2 on phones); full image, never cropped */}
               <div className={`grid min-w-0 grid-cols-3 gap-2.5 sm:grid-cols-6 xl:flex-1 ${isTrending ? 'xl:grid-cols-7' : '2xl:grid-cols-7'}`}>
                 {thumbs.slice(0, 7).map((t, i) => (
-                  <button key={t.id} type="button" onClick={() => pick(t)} aria-label={t.name} title={t.name} className={`group relative aspect-[9/16] min-w-0 cursor-pointer overflow-hidden rounded-xl border border-[#3A3552] bg-[#000000] transition-all duration-300 hover:-translate-y-1 hover:border-[#B070FA]/70 ${i === 6 ? (isTrending ? 'hidden xl:block' : 'hidden 2xl:block') : ''}`}>
+                  <button key={t.id} type="button" onClick={() => pick(t)} aria-label={t.name} title={t.name} className={`group relative aspect-[9/16] min-w-0 cursor-pointer overflow-hidden rounded-xl border border-[#3A3552] bg-[#0F0433] transition-all duration-300 hover:-translate-y-1 hover:border-[#B070FA]/70 ${i === 6 ? (isTrending ? 'hidden xl:block' : 'hidden 2xl:block') : ''}`}>
                     <img src={t.image} alt={t.name} loading="lazy" className={`absolute inset-0 h-full w-full object-center ${isTrending ? 'object-cover' : 'object-contain'}`} />
                   </button>
                 ))}
