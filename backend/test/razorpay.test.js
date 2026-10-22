@@ -67,8 +67,18 @@ test('a correct signature credits the coins once; a repeat or the webhook adds n
   const proof = { orderId: order.orderId, paymentId: 'pay_AAA', signature: hmac(KEY_SECRET, `${order.orderId}|pay_AAA`) }
   const ok = await post('/wallet/verify-payment', proof, u.token)
   assert.equal(ok.status, 200)
-  assert.deepEqual(await ok.json(), { success: true, credited: true, balance: before + 195 })
-  assert.deepEqual(await (await post('/wallet/verify-payment', proof, u.token)).json(), { success: true, credited: false, balance: before + 195 })
+  const body = await ok.json()
+  assert.deepEqual({ ...body, purchase: undefined }, { success: true, credited: true, balance: before + 195, purchase: undefined })
+  assert.deepEqual({ name: body.purchase.name, kind: body.purchase.kind, coins: body.purchase.coins, amount: body.purchase.amount, currency: body.purchase.currency, paymentId: body.purchase.paymentId },
+    { name: 'Popular', kind: 'pack', coins: 195, amount: 999, currency: 'USD', paymentId: 'pay_AAA' })
+  const again = await (await post('/wallet/verify-payment', proof, u.token)).json()
+  assert.deepEqual([again.credited, again.balance, again.purchase.paymentId], [false, before + 195, 'pay_AAA'])
+  const mine = (await (await fetch(`${app.base}/api/wallet/purchases`, { headers: { authorization: `Bearer ${u.token}` } })).json()).purchases
+  assert.equal(mine.length, 1) // one purchase, however many times it was confirmed
+  assert.equal(mine[0].name, 'Popular')
+  assert.ok(!Number.isNaN(Date.parse(mine[0].paidAt)))
+  assert.equal((await (await fetch(`${app.base}/api/wallet/purchases`, { headers: { authorization: `Bearer ${(await h.createUser('nobuy@example.com')).token}` } })).json()).purchases.length, 0) // nobody else sees it
+  assert.equal((await fetch(`${app.base}/api/wallet/purchases`, { headers: { authorization: '' } })).status, 401)
   assert.equal((await hook(captured(order, 'pay_AAA'))).status, 200)
   assert.equal(await wallet.balance(u.id), before + 195) // still once
   assert.equal((await (await db.query("SELECT COUNT(*)::int AS n FROM coin_ledger WHERE user_id = $1 AND reason = 'purchase'", [u.id])).rows[0]).n, 1)

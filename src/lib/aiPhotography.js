@@ -309,9 +309,17 @@ async function post(path, data) {
   return body
 }
 
+/** The user's paid plans and coin packs, newest first: [{ name, kind: 'plan' | 'pack', coins, amount (cents), currency, paidAt, paymentId }]. */
+export async function getPurchases() {
+  const res = await fetch(`${API_BASE}/api/wallet/purchases`, { headers: headers() })
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body.purchases
+}
+
 /**
  * Buys a plan or coin pack with Razorpay: the backend creates the order (the price comes from the server), Razorpay's payment window opens, and after paying the backend
- * checks Razorpay's signature and adds the coins. Resolves with { credited, balance }; rejects with a message when the payment is cancelled, fails, or payments are not set up (503).
+ * checks Razorpay's signature and adds the coins. Resolves with { credited, balance, purchase }; rejects with a message when the payment is cancelled, fails, or payments are not set up (503).
  */
 export async function buyCoins(itemId, { name = '', email = '' } = {}) {
   const [{ order }, loaded] = await Promise.all([post('/api/wallet/checkout', { itemId }), loadRazorpay()])

@@ -9,6 +9,7 @@ import NotFound from './pages/NotFound.jsx'
 import Creations from './pages/Creations.jsx'
 import Pricing from './pages/Pricing.jsx'
 import Coins from './pages/Coins.jsx'
+import PaymentSuccess from './pages/PaymentSuccess.jsx'
 import { Help, Contact, Feedback, Legal, Profile, Transactions } from './pages/Support.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import Login from './pages/Login.jsx'
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/creations" element={<Creations />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/coins" element={<Coins />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
