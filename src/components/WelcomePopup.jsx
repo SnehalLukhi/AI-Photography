@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { brandImages } from '../data/images.js'
 import { WELCOME_COINS } from '../context/StudioContext.jsx'
+import Confetti from './Confetti.jsx'
 
 /**
  * One-time welcome popup shown after a first sign-in (see StudioContext `welcomeOffer`). DISPLAY ONLY: the app has no user accounts or coin-balance
@@ -27,6 +28,7 @@ export default function WelcomePopup({ onClose: finish }) {
 
   return (
     <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#0B071B]/70 p-4`} onClick={onClose}>
+      <Confetti />
       <div role="dialog" aria-modal="true" aria-labelledby="welcome-title" onClick={(e) => e.stopPropagation()}
         className="welcome-card relative w-full max-w-[380px] overflow-hidden rounded-[28px] border border-white/10 bg-[#14141B] px-7 pb-8 pt-8 text-center shadow-[0_24px_80px_rgba(0,0,0,0.6)]">
         <button type="button" onClick={onClose} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full bg-white/[0.08] text-lg leading-none text-[#C9C9D4] transition hover:bg-white/15 hover:text-white">×</button>

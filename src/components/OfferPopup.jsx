@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import usePopupExit from './usePopupExit.js'
+import StarBurst from './StarBurst.jsx'
 
 const OFFER_WINDOW_MS = 24 * 60 * 60 * 1000 // the offer runs for 24 hours from the first time it is shown (kept per user in this browser)
 const money = (amount, currency) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount)
@@ -66,8 +67,9 @@ export default function OfferPopup({ onClose: finish }) {
 
   return (
     <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#0B071B]/80 p-4`} onClick={() => onClose()}>
+      <StarBurst />
       <div role="dialog" aria-modal="true" aria-labelledby="offer-title" onClick={(e) => e.stopPropagation()}
-        className="welcome-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[28px] border border-white/10 bg-[#14141C] px-5 pb-7 pt-7 text-center shadow-[0_24px_80px_rgba(0,0,0,0.65)] sm:px-7">
+        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[28px] border border-white/10 bg-[#14141C] px-5 pb-7 pt-7 text-center shadow-[0_24px_80px_rgba(0,0,0,0.65)] sm:px-7">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(139,28,255,0.16),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(255,106,40,0.12),transparent_55%)]" />
         <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full border border-white/10 bg-white/[0.07] text-lg leading-none text-[#C9C9D4] transition hover:bg-white/15 hover:text-white">×</button>
 

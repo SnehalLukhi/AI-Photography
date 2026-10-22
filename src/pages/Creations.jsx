@@ -12,8 +12,8 @@ const toCreation = (g) => ({
 /** Original photo next to the AI-generated image. */
 function Compare({ item, onClose, onDelete }) {
   return (
-    <div className="fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0B071B]/85 p-4 backdrop-blur" onClick={onClose}>
-      <div className="w-full max-w-3xl rounded-2xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-4 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
+    <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0B071B]/85 p-4 backdrop-blur" onClick={onClose}>
+      <div className="welcome-card w-full max-w-3xl rounded-2xl border border-[#B070FA]/30 bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-4 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <p className="mb-3 font-semibold">{item.name}</p>
         <div className="grid grid-cols-2 gap-3">
           {[['Original', item.original], ['AI generated', item.image]].map(([label, src]) => (

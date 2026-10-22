@@ -102,3 +102,14 @@ body {
 .profile-menu { transform-origin: top right; animation: profile-menu-in .16s cubic-bezier(.22,1,.36,1) both; }
 .profile-menu[data-closing='true'] { animation: profile-menu-out .12s ease-in both; }
 @media (prefers-reduced-motion: reduce) { .profile-menu, .profile-menu[data-closing='true'] { animation: none; } }
+
+/* Special-offer popup (third popup): big star pops in and holds, then the card flips in with a 3D spin while a gold ring expands behind it. Timings match HOLD_MS in StarBurst.jsx. */
+@keyframes star-hero { 0% { opacity: 0; transform: scale(0.5); } 40% { opacity: 1; transform: scale(1.12); } 55% { transform: scale(1); } 85% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.6); } }
+@keyframes offer-card-in { 0% { opacity: 0; transform: perspective(1000px) rotateY(90deg) scale(0.3); } 25% { opacity: 1; } 100% { opacity: 1; transform: perspective(1000px) rotateY(0) scale(1); } }
+@keyframes star-ring { 0% { opacity: 0; transform: scale(0.3); } 15% { opacity: 0.85; } 100% { opacity: 0; transform: scale(2.4); } }
+.star-hero { animation: star-hero .62s ease-out both; position: absolute; }
+.star-ring { position: absolute; width: 300px; height: 300px; border-radius: 9999px; border: 6px solid rgba(255,255,255,0.45); background: radial-gradient(circle, rgba(250,204,21,0.05) 40%, rgba(250,204,21,0.35) 100%); opacity: 0; animation: star-ring 1.3s ease-out .5s both; }
+.offer-card { animation: offer-card-in .75s cubic-bezier(.22,1,.36,1) .55s both; }
+.welcome-closing .offer-card { animation: welcome-card-out .2s ease-in both; }
+.offer-card .welcome-rise { animation: none; }
+@media (prefers-reduced-motion: reduce) { .star-hero, .star-ring, .offer-card { animation: none !important; } .star-hero, .star-ring { display: none; } .offer-card { opacity: 1; } }
