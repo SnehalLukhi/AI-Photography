@@ -27,6 +27,21 @@ const isConfigured = () => !!(env.razorpay.keyId && env.razorpay.keySecret)
 const hmac = (secret, data) => crypto.createHmac('sha256', secret).update(data).digest('hex')
 const safeEqual = (a, b) => typeof a === 'string' && typeof b === 'string' && a.length === b.length && crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
 
+/** A paid order as the frontend shows it (what was bought, how many coins, what it cost). */
+function describe(row) {
+  const item = [...plans, ...packs].find((p) => p.id === row.item_id) // an item removed from the price list later still shows up under its id
+  return {
+    orderId: row.order_id, paymentId: row.payment_id, itemId: row.item_id, name: item?.name ?? row.item_id, kind: plans.some((p) => p.id === row.item_id) ? 'plan' : 'pack',
+    coins: item?.coins ?? 0, amount: row.amount, currency: row.currency, paidAt: new Date(row.paid_at).toISOString(),
+  }
+}
+
+/** The user's paid purchases, newest first (plans and coin packs). */
+async function listPurchases(userId, limit = 50) {
+  const rows = (await query("SELECT * FROM payments WHERE user_id = $1 AND status = 'paid' ORDER BY paid_at DESC LIMIT $2", [userId, limit])).rows
+  return rows.map(describe)
+}
+
 /** Creates the Razorpay order for an item. @returns what the browser needs to open the payment window */
 async function createCheckout(userId, itemId, currency) {
   const item = itemById(itemId)
@@ -72,7 +87,8 @@ async function verifyPayment(userId, { orderId, paymentId, signature }) {
   const order = (await query('SELECT user_id FROM payments WHERE order_id = $1', [orderId])).rows[0]
   if (!order || order.user_id !== userId) throw new AppError(404, 'ORDER_NOT_FOUND', 'Order not found.')
   const { credited } = await fulfil(orderId, paymentId)
-  return { credited, balance: await wallet.balance(userId) }
+  const paid = (await query('SELECT * FROM payments WHERE order_id = $1', [orderId])).rows[0]
+  return { credited, balance: await wallet.balance(userId), purchase: describe(paid) }
 }
 
 /** Razorpay's server-to-server notification (set up in Razorpay Dashboard > Webhooks, events payment.captured and order.paid). `raw` is the unparsed request body. */
@@ -99,4 +115,4 @@ function grantPurchase(userId, itemId, paymentId) {
   return wallet.credit(userId, itemById(itemId).coins, 'purchase', String(paymentId))
 }
 
-module.exports = { createCheckout, verifyPayment, handleWebhook, grantPurchase }
+module.exports = { createCheckout, verifyPayment, handleWebhook, listPurchases, grantPurchase }

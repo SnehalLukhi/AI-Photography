@@ -35,10 +35,15 @@ async function verifyPayment(req, res) {
   res.set('Cache-Control', 'no-store').json({ success: true, ...(await payments.verifyPayment(req.user.id, req.body || {})) })
 }
 
+/** GET /api/wallet/purchases - the user's paid plans and coin packs, newest first: [{ name, kind: 'plan' | 'pack', coins, amount (cents), currency, paidAt, ... }] */
+async function purchases(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, purchases: await payments.listPurchases(req.user.id) })
+}
+
 /** POST /api/webhooks/razorpay - called by Razorpay (not by the browser); the signature header proves it. */
 async function razorpayWebhook(req, res) {
   await payments.handleWebhook(req.rawBody, req.get('x-razorpay-signature'))
   res.json({ success: true }) // always 200 once the signature is valid, so Razorpay does not keep retrying events we ignore
 }
 
-module.exports = { listPlans, listPacks, getWallet, redeem, checkout, verifyPayment, razorpayWebhook }
+module.exports = { listPlans, listPacks, getWallet, redeem, checkout, verifyPayment, purchases, razorpayWebhook }

@@ -46,6 +46,7 @@ router.get('/wallet', requireAuth, walletCtl.getWallet)
 router.post('/wallet/redeem', authLimiter, requireAuth, walletCtl.redeem) // limited like login: codes must not be guessable by trying
 router.post('/wallet/checkout', requireAuth, walletCtl.checkout)
 router.post('/wallet/verify-payment', requireAuth, walletCtl.verifyPayment)
+router.get('/wallet/purchases', requireAuth, walletCtl.purchases)
 router.post('/webhooks/razorpay', walletCtl.razorpayWebhook) // public: Razorpay calls it, the signature header is the proof
 
 // requireApiKey runs first so uploads are not even read when the server is not configured.

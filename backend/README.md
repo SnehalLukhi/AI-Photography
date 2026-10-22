@@ -151,6 +151,7 @@ starts (`402 INSUFFICIENT_COINS` if the balance is too low, before AILabTools is
 | `POST /api/wallet/redeem` | JSON `{ code }`: adds the coins of a one-time code (`404 INVALID_CODE`) |
 | `POST /api/wallet/checkout` | JSON `{ itemId (plan or coin pack id) }` -> `{ order }` (what the browser needs to open Razorpay's payment window). The price comes from the server. `503 PAYMENTS_NOT_CONFIGURED` until the Razorpay keys are set |
 | `POST /api/wallet/verify-payment` | JSON `{ orderId, paymentId, signature }` from Razorpay's window -> `{ credited, balance }`; the signature is checked with your key secret |
+| `GET /api/wallet/purchases` | the user's paid plans and coin packs, newest first (`name`, `kind` plan/pack, `coins`, `amount` in cents, `currency`, `paidAt`) |
 | `POST /api/webhooks/razorpay` | called by Razorpay (public; the `X-Razorpay-Signature` header is the proof): credits the coins even if the customer closed the tab |
 
 Create redeem codes: `npm run create-code -- 100 5` (5 codes worth 100 coins each; users enter them on the "Transfer code" page).

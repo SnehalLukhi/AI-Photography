@@ -24,8 +24,9 @@ export default function Pricing() {
     setBusy(p.id); setNote('')
     try {
       const out = await buyCoins(p.id, { name: user?.name, email: user?.email })
-      setNote(`Payment successful. Your balance is now ${out.balance.toLocaleString()} coins.`)
       refreshUser()
+      nav('/payment-success', { state: out })
+      return
     } catch (e) { setNote(e.message) }
     setBusy('')
   }

@@ -1,8 +1,10 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from '../components/Header.jsx'
 import { brandImages } from '../data/images.js'
+import { getPurchases } from '../lib/aiPhotography.js'
+import { formatDate, formatMoney } from '../lib/format.js'
 import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
 const Hero = ({ eyebrow, title, sub }) => (
@@ -92,8 +94,23 @@ export function Contact() {
   )
 }
 
+/** The user's paid purchases (plans and coin packs), newest first; null while loading. */
+function usePurchases() {
+  const { signedIn } = useStudio()
+  const [list, setList] = useState(null)
+  useEffect(() => {
+    if (!signedIn) return
+    let live = true
+    getPurchases().then((l) => live && setList(l)).catch(() => live && setList([]))
+    return () => { live = false }
+  }, [signedIn])
+  return list
+}
+
 export function Profile() {
-  const { signedIn, userEmail } = useStudio()
+  const { signedIn, userEmail, coins } = useStudio()
+  const purchases = usePurchases()
+  const lastPlan = purchases?.find((p) => p.kind === 'plan') // plans are one-time coin purchases: the latest one is "your plan"
   const name = displayName(userEmail || '')
   const [first, ...rest] = name.split(' ')
   const last = rest.join(' ')
@@ -118,6 +135,21 @@ export function Profile() {
               <div className="mt-[26px]"><label htmlFor="pf-email" className={lbl}>Email address</label><input id="pf-email" readOnly value={userEmail || ''} title={userEmail} className={`${box} text-[#9CA3C8]/70`} /></div>
               <div className="mt-[26px]"><label htmlFor="pf-country" className={lbl}>Country</label><input id="pf-country" readOnly disabled placeholder="Not set" className={`${box} text-[#9CA3C8]/70 placeholder:text-[#9CA3C8]/55`} /></div>
               <div className="mt-[26px]"><label htmlFor="pf-since" className={lbl}>Member since</label><input id="pf-since" readOnly disabled placeholder="Not available" className={`${box} text-[#9CA3C8]/70 placeholder:text-[#9CA3C8]/55`} /></div>
+              <div className="mt-[34px] border-t border-white/[0.08] pt-7">
+                <h2 className="text-[15px] font-bold text-white">Plan &amp; purchases</h2>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#15151d] px-[18px] py-4"><p className="text-xs text-[#9CA3C8]">Current plan</p><p className="mt-1 text-[15px] font-bold text-white">{purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>{lastPlan && <p className="mt-0.5 text-xs text-[#9CA3C8]">Bought {formatDate(lastPlan.paidAt)}</p>}</div>
+                  <div className="rounded-2xl border border-white/[0.06] bg-[#15151d] px-[18px] py-4"><p className="text-xs text-[#9CA3C8]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" className="mt-0.5 inline-block text-xs font-semibold text-[#C4B5FD] underline">Get more coins</Link></div>
+                </div>
+                {purchases?.length > 0 && (
+                  <ul className="mt-4 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.06] bg-[#15151d]">
+                    {purchases.slice(0, 3).map((p) => (
+                      <li key={p.paymentId} className="flex items-center justify-between gap-3 px-[18px] py-3 text-[13px]"><span className="min-w-0"><span className="block truncate font-semibold text-white">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}</span><span className="text-xs text-[#9CA3C8]">{formatDate(p.paidAt)} · +{p.coins.toLocaleString('en-US')} coins</span></span><span className="shrink-0 font-semibold text-white">{formatMoney(p.amount, p.currency)}</span></li>
+                    ))}
+                  </ul>
+                )}
+                <Link to="/transactions" className="mt-4 inline-block text-[13px] font-semibold text-[#C4B5FD] underline">View all transactions</Link>
+              </div>
               <button type="button" disabled title="Editing your profile is not available yet" className="mt-[37px] h-[47px] cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #9B30E8 0%, #F0389A 60%, #FF7A2F 100%)' }}>Save Changes</button>
             </>
           ) : (
@@ -146,6 +178,7 @@ const EmptyReceipt = () => (
 
 export function Transactions() {
   const { signedIn } = useStudio()
+  const purchases = usePurchases()
   return (
     <div className="px-4 pb-24 pt-8 md:pb-16 md:pt-10">
       <div className="mx-auto w-full max-w-[1040px]">
@@ -154,12 +187,25 @@ export function Transactions() {
         <p className="mt-4 text-base text-[#9CA3C8]">Track subscriptions, coin purchases and refunds.</p>
         <div className="mt-9 rounded-[24px] border border-white/[0.07] bg-[#121218] px-6 py-12 text-center">
           {signedIn ? (
-            <>
-              <EmptyReceipt />
-              <p className="mt-5 text-[15px] font-bold text-white">No transactions yet</p>
-              <p className="mt-2 text-[13px] text-[#9CA3C8]/80">Subscriptions and coin purchases will show up here.</p>
-              <Link to="/pricing" className="grad-bg mt-6 inline-flex h-10 items-center justify-center rounded-[10px] px-5 text-[13px] font-bold">View pricing</Link>
-            </>
+            purchases?.length ? (
+              <ul className="divide-y divide-white/[0.06] text-left">
+                {purchases.map((p) => (
+                  <li key={p.paymentId} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-4">
+                    <span className="min-w-0"><span className="block text-[15px] font-bold text-white">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}</span><span className="text-xs text-[#9CA3C8]">{formatDate(p.paidAt, true)} · Payment ID {p.paymentId}</span></span>
+                    <span className="text-right"><span className="block text-[15px] font-bold text-white">{formatMoney(p.amount, p.currency)}</span><span className="text-xs font-semibold text-emerald-300">+{p.coins.toLocaleString('en-US')} coins</span></span>
+                  </li>
+                ))}
+              </ul>
+            ) : purchases === null ? (
+              <p className="py-8 text-sm text-[#9CA3C8]">Loading…</p>
+            ) : (
+              <>
+                <EmptyReceipt />
+                <p className="mt-5 text-[15px] font-bold text-white">No transactions yet</p>
+                <p className="mt-2 text-[13px] text-[#9CA3C8]/80">Subscriptions and coin purchases will show up here.</p>
+                <Link to="/coins" className="grad-bg mt-6 inline-flex h-10 items-center justify-center rounded-[10px] px-5 text-[13px] font-bold">Get coins</Link>
+              </>
+            )
           ) : (
             <><p className="mb-5 text-lg font-medium text-white">Sign in to see your transactions</p><Link to="/login" className="btn-grad">Sign in to Pictrify</Link></>
           )}
