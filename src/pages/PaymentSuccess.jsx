@@ -16,6 +16,7 @@ export default function PaymentSuccess() {
     [p.kind === 'plan' ? 'Plan' : 'Coin pack', p.name],
     ['Coins added', `+${p.coins.toLocaleString('en-US')}`],
     ['Amount paid', formatMoney(p.amount, p.currency)],
+    ...(p.offerPercent ? [['Offer', `${p.offerPercent}% off (regular price ${formatMoney(p.listAmount, p.currency)})`]] : []),
     ['Date', formatDate(p.paidAt, true)],
     ['Payment ID', p.paymentId],
   ]

@@ -161,6 +161,17 @@ In Razorpay Dashboard > Webhooks add `https://<your-domain>/api/webhooks/razorpa
 Flow: checkout creates a Razorpay order (stored in the `payments` table) -> the browser opens Razorpay's window -> after paying, `verify-payment` and the webhook both end in one function
 that adds the coins **once per order** (a repeat or a retry changes nothing). The coins credited always come from the stored order, never from the browser. Use Razorpay's *test mode* keys to try it.
 
+### Offers (discounts)
+Post an offer by adding one line to `src/config/offers.js` (see the examples in that file): `{ id, itemId (plan or coin pack), percentOff, audience: 'all' | 'new', windowHours, startsAt?, endsAt?, popup? }`.
+The **server** works out the discounted price (the list price from `config/plans.js` / `config/packs.js` minus `percentOff`, rounded down to the cent) and creates the Razorpay order for exactly that
+amount, so Razorpay charges the reduced price however the user buys it (Pricing page, Get Coins page or a popup); the browser never sets a price. The customer still gets the plan's full coins.
+- `audience: 'new'` = only users whose account is younger than `windowHours` (e.g. the first-login popup offer, 24 hours); `'all'` = everyone. `startsAt` / `endsAt` limit an offer to dates.
+- If several offers match one item the biggest `percentOff` wins; they are never added together.
+- `GET /api/plans` and `GET /api/coin-packs` attach `offer: { id, discountPercent, original, price, endsAt }` to a discounted item (send the login token to see offers meant for that user); `GET /api/plans` also returns `offer`
+  at the top level = the popup's special offer (the entry with `popup: true`), or `null`.
+- Buying with an offer id (`POST /api/wallet/checkout { itemId: "yearly-offer" }`) uses that offer and answers `400 OFFER_EXPIRED` when it no longer applies to the user.
+- Each order stores `offer_id` and the regular price (`list_amount`); `GET /api/wallet/purchases` returns `offerPercent` and `listAmount`.
+
 ### Stored images (DigitalOcean Spaces)
 Set `SPACES_KEY` (a key with Read/Write/Delete permission), `SPACES_SECRET`, `SPACES_BUCKET` and `SPACES_REGION` (e.g. `blr1`) in `.env`. Then every call to the four
 `/generate` endpoints saves the user's original photo, and the AI result once it has finished, as one *generation*. Responses get an extra `generation` field; if storage

@@ -8,7 +8,7 @@ import { SparkIcon } from '../components/Header.jsx'
 
 export default function Pricing() {
   const nav = useNavigate()
-  const { signedIn, user, refreshUser } = useStudio()
+  const { signedIn, user, refreshUser, openLogin } = useStudio()
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState('')
   // the plans come from the backend (single source of prices and coins); the built-in list is only shown if the backend cannot be reached
@@ -16,11 +16,13 @@ export default function Pricing() {
   useEffect(() => {
     getPlans().then((r) => setPlans(r.plans.map((p) => {
       const card = fallbackPlans.find((f) => f.id === p.id) || {}
-      return { ...card, ...p, price: new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.price), coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
+      const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(n)
+      // with an offer the discounted price is the price (the server charges exactly this); the regular price is shown struck through
+      return { ...card, ...p, price: money(p.offer ? p.offer.price : p.price), originalPrice: p.offer ? money(p.price) : '', discount: p.offer?.discountPercent || 0, coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
     }))).catch(() => {})
   }, [])
   const choose = async (p) => {
-    if (!signedIn) { nav('/login'); return }
+    if (!signedIn) { openLogin(); return }
     setBusy(p.id); setNote('')
     try {
       const out = await buyCoins(p.id, { name: user?.name, email: user?.email })
@@ -47,7 +49,9 @@ export default function Pricing() {
               <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                 <p className="text-[34px] font-bold leading-none text-white sm:text-[40px]">{p.price}</p>
+                {p.originalPrice && <span className="text-[15px] text-[#A0A0A0] line-through">{p.originalPrice}</span>}
                 <span className="text-[13px] text-[#A0A0A0] sm:text-[14px]">{p.per}</span>
+                {p.discount > 0 && <span className="rounded-md bg-[#FF55AA]/15 px-2 py-0.5 text-[11px] font-bold text-[#FF88C7]">{p.discount}% OFF</span>}
               </div>
               <div className="mt-4 flex items-center gap-2.5">
                 <img src={brandImages.coin} alt="Coins" width="44" height="44" className="size-9 shrink-0 object-contain drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]" />

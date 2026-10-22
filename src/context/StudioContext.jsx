@@ -43,6 +43,7 @@ export function StudioProvider({ children }) {
     fetchMe().then(setUser).catch((e) => { if (e.status === 401) { setAuthToken(''); setUser(null) } }).finally(() => setAuthReady(true))
   }, [])
   useEffect(() => { if (authReady || user) cacheUser(user) }, [user, authReady])
+  const [loginOpen, setLoginOpen] = useState(false) // the sign-in popup (components/LoginModal.jsx)
   const [welcomeOffer, setWelcomeOffer] = useState(false) // welcome popup: opened right after a FIRST sign-in only, closed by the user
   const [premiumOffer, setPremiumOffer] = useState(false) // premium pricing popup: opens PREMIUM_DELAY_MS after the welcome popup has been closed, never at the same time
   const [offerPopup, setOfferPopup] = useState(false) // special-offer popup: opens OFFER_DELAY_MS after the premium popup is dismissed (not after a purchase)
@@ -80,7 +81,7 @@ export function StudioProvider({ children }) {
   const [creations, setCreations] = useState([])
   const addCreation = (c) => setCreations((l) => [{ id: `new-${Date.now()}`, date: 'Just now', ...c }, ...l])
 
-  const signIn = ({ token, user: u }) => { setAuthToken(token); setUser(u); if (firstSignIn(u.email)) setWelcomeOffer(true) }
+  const signIn = ({ token, user: u }) => { setAuthToken(token); setUser(u); setLoginOpen(false); if (firstSignIn(u.email)) setWelcomeOffer(true) }
   const refreshUser = () => fetchMe().then(setUser).catch(() => {}) // coin balance after a generation, a redeem or a purchase
   const signOut = () => { setFavorites(new Set()); setFavoritesReady(false); setAuthToken(''); clearPremiumTimer(); setUser(null); setCreations([]); setWelcomeOffer(false); setPremiumOffer(false); setOfferPopup(false) }
 
@@ -92,7 +93,7 @@ export function StudioProvider({ children }) {
   return <Ctx.Provider value={{
     favorites, favoritesReady, toggleFavorite,
     template, setTemplate, photo, setPhoto, creations, setCreations, addCreation, gender, setGender,
-    signedIn: !!user, user, userEmail: user?.email || '', coins: user?.coins ?? 0, refreshUser, authReady, signIn, signOut,
+    signedIn: !!user, user, userEmail: user?.email || '', coins: user?.coins ?? 0, refreshUser, authReady, signIn, signOut, loginOpen, openLogin: () => setLoginOpen(true), closeLogin: () => setLoginOpen(false),
     welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer: (purchased = false) => {
       setPremiumOffer(false)
       if (purchased !== true && !offerTimer.current) offerTimer.current = setTimeout(() => { offerTimer.current = null; setOfferPopup(true) }, OFFER_DELAY_MS)

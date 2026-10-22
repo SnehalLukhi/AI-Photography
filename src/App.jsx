@@ -12,7 +12,7 @@ import Coins from './pages/Coins.jsx'
 import PaymentSuccess from './pages/PaymentSuccess.jsx'
 import { Help, Contact, Feedback, Legal, Profile, Transactions } from './pages/Support.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
-import Login from './pages/Login.jsx'
+import LoginModal from './components/LoginModal.jsx'
 import WelcomePopup from './components/WelcomePopup.jsx'
 import PremiumPopup from './components/PremiumPopup.jsx'
 import OfferPopup from './components/OfferPopup.jsx'
@@ -20,13 +20,12 @@ import { useStudio } from './context/StudioContext.jsx'
 
 export default function App() {
   const { pathname } = useLocation()
-  const { signedIn, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer, offerPopup, closeOfferPopup } = useStudio()
-  const bare = pathname === '/login' // full-screen page without header/footer
+  const { signedIn, loginOpen, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer, offerPopup, closeOfferPopup } = useStudio()
   const generating = pathname === '/generate' // fixed-height page: no footer, no mobile chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
     <div className="flex min-h-screen w-full flex-col overflow-x-clip bg-[#0A0809] selection:bg-[#FF55AA]/30">
-      {!bare && <Header generating={generating} />}
+      <Header generating={generating} />
       <main className="flex-1 ">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -41,7 +40,6 @@ export default function App() {
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
 
           <Route path="/help" element={<Help />} />
           <Route path="/contact-us" element={<Contact />} />
@@ -51,11 +49,12 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!bare && !generating && <Footer />}
-      {!bare && !generating && pathname !== '/' && <div className="h-24 md:hidden" aria-hidden="true" />} {/* phones: room for the fixed bottom nav now that the footer is hidden */}
-      {signedIn && welcomeOffer && !bare && <WelcomePopup onClose={closeWelcomeOffer} />}
-      {signedIn && premiumOffer && !welcomeOffer && !bare && <PremiumPopup onClose={closePremiumOffer} />}
-      {signedIn && offerPopup && !welcomeOffer && !premiumOffer && !bare && <OfferPopup onClose={closeOfferPopup} />}
+      {!generating && <Footer />}
+      {!generating && pathname !== '/' && <div className="h-24 md:hidden" aria-hidden="true" />} {/* phones: room for the fixed bottom nav now that the footer is hidden */}
+      {loginOpen && !signedIn && <LoginModal />}
+      {signedIn && welcomeOffer && <WelcomePopup onClose={closeWelcomeOffer} />}
+      {signedIn && premiumOffer && !welcomeOffer && <PremiumPopup onClose={closePremiumOffer} />}
+      {signedIn && offerPopup && !welcomeOffer && !premiumOffer && <OfferPopup onClose={closeOfferPopup} />}
     </div>
   )
 }

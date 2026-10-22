@@ -35,7 +35,7 @@ function Compare({ item, onClose, onDelete }) {
 }
 
 export default function Creations() {
-  const { creations, setCreations, signedIn, authReady, signOut } = useStudio()
+  const { creations, setCreations, signedIn, authReady, signOut, openLogin } = useStudio()
   const [open, setOpen] = useState(null)
   const [loadError, setLoadError] = useState('')
   const [nextToken, setNextToken] = useState() // set while the backend has more (older) creations
@@ -76,7 +76,7 @@ export default function Creations() {
           </div>
           <h2 className="mb-2 text-2xl font-normal tracking-normal text-[#ffffff]/95 sm:text-[30px]">Sign in to view your creations</h2>
           <p className="mb-8 max-w-md text-sm font-normal text-[#A0A0A0] sm:text-base">Join our community of creators to store and manage your AI generations permanently.</p>
-          <Link to="/login" className="btn-grad">Sign in to Pictrify</Link>
+          <button type="button" onClick={openLogin} className="btn-grad">Sign in to Pictrify</button>
         </div>
       ) : (
         <>

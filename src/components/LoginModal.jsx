@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { brandImages } from '../data/images.js'
+import { Link } from 'react-router-dom'
 import { useStudio, WELCOME_COINS } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
 import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '../lib/aiPhotography.js'
 
 /**
- * Login (full screen, no header or footer). The only way in is "Continue with Google": the same button logs in a returning user and creates the account of a new one.
- * The backend (POST /api/auth/google) checks the Google token and returns our own login token, which `signIn()` from StudioContext keeps, then goes to Home (/).
+ * The sign-in popup ("Create Your Account"), opened from anywhere with `openLogin()` from StudioContext - there is no login page any more.
+ * Left: the tilted, slowly scrolling template photos. Right: Continue with Google / Apple. The same buttons log in a returning user and create the account of a new one.
+ * The backend (POST /api/auth/google | apple) checks the token and returns our own login token; `signIn()` from StudioContext keeps it and closes the popup, so the user
+ * stays on the page they were on. Closes with the X, the Escape key, or a click outside.
  */
 // Side-panel photos: Cartoon, LinkedIn Headshot, Beard, Old Money and 80's & 90's templates in a repeating sequence (one from each, then the next one from each, ...), spread over 4 columns.
 const PANEL_SOURCES = ['cartoon', 'linkedin-headshot', 'beard', 'old-money', '80s-and-90s'].map((id) => categoryItems(id))
@@ -35,64 +36,65 @@ const GoogleLogo = () => (
   </svg>
 )
 
-export function Login() {
-  const nav = useNavigate()
-  const { signIn, signedIn } = useStudio()
+export default function LoginModal() {
+  const { signIn, closeLogin } = useStudio()
   const [error, setError] = useState('')
   const [busy, setBusy] = useState('') // '' | 'google' | 'apple': which sign-in is running (the other button is only disabled)
   useEffect(() => { prepareGoogle(); prepareApple() }, []) // loads the sign-in scripts now, so the click can open the Google / Apple window immediately
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') closeLogin() }
+    window.addEventListener('keydown', onKey)
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden' // the page behind does not scroll
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = overflow }
+  }, [closeLogin])
 
   // both buttons call their sign-in straight from the click (browsers only open the pop-up then) and share the busy / error state
   const social = (provider, login, failed) => async () => {
     setBusy(provider); setError('')
-    try { signIn(await login()); nav('/') } catch (err) { setError(err.message || failed); setBusy('') }
+    try { signIn(await login()) } catch (err) { setError(err.message || failed); setBusy('') } // signIn also closes this popup
   }
   const google = social('google', loginWithGoogle, 'Google sign-in failed. Please try again.')
   const apple = social('apple', loginWithApple, 'Apple sign-in failed. Please try again.')
 
-  if (signedIn) return <Navigate to="/" replace /> // signed in (a fresh login or a restored session): always land on Home, never the previous page or Profile
-
   return (
-    <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#0A0809] text-white lg:flex-row-reverse">
-      {/* photo panel (desktop only): static, muted, no effects */}
-      <aside className="relative hidden w-[58%] shrink-0 overflow-hidden lg:block">
-        {/* tilted block of scrolling photo columns (16 degrees, bleeds past the panel edges) */}
-        <div className="absolute inset-[-18%] flex origin-center items-stretch justify-center gap-3 px-3" style={{ rotate: '16deg' }} aria-hidden="true">
-          {COLUMNS.map((col, ci) => (
-            <div key={ci} className="relative h-full min-w-0 flex-1 overflow-hidden">
-              <div className="login-col flex w-full flex-col will-change-transform" style={{ animation: `${col.anim} ${col.secs}s linear infinite` }}>
-                {col.list.map((src, k) => (
-                  <div key={k} className="mb-3 aspect-[9/16] w-full shrink-0 overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809]">
-                    <img src={src} alt="" loading="lazy" className="size-full object-cover object-center" draggable="false" />
-                  </div>
-                ))}
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="login-title">
+      <div className="login-fade absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={closeLogin} />
+      <div className="login-rise relative flex max-h-[94dvh] min-h-[560px] w-full max-w-[1030px] overflow-hidden rounded-[28px] border border-white/[0.06] bg-[#0A0809] shadow-[0_30px_90px_rgba(0,0,0,0.7)] max-sm:min-h-0">
+        {/* left: the template photos (desktop only) */}
+        <aside className="relative m-3.5 hidden w-[48%] shrink-0 overflow-hidden rounded-[22px] bg-[#0A0809] lg:block" aria-hidden="true">
+          <div className="absolute inset-[-18%] flex origin-center items-stretch justify-center gap-3 px-3" style={{ rotate: '16deg' }} aria-hidden="true">
+            {COLUMNS.map((col, ci) => (
+              <div key={ci} className="relative h-full min-w-0 flex-1 overflow-hidden">
+                <div className="login-col flex w-full flex-col will-change-transform" style={{ animation: `${col.anim} ${col.secs}s linear infinite` }}>
+                  {col.list.map((src, k) => (
+                    <div key={k} className="mb-3 aspect-[9/16] w-full shrink-0 overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809]">
+                      <img src={src} alt="" loading="lazy" className="size-full object-cover object-center" draggable="false" />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        {/* fade / blur-out toward the inner (form-facing) edge, as in the reference - confined to this panel */}
-        <div className="absolute inset-0 bg-[#0A0809]/15" />
-        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-[#0A0809]/35 to-[#0A0809]" />
-        <div className="pointer-events-none absolute inset-0 backdrop-blur-[5px] [mask-image:linear-gradient(to_left,transparent_35%,black_100%)] [-webkit-mask-image:linear-gradient(to_left,transparent_35%,black_100%)]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/90 via-transparent to-[#0A0809]/25" />
-      </aside>
+            ))}
+          </div>
+          <div className="absolute inset-0 bg-[#0A0809]/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#0A0809]/25 to-[#0A0809]/80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/85 via-transparent to-[#0A0809]/30" />
+        </aside>
 
-      <main className="flex min-w-0 flex-1 flex-col px-5 sm:px-8">
-        <header className="flex items-center justify-between py-6 lg:hidden">
-          <Link to="/" className="flex items-center gap-2.5"><img src={brandImages.logo} alt="" className="size-8 rounded-xl" /><span className="text-lg font-semibold tracking-tight">Pictrify</span></Link>
-          <Link to="/" className="text-sm text-[#A0A0A0] transition-colors duration-200 hover:text-white lg:hidden">Home</Link>
-        </header>
-
-        <div className="m-auto w-full max-w-[440px] py-8">
-          <div className="login-rise rounded-xl border border-[#2B2B2B] p-6 text-center sm:p-8">
-            <h1 className="text-[30px] font-extrabold leading-tight tracking-tight text-white sm:text-[36px]">Create Your Account</h1>
+        {/* right: the form */}
+        <div className="relative flex min-w-0 flex-1 flex-col justify-center overflow-y-auto px-5 py-12 sm:px-10">
+          <button type="button" onClick={closeLogin} aria-label="Close" className="absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-white">
+            <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg>
+          </button>
+          <div className="mx-auto w-full max-w-[400px] text-center">
+            <h1 id="login-title" className="text-[30px] font-extrabold leading-tight tracking-tight text-white sm:text-[36px]">Create Your Account</h1>
             <p className="mt-3 text-[15px] leading-snug text-white sm:text-base"><span className="grad-text text-[22px] font-extrabold">{WELCOME_COINS}</span> Free Credit are waiting for you.<br />Sign up and generate your first <strong className="font-extrabold">Trending Image!</strong></p>
 
             <div className="mt-6 grid grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/10 bg-white/[0.04] py-4">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="flex flex-col items-center gap-2 px-2">
+              {['Browse all templates', 'Create Trending Images', 'Save your creation history'].map((text) => (
+                <div key={text} className="flex flex-col items-center gap-2 px-2">
                   <svg className="size-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
-                  <p className="text-[11px] font-semibold leading-tight text-white">Save your creation History</p>
+                  <p className="text-[11px] font-semibold leading-tight text-white">{text}</p>
                 </div>
               ))}
             </div>
@@ -110,9 +112,7 @@ export function Login() {
             </p>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }
-
-export default Login

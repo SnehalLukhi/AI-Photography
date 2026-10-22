@@ -151,7 +151,7 @@ function ProfileMenu() {
             </Link>
           ))}
           <div className="my-1.5 h-px bg-white/10" />
-          <button type="button" role="menuitem" onClick={() => { close(); signOut(); nav('/login') }}
+          <button type="button" role="menuitem" onClick={() => { close(); signOut(); nav('/') }}
             className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2.5 text-left text-[14px] font-medium text-[#FFFFFF] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#FF55AA]">
             <svg className="size-[18px] shrink-0 text-[#FF55AA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9" /></svg>
             Log out
@@ -162,17 +162,17 @@ function ProfileMenu() {
 }
 
 const Claim = ({ small }) => {
-  const { signedIn } = useStudio()
+  const { signedIn, openLogin } = useStudio()
   if (signedIn) return <CoinBadge />
   return (
-  <Link to="/login" className={`group btn-grad shrink-0 ${small ? '!h-8 !gap-1.5 !px-3 !py-0 !text-[11px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}>
+  <button type="button" onClick={openLogin} className={`group btn-grad shrink-0 ${small ? '!h-8 !gap-1.5 !px-3 !py-0 !text-[11px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}>
     <SparkIcon className="size-3.5 text-white transition-transform group-hover:scale-110" />
     <span className="whitespace-nowrap">Claim 50 Coins</span>
-  </Link>
+  </button>
   )
 }
 
-const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-[#FF55AA]/15 text-white ring-1 ring-inset ring-[#FF55AA]/30' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`
+const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-white/[0.06] text-white ring-1 ring-inset ring-white/15' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`
 const Underline = () => null
 const DLink = ({ to, children }) => (
   <NavLink to={to} end={to === '/'} className={navLink}>
@@ -185,7 +185,7 @@ const accountLinks = [['/transactions', 'Transactions'], ['/help', 'Help'], ['/f
 export default function Header({ generating = false }) {
   const [menu, setMenu] = useState(false)
   const { pathname } = useLocation()
-  const { signedIn } = useStudio()
+  const { signedIn, openLogin } = useStudio()
   useEffect(() => { setMenu(false) }, [pathname])
   const scrolled = useScrolled()
   const xl = useXl()
@@ -232,18 +232,18 @@ export default function Header({ generating = false }) {
             <div className="no-scrollbar max-h-[70vh] overflow-y-auto border-t border-white/10">
               <div className="space-y-0.5 px-3 pb-3 pt-2">
                 {[...main, { to: '/creations', label: 'My Creations' }, { to: '/pricing', label: 'Pricing' }].slice(0, main.length).map((l) => (
-                  <NavLink key={l.to} to={l.to} end className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#FF55AA]/15 text-white ring-1 ring-inset ring-[#FF55AA]/30' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`}>{l.label}</NavLink>
+                  <NavLink key={l.to} to={l.to} end className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-white/[0.06] text-white ring-1 ring-inset ring-white/15' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`}>{l.label}</NavLink>
                 ))}
                 {[['/creations', 'My Creations'], ['/pricing', 'Pricing']].map(([to, label]) => (
-                  <NavLink key={to} to={to} className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-[#FF55AA]/15 text-white ring-1 ring-inset ring-[#FF55AA]/30' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`}>{label}</NavLink>
+                  <NavLink key={to} to={to} className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-white/[0.06] text-white ring-1 ring-inset ring-white/15' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`}>{label}</NavLink>
                 ))}
                 <div className="!mt-2 space-y-0.5 border-t border-white/10 pt-2">
                   <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#A0A0A0]">Account &amp; Support</div>
                   {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#A0A0A0] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
                   {signedIn ? <CoinBadge className="!mt-2 w-full" /> : (
-                  <Link to="/login" className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#FF55AA] hover:bg-[#FF55AA]/20">
+                  <button type="button" onClick={openLogin} className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#FF55AA] hover:bg-[#FF55AA]/20">
                     <SparkIcon className="size-3.5 text-[#FF55AA]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
-                  </Link>
+                  </button>
                   )}
                 </div>
               </div>
@@ -259,12 +259,12 @@ export default function Header({ generating = false }) {
         <div className="flex items-center gap-2.5">
           {signedIn ? <><CoinBadge /><ProfileMenu /></> : (
             <>
-              <Link to="/login" aria-label="Claim 50 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
+              <button type="button" onClick={openLogin} aria-label="Claim 50 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
                 <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] object-contain" />
-              </Link>
-              <Link to="/login" aria-label="Log in" className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-white transition-transform active:scale-95">
+              </button>
+              <button type="button" onClick={openLogin} aria-label="Log in" className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-white transition-transform active:scale-95">
                 <svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0116 0" /></svg>
-              </Link>
+              </button>
             </>
           )}
         </div>
@@ -278,7 +278,7 @@ export default function Header({ generating = false }) {
 const tabs = [
   { to: '/', label: 'Home', match: (p) => p === '/', d: 'M5 7v12a2 2 0 002 2h10M9 3h10a2 2 0 012 2v10a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2zM14 6.5l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
   { to: '/explore', label: 'Diy', match: (p) => p === '/explore', d: 'M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 9l2.5-5 3 1.5L6 10.5M9.5 5.5l3 1.5L10 10.5M16 5.5l3 1.5-2.5 3.5M16 13l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
-  { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/login', '/help', '/contact-us', '/feedback', '/transactions', '/profile'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
+  { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/help', '/contact-us', '/feedback', '/transactions', '/profile'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
 ]
 
 function MobileTabs({ pathname }) {

@@ -38,7 +38,7 @@ export default function OfferPopup({ onClose: finish }) {
     let live = true
     getPlans().then((r) => {
       if (!live) return
-      const e = expiryFor(user?.id)
+      const e = r.offer?.endsAt ?? expiryFor(user?.id) // the server says when this user's offer ends
       if (!r.offer || e <= Date.now()) { finish(); return }
       setOffer(r.offer); setEnd(e); setLeft(e - Date.now())
     }).catch(() => live && finish())
