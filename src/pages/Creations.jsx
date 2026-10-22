@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import PImage from '../components/PImage.jsx'
@@ -34,20 +34,35 @@ function Compare({ item, onClose, onDelete }) {
   )
 }
 
+/** A card that stands in for a creation that is still being loaded: the Pixora "P" on a dark tile, breathing gently (the same loading look as the template tiles). */
+const Skeleton = () => (
+  <div aria-hidden="true" className="relative grid aspect-[9/16] place-items-center overflow-hidden rounded-[20px] border border-white/10 bg-[#0A0809]">
+    <img src="/images/features/logo-mark.svg" alt="" draggable="false" className="pimage-pulse w-[40%] max-w-[130px]" />
+  </div>
+)
+
 export default function Creations() {
-  const { creations, setCreations, signedIn, authReady, signOut, openLogin } = useStudio()
+  const { creations, setCreations, signedIn, authReady, signOut, openLogin, user } = useStudio()
   const [open, setOpen] = useState(null)
   const [loadError, setLoadError] = useState('')
   const [nextToken, setNextToken] = useState() // set while the backend has more (older) creations
   const [loadingMore, setLoadingMore] = useState(false)
+  const [listLoading, setListLoading] = useState(true) // the first page of saved creations is on its way
   const list = creations.filter((c) => c.type === 'image' && c.image)
+  // How many loading cards to show: as many creations as this user had the last time (remembered in this browser); one card the very first time - so a user with a single creation sees one card, and a user with none sees none.
+  const countKey = `pictrify-creations-count-${user?.id || 'guest'}`
+  const expected = useMemo(() => { try { const v = localStorage.getItem(countKey); return v === null ? 1 : Math.min(12, Math.max(0, Number(v) || 0)) } catch { return 1 } }, [countKey]) // read before the count is saved below
+  useEffect(() => { if (!listLoading && !loadingMore) { try { localStorage.setItem(countKey, String(list.length)) } catch { /* storage blocked */ } } }, [list.length, listLoading, loadingMore, countKey])
+  const placeholders = listLoading ? Math.max(0, expected - list.length) : loadingMore ? Math.max(1, Math.min(6, expected - list.length)) : 0
   // stored generations (DigitalOcean Spaces) come back after a refresh; a failed load keeps what is already on screen
   useEffect(() => {
     if (!signedIn) return
     const ctrl = new AbortController()
+    setListLoading(true)
     listGenerations({ signal: ctrl.signal })
       .then(({ generations: gs, nextToken: more }) => { setLoadError(''); setNextToken(more); if (gs.length) setCreations((cur) => [...gs.filter((g) => g.result).map(toCreation), ...cur.filter((c) => !c.generationId)]) })
       .catch((e) => { if (e.status === 401) signOut(); else if (e.name !== 'AbortError') setLoadError('Could not load your saved creations.') })
+      .finally(() => { if (!ctrl.signal.aborted) setListLoading(false) })
     return () => ctrl.abort()
   }, [signedIn, setCreations, signOut])
   const loadMore = async () => {
@@ -80,7 +95,7 @@ export default function Creations() {
         </div>
       ) : (
         <>
-          {list.length === 0 ? (
+          {list.length === 0 && !listLoading ? (
             <div className="mx-auto mt-8 max-w-3xl rounded-[28px] border border-white/5 bg-[#2B2B2B] px-6 py-16 text-center sm:mt-12">
               <p className="mb-1 text-lg font-medium">No images yet</p>
               <p className="mb-6 text-sm text-[#A0A0A0]">Create something and it will show up here.</p>
@@ -99,6 +114,7 @@ export default function Creations() {
                   </div>
                 </div>
               ))}
+              {Array.from({ length: placeholders }, (_, i) => <Skeleton key={`sk${i}`} />)}
             </div>
           )}
         </>
