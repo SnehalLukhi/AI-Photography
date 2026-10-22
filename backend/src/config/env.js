@@ -30,6 +30,7 @@ module.exports = {
     pollTimeoutMs: int(process.env.AILAB_POLL_TIMEOUT_MS, 120_000),
   },
 
+  webUrl: (process.env.WEB_URL || '').trim(), // Vercel Services binding to the frontend service: beard reference images are fetched from it (the api function has no /public folder)
   beardTemplateDir: process.env.BEARD_TEMPLATE_DIR || path.join(__dirname, '..', '..', '..', 'public', 'images', 'explore', 'beard'), // preview images sent as `image_template`
 
   // DigitalOcean Spaces (S3-compatible object storage) for the user's original photo and the AI result. Storage is skipped when not configured.
@@ -45,27 +46,22 @@ module.exports = {
     publicUrl: (process.env.SPACES_PUBLIC_URL || `https://${(process.env.SPACES_BUCKET || '').trim()}.${(process.env.SPACES_REGION || 'nyc3').trim()}.digitaloceanspaces.com`).trim().replace(/\/+$/, ''),
   },
 
-  // Accounts: email + password, SQLite file, JWT bearer tokens.
-  databasePath: process.env.DATABASE_PATH === ':memory:' ? ':memory:' : path.resolve(process.env.DATABASE_PATH || path.join(__dirname, '..', '..', 'data', 'app.db')),
+  // Accounts: Google sign-in, PostgreSQL (Supabase) database, JWT bearer tokens.
+  databaseUrl: (process.env.DATABASE_URL || '').trim(), // Supabase: Project Settings > Database > Connection string (pooler). 'pglite://memory' = throw-away in-memory database (tests)
   auth: {
     jwtSecret: (process.env.JWT_SECRET || '').trim(),
+    appleClientId: (process.env.APPLE_CLIENT_ID || '').trim(), // "Sign in with Apple": the Services ID (same value as the frontend's VITE_APPLE_CLIENT_ID)
     googleClientId: (process.env.GOOGLE_CLIENT_ID || '').trim(), // OAuth client id for "Continue with Google" (same value as the frontend's VITE_GOOGLE_CLIENT_ID)
     tokenTtlSeconds: int(process.env.TOKEN_TTL_SECONDS, 7 * 24 * 3600),
     dailyLimit: int(process.env.DAILY_GENERATION_LIMIT, 100), // generations per user per day (abuse cap; the coin balance is the normal limit)
-    rateLimitMax: int(process.env.AUTH_RATE_LIMIT_MAX, 20), // login / register attempts per IP per 15 minutes
+    rateLimitMax: int(process.env.AUTH_RATE_LIMIT_MAX, 20), // sign-in attempts per IP per 15 minutes
   },
 
-  // Outgoing e-mail (password reset links). Any SMTP server; port 465 = TLS, other ports (587) = STARTTLS.
-  smtp: {
-    host: (process.env.SMTP_HOST || '').trim(),
-    port: int(process.env.SMTP_PORT, 587),
-    user: (process.env.SMTP_USER || '').trim(),
-    password: process.env.SMTP_PASSWORD || '',
-    from: (process.env.SMTP_FROM || '').trim(),
-  },
-  passwordReset: {
-    expireMinutes: int(process.env.PASSWORD_RESET_EXPIRE_MINUTES, 30),
-    frontendUrl: (process.env.FRONTEND_BASE_URL || list(process.env.CORS_ORIGIN, ['http://localhost:5173'])[0]).replace(/\/+$/, ''), // where the reset link in the e-mail points
+  // Razorpay (payments for coin packs / plans). Without the keys checkout answers 503.
+  razorpay: {
+    keyId: (process.env.RAZORPAY_KEY_ID || '').trim(), // public: also used by the browser's checkout window
+    keySecret: (process.env.RAZORPAY_KEY_SECRET || '').trim(), // secret: server only
+    webhookSecret: (process.env.RAZORPAY_WEBHOOK_SECRET || '').trim(), // the secret you type in Razorpay Dashboard > Webhooks
   },
 
   coins: {

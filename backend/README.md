@@ -119,20 +119,24 @@ Errors always look like `{ "success": false, "error": { "code": "...", "message"
 Status/result of a job (use the `taskId` from a `202`). `200` with the same body as above when `task_status` = 2,
 `202` with `status: "queued" | "processing"` otherwise. `?response=image` streams the first result image.
 
-### Accounts (login required)
-Email + password accounts in a SQLite file (`DATABASE_PATH`, default `backend/data/app.db`; needs Node >= 22.13 and a persistent disk). Set `JWT_SECRET`
-(a long random string; required when `NODE_ENV=production`).
+### Accounts (Google sign-in; login required)
+There are no passwords: the only ways in are "Continue with Google" and "Continue with Apple". Accounts live in a Supabase PostgreSQL database (`DATABASE_URL`: Supabase dashboard > Project Settings >
+Database > Connection string > Session pooler). The tables are created automatically at start and Row Level Security is switched on for all of them, so the Supabase public
+REST API cannot read or change them - only this backend can. Set `JWT_SECRET` (a long random string; required when `NODE_ENV=production`) and `GOOGLE_CLIENT_ID`
+(OAuth client of type Web application; the same value as `VITE_GOOGLE_CLIENT_ID` in the frontend `.env`).
+
+Moving from the old SQLite file (`backend/data/app.db`): set `DATABASE_URL`, then run `node scripts/migrate-sqlite-to-postgres.js` once (needs Node >= 22.13 for the old file; safe to run twice).
 
 | Endpoint | Purpose |
 |---|---|
-| `POST /api/auth/register` | JSON `{ email, password (8-128), name? }` -> `201 { token, user }` (`409 EMAIL_TAKEN`) |
-| `POST /api/auth/login` | JSON `{ email, password }` -> `{ token, user }` (`401 INVALID_CREDENTIALS`) |
-| `GET /api/auth/me` | the logged-in user |
+| `POST /api/auth/google` | JSON `{ accessToken }` (a Google access token with scopes `openid email profile`) -> `{ token, user }`. Log in **and** sign up: an unknown Google account gets a new user with the free signup coins; a known email logs into that user. Errors: `401 INVALID_GOOGLE_TOKEN`, `503 GOOGLE_NOT_CONFIGURED` |
+| `POST /api/auth/apple` | JSON `{ identityToken, nonce, name? }` (from Apple's sign-in window) -> `{ token, user }`. Same log-in-and-sign-up rules as Google. The token is checked against Apple's public keys, your `APPLE_CLIENT_ID` and the nonce. Errors: `401 INVALID_APPLE_TOKEN`, `503 APPLE_NOT_CONFIGURED` |
+| `GET /api/auth/me` | the logged-in user (`{ id, email, name, coins }`) |
 
-Send `Authorization: Bearer <token>` (valid 7 days) on **every** endpoint except `/api/health` and the two above; otherwise `401 UNAUTHORIZED`.
-Each user may start `DAILY_GENERATION_LIMIT` (default 20) generations per day (`429 DAILY_LIMIT_REACHED`); failed requests are not counted.
-Login/register are limited to `AUTH_RATE_LIMIT_MAX` (20) attempts per IP per 15 minutes. Passwords are stored as scrypt hashes.
-Stored generations belong to the user who made them; other users get `404`.
+The token is only trusted after Google confirms it was issued to your client id and the email is verified. Send `Authorization: Bearer <token>` (valid 7 days) on **every**
+endpoint except `/api/health`, `/api/plans`, `/api/coin-packs`, `/api/auth/google` and `/api/auth/apple`; otherwise `401 UNAUTHORIZED`.
+Each user may start `DAILY_GENERATION_LIMIT` (default 100) generations per day (`429 DAILY_LIMIT_REACHED`); failed requests are not counted.
+Sign-in attempts are limited to `AUTH_RATE_LIMIT_MAX` (20) per IP per 15 minutes. Stored generations belong to the user who made them; other users get `404`.
 
 ### Coins
 Every generation costs `COIN_COST_PER_GENERATION` coins (default 15); a new account gets `SIGNUP_BONUS_COINS` (default 50). The coins are taken when the request
@@ -142,13 +146,19 @@ starts (`402 INSUFFICIENT_COINS` if the balance is too low, before AILabTools is
 | Endpoint | Purpose |
 |---|---|
 | `GET /api/plans` | public: coin plans (`id`, `name`, `price`, `currency`, `per`, `coins`) + `costPerGeneration`; defined in `src/config/plans.js` |
+| `GET /api/coin-packs` | public: one-time coin packs (`id`, `name`, `coins`, `price` in US dollars, `currency`) + `costPerGeneration`; defined in `src/config/packs.js` |
 | `GET /api/wallet` | `{ coins, costPerGeneration, history[] }` (login required); `coins` is also in the `user` of `/api/auth/me`, login and register |
 | `POST /api/wallet/redeem` | JSON `{ code }`: adds the coins of a one-time code (`404 INVALID_CODE`) |
-| `POST /api/wallet/checkout` | JSON `{ planId }`: starts a payment. **`503 PAYMENTS_NOT_CONFIGURED` until a payment gateway is connected** - no coins are ever credited for free |
+| `POST /api/wallet/checkout` | JSON `{ itemId (plan or coin pack id) }` -> `{ order }` (what the browser needs to open Razorpay's payment window). The price comes from the server. `503 PAYMENTS_NOT_CONFIGURED` until the Razorpay keys are set |
+| `POST /api/wallet/verify-payment` | JSON `{ orderId, paymentId, signature }` from Razorpay's window -> `{ credited, balance }`; the signature is checked with your key secret |
+| `POST /api/webhooks/razorpay` | called by Razorpay (public; the `X-Razorpay-Signature` header is the proof): credits the coins even if the customer closed the tab |
 
 Create redeem codes: `npm run create-code -- 100 5` (5 codes worth 100 coins each; users enter them on the "Transfer code" page).
-To connect a gateway: make `createCheckout` in `src/services/payments.service.js` create the gateway's order, and have the gateway's verified webhook call
-`grantPurchase(userId, planId, paymentId)` - it credits the plan's coins once per payment id, so webhook retries are safe.
+### Payments (Razorpay)
+Set `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` and `RAZORPAY_WEBHOOK_SECRET` (see `.env.example`). Prices are in US dollars, so International Payments / USD must be enabled on your Razorpay account.
+In Razorpay Dashboard > Webhooks add `https://<your-domain>/api/webhooks/razorpay` with the events `payment.captured` and `order.paid` and the same secret as `RAZORPAY_WEBHOOK_SECRET`.
+Flow: checkout creates a Razorpay order (stored in the `payments` table) -> the browser opens Razorpay's window -> after paying, `verify-payment` and the webhook both end in one function
+that adds the coins **once per order** (a repeat or a retry changes nothing). The coins credited always come from the stored order, never from the browser. Use Razorpay's *test mode* keys to try it.
 
 ### Stored images (DigitalOcean Spaces)
 Set `SPACES_KEY` (a key with Read/Write/Delete permission), `SPACES_SECRET`, `SPACES_BUCKET` and `SPACES_REGION` (e.g. `blr1`) in `.env`. Then every call to the four
@@ -159,7 +169,7 @@ saves the result when it finishes and returns `generation` as well.
 - **Only images are stored in the Space**: `generations/<id>/original.<ext>` and `generations/<id>/result.<ext>`. Nothing else is written there.
 - **The images are public**: every image is uploaded `public-read`, so anyone who has its URL can view it (the URL contains a random id, so it can't be guessed, but it is not secret).
   Keep the Space's "File Listing" on *Restricted* so nobody can browse the folder. `SPACES_PUBLIC_URL` can point to the Space's CDN address.
-- **Who owns which image** (user, template, AILabTools task id, the two image keys) is kept in the SQLite database (table `generations`), not in the Space.
+- **Who owns which image** (user, template, AILabTools task id, the two image keys) is kept in the PostgreSQL database (table `generations`), not in the Space.
 
 A `generation` looks like:
 ```json

@@ -1,5 +1,6 @@
 const env = require('../config/env')
 const plans = require('../config/plans')
+const packs = require('../config/packs')
 const wallet = require('../services/wallet.service')
 const payments = require('../services/payments.service')
 
@@ -8,19 +9,35 @@ function listPlans(_req, res) {
   res.json({ success: true, plans, costPerGeneration: env.coins.perGeneration })
 }
 
+/** GET /api/coin-packs - public: the one-time coin packs for the Get Coins page. */
+function listPacks(_req, res) {
+  res.json({ success: true, packs, costPerGeneration: env.coins.perGeneration })
+}
+
 /** GET /api/wallet - balance, cost of one generation and the latest coin movements. */
-function getWallet(req, res) {
-  res.set('Cache-Control', 'no-store').json({ success: true, coins: wallet.balance(req.user.id), costPerGeneration: env.coins.perGeneration, history: wallet.history(req.user.id) })
+async function getWallet(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, coins: await wallet.balance(req.user.id), costPerGeneration: env.coins.perGeneration, history: await wallet.history(req.user.id) })
 }
 
 /** POST /api/wallet/redeem - JSON { code } */
-function redeem(req, res) {
-  res.set('Cache-Control', 'no-store').json({ success: true, ...wallet.redeem(req.user.id, req.body?.code) })
+async function redeem(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, ...(await wallet.redeem(req.user.id, req.body?.code)) })
 }
 
-/** POST /api/wallet/checkout - JSON { planId } -> starts a payment (503 until a payment gateway is connected). */
-function checkout(req, res) {
-  res.json({ success: true, ...payments.createCheckout(req.user.id, req.body?.planId) })
+/** POST /api/wallet/checkout - JSON { itemId (plan or coin pack id) } -> { order }: what the browser needs to open Razorpay's payment window (503 until the Razorpay keys are set). */
+async function checkout(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, order: await payments.createCheckout(req.user.id, req.body?.itemId ?? req.body?.planId, req.body?.currency) })
 }
 
-module.exports = { listPlans, getWallet, redeem, checkout }
+/** POST /api/wallet/verify-payment - JSON { orderId, paymentId, signature } (from Razorpay's payment window) -> { credited, balance } */
+async function verifyPayment(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, ...(await payments.verifyPayment(req.user.id, req.body || {})) })
+}
+
+/** POST /api/webhooks/razorpay - called by Razorpay (not by the browser); the signature header proves it. */
+async function razorpayWebhook(req, res) {
+  await payments.handleWebhook(req.rawBody, req.get('x-razorpay-signature'))
+  res.json({ success: true }) // always 200 once the signature is valid, so Razorpay does not keep retrying events we ignore
+}
+
+module.exports = { listPlans, listPacks, getWallet, redeem, checkout, verifyPayment, razorpayWebhook }

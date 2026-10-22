@@ -3,11 +3,11 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { brandImages } from '../data/images.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { categoryItems } from '../data/templates.js'
-import { login, register, loginWithGoogle, loadGoogle } from '../lib/aiPhotography.js'
+import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '../lib/aiPhotography.js'
 
 /**
- * Login / Sign Up (full screen, no header or footer). Calls the backend (POST /api/auth/login | register), keeps the returned token via
- * `signIn()` from StudioContext and goes to Home (/).
+ * Login (full screen, no header or footer). The only way in is "Continue with Google": the same button logs in a returning user and creates the account of a new one.
+ * The backend (POST /api/auth/google) checks the Google token and returns our own login token, which `signIn()` from StudioContext keeps, then goes to Home (/).
  */
 // Side-panel photos: Cartoon, LinkedIn Headshot, Beard, Old Money and 80's & 90's templates in a repeating sequence (one from each, then the next one from each, ...), spread over 4 columns.
 const PANEL_SOURCES = ['cartoon', 'linkedin-headshot', 'beard', 'old-money', '80s-and-90s'].map((id) => categoryItems(id))
@@ -20,11 +20,9 @@ const COLUMNS = [ // [animation, seconds] - alternating directions, like the ref
   const list = Array.from({ length: n }, (_, k) => PANEL_IMAGES[(k + i * 2) % n]) // each column starts at a different photo
   return { anim, secs, list: [...list, ...list] }
 })
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
-
-export const Eye = ({ off }) => (
-  <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />{off && <path d="M4 4l16 16" />}
+const AppleLogo = () => (
+  <svg className="size-5" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
   </svg>
 )
 
@@ -37,71 +35,23 @@ const GoogleLogo = () => (
   </svg>
 )
 
-export function Field({ id, label, error, right, ...props }) {
-  return (
-    <div>
-      <label htmlFor={id} className="mb-2 block text-sm font-medium text-[#C4B5FD]">{label}</label>
-      <div className={`flex h-12 items-center rounded-xl border bg-gradient-to-br from-[#2A1B52] to-[#1A284F] transition-all duration-200 focus-within:shadow-[0_0_0_3px_rgba(176,112,250,0.12)] ${error ? 'border-red-500/70' : 'border-[#3A3552] hover:border-[#B070FA]/60 focus-within:border-[#B070FA]/70'}`}>
-        <input id={id} aria-invalid={!!error} {...props} className="h-full min-w-0 flex-1 bg-transparent px-4 text-[15px] text-white outline-none placeholder:text-[#C4B5FD]/60" />
-        {right}
-      </div>
-      {error && <p role="alert" className="mt-1.5 text-xs text-red-400">{error}</p>}
-    </div>
-  )
-}
-
 export function Login() {
   const nav = useNavigate()
   const { signIn, signedIn } = useStudio()
-  const [mode, setMode] = useState('login') // 'login' | 'signup'
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [show, setShow] = useState(false)
-  const [confirm, setConfirm] = useState('')
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const [note, setNote] = useState('')
-  const signup = mode === 'signup'
-  useEffect(() => { loadGoogle() }, []) // so the Google window opens instantly on click
-  const google = async () => {
-    setBusy(true); setErrors({}); setNote('')
-    try { signIn(await loginWithGoogle()); nav('/') } catch (err) { setErrors({ form: err.message }); setBusy(false) }
-  }
+  useEffect(() => { prepareGoogle(); prepareApple() }, []) // loads the sign-in scripts now, so the click can open the Google / Apple window immediately
 
-  const switchMode = () => { setMode(signup ? 'login' : 'signup'); setErrors({}); setNote(''); setConfirm('') }
-  const validate = () => {
-    const e = {}
-    if (signup && !name.trim()) e.name = 'Enter your name.'
-    if (!email.trim()) e.email = 'Enter your email address.'
-    else if (!EMAIL_RE.test(email.trim())) e.email = 'Enter a valid email address.'
-    if (!password) e.password = 'Enter your password.'
-    else if (password.length < 8) e.password = 'Password must be at least 8 characters.'
-    if (signup) {
-      if (!confirm) e.confirm = 'Confirm your password.'
-      else if (confirm !== password) e.confirm = 'Passwords do not match.'
-    }
-    return e
+  // both buttons call their sign-in straight from the click (browsers only open the pop-up then) and share the busy / error state
+  const social = (login, failed) => async () => {
+    setBusy(true); setError('')
+    try { signIn(await login()); nav('/') } catch (err) { setError(err.message || failed); setBusy(false) }
   }
-  const submit = async (ev) => {
-    ev.preventDefault()
-    const e = validate()
-    setErrors(e); setNote('')
-    if (Object.keys(e).length) return
-    setBusy(true)
-    try {
-      const session = signup ? await register({ email: email.trim(), password, name: name.trim() }) : await login({ email: email.trim(), password })
-      signIn(session)
-      nav('/')
-    } catch (err) {
-      setErrors({ form: err.message || 'Something went wrong. Please try again.' })
-      setBusy(false)
-    }
-  }
-  const clear = (k, set) => (ev) => { set(ev.target.value); if (errors[k]) setErrors({ ...errors, [k]: '' }) }
+  const google = social(loginWithGoogle, 'Google sign-in failed. Please try again.')
+  const apple = social(loginWithApple, 'Apple sign-in failed. Please try again.')
 
   if (signedIn) return <Navigate to="/" replace /> // signed in (a fresh login or a restored session): always land on Home, never the previous page or Profile
+
   return (
     <div className="login-fade fixed inset-0 z-[200] flex overflow-y-auto bg-[#0F0433] text-white lg:flex-row-reverse">
       {/* photo panel (desktop only): static, muted, no effects */}
@@ -135,44 +85,21 @@ export function Login() {
 
         <div className="m-auto w-full max-w-[440px] py-8">
           <div className="login-rise rounded-xl border border-[#3A3552] bg-gradient-to-br from-[#2A1B52] to-[#1A284F] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-8">
-            <h1 className="text-[26px] font-bold tracking-tight">{signup ? 'Create your account' : 'Welcome back'}</h1>
-            <p className="mb-7 mt-2 text-sm leading-relaxed text-[#C4B5FD]/75">{signup ? 'Sign up to start creating AI photos.' : 'Log in to your AI Photography account.'}</p>
+            <h1 className="text-[26px] font-bold tracking-tight">Welcome to Pixora</h1>
+            <p className="mb-7 mt-2 text-sm leading-relaxed text-[#C4B5FD]/75">Log in or create your account with Google or Apple to start creating AI photos.</p>
 
             <button type="button" onClick={google} disabled={busy} className="flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
-              <GoogleLogo /><span>Continue with Google</span>
+              <GoogleLogo /><span>{busy ? 'Please wait…' : 'Continue with Google'}</span>
             </button>
-            <div className="my-5 flex items-center gap-3 text-xs text-[#C4B5FD]/75" aria-hidden="true"><span className="h-px flex-1 bg-[#3A3552]" />or<span className="h-px flex-1 bg-[#3A3552]" /></div>
+            <button type="button" onClick={apple} disabled={busy} className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-[#3A3552] bg-[#14141f] text-[15px] font-semibold text-white transition-colors duration-200 hover:border-[#B070FA]/60 hover:bg-[#1b1b2b] disabled:cursor-wait disabled:opacity-70">
+              <AppleLogo /><span>{busy ? 'Please wait…' : 'Continue with Apple'}</span>
+            </button>
+            {error && <p role="alert" className="mt-4 text-sm text-red-400">{error}</p>}
 
-            <form onSubmit={submit} noValidate className="space-y-4">
-              {signup && <Field id="auth-name" label="Name" type="text" autoComplete="name" placeholder="Your name" value={name} error={errors.name} onChange={clear('name', setName)} />}
-              <Field id="auth-email" label="Email" type="email" autoComplete="email" placeholder="you@example.com" value={email} error={errors.email} onChange={clear('email', setEmail)} />
-              <Field id="auth-password" label="Password" type={show ? 'text' : 'password'} autoComplete={signup ? 'new-password' : 'current-password'} placeholder="Enter your password" value={password} error={errors.password} onChange={clear('password', setPassword)}
-                right={<button type="button" aria-label={show ? 'Hide password' : 'Show password'} aria-pressed={show} onClick={() => setShow(!show)} className="mr-2 grid size-9 cursor-pointer place-items-center rounded-xl text-[#C4B5FD]/75 transition-colors duration-200 hover:bg-white/5 hover:text-white"><Eye off={show} /></button>} />
-              {signup && (
-                <Field id="auth-confirm" label="Confirm Password" type={showConfirm ? 'text' : 'password'} autoComplete="new-password" placeholder="Re-enter your password" value={confirm} error={errors.confirm} onChange={clear('confirm', setConfirm)}
-                  right={<button type="button" aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'} aria-pressed={showConfirm} onClick={() => setShowConfirm(!showConfirm)} className="mr-2 grid size-9 cursor-pointer place-items-center rounded-xl text-[#C4B5FD]/75 transition-colors duration-200 hover:bg-white/5 hover:text-white"><Eye off={showConfirm} /></button>} />
-              )}
-              {!signup && (
-                <div className="text-right text-sm">
-                  <Link to="/forgot-password" className="cursor-pointer text-[#C4B5FD]/75 transition-colors duration-200 hover:text-white">Forgot password?</Link>
-                </div>
-              )}
-              {errors.form && <p role="alert" className="text-sm text-red-400">{errors.form}</p>}
-              {note && <p role="status" className="text-xs text-[#C4B5FD]/75">{note}</p>}
-              <button type="submit" disabled={busy} className="grad-bg h-12 w-full cursor-pointer rounded-xl text-[15px] font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(176,112,250,0.35)] hover:brightness-110 active:translate-y-0 active:scale-[0.98] disabled:translate-y-0 disabled:cursor-wait disabled:opacity-70">
-                {busy ? 'Please wait…' : signup ? 'Sign Up' : 'Login'}
-              </button>
-            </form>
-
-            <p className="mt-6 text-center text-sm text-[#C4B5FD]/75">
-              {signup ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <button type="button" onClick={switchMode} className="cursor-pointer font-semibold text-white transition-colors duration-200 hover:text-[#B070FA]">{signup ? 'Login' : 'Sign Up'}</button>
-            </p>
-            <p className="mt-5 border-t border-[#3A3552] pt-5 text-center text-xs leading-relaxed text-[#C4B5FD]/75">
+            <p className="mt-6 border-t border-[#3A3552] pt-5 text-center text-xs leading-relaxed text-[#C4B5FD]/75">
               By continuing, you agree to our <Link to="/privacy-policy" className="underline hover:text-white">Privacy Policy</Link> and <Link to="/terms-conditions" className="underline hover:text-white">Terms of Service</Link>.
             </p>
           </div>
-          <p className="login-rise-2 mt-4 text-center text-[11px] text-[#C4B5FD]/75"></p>
         </div>
       </main>
     </div>

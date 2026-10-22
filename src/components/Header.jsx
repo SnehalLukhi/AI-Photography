@@ -72,7 +72,7 @@ function GetApp({ small }) {
 const CoinBadge = ({ className = '' }) => {
   const { coins } = useStudio()
   return (
-  <Link to="/pricing" aria-label={`${coins} coins - view pricing`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-[#34343c] bg-[#17171c] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#B070FA]/60 hover:bg-[#1d1b26] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(176,112,250,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${className}`}>
+  <Link to="/coins" aria-label={`${coins} coins - get more coins`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-[#34343c] bg-[#17171c] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-[#B070FA]/60 hover:bg-[#1d1b26] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_14px_rgba(176,112,250,0.25)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B070FA] ${className}`}>
     <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] shrink-0 object-contain" />
     <span className="text-[15px] font-bold leading-none tabular-nums text-white">{coins.toLocaleString()}</span>
   </Link>

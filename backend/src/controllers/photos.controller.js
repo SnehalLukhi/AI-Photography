@@ -69,7 +69,7 @@ async function generate(req, res) {
 
     const submitted = await ailab.submitPhotography({ image, styleTitle, styleDesc, imageSize })
     const gen = await generations.begin(image, { api: 'ai-photography', template: generations.label(req, styleTitle), owner: req.user.id }) // original photo -> Spaces, only for a job AILabTools accepted (null when storage is off)
-    generations.linkTask(gen, submitted.taskId)
+    await generations.linkTask(gen, submitted.taskId)
     let result
     try { result = await ailab.waitForTask(submitted.taskId) } catch (e) { await generations.discard(gen); throw e } // asynchronous API: poll every 5 s; a failed job leaves no stored photo behind
     const full = { ...result, requestId: result.requestId || submitted.requestId, logId: result.logId || submitted.logId }

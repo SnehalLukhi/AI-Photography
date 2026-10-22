@@ -1,4 +1,7 @@
 const path = require('node:path')
+const crypto = require('node:crypto')
+const fsp = require('node:fs/promises')
+const { UPLOAD_DIR } = require('../utils/tempFiles')
 const AppError = require('../utils/AppError')
 const env = require('../config/env')
 const TEMPLATES = require('../config/beardTemplates')
@@ -9,6 +12,18 @@ const generations = require('../services/generations.service')
 
 // AI Beard Styling image requirements (official docs, image and image_template): JPEG / JPG / PNG / WEBP, <= 10 MB, < 4096 x 4096 px.
 const LIMITS = { maxBytes: 10 * 1024 * 1024 }
+
+// Reference image on disk; when WEB_URL (service binding to the frontend) is set it is downloaded from the frontend's /images/explore/beard/ first.
+async function templatePath(file, tmp) {
+  if (!env.webUrl) return path.join(env.beardTemplateDir, file)
+  const res = await fetch(new URL(`images/explore/beard/${encodeURIComponent(file)}`, env.webUrl.replace(/\/*$/, '/')))
+  if (!res.ok) throw new Error(`template fetch failed: HTTP ${res.status}`)
+  await fsp.mkdir(UPLOAD_DIR, { recursive: true, mode: 0o700 })
+  const p = path.join(UPLOAD_DIR, `${crypto.randomUUID()}.upload`)
+  tmp.push(p)
+  await fsp.writeFile(p, Buffer.from(await res.arrayBuffer()))
+  return p
+}
 
 function payload(result) {
   const base = { success: true, status: result.status, provider: 'ai-beard-styling', taskId: result.taskId, requestId: result.requestId, logId: result.logId }
@@ -32,14 +47,14 @@ async function generate(req, res) {
 
     const image = await prepareImage(req.file.path, 'image', LIMITS)
     await removeFiles(tmp)
-    const template = await prepareImage(path.join(env.beardTemplateDir, file), 'image_template', LIMITS).catch((e) => {
+    const template = await templatePath(file, tmp).then((p) => prepareImage(p, 'image_template', LIMITS)).catch((e) => {
       if (e instanceof AppError && e.status !== 422) throw e
       throw new AppError(500, 'TEMPLATE_IMAGE_UNAVAILABLE', `The reference image of the Beard template "${id}" could not be read on the server.`)
     })
 
     const submitted = await ailab.submitBeard({ image, template })
     const gen = await generations.begin(image, { api: 'ai-beard-styling', template: generations.label(req, id), owner: req.user.id }) // original photo -> Spaces, only for a job AILabTools accepted (null when storage is off)
-    generations.linkTask(gen, submitted.taskId)
+    await generations.linkTask(gen, submitted.taskId)
     let result
     try { result = await ailab.waitForTask(submitted.taskId) } catch (e) { await generations.discard(gen); throw e } // asynchronous API: poll every 5 s; a failed job leaves no stored photo behind
     const full = { ...result, requestId: result.requestId || submitted.requestId, logId: result.logId || submitted.logId }

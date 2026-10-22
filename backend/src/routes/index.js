@@ -35,18 +35,18 @@ const authLimiter = rateLimit({
 router.get('/health', health)
 
 // Accounts
-router.post('/auth/register', authLimiter, authCtl.register)
-router.post('/auth/login', authLimiter, authCtl.login)
 router.post('/auth/google', authLimiter, authCtl.google)
-router.post('/auth/forgot-password', authLimiter, authCtl.forgotPassword)
-router.post('/auth/reset-password', authLimiter, authCtl.resetPassword)
+router.post('/auth/apple', authLimiter, authCtl.apple)
 router.get('/auth/me', requireAuth, authCtl.me)
 
 // Coins
 router.get('/plans', walletCtl.listPlans)
+router.get('/coin-packs', walletCtl.listPacks)
 router.get('/wallet', requireAuth, walletCtl.getWallet)
 router.post('/wallet/redeem', authLimiter, requireAuth, walletCtl.redeem) // limited like login: codes must not be guessable by trying
 router.post('/wallet/checkout', requireAuth, walletCtl.checkout)
+router.post('/wallet/verify-payment', requireAuth, walletCtl.verifyPayment)
+router.post('/webhooks/razorpay', walletCtl.razorpayWebhook) // public: Razorpay calls it, the signature header is the proof
 
 // requireApiKey runs first so uploads are not even read when the server is not configured.
 router.post('/photos/generate', generateLimiter, requireAuth, requireApiKey, dailyQuota, chargeCoins, uploadImage, photos.generate)

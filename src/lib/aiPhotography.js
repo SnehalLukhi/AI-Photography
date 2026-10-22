@@ -16,13 +16,16 @@ import hairstyleChanger from '../data/ai-hairstyle-changer_templates.json'
  * Hairstyle templates (Baby / Man / Woman) use the Hairstyle Changer Premium API through POST /api/hairstyle/generate: the confirmed JSON `id` of the template is sent as
  * `template` (the Hairstyle cards carry no colour); the backend turns the id into the API's `hair_style`. The JSON prompts are not used by that API.
  */
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001').replace(/\/+$/, '')
+// Where the backend is. Local development: http://localhost:5001. Deployed (Vercel services, backend under /api on the same domain): '' = same origin.
+// A production build ignores a localhost VITE_API_BASE_URL (copied from the local .env by mistake): it could never work for visitors.
+const CONFIGURED_API = import.meta.env.VITE_API_BASE_URL
+const API_BASE = ((CONFIGURED_API && !(import.meta.env.PROD && /(^|\/\/)(localhost|127\.0\.0\.1)(:|\/|$)/.test(CONFIGURED_API))) ? CONFIGURED_API : (import.meta.env.DEV ? 'http://localhost:5001' : '')).replace(/\/+$/, '')
 export const IMAGE_SIZE = '9:16'
 export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 export const MAX_BYTES = 10 * 1024 * 1024
 const POLL_MS = 5000
 
-// Login token from POST /api/auth/login | register, sent as `Authorization: Bearer` on every backend call. Kept in localStorage so a refresh stays logged in.
+// Login token from POST /api/auth/google, sent as `Authorization: Bearer` on every backend call. Kept in localStorage so a refresh stays logged in.
 const TOKEN_KEY = 'ai-photo-token'
 let token = ''
 try { token = localStorage.getItem(TOKEN_KEY) || '' } catch { /* storage blocked: the login lasts until the page is closed */ }
@@ -162,10 +165,6 @@ async function authRequest(path, init) {
 }
 const jsonPost = (data) => ({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
 
-/** Create an account. Resolves with { token, user }. */
-export const register = (data) => authRequest('register', jsonPost(data))
-/** Log in. Resolves with { token, user }. */
-export const login = (data) => authRequest('login', jsonPost(data))
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 let gisLoading
 /** Loads Google's sign-in script once. Call early (e.g. when the Login page opens) so the later click can open the Google window without a delay. */
@@ -182,25 +181,66 @@ export function loadGoogle() {
   return gisLoading
 }
 
-/** "Continue with Google": opens Google's window, then the backend checks the Google token and returns our own { token, user }. Rejects with a user-facing message. */
-export async function loginWithGoogle() {
-  if (!GOOGLE_CLIENT_ID) throw new Error('Google sign-in is not set up yet (VITE_GOOGLE_CLIENT_ID is missing).')
-  if (!(await loadGoogle())) throw new Error('Could not load Google sign-in. Check your connection and try again.')
-  const accessToken = await new Promise((resolve, reject) => {
-    window.google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: 'openid email profile',
-      callback: (r) => (r.access_token ? resolve(r.access_token) : reject(new Error('Google sign-in was cancelled.'))),
-      error_callback: (e) => reject(new Error(e?.type === 'popup_closed' ? 'Google sign-in was cancelled.' : 'Google sign-in failed. Please allow pop-ups and try again.')),
-    }).requestAccessToken()
+let tokenClient
+let waiting // { resolve, reject } of the sign-in that is currently open
+/** Loads Google's script and creates the sign-in client once. Call when the Login page opens: the click must open Google's window at once (browsers block pop-ups opened after a wait). */
+export async function prepareGoogle() {
+  if (!(await loadGoogle())) return false
+  tokenClient ||= window.google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: 'openid email profile',
+    callback: (r) => (r.access_token ? waiting?.resolve(r.access_token) : waiting?.reject(new Error(r.error_description || 'Google sign-in failed. Please try again.'))),
+    error_callback: (e) => waiting?.reject(new Error(e?.type === 'popup_closed' ? 'Google sign-in was cancelled.' : 'The Google window could not open. Please allow pop-ups for this site and try again.')),
   })
-  return authRequest('google', jsonPost({ accessToken }))
+  return true
 }
 
-/** Asks the backend to e-mail a password reset link. The answer is always the same, whether or not the address has an account. */
-export const forgotPassword = (email) => authRequest('forgot-password', jsonPost({ email }))
-/** Sets a new password with the token from the reset e-mail. Rejects with the backend's message when the link is invalid or expired. */
-export const resetPassword = (token, password) => authRequest('reset-password', jsonPost({ token, password }))
+/** "Continue with Google": opens Google's account chooser, then the backend checks the Google token and returns our own { token, user }. Rejects with a user-facing message. */
+export function loginWithGoogle() {
+  // everything up to requestAccessToken() runs synchronously inside the click, so the browser lets the pop-up open
+  const popup = new Promise((resolve, reject) => {
+    if (!GOOGLE_CLIENT_ID) return reject(new Error('Google sign-in is not set up yet (VITE_GOOGLE_CLIENT_ID is missing).'))
+    if (!tokenClient) return reject(new Error('Google sign-in is still loading. Please try again in a moment.'))
+    waiting = { resolve, reject }
+    tokenClient.requestAccessToken({ prompt: 'select_account' })
+  })
+  return popup.then((accessToken) => authRequest('google', jsonPost({ accessToken })))
+}
+
+const APPLE_CLIENT_ID = import.meta.env.VITE_APPLE_CLIENT_ID || ''
+let appleLoading
+/** Loads Apple's sign-in script once (call when the Login page opens, so the click can open Apple's window at once). */
+export function prepareApple() {
+  if (!APPLE_CLIENT_ID) return Promise.resolve(false)
+  appleLoading ||= new Promise((resolve) => {
+    if (window.AppleID?.auth) return resolve(true)
+    const s = document.createElement('script')
+    s.src = 'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js'; s.async = true
+    s.onload = () => resolve(true)
+    s.onerror = () => { appleLoading = undefined; resolve(false) }
+    document.head.appendChild(s)
+  })
+  return appleLoading
+}
+
+/** "Continue with Apple": opens Apple's sign-in window, then the backend checks Apple's identity token and returns our own { token, user }. Rejects with a user-facing message. */
+export function loginWithApple() {
+  // init + signIn run synchronously inside the click, so the browser lets the pop-up open
+  const popup = new Promise((resolve, reject) => {
+    if (!APPLE_CLIENT_ID) return reject(new Error('Apple sign-in is not set up yet (VITE_APPLE_CLIENT_ID is missing).'))
+    if (!window.AppleID?.auth) return reject(new Error('Apple sign-in is still loading. Please try again in a moment.'))
+    const nonce = crypto.randomUUID() // ties the identity token to this sign-in; the backend checks it
+    window.AppleID.auth.init({ clientId: APPLE_CLIENT_ID, scope: 'name email', redirectURI: import.meta.env.VITE_APPLE_REDIRECT_URI || window.location.origin, state: nonce, nonce, usePopup: true })
+    window.AppleID.auth.signIn().then(
+      (r) => {
+        const n = r.user?.name // Apple shares the name only the first time
+        resolve({ identityToken: r.authorization?.id_token, nonce, name: n ? `${n.firstName || ''} ${n.lastName || ''}`.trim() : '' })
+      },
+      (e) => reject(new Error(e?.error === 'popup_closed_by_user' || e?.error === 'user_cancelled_authorize' ? 'Apple sign-in was cancelled.' : 'Apple sign-in failed. Please try again.')),
+    )
+  })
+  return popup.then((body) => authRequest('apple', jsonPost(body)))
+}
 
 /** The user a saved token belongs to ({ id, email, name }); rejects with status 401 when the token is no longer valid. */
 export const fetchMe = async () => (await authRequest('me', { headers: headers() })).user
@@ -217,7 +257,7 @@ function pickImage(body) {
   return { url, original: g?.original?.url || '', generationId: g?.id || '' }
 }
 
-/** Coin plans for the Pricing page: { plans: [{ id, name, priceInr, per, coins, tier, popular? }], costPerGeneration }. Public. */
+/** Coin plans for the Pricing page: { plans: [{ id, name, price, currency, per, coins, popular? }], costPerGeneration }. Public. */
 export async function getPlans() {
   const res = await fetch(`${API_BASE}/api/plans`)
   const body = await readJson(res)
@@ -241,12 +281,51 @@ export async function redeemCode(code) {
   return body
 }
 
-/** Starts the payment for a plan. Rejects with the backend's message (503 while no payment gateway is connected). */
-export async function startCheckout(planId) {
-  const res = await fetch(`${API_BASE}/api/wallet/checkout`, { ...jsonPost({ planId }), headers: { 'Content-Type': 'application/json', ...headers() } })
+/** One-time coin packs for the Get Coins page: { packs: [{ id, name, coins, price (USD), currency, popular? }], costPerGeneration }. Public. */
+export async function getCoinPacks() {
+  const res = await fetch(`${API_BASE}/api/coin-packs`)
   const body = await readJson(res)
   if (!res.ok) throw failure(body, res)
   return body
+}
+
+let razorpayLoading
+function loadRazorpay() {
+  razorpayLoading ||= new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true)
+    const s = document.createElement('script')
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js'; s.async = true
+    s.onload = () => resolve(true)
+    s.onerror = () => { razorpayLoading = undefined; resolve(false) }
+    document.head.appendChild(s)
+  })
+  return razorpayLoading
+}
+
+async function post(path, data) {
+  const res = await fetch(`${API_BASE}${path}`, { ...jsonPost(data), headers: { 'Content-Type': 'application/json', ...headers() } })
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  return body
+}
+
+/**
+ * Buys a plan or coin pack with Razorpay: the backend creates the order (the price comes from the server), Razorpay's payment window opens, and after paying the backend
+ * checks Razorpay's signature and adds the coins. Resolves with { credited, balance }; rejects with a message when the payment is cancelled, fails, or payments are not set up (503).
+ */
+export async function buyCoins(itemId, { name = '', email = '' } = {}) {
+  const [{ order }, loaded] = await Promise.all([post('/api/wallet/checkout', { itemId }), loadRazorpay()])
+  if (!loaded) throw new Error('Could not load the payment window. Check your connection and try again.')
+  return new Promise((resolve, reject) => {
+    const rzp = new window.Razorpay({
+      key: order.keyId, amount: order.amount, currency: order.currency, order_id: order.orderId, name: order.name, description: order.description,
+      prefill: { name, email }, theme: { color: '#B070FA' },
+      handler: (r) => post('/api/wallet/verify-payment', { orderId: r.razorpay_order_id, paymentId: r.razorpay_payment_id, signature: r.razorpay_signature }).then(resolve, reject),
+      modal: { ondismiss: () => reject(new Error('Payment cancelled.')) },
+    })
+    rzp.on('payment.failed', (r) => reject(new Error(r?.error?.description || 'The payment failed. Please try again.')))
+    rzp.open()
+  })
 }
 
 /**
