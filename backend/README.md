@@ -161,6 +161,18 @@ In Razorpay Dashboard > Webhooks add `https://<your-domain>/api/webhooks/razorpa
 Flow: checkout creates a Razorpay order (stored in the `payments` table) -> the browser opens Razorpay's window -> after paying, `verify-payment` and the webhook both end in one function
 that adds the coins **once per order** (a repeat or a retry changes nothing). The coins credited always come from the stored order, never from the browser. Use Razorpay's *test mode* keys to try it.
 
+### Auto-renewing plans (Razorpay Subscriptions)
+Put the Razorpay **plan ids** (`plan_xxx`, from Dashboard > Subscriptions > Plans) in `.env` as `RAZORPAY_PLAN_WEEKLY`, `RAZORPAY_PLAN_MONTHLY`, `RAZORPAY_PLAN_YEARLY` - the plan's price and period must match the site.
+A plan with an id is sold as a subscription (first payment now, then Razorpay charges it every week / month / year); a plan without one, and every coin pack, stays a one-time purchase.
+- **Coins.** The plan's coins (Weekly 110, Monthly 220, Yearly 2,700) are added at the first payment and again at **every renewal**, once per payment id (the browser check and Razorpay's `subscription.charged`
+  webhook both go through the same function, so nothing is counted twice). Every charge appears in the purchase history.
+- **Webhook events** to enable in Razorpay (in addition to `payment.captured`, `order.paid`): `subscription.charged`, `subscription.activated`, `subscription.cancelled`, `subscription.completed`, `subscription.halted`, `subscription.pending`.
+- `GET /api/wallet/subscription` -> the plan the user has now `{ id, name, coins, status, cancelRequested, renewsAt, endsAt }` or `null`; `POST /api/wallet/subscription/cancel` stops the renewals, the plan stays until the paid period ends.
+  A user can have one live plan at a time (`409 ALREADY_SUBSCRIBED` otherwise).
+- `POST /api/wallet/verify-payment` takes `{ subscriptionId, paymentId, signature }` for a subscription (Razorpay signs `<payment_id>|<subscription_id>`).
+- **Offers on a renewing plan** are Razorpay Offers: create the offer in the Razorpay dashboard and put its id in the entry in `config/offers.js` as `razorpayOfferId` (for the first-login Yearly popup: `RAZORPAY_OFFER_YEARLY`).
+  An offer on a renewing plan without `razorpayOfferId` is not used. Offers on coin packs and on plans without a plan id still work as before (the server charges the discounted price).
+
 ### Offers (discounts)
 Post an offer by adding one line to `src/config/offers.js` (see the examples in that file): `{ id, itemId (plan or coin pack), percentOff, audience: 'all' | 'new', windowHours, startsAt?, endsAt?, popup? }`.
 The **server** works out the discounted price (the list price from `config/plans.js` / `config/packs.js` minus `percentOff`, rounded down to the cent) and creates the Razorpay order for exactly that

@@ -4,6 +4,7 @@ const packs = require('../config/packs')
 const offerRules = require('../services/offers.service')
 const wallet = require('../services/wallet.service')
 const payments = require('../services/payments.service')
+const subscriptions = require('../services/subscriptions.service')
 
 /** Items with the active offer for this user (if any) attached as `offer: { id, discountPercent, original, price, endsAt }`. `price` of the item stays the regular price. */
 const withOffers = (items, user) => items.map((i) => { const o = offerRules.bestFor(i.id, user); return o ? { ...i, offer: offerRules.badge(o, user) } : i })
@@ -35,7 +36,19 @@ async function checkout(req, res) {
 
 /** POST /api/wallet/verify-payment - JSON { orderId, paymentId, signature } (from Razorpay's payment window) -> { credited, balance } */
 async function verifyPayment(req, res) {
-  res.set('Cache-Control', 'no-store').json({ success: true, ...(await payments.verifyPayment(req.user.id, req.body || {})) })
+  const body = req.body || {}
+  const out = body.subscriptionId ? await subscriptions.verify(req.user.id, body) : await payments.verifyPayment(req.user.id, body) // auto-renewing plan or one-time purchase
+  res.set('Cache-Control', 'no-store').json({ success: true, ...out })
+}
+
+/** GET /api/wallet/subscription - the plan the user has now (auto-renewing or cancelled but still paid for), or null: { id, name, coins, status, cancelRequested, renewsAt, endsAt } */
+async function getSubscription(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, subscription: await subscriptions.current(req.user.id) })
+}
+
+/** POST /api/wallet/subscription/cancel - stops the renewals; the plan stays until the end of the paid period. */
+async function cancelSubscription(req, res) {
+  res.set('Cache-Control', 'no-store').json({ success: true, subscription: await subscriptions.cancel(req.user.id) })
 }
 
 /** GET /api/wallet/purchases - the user's paid plans and coin packs, newest first: [{ name, kind: 'plan' | 'pack', coins, amount (cents), currency, paidAt, ... }] */
@@ -49,4 +62,4 @@ async function razorpayWebhook(req, res) {
   res.json({ success: true }) // always 200 once the signature is valid, so Razorpay does not keep retrying events we ignore
 }
 
-module.exports = { listPlans, listPacks, getWallet, redeem, checkout, verifyPayment, purchases, razorpayWebhook }
+module.exports = { listPlans, listPacks, getWallet, redeem, checkout, verifyPayment, getSubscription, cancelSubscription, purchases, razorpayWebhook }

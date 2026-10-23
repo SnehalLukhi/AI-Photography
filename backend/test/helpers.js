@@ -9,6 +9,8 @@ process.env.DATABASE_URL = 'pglite://memory'
 process.env.JWT_SECRET = 'test-secret'
 process.env.AUTH_RATE_LIMIT_MAX = '1000'
 process.env.DAILY_GENERATION_LIMIT = '100000'
+// the developer's real backend/.env must never leak into the tests (dotenv does not override variables that are already set, even empty ones)
+for (const k of ['RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET', 'RAZORPAY_WEBHOOK_SECRET', 'RAZORPAY_PLAN_WEEKLY', 'RAZORPAY_PLAN_MONTHLY', 'RAZORPAY_PLAN_YEARLY', 'RAZORPAY_OFFER_YEARLY']) process.env[k] = ''
 process.env.COIN_COST_PER_GENERATION = '1' // tests make many generations: plenty of cheap coins
 process.env.SIGNUP_BONUS_COINS = '1000000'
 const rawFetch = globalThis.fetch

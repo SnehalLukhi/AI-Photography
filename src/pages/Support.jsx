@@ -4,7 +4,7 @@ import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from '../components/Header.jsx'
 import PlansSheet from '../components/PlansSheet.jsx'
 import { brandImages } from '../data/images.js'
-import { getPurchases } from '../lib/aiPhotography.js'
+import { getPurchases, getSubscription, cancelSubscription } from '../lib/aiPhotography.js'
 import { formatDate, formatMoney } from '../lib/format.js'
 import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
@@ -132,6 +132,44 @@ export function Contact() {
   )
 }
 
+/** The user's auto-renewing plan (null = none), with a cancel action. `loaded` is false until the first answer. */
+function useSubscription() {
+  const { signedIn } = useStudio()
+  const [sub, setSub] = useState(null)
+  const [loaded, setLoaded] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  useEffect(() => {
+    if (!signedIn) return
+    let live = true
+    getSubscription().then((s) => live && (setSub(s), setLoaded(true))).catch(() => live && setLoaded(true))
+    return () => { live = false }
+  }, [signedIn])
+  const cancel = async () => {
+    if (!window.confirm(`Cancel your ${sub.name} plan? It will not renew, and you keep it until ${formatDate(sub.renewsAt || sub.endsAt)}.`)) return
+    setBusy(true); setError('')
+    try { setSub(await cancelSubscription()) } catch (e) { setError(e.message) }
+    setBusy(false)
+  }
+  return { sub, loaded, busy, error, cancel }
+}
+
+/** "Current plan" card: the auto-renewing plan with its renewal date and a Cancel button, else the latest plan that was bought once. */
+function CurrentPlan({ className, purchases, lastPlan, plan, tabIndex }) {
+  const { sub, busy, error, cancel } = plan
+  return (
+    <div className={className}>
+      <p className="text-xs text-[#A0A0A0]">Current plan</p>
+      <p className="mt-1 text-[15px] font-bold text-white">{sub ? sub.name : purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>
+      {sub
+        ? <p className="mt-0.5 text-xs text-[#A0A0A0]">{sub.cancelRequested ? `Will not renew - ends ${formatDate(sub.endsAt)}` : sub.renewsAt ? `Renews automatically on ${formatDate(sub.renewsAt)}` : 'Renews automatically'}</p>
+        : lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}
+      {sub && !sub.cancelRequested && <button type="button" tabIndex={tabIndex} disabled={busy} onClick={cancel} className="mt-2 cursor-pointer text-xs font-semibold text-[#FF88C7] underline disabled:opacity-60">{busy ? 'Cancelling…' : 'Cancel plan'}</button>}
+      {error && <p role="alert" className="mt-1 text-xs text-red-300">{error}</p>}
+    </div>
+  )
+}
+
 /** The user's paid purchases (plans and coin packs), newest first; null while loading. */
 function usePurchases() {
   const { signedIn } = useStudio()
@@ -157,6 +195,7 @@ const Chev = () => <svg className="size-4 shrink-0 text-white/50" viewBox="0 0 2
 function MobileMe() {
   const { signedIn, userEmail, coins } = useStudio()
   const purchases = usePurchases()
+  const plan = useSubscription()
   const lastPlan = purchases?.find((p) => p.kind === 'plan')
   const [plansOpen, setPlansOpen] = useState(false)
   const [planOpen, setPlanOpen] = useState(false) // Plan & Purchases dropdown
@@ -181,7 +220,7 @@ function MobileMe() {
         <div id="plan-purchases" className={`grid transition-[grid-template-rows] duration-300 ease-out ${planOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`} aria-hidden={!planOpen}>
           <div className="min-h-0 overflow-hidden">
             <div className="space-y-2 border-t border-white/[0.06] p-3.5">
-              <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-3.5 py-2.5"><p className="text-xs text-[#A0A0A0]">Current plan</p><p className="mt-1 text-[15px] font-bold text-white">{purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>{lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}</div>
+              <CurrentPlan className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-3.5 py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} />
               <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-3.5 py-2.5"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" tabIndex={planOpen ? 0 : -1} className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
               <Link to="/transactions" tabIndex={planOpen ? 0 : -1} className="inline-block pt-1 text-[13px] font-semibold text-[#A0A0A0] underline">View all transactions</Link>
             </div>
@@ -199,6 +238,7 @@ function MobileMe() {
 export function Profile() {
   const { signedIn, userEmail, coins, openLogin } = useStudio()
   const purchases = usePurchases()
+  const plan = useSubscription()
   const lastPlan = purchases?.find((p) => p.kind === 'plan') // plans are one-time coin purchases: the latest one is "your plan"
   const name = displayName(userEmail || '')
   const [first, ...rest] = name.split(' ')
@@ -230,7 +270,7 @@ export function Profile() {
               <div className="mt-6 max-md:hidden border-t border-white/[0.08] pt-5 max-md:rounded-2xl max-md:border max-md:border-white/[0.1] max-md:bg-black/20 max-md:p-3.5">
                 <h2 className="text-[15px] font-bold text-white">Plan &amp; purchases</h2>
                 <div className="mt-4 max-md:mt-3 grid gap-3 max-md:gap-2 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-[#1D1B1D] px-4 py-3 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Current plan</p><p className="mt-1 text-[15px] font-bold text-white">{purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>{lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}</div>
+                  <CurrentPlan className="rounded-2xl border border-white/10 bg-[#1D1B1D] px-4 py-3 max-md:px-3.5 max-md:py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} />
                   <div className="rounded-2xl border border-white/10 bg-[#1D1B1D] px-4 py-3 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
                 </div>
                 {purchases?.length > 0 && (

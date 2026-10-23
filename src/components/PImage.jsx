@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 /**
- * An <img> that shows the Pixora "P" on a dark tile until the picture has loaded (a page reload, a slow connection, or an image scrolled into view),
+ * An <img> that shows the Pictrify "P" on a dark tile until the picture has loaded (a page reload, a slow connection, or an image scrolled into view),
  * then fades the picture in, sharpening from a soft blur. It takes the same props as <img>; its parent must be `relative` (the tile) so the placeholder can fill it.
  *
  * The pictures are revealed ONE BY ONE in RANDOM order: a loaded picture waits in a shared pool, and every STAGGER_MS (varied a little each time, and faster when the pool is big)

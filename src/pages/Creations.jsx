@@ -34,7 +34,7 @@ function Compare({ item, onClose, onDelete }) {
   )
 }
 
-/** A card that stands in for a creation that is still being loaded: the Pixora "P" on a dark tile, breathing gently (the same loading look as the template tiles). */
+/** A card that stands in for a creation that is still being loaded: the Pictrify "P" on a dark tile, breathing gently (the same loading look as the template tiles). */
 const Skeleton = () => (
   <div aria-hidden="true" className="relative grid aspect-[9/16] place-items-center overflow-hidden rounded-[20px] border border-white/10 bg-[#0A0809]">
     <img src="/images/features/logo-mark.svg" alt="" draggable="false" className="pimage-pulse w-[40%] max-w-[130px]" />

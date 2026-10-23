@@ -6,6 +6,9 @@ const packs = require('../config/packs')
 const offers = require('../config/offers')
 const offerRules = require('./offers.service')
 const wallet = require('./wallet.service')
+const { itemById, isPlan } = require('./catalog')
+const razorpay = require('./razorpay.client')
+const subscriptions = require('./subscriptions.service')
 const { query, tx } = require('../db')
 
 /**
@@ -15,25 +18,14 @@ const { query, tx } = require('../db')
  *   3. verifyPayment    (browser, right after paying) and handleWebhook (Razorpay, in case the tab was closed) both end in fulfil(): it adds the coins ONCE per order
  */
 const CURRENCY = 'USD'
-const ORDERS_URL = 'https://api.razorpay.com/v1/orders'
 
-/** A subscription plan (config/plans.js) or a one-time coin pack (config/packs.js) by id. An offer id (config/offers.js) resolves to the item it discounts. */
-function itemById(id) {
-  const offer = offers.find((o) => o.id === id)
-  const item = plans.find((p) => p.id === (offer ? offer.itemId : id)) || packs.find((p) => p.id === (offer ? offer.itemId : id))
-  if (!item) throw new AppError(400, 'INVALID_ITEM', 'Unknown plan or coin pack.')
-  return item
-}
-
-const isConfigured = () => !!(env.razorpay.keyId && env.razorpay.keySecret)
-const hmac = (secret, data) => crypto.createHmac('sha256', secret).update(data).digest('hex')
-const safeEqual = (a, b) => typeof a === 'string' && typeof b === 'string' && a.length === b.length && crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
+const { isConfigured, hmac, safeEqual } = razorpay
 
 /** A paid order as the frontend shows it (what was bought, how many coins, what it cost). */
 function describe(row) {
   const item = [...plans, ...packs].find((p) => p.id === row.item_id) // an item removed from the price list later still shows up under its id
   return {
-    orderId: row.order_id, paymentId: row.payment_id, itemId: row.item_id, name: item?.name ?? row.item_id, kind: plans.some((p) => p.id === row.item_id) ? 'plan' : 'pack',
+    orderId: row.order_id, paymentId: row.payment_id, itemId: row.item_id, name: item?.name ?? row.item_id, kind: isPlan(row.item_id) ? 'plan' : 'pack',
     coins: item?.coins ?? 0, amount: row.amount, currency: row.currency, paidAt: new Date(row.paid_at).toISOString(),
     listAmount: row.list_amount ?? row.amount, offerPercent: row.offer_id && row.list_amount ? Math.round((1 - row.amount / row.list_amount) * 100) : 0,
   }
@@ -58,24 +50,13 @@ async function createCheckout(user, itemId, currency) {
   const offer = direct || offerRules.bestFor(item.id, user)
   if (currency !== undefined && currency !== CURRENCY) throw new AppError(400, 'INVALID_CURRENCY', `Prices are in ${CURRENCY} only.`)
   if (!isConfigured()) throw new AppError(503, 'PAYMENTS_NOT_CONFIGURED', 'Online payments are not available yet. Please check back soon.')
+  if (subscriptions.planIdFor(item.id)) return subscriptions.createSubscription(user, item, offer) // plans with a Razorpay plan id renew automatically
   const listAmount = Math.round(item.price * 100)
   const amount = offer ? offerRules.discountedCents(item, offer.percentOff) : listAmount
-  let res
-  try {
-    res = await fetch(ORDERS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Basic ${Buffer.from(`${env.razorpay.keyId}:${env.razorpay.keySecret}`).toString('base64')}` },
-      body: JSON.stringify({ amount, currency: CURRENCY, receipt: `rcpt_${crypto.randomBytes(8).toString('hex')}`, notes: { user_id: userId, item_id: item.id, ...(offer ? { offer_id: offer.id } : {}) } }),
-      signal: AbortSignal.timeout(15_000),
-    })
-  } catch { throw new AppError(502, 'PAYMENT_PROVIDER_UNREACHABLE', 'Could not reach the payment provider. Please try again.') }
-  const order = await res.json().catch(() => ({}))
-  if (!res.ok || !order.id) {
-    console.error('[razorpay] order creation failed:', res.status, JSON.stringify(order.error || order))
-    throw new AppError(502, 'PAYMENT_PROVIDER_ERROR', 'The payment could not be started. Please try again later.')
-  }
+  const order = await razorpay.call('POST', '/orders', { amount, currency: CURRENCY, receipt: `rcpt_${crypto.randomBytes(8).toString('hex')}`, notes: { user_id: userId, item_id: item.id, ...(offer ? { offer_id: offer.id } : {}) } })
+  if (!order.id) throw new AppError(502, 'PAYMENT_PROVIDER_ERROR', 'The payment could not be started. Please try again later.')
   await query('INSERT INTO payments (order_id, user_id, item_id, amount, currency, offer_id, list_amount) VALUES ($1, $2, $3, $4, $5, $6, $7)', [order.id, userId, item.id, amount, CURRENCY, offer ? offer.id : null, listAmount])
-  return { orderId: order.id, amount, currency: CURRENCY, keyId: env.razorpay.keyId, name: 'Pixora', description: `${item.name} - ${item.coins.toLocaleString('en-US')} coins${offer ? ` (${offer.percentOff}% off)` : ''}` }
+  return { kind: 'order', orderId: order.id, amount, currency: CURRENCY, keyId: env.razorpay.keyId, name: env.brandName, description: `${item.name} - ${item.coins.toLocaleString('en-US')} coins${offer ? ` (${offer.percentOff}% off)` : ''}` }
 }
 
 /** Marks the order paid and adds its coins, exactly once (a repeated call - webhook retry, or webhook after the browser check - changes nothing). */
@@ -109,6 +90,7 @@ async function handleWebhook(raw, signature) {
   if (!Buffer.isBuffer(raw) || !safeEqual(hmac(env.razorpay.webhookSecret, raw), signature)) throw new AppError(400, 'INVALID_SIGNATURE', 'Invalid signature.')
   let event
   try { event = JSON.parse(raw.toString('utf8')) } catch { throw new AppError(400, 'BAD_REQUEST', 'Malformed body.') }
+  if (String(event.event).startsWith('subscription.')) return subscriptions.handleEvent(event) // renewals, cancellations, ...
   const payment = event.payload?.payment?.entity
   if (!['payment.captured', 'order.paid'].includes(event.event) || !payment?.id || !payment.order_id) return { handled: false } // other events: nothing to do
   const row = (await query('SELECT amount, currency FROM payments WHERE order_id = $1', [payment.order_id])).rows[0]
