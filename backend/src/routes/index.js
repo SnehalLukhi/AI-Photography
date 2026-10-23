@@ -67,6 +67,7 @@ router.post('/hairstyle/generate', generateLimiter, requireAuth, requireApiKey, 
 router.post('/generations', generateLimiter, requireAuth, uploadImage, generationsCtl.create)
 router.post('/generations/:id/result', generateLimiter, requireAuth, uploadImage, generationsCtl.saveResult)
 router.get('/generations', requireAuth, generationsCtl.list) // the logged-in user's generations
+router.get('/generations/:id/download', requireAuth, generationsCtl.download) // the AI result as a file download
 router.get('/generations/:id', requireAuth, generationsCtl.get)
 router.delete('/generations/:id', requireAuth, generationsCtl.remove)
 router.get('/photos/tasks/:taskId', requireAuth, requireApiKey, photos.taskStatus)

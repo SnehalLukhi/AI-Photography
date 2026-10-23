@@ -34,7 +34,7 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
   const cat = t.category && t.category !== 'Templates' ? t.category : ''
   const info = [t.index ? `FR ${pad(t.index)}` : '', cat].filter(Boolean).join(' · ')
   return (
-    <article tabIndex={0} title={info ? `${t.name} - ${info}` : t.name} onClick={() => onSelect?.(t)} onKeyDown={(e) => e.key === 'Enter' && onSelect?.(t)}
+    <article tabIndex={0} aria-label={t.name} onClick={() => onSelect?.(t)} onKeyDown={(e) => e.key === 'Enter' && onSelect?.(t)}
       className={`group relative z-10 w-full animate-fade-in cursor-pointer overflow-visible rounded-[6px] outline-none hover:z-30 focus-within:z-30 focus-visible:ring-2 focus-visible:ring-[#FF55AA]/60 ${className}`}>
       <div style={{ aspectRatio: ratio }} className={`relative w-full overflow-hidden rounded-[6px] border bg-[#0A0809] ${selected ? 'border-[#FF55AA] ring-1 ring-[#FF55AA]' : 'border-[#2B2B2B]'}`}>
         <PImage src={t.image} alt={t.name} loading="lazy" draggable="false" className={img} style={imgStyle} />
@@ -49,9 +49,8 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
           <PImage src={t.image} alt="" draggable="false" className={img} style={imgStyle} />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[12%] bg-gradient-to-t from-[#2B2B2B] to-transparent" />
         </div>
-        <div className="flex min-h-[92px] flex-1 flex-col justify-between bg-gradient-to-br from-[#2B2B2B] to-[#2B2B2B] p-3">
-          <h3 className="w-full truncate px-0.5 text-left font-sans text-[13px] font-medium leading-tight !text-[#ffffff] sm:text-[14px]">{t.name}</h3>
-          <button type="button" onClick={use} tabIndex={-1} className="grad-bg mt-2 flex h-[38px] w-full cursor-pointer items-center justify-center rounded-[8px] text-[13px] font-semibold shadow-[0px_0px_15px_0px_rgba(255,85,170,0.2)]">
+        <div className="flex min-h-[92px] flex-1 flex-col justify-center bg-gradient-to-br from-[#2B2B2B] to-[#2B2B2B] p-3">
+          <button type="button" onClick={use} tabIndex={-1} className="grad-bg flex h-[38px] w-full cursor-pointer items-center justify-center rounded-[8px] text-[13px] font-semibold shadow-[0px_0px_15px_0px_rgba(255,85,170,0.2)]">
             {selected ? 'Selected ✓' : 'Use Template'}
           </button>
         </div>

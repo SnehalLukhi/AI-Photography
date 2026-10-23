@@ -161,13 +161,13 @@ export default function Explore() {
               <div className="min-w-0 xl:w-[250px] xl:shrink-0">
                 <div className="eyebrow"><span>Spotlight roll</span></div>
                 <h2 className="mt-3 text-[32px] leading-[1.1] text-[#ffffff] sm:text-[38px] xl:text-[34px]">Trending <span className="grad-text">This Week</span></h2>
-                <p className="mt-3 text-base leading-relaxed text-[#A0A0A0]">Fresh cinematic portraits, couple edits and viral AI video effects.</p>
+                <p className="mt-3 text-base leading-relaxed text-[#A0A0A0]">Fresh portraits, popular looks and trending AI photo styles.</p>
                 {chip.id === null && <button type="button" onClick={() => { nav('/explore?category=trending'); window.scrollTo(0, 0) }} className="btn-grad mt-5 !py-3">View Trending&nbsp;<span className="arrow" aria-hidden="true">→</span></button>}
               </div>
               {/* one row of equal portrait cards on the right (3 x 2 on phones); full image, never cropped */}
               <div className={`grid min-w-0 grid-cols-3 gap-2.5 sm:grid-cols-6 xl:flex-1 ${isTrending ? 'xl:grid-cols-7' : '2xl:grid-cols-7'}`}>
                 {thumbs.slice(0, 7).map((t, i) => (
-                  <button key={t.id} type="button" onClick={() => pick(t)} aria-label={t.name} title={t.name} className={`group relative aspect-[9/16] min-w-0 cursor-pointer overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809] transition-all duration-300 hover:-translate-y-1 hover:border-white/40 ${i === 6 ? (isTrending ? 'hidden xl:block' : 'hidden 2xl:block') : ''}`}>
+                  <button key={t.id} type="button" onClick={() => pick(t)} aria-label={t.name} className={`group relative aspect-[9/16] min-w-0 cursor-pointer overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809] transition-all duration-300 hover:-translate-y-1 hover:border-white/40 ${i === 6 ? (isTrending ? 'hidden xl:block' : 'hidden 2xl:block') : ''}`}>
                     <img src={t.image} alt={t.name} loading="lazy" className={`absolute inset-0 h-full w-full object-center ${isTrending ? 'object-cover' : 'object-contain'}`} />
                   </button>
                 ))}

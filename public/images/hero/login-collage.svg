@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1000" viewBox="0 0 960 1000">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(15 70% 32%)"/><stop offset="1" stop-color="hsl(70 75% 12%)"/></linearGradient>
-<radialGradient id="r" cx=".3" cy=".25" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-<clipPath id="c"><rect width="960" height="1000" rx="0"/></clipPath></defs>
-<g clip-path="url(#c)"><rect width="960" height="1000" fill="url(#g)"/><rect width="960" height="1000" fill="url(#r)"/>
-<circle cx="480" cy="380" r="153.6" fill="#fff" fill-opacity=".14"/>
-<path d="M192 720 Q480 480 768 720 Z" fill="#fff" fill-opacity=".12"/>
-<text x="50%" y="860" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="700" font-size="69" fill="#fff" fill-opacity=".85">Login Collage</text>
-<text x="50%" y="949.7" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="41" fill="#fff" fill-opacity=".5">login background 960x1000</text></g></svg>

@@ -122,6 +122,17 @@ async function get(id, owner) {
   return toView(await load(id, owner))
 }
 
+/** The AI result image of one of the user's generations as bytes + a file name, for a browser download (never the original photo). */
+async function download(id, owner) {
+  requireStorage()
+  const row = await load(id, owner)
+  if (!row.result_key) throw new AppError(404, 'RESULT_NOT_READY', 'This generation has no result image yet.')
+  const { buffer, mimeType } = await storage.getImage(row.result_key)
+  const mime = row.result_mime || mimeType || 'application/octet-stream'
+  const base = String(row.template || 'pictrify').replace(/[^A-Za-z0-9 _-]+/g, '').trim().replace(/\s+/g, '-').slice(0, 60) || 'pictrify'
+  return { buffer, mimeType: mime, filename: `${base}-${id.slice(0, 8)}.${EXT[mime] || 'jpg'}` }
+}
+
 async function saveResult(id, owner, image) {
   requireStorage()
   const row = await load(id, owner)
@@ -171,4 +182,4 @@ const label = (req, fallback) => (typeof req.body?.template_name === 'string' &&
 /** Add a `generation` field to a response payload when storage produced one. */
 const attach = (payload, generation) => (generation ? { ...payload, generation } : payload)
 
-module.exports = { enabled, begin, linkTask, complete, completeByTask, create, get, saveResult, list, remove, discard, label, attach }
+module.exports = { enabled, begin, linkTask, complete, completeByTask, create, get, download, saveResult, list, remove, discard, label, attach }

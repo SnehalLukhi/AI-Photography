@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3')
+const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
 const env = require('../config/env')
 
 /**
@@ -27,7 +27,13 @@ async function deleteObject(key) {
   await s3().send(new DeleteObjectCommand({ Bucket: env.spaces.bucket, Key: fullKey(key) }))
 }
 
+/** The stored bytes of an image (used to hand the browser a real file download). */
+async function getImage(key) {
+  const out = await s3().send(new GetObjectCommand({ Bucket: env.spaces.bucket, Key: fullKey(key) }))
+  return { buffer: Buffer.from(await out.Body.transformToByteArray()), mimeType: out.ContentType }
+}
+
 /** Permanent public URL of a stored image (SPACES_PUBLIC_URL, e.g. the Space's CDN address, else the Space's own address). */
 const publicUrl = (key) => `${env.spaces.publicUrl}/${fullKey(key)}`
 
-module.exports = { isConfigured, putImage, deleteObject, publicUrl }
+module.exports = { isConfigured, putImage, getImage, deleteObject, publicUrl }

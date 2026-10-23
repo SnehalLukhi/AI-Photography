@@ -25,6 +25,7 @@ before(async () => {
   storage.isConfigured = () => storageUp
   storage.putImage = async (key, body) => { if (!storageUp) throw new Error('down'); store.set(key, Buffer.from(body)) }
   storage.deleteObject = async (key) => { store.delete(key) }
+  storage.getImage = async (key) => ({ buffer: store.get(key), mimeType: key.endsWith('.png') ? 'image/png' : 'image/jpeg' })
   storage.publicUrl = (key) => `https://public.invalid/${key}`
   require('../src/services/ailab.service').downloadImage = async () => ({ buffer: await h.resultJpeg(), mimeType: 'image/jpeg' })
 
@@ -108,4 +109,18 @@ test('listing pages through the newest generations first', async () => {
   assert.ok(second.generations.map((g) => g.template).includes('t0'))
   assert.equal(second.nextToken, undefined)
   assert.equal((await api('/generations?nextToken=garbage')).status, 400)
+})
+
+test('GET /api/generations/:id/download returns the AI result (not the original) as an attachment, only to its owner', async () => {
+  const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { style_title: 'Golden hour', style_desc: 'Warm light', template_name: 'Retro Vibes' }) })
+  const { generation } = await res.json()
+  const dl = await api(`/generations/${generation.id}/download`)
+  assert.equal(dl.status, 200)
+  assert.equal(dl.headers.get('content-type'), 'image/jpeg')
+  assert.match(dl.headers.get('content-disposition'), /^attachment; filename="Retro-Vibes-[0-9a-f]{8}\.jpg"$/)
+  const bytes = Buffer.from(await dl.arrayBuffer())
+  assert.ok(bytes.equals(store.get(`generations/${generation.id}/result.jpg`)))      // the AI result ...
+  assert.ok(!bytes.equals(store.get(`generations/${generation.id}/original.jpg`)))   // ... not the uploaded photo
+  assert.equal((await api(`/generations/${generation.id}/download`, as(other))).status, 404) // someone else's
+  assert.equal((await api(`/generations/${generation.id}/download`, { headers: { authorization: '' } })).status, 401)
 })

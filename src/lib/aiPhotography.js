@@ -387,6 +387,21 @@ export async function setFavorite(templateId, on) {
   if (!res.ok) throw failure(await readJson(res), res)
 }
 
+/**
+ * Downloads the AI result of a generation as a file. The backend streams the image as an attachment (so the storage domain's CORS rules do not matter);
+ * it is fetched with the login token and saved through a temporary link. Throws with a readable message on failure.
+ */
+export async function downloadGeneration(id) {
+  let res
+  try { res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}/download`, { headers: headers() }) } catch { throw new Error('Could not reach the server. Please try again.') }
+  if (!res.ok) throw failure(await readJson(res), res)
+  const name = /filename="([^"]+)"/.exec(res.headers.get('Content-Disposition') || '')?.[1] || `pictrify-${id.slice(0, 8)}.jpg`
+  const url = URL.createObjectURL(await res.blob())
+  const a = document.createElement('a')
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 10_000)
+}
+
 /** Deletes both stored images of a generation (only works from the browser that created it). */
 export async function deleteGeneration(id) {
   const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}`, { method: 'DELETE', headers: headers() })

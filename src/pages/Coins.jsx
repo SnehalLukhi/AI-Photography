@@ -108,7 +108,7 @@ export default function Coins() {
             const photos = Math.floor(p.coins / data.costPerGeneration)
             const list = typeof p.price === 'object' ? p.price.USD : p.price // regular price; with an offer the discounted price is what is charged
             return (
-              <article key={p.id} className={`relative flex flex-col max-sm:grid max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:items-center max-sm:gap-x-3 max-sm:gap-y-1.5 max-sm:rounded-[20px] max-sm:p-4 overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-6 ${p.popular ? 'border-[#FF55AA]/30 bg-[#2B2B2B]' : 'border-white/[0.08] bg-[#2B2B2B]'}`}>
+              <article key={p.id} className={`relative flex flex-col max-sm:grid max-sm:grid-cols-[minmax(0,1fr)_auto] max-sm:items-center max-sm:gap-x-3 max-sm:gap-y-1.5 max-sm:rounded-[20px] max-sm:p-4 overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-6 ${p.popular ? 'border-white/25 bg-[#2B2B2B]' : 'border-white/[0.08] bg-[#2B2B2B]'}`}>
                 {p.popular && <span className="grad-alt-bg absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full px-3 py-1 text-[10px] uppercase tracking-wide sm:text-[11px]">Most Popular</span>}
                 <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white max-sm:col-start-1 max-sm:row-start-1 sm:text-[22px]`}>{p.name}</h3>
                 <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1 max-sm:col-start-2 max-sm:row-span-2 max-sm:row-start-1 max-sm:mt-0 max-sm:justify-end">
@@ -129,7 +129,7 @@ export default function Coins() {
             )
           })}
         </div>
-        {note && <p role="status" className="mt-4 rounded-xl border border-[#FF55AA]/40 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-4 py-3 text-center text-sm text-[#A0A0A0]">{note}</p>}
+        {note && <p role="status" className="mt-4 rounded-xl border border-white/15 bg-[#2B2B2B] px-4 py-3 text-center text-sm text-[#A0A0A0]">{note}</p>}
         <p className="mt-6 text-center text-sm text-[#A0A0A0]">Prefer a subscription? <Link to="/pricing" className="font-semibold text-white underline">See the plans</Link></p>
       </section>
     </div>
