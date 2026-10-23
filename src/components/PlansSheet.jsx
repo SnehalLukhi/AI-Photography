@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { plans as fallbackPlans } from '../data/templates.js'
-import { getPlans, buyCoins } from '../lib/aiPhotography.js'
+import { getPlans, cachedPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { brandImages } from '../data/images.js'
 import { categoryItems } from '../data/templates.js'
@@ -21,10 +21,15 @@ const reel = [columns[0] || [], columns[1] || [], (columns[0] || []).slice().rev
 
 
 /** Phone-only bottom sheet with the subscription plans (same plans and purchase call as the Pricing page). Slides up; closes by the X, tapping outside or dragging down. */
+const build = (r) => r.plans.map((p) => {
+  const card = fallbackPlans.find((f) => f.id === p.id) || {}
+  return { ...card, ...p, price: formatPrice(p.offer ? p.offer.price : p.price, p.currency), coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
+})
+
 export default function PlansSheet({ onClose }) {
   const nav = useNavigate()
   const { signedIn, user, refreshUser, openLogin } = useStudio()
-  const [plans, setPlans] = useState(() => fallbackPlans.map((p) => ({ ...p, price: '' }))) // no price shown until the server answers (rupees or dollars depending on the visitor)
+  const [plans, setPlans] = useState(() => (cachedPlans() ? build(cachedPlans()) : fallbackPlans.map((p) => ({ ...p, price: '' })))) // no price shown until it is known (rupees or dollars depending on the visitor)
   const [sel, setSel] = useState(() => (fallbackPlans.find((p) => p.popular) || fallbackPlans[0])?.id)
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
@@ -32,10 +37,7 @@ export default function PlansSheet({ onClose }) {
   const [dy, setDy] = useState(0)
   const drag = useRef(null)
   useEffect(() => {
-    getPlans().then((r) => setPlans(r.plans.map((p) => {
-      const card = fallbackPlans.find((f) => f.id === p.id) || {}
-      return { ...card, ...p, price: formatPrice(p.offer ? p.offer.price : p.price, p.currency), coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
-    }))).catch(() => setPlans(fallbackPlans))
+    getPlans().then((r) => setPlans(build(r))).catch(() => setPlans((cur) => (cur.some((p) => p.price) ? cur : fallbackPlans)))
   }, [])
   const close = () => { setShown(false); setTimeout(onClose, 300) }
   useEffect(() => {
@@ -110,7 +112,7 @@ export default function PlansSheet({ onClose }) {
                 className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border px-4 py-2.5 text-left transition-colors ${on ? 'border-white/35 bg-white/[0.08]' : 'border-white/10 bg-black/45 backdrop-blur-md'}`}>
                 <span className="min-w-0">
                   <span className="flex items-center gap-2 text-[15px] font-semibold text-white">{p.name}{p.popular && <span className="rounded-full bg-[#FF55AA] px-2 py-px text-[9px] font-bold uppercase text-white">Popular</span>}</span>
-                  <span className="mt-0.5 block text-[20px] font-bold leading-tight text-white">{p.price || <span aria-hidden="true" className="inline-block h-[0.85em] w-[3.4em] animate-pulse rounded bg-white/10 align-middle" />} <span className="text-[12px] font-normal text-[#A0A0A0]">{p.per}</span></span>
+                  <span className="mt-0.5 block text-[20px] font-bold leading-tight text-white">{p.price || <span aria-hidden="true" className="invisible">₹000</span>} <span className="text-[12px] font-normal text-[#A0A0A0]">{p.per}</span></span>
                   <span className="mt-0.5 block text-[12px] leading-tight text-[#A0A0A0]">Premium templates</span>
                 </span>
                 <span className="flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3 py-1.5">

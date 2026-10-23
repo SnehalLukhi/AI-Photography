@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { categories, steps, exploreCategories, exploreTabs, byCategory, exploreList, folderTemplates, exploreEverything, categoryItems, generateUrl } from '../data/templates.js'
+import { categories, steps, exploreCategories, exploreTabs, byCategory, exploreList, folderTemplates, exploreEverything, categoryItems, ownItems, generateUrl } from '../data/templates.js'
 import TemplateCard from '../components/TemplateCard.jsx'
 import PImage from '../components/PImage.jsx'
 import { SparkIcon } from '../components/Header.jsx'
@@ -278,7 +278,7 @@ const CATEGORY_INFO = {
 function MobileHome() {
   const top = categoryItems('top-carousel')
   const rows = exploreTabs.filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
-    id: tab.id, title: tab.category || tab.name, info: CATEGORY_INFO[tab.id], items: categoryItems(tab.id),
+    id: tab.id, title: tab.category || tab.name, info: CATEGORY_INFO[tab.id], items: ownItems(tab.id), // templates that are in Trending are not repeated here
     to: tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}&from=home` : `/explore?category=${tab.id}&from=home`, // from=home: Explore shows a phone-only back-to-Home bar for this one category
   })).filter((r) => r.items.length)
   return (

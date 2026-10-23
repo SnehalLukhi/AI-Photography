@@ -272,8 +272,18 @@ export async function getPlans() {
   const res = await fetch(`${API_BASE}/api/plans${devCurrency()}`, { headers: headers() }) // the token lets the backend add the offers meant for this user
   const body = await readJson(res)
   if (!res.ok) throw failure(body, res)
+  plansCache = body
+  try { localStorage.setItem(PLANS_KEY, JSON.stringify(body)) } catch { /* private window: no cache between visits */ }
   return body
 }
+
+// The last answer of GET /api/plans (also kept between visits), so a plan's price - in the visitor's own currency - is on screen the moment a page opens instead of after a request.
+// getPlans() is called again every time to refresh it (an offer may have started or ended).
+const PLANS_KEY = 'pictrify-plans'
+let plansCache = null
+try { plansCache = JSON.parse(localStorage.getItem(PLANS_KEY) || 'null') } catch { /* nothing cached */ }
+export const cachedPlans = () => plansCache
+if (typeof window !== 'undefined') getPlans().catch(() => {}) // start fetching as soon as the app loads
 
 /** Coin balance, cost of one generation and the latest coin movements: { coins, costPerGeneration, history }. */
 export async function getWallet() {
