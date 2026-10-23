@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { plans as fallbackPlans, categoryItems } from '../data/templates.js'
 import { brandImages } from '../data/images.js'
-import { getPlans, buyCoins } from '../lib/aiPhotography.js'
+import { getPlans, cachedPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { formatPrice } from '../lib/format.js'
 import { SparkIcon } from './Header.jsx'
@@ -23,7 +23,7 @@ const PERKS = [
 
 // None of these four perks exists in the app yet (no plan-based discount, upscaling, ad-free mode or pro tools): they are shown as "Coming soon", not as active benefits.
 // the plans come from the backend (single source of prices and coins); the built-in list is only shown if it cannot be reached
-const pending = <span aria-hidden="true" className="inline-block h-[0.85em] w-[3.4em] animate-pulse rounded bg-white/10 align-middle" /> // the price is not known until the server says which currency this visitor pays in
+const pending = <span aria-hidden="true" className="invisible">₹000</span> // the price is not known until the server says which currency this visitor pays in
 const fromFallback = (p, price = p.price) => ({ id: p.id, name: p.name, price, per: p.per, coins: Number(String(p.coins).replace(/[^\d]/g, '')), popular: !!p.popular })
 const fromApi = (p) => ({ id: p.id, name: p.name, price: formatPrice(p.offer ? p.offer.price : p.price, p.currency), was: p.offer ? formatPrice(p.price, p.currency) : '', per: p.per, coins: p.coins, popular: !!p.popular })
 
@@ -36,11 +36,11 @@ export default function PremiumPopup({ onClose: finish }) {
   const nav = useNavigate()
   const { user, refreshUser } = useStudio()
   const [closing, onClose] = usePopupExit(finish)
-  const [plans, setPlans] = useState(() => fallbackPlans.map((p) => fromFallback(p, '')))
+  const [plans, setPlans] = useState(() => (cachedPlans() ? cachedPlans().plans.map(fromApi) : fallbackPlans.map((p) => fromFallback(p, ''))))
   const [selected, setSelected] = useState((fallbackPlans.find((p) => p.popular) || fallbackPlans[0]).id)
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState('')
-  useEffect(() => { getPlans().then((r) => setPlans(r.plans.map(fromApi))).catch(() => setPlans(fallbackPlans.map((p) => fromFallback(p)))) }, [])
+  useEffect(() => { getPlans().then((r) => setPlans(r.plans.map(fromApi))).catch(() => setPlans((cur) => (cur.some((p) => p.price) ? cur : fallbackPlans.map((p) => fromFallback(p))))) }, [])
 
   const pay = async () => {
     setBusy(true); setNote('')

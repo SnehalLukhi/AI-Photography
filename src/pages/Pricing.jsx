@@ -1,13 +1,41 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { plans as fallbackPlans } from '../data/templates.js'
-import { getPlans, buyCoins } from '../lib/aiPhotography.js'
+import { getPlans, cachedPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { brandImages } from '../data/images.js'
 import { SparkIcon } from '../components/Header.jsx'
 import { formatPrice } from '../lib/format.js'
 
-const pending = <span aria-hidden="true" className="inline-block h-[0.85em] w-[3.4em] animate-pulse rounded bg-white/10 align-middle" /> // the price is not known until the server says which currency this visitor pays in
+const pending = <span aria-hidden="true" className="invisible">₹000</span> // the price is not known until the server says which currency this visitor pays in
+
+const bar = (cls) => <span className={`block animate-pulse rounded-md bg-white/[0.08] ${cls}`} />
+/** Placeholder cards for the very first visit (no saved prices yet) until the server says which currency applies. */
+const SkeletonCard = () => (
+  <article aria-hidden="true" className="flex flex-col rounded-[24px] border border-white/[0.08] bg-[#2B2B2B] p-6 sm:p-8 lg:p-6 xl:p-8">
+    {bar('h-6 w-40')}
+    <div className="mt-5">{bar('h-10 w-32')}</div>
+    <div className="mt-4 flex items-center gap-2.5"><span className="size-9 animate-pulse rounded-full bg-white/[0.08]" />{bar('h-4 w-28')}</div>
+    <div className="mt-7 flex flex-col gap-4 sm:mt-8">{[0, 1, 2, 3, 4].map((i) => <div key={i} className="flex justify-between gap-6">{bar('h-3.5 w-36')}{bar('h-3.5 w-12')}</div>)}</div>
+    <span className="mt-8 block h-[52px] w-full animate-pulse rounded-xl bg-white/[0.06]" />
+  </article>
+)
+const SkeletonRow = () => (
+  <div aria-hidden="true" className="flex items-center gap-3 rounded-[20px] border border-white/[0.08] bg-[#121012] p-4">
+    <span className="size-5 shrink-0 rounded-full border-2 border-white/20" />
+    <div className="flex-1 space-y-2">{bar('h-4 w-32')}{bar('h-3 w-24')}</div>
+    {bar('h-6 w-20')}
+  </div>
+)
+
+function build(r) {
+  return r.plans.map((p) => {
+    const card = fallbackPlans.find((f) => f.id === p.id) || {}
+    const money = (n) => formatPrice(n, p.currency)
+    // with an offer the discounted price is the price (the server charges exactly this); the regular price is shown struck through
+    return { ...card, ...p, price: money(p.offer ? p.offer.price : p.price), originalPrice: p.offer ? money(p.price) : '', discount: p.offer?.discountPercent || 0, coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
+  })
+}
 
 export default function Pricing() {
   const nav = useNavigate()
@@ -15,15 +43,8 @@ export default function Pricing() {
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState('')
   // the plans come from the backend (single source of prices and coins); the built-in list is only shown if the backend cannot be reached
-  const [plans, setPlans] = useState(() => fallbackPlans.map((p) => ({ ...p, price: '' }))) // no price shown until the server answers (rupees or dollars depending on the visitor)
-  useEffect(() => {
-    getPlans().then((r) => setPlans(r.plans.map((p) => {
-      const card = fallbackPlans.find((f) => f.id === p.id) || {}
-      const money = (n) => formatPrice(n, p.currency)
-      // with an offer the discounted price is the price (the server charges exactly this); the regular price is shown struck through
-      return { ...card, ...p, price: money(p.offer ? p.offer.price : p.price), originalPrice: p.offer ? money(p.price) : '', discount: p.offer?.discountPercent || 0, coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
-    }))).catch(() => setPlans(fallbackPlans))
-  }, [])
+  const [plans, setPlans] = useState(() => (cachedPlans() ? build(cachedPlans()) : fallbackPlans.map((p) => ({ ...p, price: '' })))) // no price shown until it is known (rupees or dollars depending on the visitor)
+  useEffect(() => { getPlans().then((r) => setPlans(build(r))).catch(() => setPlans((cur) => (cur.some((p) => p.price) ? cur : fallbackPlans))) }, [])
   const [sel, setSel] = useState(null)
   const selId = sel || (plans.find((p) => p.popular) || plans[0])?.id
   const choose = async (p) => {
@@ -37,6 +58,7 @@ export default function Pricing() {
     } catch (e) { setNote(e.message) }
     setBusy('')
   }
+  const loading = !plans.some((p) => p.price) // the very first visit: nothing known yet
   const chosen = plans.find((p) => p.id === selId)
   const mobile = (
     <div className="px-4 pb-32 pt-4 sm:hidden">
@@ -46,7 +68,8 @@ export default function Pricing() {
       </div>
       <p className="mb-4 text-center text-[13px] text-[#A0A0A0]">Unlock premium templates, faster generation and more creative freedom.</p>
       <div className="space-y-3" role="radiogroup" aria-label="Subscription plans">
-        {plans.map((p) => {
+        {loading && [0, 1, 2].map((i) => <SkeletonRow key={i} />)}
+        {!loading && plans.map((p) => {
           const on = p.id === selId
           return (
             <div key={p.id} role="radio" aria-checked={on} tabIndex={0} onClick={() => setSel(p.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(p.id)}
@@ -90,7 +113,8 @@ export default function Pricing() {
       <section className="mt-8 sm:mt-10 lg:mt-12">
         <h2 className="sr-only">Subscription plans</h2>
         <div className="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:grid-cols-3 lg:gap-6">
-          {plans.map((p) => (
+          {loading && [0, 1, 2].map((i) => <SkeletonCard key={i} />)}
+          {!loading && plans.map((p) => (
             <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-white/25 bg-[#2B2B2B]' : 'border-white/[0.08] bg-[#2B2B2B]'}`}>
               {p.popular && <span className="grad-alt-bg absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full px-3 py-1 text-[10px] uppercase tracking-wide sm:text-[11px]">Most Popular</span>}
               <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
