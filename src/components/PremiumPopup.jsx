@@ -23,7 +23,8 @@ const PERKS = [
 
 // None of these four perks exists in the app yet (no plan-based discount, upscaling, ad-free mode or pro tools): they are shown as "Coming soon", not as active benefits.
 // the plans come from the backend (single source of prices and coins); the built-in list is only shown if it cannot be reached
-const fromFallback = (p) => ({ id: p.id, name: p.name, price: p.price, per: p.per, coins: Number(String(p.coins).replace(/[^\d]/g, '')), popular: !!p.popular })
+const pending = <span aria-hidden="true" className="inline-block h-[0.85em] w-[3.4em] animate-pulse rounded bg-white/10 align-middle" /> // the price is not known until the server says which currency this visitor pays in
+const fromFallback = (p, price = p.price) => ({ id: p.id, name: p.name, price, per: p.per, coins: Number(String(p.coins).replace(/[^\d]/g, '')), popular: !!p.popular })
 const fromApi = (p) => ({ id: p.id, name: p.name, price: formatPrice(p.offer ? p.offer.price : p.price, p.currency), was: p.offer ? formatPrice(p.price, p.currency) : '', per: p.per, coins: p.coins, popular: !!p.popular })
 
 /**
@@ -35,11 +36,11 @@ export default function PremiumPopup({ onClose: finish }) {
   const nav = useNavigate()
   const { user, refreshUser } = useStudio()
   const [closing, onClose] = usePopupExit(finish)
-  const [plans, setPlans] = useState(() => fallbackPlans.map(fromFallback))
+  const [plans, setPlans] = useState(() => fallbackPlans.map((p) => fromFallback(p, '')))
   const [selected, setSelected] = useState((fallbackPlans.find((p) => p.popular) || fallbackPlans[0]).id)
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState('')
-  useEffect(() => { getPlans().then((r) => setPlans(r.plans.map(fromApi))).catch(() => {}) }, [])
+  useEffect(() => { getPlans().then((r) => setPlans(r.plans.map(fromApi))).catch(() => setPlans(fallbackPlans.map((p) => fromFallback(p)))) }, [])
 
   const pay = async () => {
     setBusy(true); setNote('')
@@ -101,7 +102,7 @@ export default function PremiumPopup({ onClose: finish }) {
                     <span className="min-w-0">
                       {p.popular && <span className="mb-1.5 inline-block grad-alt-bg rounded-md px-2 py-0.5 text-[10px]">Popular</span>}
                       <span className="block text-[17px] font-bold leading-tight text-white">{p.name.replace(/ Premium$/, '')}</span>
-                      <span className="mt-2 flex items-baseline gap-1.5"><span className="text-[24px] font-bold leading-none text-white">{p.price}</span>{p.was && <span className="text-[13px] text-[#A0A0A0] line-through">{p.was}</span>}<span className="text-[13px] text-[#A0A0A0]">{p.per.replace(/^\/\s*/, '/')}</span></span>
+                      <span className="mt-2 flex items-baseline gap-1.5"><span className="text-[24px] font-bold leading-none text-white">{p.price || pending}</span>{p.was && <span className="text-[13px] text-[#A0A0A0] line-through">{p.was}</span>}<span className="text-[13px] text-[#A0A0A0]">{p.per.replace(/^\/\s*/, '/')}</span></span>
                     </span>
                     <span className="flex h-[88px] w-[88px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border border-white/[0.08] bg-[#2B2B2B]">
                       <img src={brandImages.coin} alt="" width="28" height="28" className="size-7 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />

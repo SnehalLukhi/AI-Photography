@@ -7,20 +7,22 @@ import { brandImages } from '../data/images.js'
 import { SparkIcon } from '../components/Header.jsx'
 import { formatPrice } from '../lib/format.js'
 
+const pending = <span aria-hidden="true" className="inline-block h-[0.85em] w-[3.4em] animate-pulse rounded bg-white/10 align-middle" /> // the price is not known until the server says which currency this visitor pays in
+
 export default function Pricing() {
   const nav = useNavigate()
   const { signedIn, user, refreshUser, openLogin } = useStudio()
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState('')
   // the plans come from the backend (single source of prices and coins); the built-in list is only shown if the backend cannot be reached
-  const [plans, setPlans] = useState(fallbackPlans)
+  const [plans, setPlans] = useState(() => fallbackPlans.map((p) => ({ ...p, price: '' }))) // no price shown until the server answers (rupees or dollars depending on the visitor)
   useEffect(() => {
     getPlans().then((r) => setPlans(r.plans.map((p) => {
       const card = fallbackPlans.find((f) => f.id === p.id) || {}
       const money = (n) => formatPrice(n, p.currency)
       // with an offer the discounted price is the price (the server charges exactly this); the regular price is shown struck through
       return { ...card, ...p, price: money(p.offer ? p.offer.price : p.price), originalPrice: p.offer ? money(p.price) : '', discount: p.offer?.discountPercent || 0, coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
-    }))).catch(() => {})
+    }))).catch(() => setPlans(fallbackPlans))
   }, [])
   const [sel, setSel] = useState(null)
   const selId = sel || (plans.find((p) => p.popular) || plans[0])?.id
@@ -57,7 +59,7 @@ export default function Pricing() {
                   <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#A0A0A0]"><img src={brandImages.coin} alt="" width="16" height="16" className="size-4 object-contain" />{p.coins}</p>
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="text-[20px] font-bold leading-none text-white">{p.price} <span className="text-[11px] font-normal text-[#A0A0A0]">{p.per}</span></p>
+                  <p className="text-[20px] font-bold leading-none text-white">{p.price || pending} <span className="text-[11px] font-normal text-[#A0A0A0]">{p.per}</span></p>
                   {p.originalPrice && <p className="mt-1 text-[11px] text-[#A0A0A0]"><span className="line-through">{p.originalPrice}</span> <span className="font-bold text-[#FF88C7]">{p.discount}% OFF</span></p>}
                 </div>
               </div>
@@ -71,7 +73,7 @@ export default function Pricing() {
         })}
       </div>
       {note && <p role="status" className="mt-4 rounded-xl border border-white/15 bg-[#121012] px-4 py-3 text-center text-sm text-[#A0A0A0]">{note}</p>}
-      <button type="button" disabled={!chosen || busy === selId} onClick={() => chosen && choose(chosen)} className="mt-5 flex h-[54px] w-full cursor-pointer items-center justify-center rounded-full text-[16px] font-bold text-white shadow-[0_8px_28px_rgba(255,85,170,0.35)] transition-transform active:scale-[0.98] disabled:cursor-wait disabled:opacity-70" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>{busy === selId ? 'Please wait…' : chosen ? `Continue · ${chosen.price}` : 'Continue'}</button>
+      <button type="button" disabled={!chosen?.price || busy === selId} onClick={() => chosen && choose(chosen)} className="mt-5 flex h-[54px] w-full cursor-pointer items-center justify-center rounded-full text-[16px] font-bold text-white shadow-[0_8px_28px_rgba(255,85,170,0.35)] transition-transform active:scale-[0.98] disabled:cursor-wait disabled:opacity-70" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>{busy === selId ? 'Please wait…' : chosen ? chosen.price ? `Continue · ${chosen.price}` : 'Continue' : 'Continue'}</button>
       <p className="mt-3 text-center text-[11px] text-[#A0A0A0]">Auto-renewable subscription. Cancel anytime.</p>
     </div>
   )
@@ -93,7 +95,7 @@ export default function Pricing() {
               {p.popular && <span className="grad-alt-bg absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full px-3 py-1 text-[10px] uppercase tracking-wide sm:text-[11px]">Most Popular</span>}
               <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                <p className="text-[34px] font-bold leading-none text-white sm:text-[40px]">{p.price}</p>
+                <p className="text-[34px] font-bold leading-none text-white sm:text-[40px]">{p.price || pending}</p>
                 {p.originalPrice && <span className="text-[15px] text-[#A0A0A0] line-through">{p.originalPrice}</span>}
                 <span className="text-[13px] text-[#A0A0A0] sm:text-[14px]">{p.per}</span>
                 {p.discount > 0 && <span className="rounded-md bg-[#FF55AA]/15 px-2 py-0.5 text-[11px] font-bold text-[#FF88C7]">{p.discount}% OFF</span>}
