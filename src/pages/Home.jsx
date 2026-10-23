@@ -13,22 +13,35 @@ const STAGE_H = 335
 const BOX_X = 55, BOX_Y = 15, BOX_W = 620, BOX_H = 290
 // Orbit rings, traced from the reference. Each ring is a tilted ellipse drawn in two halves: the upper (back) arc under the cards and the lower
 // (front) arc over them, so the ring passes behind the picture and comes round in front. `clipFrom` hides a front arc left of that stage x.
+// The ring is drawn as RING_COLORS.length arcs, one after another round the ellipse; each arc fades from its colour into the next one (a straight gradient between
+// the arc's two end points), so the colours follow the curve and the last one blends back into the first.
+const RING_COLORS = ['#705CFF', '#FC48E7', '#FF88C7', '#FF55AA', '#9B7BFF']
 function RingHalf({ ring, half, z, clipFrom = 0 }) {
   const { id, cx, cy, rx, ry, rot, width, pulse } = ring
   const clip = `${id}-${half}`
+  const n = RING_COLORS.length
+  const pt = (deg) => { const t = (deg * Math.PI) / 180; return [cx + rx * Math.cos(t), cy + ry * Math.sin(t)] }
+  const arcs = RING_COLORS.map((c, i) => {
+    const d0 = -90 + (360 / n) * i, d1 = d0 + 360 / n + 0.6 // a hair of overlap hides the seams
+    const [x0, y0] = pt(d0), [x1, y1] = pt(d1)
+    return { id: `${id}-g${i}`, from: c, to: RING_COLORS[(i + 1) % n], x0, y0, x1, y1, d: `M${x0} ${y0}A${rx} ${ry} 0 0 1 ${x1} ${y1}` }
+  })
   return (
     <svg className="pointer-events-none absolute inset-0 overflow-visible" style={{ zIndex: z, clipPath: clipFrom ? `inset(-40px -40px -40px ${clipFrom}px)` : undefined }} width={STAGE_W} height={STAGE_H} viewBox={`0 0 ${STAGE_W} ${STAGE_H}`} aria-hidden="true">
       <defs>
-        <linearGradient id={`${id}-s`} gradientUnits="userSpaceOnUse" x1={cx - rx} y1="0" x2={cx + rx} y2="0">
-          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.5" /><stop offset="0.55" stopColor="#A0A0A0" stopOpacity="0.9" /><stop offset="1" stopColor="#FFFFFF" stopOpacity="0.7" />
-        </linearGradient>
+        {arcs.map((a) => (
+          <linearGradient key={a.id} id={a.id} gradientUnits="userSpaceOnUse" x1={a.x0} y1={a.y0} x2={a.x1} y2={a.y1}>
+            <stop offset="0" stopColor={a.from} /><stop offset="1" stopColor={a.to} />
+          </linearGradient>
+        ))}
         <filter id={`${clip}-g`} x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur stdDeviation="1.6" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
         <clipPath id={clip}><rect x={cx - rx - 20} y={half === 'back' ? cy - ry - 20 : cy} width={rx * 2 + 40} height={ry + 20} /></clipPath>
       </defs>
       <g transform={`rotate(${rot} ${cx} ${cy})`} clipPath={`url(#${clip})`} filter={`url(#${clip}-g)`}>
-        <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="none" stroke={`url(#${id}-s)`} strokeWidth={width}>
-          {pulse && <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="6s" repeatCount="indefinite" />}
-        </ellipse>
+        <g fill="none" strokeWidth={width}>
+          {arcs.map((a) => <path key={a.id} d={a.d} stroke={`url(#${a.id})`} />)}
+          {pulse && <animate attributeName="stroke-opacity" values="0.75;1;0.75" dur="6s" repeatCount="indefinite" />}
+        </g>
       </g>
     </svg>
   )

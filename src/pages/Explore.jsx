@@ -84,10 +84,10 @@ export default function Explore() {
               const on = chip.id === c.id
               return (
                 <button key={c.name} type="button" role="tab" aria-selected={on} onClick={() => setChip(c)}
-                  className={`relative flex h-12 shrink-0 cursor-pointer select-none items-center gap-2 px-3 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors focus-visible:text-white ${on ? 'font-bold text-[#FF55AA]' : 'text-[#A0A0A0] hover:text-white'}`}>
+                  className={`relative flex h-12 shrink-0 cursor-pointer select-none items-center gap-2 px-3 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors focus-visible:text-white ${on ? 'font-bold text-white' : 'text-[#A0A0A0] hover:text-white'}`}>
                   <span className="pointer-events-none">{c.name}</span>
                   <span className="pointer-events-none hidden text-[10px] tabular-nums opacity-70">{countOf(c)}</span>
-                  <span className={`absolute inset-x-2 -bottom-px h-[3px] bg-gradient-to-r from-[#FF88C7] to-[#FF55AA] shadow-[0_0_10px_rgba(255,85,170,0.7)] transition-opacity ${on ? 'opacity-100' : 'opacity-0'}`} />
+                  <span className={`absolute inset-x-2 -bottom-px h-[3px] bg-white transition-opacity ${on ? 'opacity-100' : 'opacity-0'}`} />
                 </button>
               )
             })}
@@ -99,7 +99,7 @@ export default function Explore() {
               const son = sub?.id === sc.id
               return (
                 <button key={sc.id} type="button" role="tab" aria-selected={son} onClick={() => setSub(sc)}
-                  className={`h-8 cursor-pointer rounded-full border px-4 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors ${son ? 'border-[#FF55AA] bg-[#FF55AA]/15 font-bold text-[#FF55AA]' : 'border-[#2B2B2B] text-[#A0A0A0] hover:text-white'}`}>{sc.name}</button>
+                  className={`h-8 cursor-pointer rounded-full border px-4 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors ${son ? 'border-white/25 bg-white/[0.08] font-bold text-white' : 'border-[#2B2B2B] text-[#A0A0A0] hover:text-white'}`}>{sc.name}</button>
               )
             })}
           </div>
@@ -179,7 +179,7 @@ export default function Explore() {
 
           <section id="all-templates" className={chip.id === null || chip.id === 'trending' ? 'md:mt-10' : ''}>
             <div className="flex items-baseline gap-4">
-              <h2 className="shrink-0 text-[30px] leading-[1.1] text-[#ffffff] sm:text-[38px] lg:text-[42px]">{chip.id === null ? 'All Templates' : chip.id === 'trending' ? 'Trending Templates' : 'Category Templates'}</h2>
+              <h2 className="shrink-0 text-[30px] leading-[1.1] text-[#ffffff] sm:text-[38px] lg:text-[42px]">{chip.id === null ? 'All Templates' : chip.id === 'trending' ? 'Trending Templates' : sub ? `${chip.name} · ${sub.name}` : chip.name}</h2>
               <span className="h-px flex-1 bg-[#2B2B2B]" />
               <span className="mono hidden shrink-0 tabular-nums">{pad(list.length)} frames</span>
             </div>
