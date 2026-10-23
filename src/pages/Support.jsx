@@ -19,12 +19,49 @@ const field = 'w-full rounded-xl border border-white/10 bg-[#2B2B2B] px-4 text-s
 const submitBtn = 'grad-bg flex h-12 w-full cursor-pointer items-center justify-center rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50'
 
 const topics = [
-  ['Getting Started', 'Learn the basic workflow.', 'Pick a template, upload a clear photo, and press Generate. Results land in My Creations.'],
-  ['Photo Upload Guide', 'Choose the best source photo.', 'Use a clear, front-facing photo with good lighting. JPG, PNG and HEIC are supported.'],
-  ['AI Generation', 'Understand image and video creation.', 'Images take seconds; videos take a little longer depending on duration (5-20 seconds).'],
-  ['Coins & Billing', 'Payments, packs and balances.', 'Each generation uses coins. Plans include a coin balance.'],
-  ['Subscriptions', 'Manage plans and renewals.', 'Plans auto-renew and can be cancelled anytime.'],
-  ['Troubleshooting', 'Fix common generation issues.', 'Try a sharper photo or a different template.'],
+  ['Getting Started', 'Learn the basic workflow.', [
+    'Browse templates on Home or Explore and tap one to open it.',
+    'Add a photo of yourself, then press Generate. If you are not signed in yet, you will be asked to sign in first.',
+    'Your finished image is saved in My Creations.',
+  ]],
+  ['Photo Upload Guide', 'Choose the best source photo.', [
+    'Use a clear, front-facing photo with good lighting and your face fully visible.',
+    'Most templates accept JPG, PNG or WebP up to 10 MB. Cartoon and Hairstyle templates accept JPG or PNG up to 5 MB.',
+    'HEIC photos cannot be used to generate. Save or export the photo as JPG or PNG first.',
+    'Use the ✕ on your photo to remove it, or Change Photo to pick another one.',
+  ]],
+  ['AI Generation', 'How your image is created.', [
+    'Pictrify turns your photo into the style of the template you picked. Each generation makes one image.',
+    'It can take up to a minute. Keep the page open until your result appears.',
+    'Templates are grouped into categories such as 80’s & 90’s, Cartoon, LinkedIn Headshot, Old Money, Beard and Hairstyle.',
+  ]],
+  ['Coins & Billing', 'Coins, packs and payments.', [
+    'Every generation costs coins (15 coins at the moment). New accounts get free coins to start.',
+    'If a generation fails, the coins are returned to your balance automatically.',
+    'Need more? Open Get More Coins and buy a one-time coin pack. Coins do not expire.',
+    'Payments are processed securely through Razorpay. Your purchases are listed on the Transactions page, which you can open from the profile menu.',
+  ]],
+  ['Plans & Pricing', 'See what each plan includes.', [
+    'The Pricing page lists the Weekly, Monthly and Yearly plans with their price and the coins each one adds.',
+    'After a payment succeeds, the plan’s coins are added to your balance. You use them for generations like any other coins.',
+    'Any special offer or discount shown on the Pricing or Get More Coins page is applied to the price you pay at checkout.',
+  ]],
+  ['Likes & My Creations', 'Save favourites and find your images.', [
+    'Tap the heart on a template in Explore to like it. Likes are saved to your account, so they stay after you refresh or log in again. Tap it again to unlike.',
+    'My Creations shows every image you have generated. Open one to compare your original with the AI result, then open or download it, or delete it.',
+  ]],
+  ['Account & Login', 'Sign in and manage your account.', [
+    'You sign in with your Google or Apple account. A new account is created the first time you sign in.',
+    'Open the profile menu to see Profile Settings, Transactions, Help, Contact Support, Share Your Feedback, Privacy Policy, Terms & Conditions and Log out.',
+    'Profile Settings shows your name and email from your sign-in account. These details are for viewing only.',
+  ]],
+  ['Troubleshooting', 'Fix common generation issues.', [
+    'Photo rejected? Check that it is a JPG, PNG or WebP (JPG or PNG for Cartoon and Hairstyle) and within the size limit.',
+    'Not enough coins? Open Get More Coins, then try again.',
+    'Generation failed? Your coins are returned. Try a sharper, well-lit photo or a different template.',
+    'Signed out unexpectedly? Sign in again and your coins, likes and creations will still be there.',
+    'Still stuck? Use Contact Support from the profile menu.',
+  ]],
 ]
 
 export function Help() {
@@ -37,7 +74,7 @@ export function Help() {
           <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer self-start rounded-[20px] border bg-[#2B2B2B] px-6 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 ${open === i ? 'border-white/20' : 'border-white/[0.06]'}`}>
             <span className="block text-[17px] font-semibold text-white">{t}</span>
             <span className="mt-1.5 block text-sm text-[#A0A0A0]">{d}</span>
-            {open === i && <span className="mt-3 block border-t border-white/10 pt-3 text-sm text-[#A0A0A0]">{body}</span>}
+            {open === i && <span className="mt-3 block space-y-2 border-t border-white/10 pt-3 text-sm leading-relaxed text-[#A0A0A0]">{body.map((line) => <span key={line} className="block">{line}</span>)}</span>}
           </button>
         ))}
       </div>
