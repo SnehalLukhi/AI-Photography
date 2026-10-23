@@ -354,6 +354,20 @@ export async function cancelSubscription() {
 }
 
 /**
+ * Saves one image of a creation to the user's device: `which` = 'result' (the AI image) | 'original'. The backend sends it as a file download (a plain link to the image
+ * would only open it in a tab), so this fetches it with the login token and saves it under the file name the backend gives.
+ */
+export async function downloadGeneration(id, which = 'result') {
+  const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}/download?which=${which}`, { headers: headers() })
+  if (!res.ok) throw failure(await readJson(res), res)
+  const filename = /filename="([^"]+)"/.exec(res.headers.get('content-disposition') || '')?.[1] || `pictrify-${which}.jpg`
+  const url = URL.createObjectURL(await res.blob())
+  const a = Object.assign(document.createElement('a'), { href: url, download: filename })
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 10_000)
+}
+
+/**
  * One page of the logged-in user's stored generations, newest first: { generations: [{ id, status, createdAt, template, original: { url }, result: { url } | null }], nextToken }.
  * Pass the previous `nextToken` to get the next page. Empty when storage is off.
  */

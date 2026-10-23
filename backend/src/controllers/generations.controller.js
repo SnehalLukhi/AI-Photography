@@ -31,6 +31,12 @@ async function get(req, res) {
   res.set('Cache-Control', 'no-store').json({ success: true, generation: await generations.get(req.params.id, req.user.id) })
 }
 
+/** GET /api/generations/:id/download?which=result|original - the image as a file (Content-Disposition: attachment), so the browser saves it instead of opening it. Owner only. */
+async function download(req, res) {
+  const { buffer, mimeType, filename } = await generations.download(req.params.id, req.user.id, req.query.which === 'original' ? 'original' : 'result')
+  res.set({ 'Content-Type': mimeType, 'Content-Length': buffer.length, 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'private, no-store', 'Access-Control-Expose-Headers': 'Content-Disposition' }).send(buffer)
+}
+
 /** GET /api/generations?limit=20&nextToken=... - the logged-in user's generations, newest first. */
 async function list(req, res) {
   const limit = Math.min(Math.max(Number.parseInt(req.query.limit, 10) || 20, 1), 50)
@@ -44,4 +50,4 @@ async function remove(req, res) {
   res.json({ success: true })
 }
 
-module.exports = { create, saveResult, get, list, remove }
+module.exports = { create, saveResult, get, download, list, remove }

@@ -24,6 +24,7 @@ before(async () => {
   const storage = require('../src/services/storage.service')
   storage.isConfigured = () => storageUp
   storage.putImage = async (key, body) => { if (!storageUp) throw new Error('down'); store.set(key, Buffer.from(body)) }
+  storage.getObject = async (key) => store.get(key) || null
   storage.deleteObject = async (key) => { store.delete(key) }
   storage.publicUrl = (key) => `https://public.invalid/${key}`
   require('../src/services/ailab.service').downloadImage = async () => ({ buffer: await h.resultJpeg(), mimeType: 'image/jpeg' })
@@ -108,4 +109,20 @@ test('listing pages through the newest generations first', async () => {
   assert.ok(second.generations.map((g) => g.template).includes('t0'))
   assert.equal(second.nextToken, undefined)
   assert.equal((await api('/generations?nextToken=garbage')).status, 400)
+})
+
+test('download sends the image as a file; only its owner can get it', async () => {
+  const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { style_title: 'Vintage Sari', style_desc: 'warm', template_name: 'Vintage Sari!' }) })
+  const { generation } = await res.json()
+  const file = await api(`/generations/${generation.id}/download`)
+  assert.equal(file.status, 200)
+  assert.equal(file.headers.get('content-type'), 'image/jpeg')
+  assert.equal(file.headers.get('content-disposition'), 'attachment; filename="pictrify-vintage-sari-ai.jpg"')
+  assert.deepEqual(Buffer.from(await file.arrayBuffer()), store.get(`generations/${generation.id}/result.jpg`))
+  const orig = await api(`/generations/${generation.id}/download?which=original`)
+  assert.equal(orig.headers.get('content-disposition'), 'attachment; filename="pictrify-vintage-sari-original.jpg"')
+  assert.equal((await api(`/generations/${generation.id}/download`, as(other))).status, 404) // someone else's
+  assert.equal((await api(`/generations/${generation.id}/download`, { headers: { authorization: '' } })).status, 401)
+  const pending = (await (await api('/generations', { method: 'POST', body: h.form({ image: await img() }) })).json()).generation
+  assert.equal((await api(`/generations/${pending.id}/download`)).status, 404) // no AI image yet
 })

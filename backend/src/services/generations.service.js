@@ -122,6 +122,19 @@ async function get(id, owner) {
   return toView(await load(id, owner))
 }
 
+/** One of the two images of a generation as a file to download: { buffer, mimeType, filename }. `which` = 'result' (the AI image, default) | 'original'. */
+async function download(id, owner, which = 'result') {
+  requireStorage()
+  const row = await load(id, owner)
+  const original = which === 'original'
+  const key = original ? row.original_key : row.result_key
+  const mimeType = original ? row.original_mime : row.result_mime
+  const buffer = key ? await storage.getObject(key) : null
+  if (!buffer) throw new AppError(404, 'IMAGE_NOT_FOUND', original ? 'The original photo is not available.' : 'The AI image is not ready yet.')
+  const name = (row.template || 'creation').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'creation'
+  return { buffer, mimeType, filename: `pictrify-${name}-${original ? 'original' : 'ai'}.${EXT[mimeType] || 'jpg'}` }
+}
+
 async function saveResult(id, owner, image) {
   requireStorage()
   const row = await load(id, owner)
@@ -171,4 +184,4 @@ const label = (req, fallback) => (typeof req.body?.template_name === 'string' &&
 /** Add a `generation` field to a response payload when storage produced one. */
 const attach = (payload, generation) => (generation ? { ...payload, generation } : payload)
 
-module.exports = { enabled, begin, linkTask, complete, completeByTask, create, get, saveResult, list, remove, discard, label, attach }
+module.exports = { enabled, begin, linkTask, complete, completeByTask, create, get, download, saveResult, list, remove, discard, label, attach }
