@@ -13,4 +13,12 @@ function itemById(id) {
 
 const isPlan = (id) => plans.some((p) => p.id === id)
 
-module.exports = { itemById, isPlan }
+/** Is this item sold in rupees? When it has a rupee price (a Razorpay plan for it is found or created automatically). */
+const inrAvailable = (item) => !!item.inr
+
+/** The item priced for the visitor's currency: a copy with `price` and `currency` of 'INR' (rupees) or 'USD' (dollars). Falls back to dollars when there is no rupee price / plan. */
+function localize(item, currency) {
+  return currency === 'INR' && inrAvailable(item) ? { ...item, price: item.inr, currency: 'INR' } : item
+}
+
+module.exports = { itemById, isPlan, localize }

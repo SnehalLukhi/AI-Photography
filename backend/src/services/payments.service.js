@@ -6,7 +6,7 @@ const packs = require('../config/packs')
 const offers = require('../config/offers')
 const offerRules = require('./offers.service')
 const wallet = require('./wallet.service')
-const { itemById, isPlan } = require('./catalog')
+const { itemById, isPlan, localize } = require('./catalog')
 const razorpay = require('./razorpay.client')
 const subscriptions = require('./subscriptions.service')
 const { query, tx } = require('../db')
@@ -38,25 +38,24 @@ async function listPurchases(userId, limit = 50) {
 }
 
 /**
- * Creates the Razorpay order for an item. The price is worked out HERE: the list price, or - when an offer is active for this user and this item (config/offers.js) -
+ * Creates the Razorpay order for an item, in the visitor's currency (`currency`: 'INR' for visitors in India, else 'USD'; chosen by the server from the visitor's country). The price is worked out HERE: the list price, or - when an offer is active for this user and this item (config/offers.js) -
  * the discounted price. Buying by an offer id uses that offer (400 OFFER_EXPIRED when it no longer applies to the user).
  * @returns what the browser needs to open the payment window
  */
 async function createCheckout(user, itemId, currency) {
   const userId = user.id
   const direct = offers.find((o) => o.id === itemId)
-  if (direct && !offerRules.isActive(direct, user)) throw new AppError(400, 'OFFER_EXPIRED', 'This offer has expired.')
-  const item = itemById(itemId)
-  const offer = direct || offerRules.bestFor(item.id, user)
-  if (currency !== undefined && currency !== CURRENCY) throw new AppError(400, 'INVALID_CURRENCY', `Prices are in ${CURRENCY} only.`)
+  const item = localize(itemById(itemId), currency === 'INR' ? 'INR' : 'USD')
+  if (direct && !offerRules.isActive(direct, user, { currency: item.currency })) throw new AppError(400, 'OFFER_EXPIRED', 'This offer has expired.')
+  const offer = direct || offerRules.bestFor(item.id, user, item.currency)
   if (!isConfigured()) throw new AppError(503, 'PAYMENTS_NOT_CONFIGURED', 'Online payments are not available yet. Please check back soon.')
-  if (subscriptions.planIdFor(item.id)) return subscriptions.createSubscription(user, item, offer) // plans with a Razorpay plan id renew automatically
+  if (subscriptions.planIdFor(item)) return subscriptions.createSubscription(user, item, offer) // plans with a Razorpay plan id renew automatically
   const listAmount = Math.round(item.price * 100)
   const amount = offer ? offerRules.discountedCents(item, offer.percentOff) : listAmount
-  const order = await razorpay.call('POST', '/orders', { amount, currency: CURRENCY, receipt: `rcpt_${crypto.randomBytes(8).toString('hex')}`, notes: { user_id: userId, item_id: item.id, ...(offer ? { offer_id: offer.id } : {}) } })
+  const order = await razorpay.call('POST', '/orders', { amount, currency: item.currency, receipt: `rcpt_${crypto.randomBytes(8).toString('hex')}`, notes: { user_id: userId, item_id: item.id, ...(offer ? { offer_id: offer.id } : {}) } })
   if (!order.id) throw new AppError(502, 'PAYMENT_PROVIDER_ERROR', 'The payment could not be started. Please try again later.')
-  await query('INSERT INTO payments (order_id, user_id, item_id, amount, currency, offer_id, list_amount) VALUES ($1, $2, $3, $4, $5, $6, $7)', [order.id, userId, item.id, amount, CURRENCY, offer ? offer.id : null, listAmount])
-  return { kind: 'order', orderId: order.id, amount, currency: CURRENCY, keyId: env.razorpay.keyId, name: env.brandName, description: `${item.name} - ${item.coins.toLocaleString('en-US')} coins${offer ? ` (${offer.percentOff}% off)` : ''}` }
+  await query('INSERT INTO payments (order_id, user_id, item_id, amount, currency, offer_id, list_amount) VALUES ($1, $2, $3, $4, $5, $6, $7)', [order.id, userId, item.id, amount, item.currency, offer ? offer.id : null, listAmount])
+  return { kind: 'order', orderId: order.id, amount, currency: item.currency, keyId: env.razorpay.keyId, name: env.brandName, description: `${item.name} - ${item.coins.toLocaleString('en-US')} coins${offer ? ` (${offer.percentOff}% off)` : ''}` }
 }
 
 /** Marks the order paid and adds its coins, exactly once (a repeated call - webhook retry, or webhook after the browser check - changes nothing). */

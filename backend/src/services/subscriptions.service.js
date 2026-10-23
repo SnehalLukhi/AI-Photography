@@ -3,7 +3,7 @@ const AppError = require('../utils/AppError')
 const plans = require('../config/plans')
 const wallet = require('./wallet.service')
 const razorpay = require('./razorpay.client')
-const { itemById } = require('./catalog')
+const { itemById, localize } = require('./catalog')
 const { query, tx } = require('../db')
 
 /**
@@ -13,9 +13,44 @@ const { query, tx } = require('../db')
  *                           it records the payment and adds the plan's coins ONCE per payment id
  *   3. cancel               stops renewals at the end of the paid period (the customer keeps the plan until then)
  */
-const TOTAL_COUNT = { weekly: 260, monthly: 60, yearly: 10 } // billing cycles Razorpay may charge in total (5 years, 5 years, 10 years)
+const TOTAL_COUNT = { weekly: 100, monthly: 60, yearly: 10, test: 4 } // billing cycles Razorpay may charge in total: Razorpay allows at most 100 for these plans (weekly 100 = about 2 years, monthly 60 = 5 years, yearly 10 = 10 years); after that the customer subscribes again
 const LIVE = ['active', 'authenticated', 'pending']
-const planIdFor = (itemId) => env.razorpay.planIds[itemId] || ''
+/**
+ * Is this item sold as a subscription, and with which Razorpay plan? A plan is a subscription when its dollar plan id is set in .env (RAZORPAY_PLAN_*).
+ * Returns the id for dollars, the optional override for rupees (RAZORPAY_PLAN_*_INR), or 'auto' for rupees: resolvePlanId() then finds / creates the rupee plan. '' = not a subscription.
+ */
+const planIdFor = (item) => {
+  if (item.test) return env.razorpay.planIds.test || ''
+  const usd = env.razorpay.planIds[item.id]
+  if (!usd) return ''
+  return item.currency === 'INR' ? env.razorpay.planIdsInr[item.id] || 'auto' : usd
+}
+
+// Razorpay plans are looked up (or created once) by what they are: period, currency and amount - so no plan id has to be configured for the rupee versions.
+const planCache = new Map()
+async function findOrCreatePlan(item) {
+  const amount = Math.round(item.price * 100)
+  const name = item.currency === 'INR' ? `${item.name} (INR)` : item.name
+  for (let skip = 0; skip < 500; skip += 100) {
+    const page = await razorpay.call('GET', `/plans?count=100&skip=${skip}`)
+    const found = (page.items || []).find((p) => p.period === item.period && p.interval === 1 && p.item?.currency === item.currency && p.item?.amount === amount && String(p.item?.name || '').startsWith(item.name))
+    if (found) return found.id
+    if ((page.items || []).length < 100) break
+  }
+  const created = await razorpay.call('POST', '/plans', { period: item.period, interval: 1, item: { name, amount, currency: item.currency, description: `${item.name} (${item.currency})` } })
+  if (!created.id) throw new AppError(502, 'PAYMENT_PROVIDER_ERROR', 'The payment could not be started. Please try again later.')
+  console.log(`[razorpay] created plan ${created.id} for ${name}`)
+  return created.id
+}
+
+/** The plan id to subscribe to (the configured id, or the found / created plan for the rupee prices). */
+async function resolvePlanId(item) {
+  const id = planIdFor(item)
+  if (id !== 'auto') return id
+  const key = `${item.id}:${item.currency}:${item.price}`
+  if (!planCache.has(key)) planCache.set(key, findOrCreatePlan(item).catch((e) => { planCache.delete(key); throw e })) // one lookup at a time; a failure is retried next time
+  return planCache.get(key)
+}
 
 const view = (row) => {
   const item = plans.find((p) => p.id === row.item_id)
@@ -34,11 +69,12 @@ async function current(userId) {
 }
 
 async function createSubscription(user, item, offer) {
+  await wallet.expireEnded(user.id) // coins of a plan that has ended go before the new plan's coins arrive
   if (await current(user.id)) throw new AppError(409, 'ALREADY_SUBSCRIBED', 'You already have an active plan. Cancel it in your profile before choosing another.')
   const sub = await razorpay.call('POST', '/subscriptions', {
-    plan_id: planIdFor(item.id), total_count: TOTAL_COUNT[item.id] || 12, quantity: 1, customer_notify: 1,
+    plan_id: await resolvePlanId(item), total_count: TOTAL_COUNT[item.id] || 12, quantity: 1, customer_notify: 1,
     notes: { user_id: user.id, item_id: item.id, ...(offer ? { offer_id: offer.id } : {}) },
-    ...(offer?.razorpayOfferId ? { offer_id: offer.razorpayOfferId } : {}),
+    ...((item.currency === 'INR' ? offer?.razorpayOfferIdInr : offer?.razorpayOfferId) ? { offer_id: item.currency === 'INR' ? offer.razorpayOfferIdInr : offer.razorpayOfferId } : {}),
   })
   if (!sub.id) throw new AppError(502, 'PAYMENT_PROVIDER_ERROR', 'The payment could not be started. Please try again later.')
   await query('INSERT INTO subscriptions (subscription_id, user_id, item_id, offer_id) VALUES ($1, $2, $3, $4)', [sub.id, user.id, item.id, offer ? offer.id : null])
@@ -52,14 +88,14 @@ function fulfilCharge(subscriptionId, payment, subEntity) {
   return tx(async (db) => {
     const sub = (await db.query('SELECT * FROM subscriptions WHERE subscription_id = $1 FOR UPDATE', [subscriptionId])).rows[0]
     if (!sub) throw new AppError(404, 'SUBSCRIPTION_NOT_FOUND', 'Subscription not found.')
-    const item = itemById(sub.item_id)
+    const item = localize(itemById(sub.item_id), payment.currency) // the regular price in the currency that was charged
     const listAmount = Math.round(item.price * 100)
     const discounted = payment.amount < listAmount
     const ins = await db.query(
       "INSERT INTO payments (order_id, user_id, item_id, amount, currency, status, payment_id, subscription_id, offer_id, list_amount, paid_at) VALUES ($1, $2, $3, $4, $5, 'paid', $1, $6, $7, $8, now()) ON CONFLICT DO NOTHING RETURNING order_id",
       [payment.id, sub.user_id, item.id, payment.amount, payment.currency, subscriptionId, discounted ? sub.offer_id : null, listAmount])
     const credited = ins.rows.length > 0
-    if (credited) await wallet.credit(sub.user_id, item.coins, 'purchase', payment.id, db)
+    if (credited) await wallet.creditPlan(sub.user_id, item.coins, payment.id, db)
     await db.query(
       "UPDATE subscriptions SET status = CASE WHEN status IN ('cancelled', 'completed', 'halted') THEN status ELSE 'active' END, paid_count = paid_count + $2, current_end = COALESCE($3::timestamptz, current_end), charge_at = COALESCE($4::timestamptz, charge_at) WHERE subscription_id = $1",
       [subscriptionId, credited ? 1 : 0, toTs(subEntity?.current_end), toTs(subEntity?.charge_at)])

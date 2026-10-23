@@ -169,7 +169,7 @@ const Claim = ({ small }) => {
   return (
   <button type="button" onClick={openLogin} className={`group btn-grad shrink-0 ${small ? '!h-8 !gap-1.5 !px-3 !py-0 !text-[11px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}>
     <SparkIcon className="size-3.5 text-white transition-transform group-hover:scale-110" />
-    <span className="whitespace-nowrap">Claim 50 Coins</span>
+    <span className="whitespace-nowrap">Claim 100 Coins</span>
   </button>
   )
 }
@@ -245,7 +245,7 @@ export default function Header({ generating = false }) {
                   {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#A0A0A0] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
                   {signedIn ? <CoinBadge className="!mt-2 w-full" /> : (
                   <button type="button" onClick={openLogin} className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#FF55AA] hover:bg-[#FF55AA]/20">
-                    <SparkIcon className="size-3.5 text-[#FF55AA]" /><span className="whitespace-nowrap">Claim 50 Coins</span>
+                    <SparkIcon className="size-3.5 text-[#FF55AA]" /><span className="whitespace-nowrap">Claim 100 Coins</span>
                   </button>
                   )}
                 </div>
@@ -262,7 +262,7 @@ export default function Header({ generating = false }) {
         <div className="flex items-center gap-2">
           {signedIn ? <><CoinBadge className="!h-7 !min-w-0 !gap-1.5 !px-2" /><ProfileMenu compact /></> : (
             <>
-              <button type="button" onClick={openLogin} aria-label="Claim 50 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
+              <button type="button" onClick={openLogin} aria-label="Claim 100 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
                 <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] object-contain" />
               </button>
               <button type="button" onClick={openLogin} aria-label="Log in" className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-white transition-transform active:scale-95">

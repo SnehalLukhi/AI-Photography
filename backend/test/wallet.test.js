@@ -45,11 +45,11 @@ test('a new account gets the 50 free coins; plans are public; wallet needs a log
   assert.deepEqual(w.history.map((x) => [x.reason, x.delta]), [['signup_bonus', 50]])
 
   const plans = await (await get('/plans')).json()
-  assert.deepEqual(plans.plans.map((p) => [p.id, p.price, p.currency, p.coins]), [['weekly', 4.99, 'USD', 110], ['monthly', 9.99, 'USD', 220], ['yearly', 39.99, 'USD', 2700]])
+  assert.deepEqual(plans.plans.map((p) => [p.id, p.price, p.currency, p.coins]), [['weekly', 4.99, 'USD', 1100], ['monthly', 9.99, 'USD', 2200], ['yearly', 39.99, 'USD', 27000]])
   assert.equal((await get('/wallet')).status, 401)
 
   const packs = await (await get('/coin-packs')).json()
-  assert.deepEqual(packs.packs.map((p) => [p.id, p.coins, p.price, p.currency]), [['starter', 45, 2.99, 'USD'], ['small', 90, 4.99, 'USD'], ['popular', 195, 9.99, 'USD'], ['value', 420, 19.99, 'USD'], ['mega', 1080, 49.99, 'USD']])
+  assert.deepEqual(packs.packs.map((p) => [p.id, p.coins, p.price, p.currency]), [['starter', 450, 2.99, 'USD'], ['small', 900, 4.99, 'USD'], ['popular', 1950, 9.99, 'USD'], ['value', 4200, 19.99, 'USD'], ['mega', 10800, 49.99, 'USD']])
   assert.equal(packs.costPerGeneration, 15)
 })
 
@@ -94,14 +94,14 @@ test('checkout is refused until a payment gateway is connected; a verified payme
   assert.equal((await res.json()).error.code, 'PAYMENTS_NOT_CONFIGURED')
   assert.equal((await post('/wallet/checkout', { planId: 'gold' }, u.token)).status, 400)
   assert.equal((await post('/wallet/checkout', { itemId: 'popular', currency: 'USD' }, u.token)).status, 503) // coin packs too
-  assert.equal((await post('/wallet/checkout', { itemId: 'popular', currency: 'INR' }, u.token)).status, 400)
+  assert.equal((await post('/wallet/checkout', { itemId: 'popular', currency: 'INR' }, u.token)).status, 503) // the currency is chosen by the server (from the visitor's country), not by the browser
   assert.equal(await coins(u.token), 50) // nothing was credited for free
 
   assert.equal(await payments.grantPurchase(u.id, 'weekly', 'pay_123'), true)
   assert.equal(await payments.grantPurchase(u.id, 'weekly', 'pay_123'), false) // same payment again (webhook retry)
-  assert.equal(await coins(u.token), 160)
-  assert.equal(await payments.grantPurchase(u.id, 'popular', 'pay_456'), true) // a coin pack: +195
-  assert.equal(await coins(u.token), 355)
+  assert.equal(await coins(u.token), 1150)
+  assert.equal(await payments.grantPurchase(u.id, 'popular', 'pay_456'), true) // a coin pack: +1950
+  assert.equal(await coins(u.token), 3100)
   assert.throws(() => payments.grantPurchase(u.id, 'weekly', ''), { code: 'INVALID_PAYMENT' })
-  assert.equal(await wallet.balance(u.id), 355)
+  assert.equal(await wallet.balance(u.id), 3100)
 })

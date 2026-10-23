@@ -34,6 +34,8 @@ export function setAuthToken(value) {
   token = value || ''
   try { token ? localStorage.setItem(TOKEN_KEY, token) : localStorage.removeItem(TOKEN_KEY) } catch { /* ignore */ }
 }
+// Local development only: open any page with ?currency=INR (or USD) to see / pay in that currency (the backend ignores it in production, where the visitor's country decides).
+const devCurrency = () => { try { const c = import.meta.env.DEV ? new URLSearchParams(window.location.search).get('currency') : ''; return c ? `?currency=${encodeURIComponent(c)}` : '' } catch { return '' } }
 const headers = () => (token ? { Authorization: `Bearer ${token}` } : {})
 const GIVE_UP_MS = 5 * 60 * 1000
 
@@ -259,7 +261,7 @@ function pickImage(body) {
 
 /** Coin plans for the Pricing page: { plans: [{ id, name, price, currency, per, coins, popular? }], costPerGeneration }. Public. */
 export async function getPlans() {
-  const res = await fetch(`${API_BASE}/api/plans`, { headers: headers() }) // the token lets the backend add the offers meant for this user
+  const res = await fetch(`${API_BASE}/api/plans${devCurrency()}`, { headers: headers() }) // the token lets the backend add the offers meant for this user
   const body = await readJson(res)
   if (!res.ok) throw failure(body, res)
   return body
@@ -283,7 +285,7 @@ export async function redeemCode(code) {
 
 /** One-time coin packs for the Get Coins page: { packs: [{ id, name, coins, price (USD), currency, popular? }], costPerGeneration }. Public. */
 export async function getCoinPacks() {
-  const res = await fetch(`${API_BASE}/api/coin-packs`, { headers: headers() })
+  const res = await fetch(`${API_BASE}/api/coin-packs${devCurrency()}`, { headers: headers() })
   const body = await readJson(res)
   if (!res.ok) throw failure(body, res)
   return body
@@ -322,7 +324,7 @@ export async function getPurchases() {
  * checks Razorpay's signature and adds the coins. Resolves with { credited, balance, purchase }; rejects with a message when the payment is cancelled, fails, or payments are not set up (503).
  */
 export async function buyCoins(itemId, { name = '', email = '' } = {}) {
-  const [{ order }, loaded] = await Promise.all([post('/api/wallet/checkout', { itemId }), loadRazorpay()])
+  const [{ order }, loaded] = await Promise.all([post(`/api/wallet/checkout${devCurrency()}`, { itemId }), loadRazorpay()])
   if (!loaded) throw new Error('Could not load the payment window. Check your connection and try again.')
   const subscription = order.kind === 'subscription' // an auto-renewing plan: Razorpay's window gets the subscription id (the amount belongs to the plan)
   return new Promise((resolve, reject) => {
@@ -358,7 +360,7 @@ export async function cancelSubscription() {
  * would only open it in a tab), so this fetches it with the login token and saves it under the file name the backend gives.
  */
 export async function downloadGeneration(id, which = 'result') {
-  const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}/download?which=${which}`, { headers: headers() })
+  const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}/download`, { headers: headers() })
   if (!res.ok) throw failure(await readJson(res), res)
   const filename = /filename="([^"]+)"/.exec(res.headers.get('content-disposition') || '')?.[1] || `pictrify-${which}.jpg`
   const url = URL.createObjectURL(await res.blob())

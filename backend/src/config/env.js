@@ -57,6 +57,10 @@ module.exports = {
     rateLimitMax: int(process.env.AUTH_RATE_LIMIT_MAX, 20), // sign-in attempts per IP per 15 minutes
   },
 
+  // Visitors in India are charged in rupees, everyone else in dollars. The country comes from the hosting platform (Vercel: x-vercel-ip-country). DEFAULT_CURRENCY is used when no country is known (local development): USD or INR.
+  defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase() === 'INR' ? 'INR' : 'USD',
+  // Visitors in India are charged in rupees, everyone else in dollars. The country comes from the hosting platform (Vercel: x-vercel-ip-country). DEFAULT_CURRENCY is used when no country is known (local development): USD or INR.
+  defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase() === 'INR' ? 'INR' : 'USD',
   brandName: (process.env.BRAND_NAME || 'Pictrify').trim(), // the name of the site: shown at the top of Razorpay's payment window
 
   // Razorpay (payments for coin packs / plans). Without the keys checkout answers 503.
@@ -65,12 +69,14 @@ module.exports = {
     keySecret: (process.env.RAZORPAY_KEY_SECRET || '').trim(), // secret: server only
     webhookSecret: (process.env.RAZORPAY_WEBHOOK_SECRET || '').trim(), // the secret you type in Razorpay Dashboard > Webhooks
     // Razorpay Subscription Plans (Dashboard > Subscriptions > Plans, ids like plan_xxx). A plan with an id here is sold as an auto-renewing subscription; without one it is a one-time purchase.
-    planIds: { weekly: (process.env.RAZORPAY_PLAN_WEEKLY || '').trim(), monthly: (process.env.RAZORPAY_PLAN_MONTHLY || '').trim(), yearly: (process.env.RAZORPAY_PLAN_YEARLY || '').trim() },
+    planIds: { weekly: (process.env.RAZORPAY_PLAN_WEEKLY || '').trim(), monthly: (process.env.RAZORPAY_PLAN_MONTHLY || '').trim(), yearly: (process.env.RAZORPAY_PLAN_YEARLY || '').trim(), test: (process.env.RAZORPAY_PLAN_TEST || '').trim() },
+    // OPTIONAL: the same plans in rupees. Normally not needed - the rupee plan is found (or created once) in Razorpay automatically from the INR prices of config/plans.js.
+    planIdsInr: { weekly: (process.env.RAZORPAY_PLAN_WEEKLY_INR || '').trim(), monthly: (process.env.RAZORPAY_PLAN_MONTHLY_INR || '').trim(), yearly: (process.env.RAZORPAY_PLAN_YEARLY_INR || '').trim() },
   },
 
   coins: {
-    perGeneration: int(process.env.COIN_COST_PER_GENERATION, 15), // coins one generation costs
-    signupBonus: int(process.env.SIGNUP_BONUS_COINS, 50), // free coins for a new account
+    perGeneration: int(process.env.COIN_COST_PER_GENERATION, 150), // coins one generation costs
+    signupBonus: int(process.env.SIGNUP_BONUS_COINS, 100), // free coins for a new account
   },
 
   upload: {

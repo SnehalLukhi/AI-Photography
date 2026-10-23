@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { getPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
+import { formatPrice } from '../lib/format.js'
 import usePopupExit from './usePopupExit.js'
 import StarBurst from './StarBurst.jsx'
 
 const OFFER_WINDOW_MS = 24 * 60 * 60 * 1000 // the offer runs for 24 hours from the first time it is shown (kept per user in this browser)
-const money = (amount, currency) => new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount)
+const money = formatPrice
 const pad = (n) => String(n).padStart(2, '0')
 
 /** When this user's offer ends (ms since epoch): set the first time the popup is shown, then remembered. */

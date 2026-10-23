@@ -4,8 +4,9 @@ import { brandImages } from '../data/images.js'
 import { SparkIcon } from '../components/Header.jsx'
 import { useStudio } from '../context/StudioContext.jsx'
 import { getCoinPacks, buyCoins } from '../lib/aiPhotography.js'
+import { formatPrice } from '../lib/format.js'
 
-const usd = (amount) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
+const usd = (amount, currency = 'USD') => formatPrice(amount, currency) // dollars, or rupees for visitors in India
 
 // The packs come from the backend; the last answer is kept in this browser so the cards appear at once on the next visit while a fresh copy loads.
 const CACHE_KEY = 'pictrify-coin-packs'
@@ -112,8 +113,8 @@ export default function Coins() {
                 {p.popular && <span className="grad-alt-bg absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full px-3 py-1 text-[10px] uppercase tracking-wide sm:text-[11px]">Most Popular</span>}
                 <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white max-sm:col-start-1 max-sm:row-start-1 sm:text-[22px]`}>{p.name}</h3>
                 <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1 max-sm:col-start-2 max-sm:row-span-2 max-sm:row-start-1 max-sm:mt-0 max-sm:justify-end">
-                  <p className="text-[34px] font-bold leading-none text-white max-sm:text-[28px] sm:text-[40px]">{usd(p.offer ? p.offer.price : list)}</p>
-                  {p.offer && <><span className="text-[15px] text-[#A0A0A0] line-through">{usd(list)}</span><span className="rounded-md bg-[#FF55AA]/15 px-2 py-0.5 text-[11px] font-bold text-[#FF88C7]">{p.offer.discountPercent}% OFF</span></>}
+                  <p className="text-[34px] font-bold leading-none text-white max-sm:text-[28px] sm:text-[40px]">{usd(p.offer ? p.offer.price : list, p.currency)}</p>
+                  {p.offer && <><span className="text-[15px] text-[#A0A0A0] line-through">{usd(list, p.currency)}</span><span className="rounded-md bg-[#FF55AA]/15 px-2 py-0.5 text-[11px] font-bold text-[#FF88C7]">{p.offer.discountPercent}% OFF</span></>}
                 </div>
                 <div className="mt-4 flex items-center gap-2.5 max-sm:col-start-1 max-sm:row-start-2 max-sm:mt-0 max-sm:gap-2">
                   <img src={brandImages.coin} alt="" width="44" height="44" className="size-9 max-sm:size-7 shrink-0 object-contain drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]" />

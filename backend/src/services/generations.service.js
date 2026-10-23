@@ -6,9 +6,9 @@ const ailab = require('./ailab.service')
 const { sniffMime } = require('./image.service')
 
 /**
- * One "generation" = the user's original photo + the AI result.
- *   DigitalOcean Spaces: ONLY the two images, public:  generations/<id>/original.<ext>  and  generations/<id>/result.<ext>
- *   PostgreSQL (table `generations`): who owns it, the template, the AILabTools task id and the two image keys.
+ * One "generation" = the AI result of one photo. The user's original photo is NOT stored here: the browser keeps it (IndexedDB) for My Creations.
+ *   DigitalOcean Spaces: ONLY the AI image, public:  generations/<id>/result.<ext>
+ *   PostgreSQL (table `generations`): who owns it, the template, the AILabTools task id and the result image key.
  */
 const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }
 const ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
@@ -27,29 +27,26 @@ async function load(id, owner) {
   return row
 }
 
-/** Shape returned to the frontend: both images as permanent public URLs. */
+/** Shape returned to the frontend: the AI image as a permanent public URL (`original` stays null: the original photo lives in the user's browser). */
 function toView(row) {
   const image = (key, mimeType) => (key ? { url: storage.publicUrl(key), mimeType } : null)
   return {
     id: row.id, status: row.result_key ? 'completed' : 'pending', createdAt: new Date(row.created_at).toISOString(), api: row.api, template: row.template || null,
-    original: image(row.original_key, row.original_mime), result: image(row.result_key, row.result_mime),
+    original: null, result: image(row.result_key, row.result_mime),
   }
 }
 
 const keyFor = (id, kind, mimeType) => `generations/${id}/${kind}.${EXT[mimeType] || 'bin'}`
 
-/** Save the original photo and start a generation record. Never throws: returns null when storage is off or fails (generation still works). */
-async function begin(image, { api, template, owner } = {}) {
+/** Start a generation record (the original photo is not stored). Never throws: returns null when storage is off or the record cannot be made (generation still works). */
+async function begin(_image, { api, template, owner } = {}) {
   if (!enabled() || !owner) return null
   const id = crypto.randomUUID()
-  const key = keyFor(id, 'original', image.mimeType)
   try {
-    await storage.putImage(key, image.buffer, image.mimeType)
-    await query('INSERT INTO generations (id, user_id, api, template, original_key, original_mime) VALUES ($1, $2, $3, $4, $5, $6)', [id, owner, api ?? null, template ?? null, key, image.mimeType])
+    await query('INSERT INTO generations (id, user_id, api, template) VALUES ($1, $2, $3, $4)', [id, owner, api ?? null, template ?? null])
     return id
   } catch (e) {
-    console.error('[storage] could not save the original image', e.message)
-    storage.deleteObject(key).catch(() => {}) // do not leave an image without a record
+    console.error('[storage] could not start the generation record', e.message)
     return null
   }
 }
@@ -122,17 +119,16 @@ async function get(id, owner) {
   return toView(await load(id, owner))
 }
 
-/** One of the two images of a generation as a file to download: { buffer, mimeType, filename }. `which` = 'result' (the AI image, default) | 'original'. */
-async function download(id, owner, which = 'result') {
+/** The AI image of a generation as a file to download: { buffer, mimeType, filename }. */
+async function download(id, owner) {
   requireStorage()
   const row = await load(id, owner)
-  const original = which === 'original'
-  const key = original ? row.original_key : row.result_key
-  const mimeType = original ? row.original_mime : row.result_mime
+  const key = row.result_key
+  const mimeType = row.result_mime
   const buffer = key ? await storage.getObject(key) : null
-  if (!buffer) throw new AppError(404, 'IMAGE_NOT_FOUND', original ? 'The original photo is not available.' : 'The AI image is not ready yet.')
+  if (!buffer) throw new AppError(404, 'IMAGE_NOT_FOUND', 'The AI image is not ready yet.')
   const name = (row.template || 'creation').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'creation'
-  return { buffer, mimeType, filename: `pictrify-${name}-${original ? 'original' : 'ai'}.${EXT[mimeType] || 'jpg'}` }
+  return { buffer, mimeType, filename: `pictrify-${name}-ai.${EXT[mimeType] || 'jpg'}` }
 }
 
 async function saveResult(id, owner, image) {

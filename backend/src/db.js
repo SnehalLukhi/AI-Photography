@@ -76,6 +76,9 @@ const SCHEMA = `
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
   CREATE INDEX IF NOT EXISTS subscriptions_user ON subscriptions (user_id, created_at DESC);
+  -- coins that came from a plan and are still unspent: they are taken away when the plan ends (coins from packs / codes / signup stay)
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_coins INTEGER NOT NULL DEFAULT 0;
+  ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS coins_expired BOOLEAN NOT NULL DEFAULT false;
   CREATE INDEX IF NOT EXISTS payments_user ON payments (user_id, created_at DESC);
   -- one row per generation: the user's original photo + the AI result (both are public images in the Space; only their keys are kept here)
   CREATE TABLE IF NOT EXISTS generations (
@@ -90,6 +93,8 @@ const SCHEMA = `
     result_mime TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
+  ALTER TABLE generations ALTER COLUMN original_key DROP NOT NULL; -- the original photo is no longer stored on the server (it stays in the user's browser)
+  ALTER TABLE generations ALTER COLUMN original_mime DROP NOT NULL;
   CREATE INDEX IF NOT EXISTS generations_user ON generations (user_id, created_at DESC, id DESC);
   CREATE INDEX IF NOT EXISTS generations_task ON generations (task_id);
   -- templates a user has liked: the primary key makes a second like of the same template impossible

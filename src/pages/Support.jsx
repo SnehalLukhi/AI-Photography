@@ -36,7 +36,7 @@ const topics = [
     'Templates are grouped into categories such as 80’s & 90’s, Cartoon, LinkedIn Headshot, Old Money, Beard and Hairstyle.',
   ]],
   ['Coins & Billing', 'Coins, packs and payments.', [
-    'Every generation costs coins (15 coins at the moment). New accounts get free coins to start.',
+    'Every generation costs coins (150 coins at the moment). New accounts get free coins to start.',
     'If a generation fails, the coins are returned to your balance automatically.',
     'Need more? Open Get More Coins and buy a one-time coin pack. Coins do not expire.',
     'Payments are processed securely through Razorpay. Your purchases are listed on the Transactions page, which you can open from the profile menu.',

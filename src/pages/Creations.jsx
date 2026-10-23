@@ -3,33 +3,43 @@ import { Link } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import PImage from '../components/PImage.jsx'
 import { listGenerations, deleteGeneration, downloadGeneration } from '../lib/aiPhotography.js'
+import { getOriginal, deleteOriginal } from '../lib/localPhotos.js'
 import { SparkIcon } from '../components/Header.jsx'
 
 const toCreation = (g) => ({
-  id: g.id, generationId: g.id, type: 'image', name: g.template || 'AI photo', image: g.result?.url, original: g.original?.url,
+  id: g.id, generationId: g.id, type: 'image', name: g.template || 'AI photo', image: g.result?.url,
   date: new Date(g.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }),
 })
 
 /** Original photo next to the AI-generated image. */
 function Compare({ item, onClose, onDelete }) {
+  const [original, setOriginal] = useState(item.original || '') // the original photo is kept in THIS browser only (null elsewhere)
+  useEffect(() => {
+    if (item.original || !item.generationId) return
+    let url, alive = true
+    getOriginal(item.generationId).then((blob) => { if (alive && blob) { url = URL.createObjectURL(blob); setOriginal(url) } })
+    return () => { alive = false; if (url) URL.revokeObjectURL(url) }
+  }, [item.generationId, item.original])
   const [busy, setBusy] = useState('') // '' | 'result' | 'original' | 'delete': what is running
   const [error, setError] = useState('')
   const save = async (which) => {
     setBusy(which); setError('')
-    try { await downloadGeneration(item.generationId, which) } catch (e) { setError(e.message || 'Could not download the image. Please try again.') }
+    try {
+      if (which === 'original') { const a = Object.assign(document.createElement('a'), { href: original, download: `pictrify-${item.generationId}-original.jpg` }); document.body.appendChild(a); a.click(); a.remove() } else await downloadGeneration(item.generationId)
+    } catch (e) { setError(e.message || 'Could not download the image. Please try again.') }
     setBusy('')
   }
   const del = async () => {
-    if (!window.confirm('Delete this creation? Both photos (the original and the AI image) will be permanently removed from storage.')) return
+    if (!window.confirm('Delete this creation? The AI image will be permanently removed.')) return
     setBusy('delete'); setError('')
     try { await onDelete() } catch (e) { setError(e.message || 'Could not delete this creation. Please try again.'); setBusy('') } // on success the popup closes
   }
   return (
     <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0A0809]/85 px-4 pb-6 pt-24 backdrop-blur md:pt-28" onClick={onClose}>
-      <div className="welcome-card w-full max-w-3xl rounded-2xl border border-white/15 bg-[#2B2B2B] p-4 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className={`welcome-card w-full ${original ? 'max-w-3xl' : 'max-w-xs'} rounded-2xl border border-white/15 bg-[#2B2B2B] p-4 text-center shadow-2xl`} onClick={(e) => e.stopPropagation()}>
         <p className="mb-3 font-semibold">{item.name}</p>
-        <div className="grid grid-cols-2 gap-3">
-          {[['Original', item.original], ['AI generated', item.image]].map(([label, src]) => (
+        <div className={original ? 'grid grid-cols-2 gap-3' : 'mx-auto max-w-[200px]'}>{/* no saved original (other browser / device): just the AI image */}
+          {[...(original ? [['Original', original]] : []), ['AI generated', item.image]].map(([label, src]) => (
             <figure key={label}>
               <div className="aspect-[9/16] overflow-hidden rounded-xl border border-white/15 bg-[#0A0809]">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#A0A0A0]">Not available</div>}</div>
               <figcaption className="mt-1.5 text-xs text-[#A0A0A0]">{label}</figcaption>
@@ -42,7 +52,7 @@ function Compare({ item, onClose, onDelete }) {
           {item.generationId && <button type="button" className="btn-dark disabled:opacity-60" disabled={!!busy} onClick={del}>{busy === 'delete' ? 'Deleting…' : 'Delete'}</button>}
           <button className="btn-dark" onClick={onClose}>Close</button>
         </div>
-        {item.original && item.generationId && <button type="button" disabled={!!busy} onClick={() => save('original')} className="mt-3 cursor-pointer text-xs text-[#A0A0A0] underline hover:text-white disabled:opacity-60">{busy === 'original' ? 'Downloading…' : 'Download original photo'}</button>}
+        {original && <button type="button" disabled={!!busy} onClick={() => save('original')} className="mt-3 cursor-pointer text-xs text-[#A0A0A0] underline hover:text-white disabled:opacity-60">{busy === 'original' ? 'Downloading…' : 'Download original photo'}</button>}
       </div>
     </div>
   )
@@ -89,7 +99,8 @@ export default function Creations() {
     setLoadingMore(false)
   }
   const remove = async (c) => {
-    await deleteGeneration(c.generationId) // removes both images from storage and the record (it throws when that fails: the popup shows the message)
+    await deleteGeneration(c.generationId) // removes the AI image from storage and the record
+    deleteOriginal(c.generationId) // and the original photo kept in this browser (it throws when that fails: the popup shows the message)
     setCreations((cur) => cur.filter((x) => x.id !== c.id)); setOpen(null)
   }
   return (
@@ -119,7 +130,7 @@ export default function Creations() {
           ) : (
             <div className="mt-8 grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
               {list.map((c) => (
-                <div key={c.id} onClick={() => c.original && setOpen(c)} className={`group relative aspect-[9/16] animate-fade-in overflow-hidden rounded-[20px] border border-white/5 bg-[#2B2B2B] transition-transform duration-300 hover:-translate-y-1 ${c.original ? 'cursor-pointer' : ''}`}>
+                <div key={c.id} onClick={() => setOpen(c)} className="group relative aspect-[9/16] animate-fade-in cursor-pointer overflow-hidden rounded-[20px] border border-white/5 bg-[#2B2B2B] transition-transform duration-300 hover:-translate-y-1">
                   {/* every generated picture fills the whole 9:16 card (cropped evenly, never stretched): results from the AI Photography API are almost 9:16, Cartoon results keep the photo's own shape */}
                   <PImage src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/70 via-transparent to-transparent" />

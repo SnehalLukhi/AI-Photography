@@ -29,7 +29,7 @@ const PREMIUM_DELAY_MS = 2000
 const OFFER_DELAY_MS = 600 // pause between dismissing the premium popup and the special-offer popup
 
 // The welcome-coin amount shown by the Welcome popup (a new account really gets this many coins from the backend: SIGNUP_BONUS_COINS).
-export const WELCOME_COINS = 50
+export const WELCOME_COINS = 100
 
 export function StudioProvider({ children }) {
   const [template, setTemplate] = useState(null)

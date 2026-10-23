@@ -64,7 +64,7 @@ test('paying the discounted order still gives the full coins, and the purchase s
   const { body } = await checkout(u, 'monthly')
   const proof = { orderId: body.order.orderId, paymentId: 'pay_OFF', signature: hmac(KEY_SECRET, `${body.order.orderId}|pay_OFF`) }
   const ok = await (await post('/wallet/verify-payment', proof, u)).json()
-  assert.equal(ok.balance, before + 220) // Monthly Premium = 220 coins, whatever was paid
+  assert.equal(ok.balance, before + 2200) // Monthly Premium = 2200 coins, whatever was paid
   assert.deepEqual([ok.purchase.amount, ok.purchase.listAmount, ok.purchase.offerPercent], [799, 999, 20])
 })
 

@@ -164,7 +164,7 @@ that adds the coins **once per order** (a repeat or a retry changes nothing). Th
 ### Auto-renewing plans (Razorpay Subscriptions)
 Put the Razorpay **plan ids** (`plan_xxx`, from Dashboard > Subscriptions > Plans) in `.env` as `RAZORPAY_PLAN_WEEKLY`, `RAZORPAY_PLAN_MONTHLY`, `RAZORPAY_PLAN_YEARLY` - the plan's price and period must match the site.
 A plan with an id is sold as a subscription (first payment now, then Razorpay charges it every week / month / year); a plan without one, and every coin pack, stays a one-time purchase.
-- **Coins.** The plan's coins (Weekly 110, Monthly 220, Yearly 2,700) are added at the first payment and again at **every renewal**, once per payment id (the browser check and Razorpay's `subscription.charged`
+- **Coins.** The plan's coins (Weekly 1,100, Monthly 2,200, Yearly 27,000) are added at the first payment and again at **every renewal**, once per payment id (the browser check and Razorpay's `subscription.charged`
   webhook both go through the same function, so nothing is counted twice). Every charge appears in the purchase history.
 - **Webhook events** to enable in Razorpay (in addition to `payment.captured`, `order.paid`): `subscription.charged`, `subscription.activated`, `subscription.cancelled`, `subscription.completed`, `subscription.halted`, `subscription.pending`.
 - `GET /api/wallet/subscription` -> the plan the user has now `{ id, name, coins, status, cancelRequested, renewsAt, endsAt }` or `null`; `POST /api/wallet/subscription/cancel` stops the renewals, the plan stays until the paid period ends.
@@ -172,6 +172,16 @@ A plan with an id is sold as a subscription (first payment now, then Razorpay ch
 - `POST /api/wallet/verify-payment` takes `{ subscriptionId, paymentId, signature }` for a subscription (Razorpay signs `<payment_id>|<subscription_id>`).
 - **Offers on a renewing plan** are Razorpay Offers: create the offer in the Razorpay dashboard and put its id in the entry in `config/offers.js` as `razorpayOfferId` (for the first-login Yearly popup: `RAZORPAY_OFFER_YEARLY`).
   An offer on a renewing plan without `razorpayOfferId` is not used. Offers on coin packs and on plans without a plan id still work as before (the server charges the discounted price).
+
+### Prices by country (India in rupees, the rest in dollars)
+The server chooses the currency from the visitor's country (Vercel header `x-vercel-ip-country`; the browser cannot choose): **India = rupees (INR), everywhere else = dollars (USD)**. `GET /api/plans`, `GET /api/coin-packs` and `POST /api/wallet/checkout`
+all use it, so a visitor sees, and is charged, the same price. Local development has no country: set `DEFAULT_CURRENCY=INR` in `.env` to try the rupee prices.
+- **Prices.** Dollar prices are `price` and rupee prices are `inr` in `src/config/plans.js` and `src/config/packs.js` (Plans: 399 / 799 / 3,999; packs: 149 / 249 / 499 / 999 / 2,499).
+- **Coin packs** (one-time orders) are charged in rupees automatically for India (INR orders, amount in paise).
+- **Plans** (auto-renewing) need a **rupee plan in Razorpay**: create Weekly / Monthly / Yearly plans in INR with the prices above and put their ids in `RAZORPAY_PLAN_WEEKLY_INR`, `RAZORPAY_PLAN_MONTHLY_INR`, `RAZORPAY_PLAN_YEARLY_INR`.
+  A plan without a rupee plan id is sold in dollars to everyone, India included. Offers on a rupee plan need their own Razorpay Offer: `razorpayOfferIdInr` in `src/config/offers.js` (`RAZORPAY_OFFER_YEARLY_INR`).
+- Rupee payments get UPI, net banking, wallets and Indian cards in Razorpay's window; dollar payments get international cards (International Payments must be enabled in live mode).
+- Every payment is stored with its own currency, so Transactions shows what was really charged.
 
 ### Offers (discounts)
 Post an offer by adding one line to `src/config/offers.js` (see the examples in that file): `{ id, itemId (plan or coin pack), percentOff, audience: 'all' | 'new', windowHours, startsAt?, endsAt?, popup? }`.

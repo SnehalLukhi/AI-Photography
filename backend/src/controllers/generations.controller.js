@@ -14,7 +14,7 @@ async function readUpload(req) {
   }
 }
 
-/** POST /api/generations - multipart: image. Saves the user's original photo to Spaces and returns the new generation (id + public image URL). */
+/** POST /api/generations - multipart: image. Starts an empty generation record (the photo itself is not stored) and returns it; add the AI image with POST /:id/result. */
 async function create(req, res) {
   const generation = await generations.create(await readUpload(req), { api: 'upload', template: generations.label(req), owner: req.user.id })
   res.status(201).set('Cache-Control', 'no-store').json({ success: true, generation })
@@ -31,9 +31,9 @@ async function get(req, res) {
   res.set('Cache-Control', 'no-store').json({ success: true, generation: await generations.get(req.params.id, req.user.id) })
 }
 
-/** GET /api/generations/:id/download?which=result|original - the image as a file (Content-Disposition: attachment), so the browser saves it instead of opening it. Owner only. */
+/** GET /api/generations/:id/download - the AI image as a file (Content-Disposition: attachment), so the browser saves it instead of opening it. Owner only. */
 async function download(req, res) {
-  const { buffer, mimeType, filename } = await generations.download(req.params.id, req.user.id, req.query.which === 'original' ? 'original' : 'result')
+  const { buffer, mimeType, filename } = await generations.download(req.params.id, req.user.id)
   res.set({ 'Content-Type': mimeType, 'Content-Length': buffer.length, 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'private, no-store', 'Access-Control-Expose-Headers': 'Content-Disposition' }).send(buffer)
 }
 

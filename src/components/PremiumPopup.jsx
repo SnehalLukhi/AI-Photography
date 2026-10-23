@@ -4,6 +4,7 @@ import { plans as fallbackPlans, categoryItems } from '../data/templates.js'
 import { brandImages } from '../data/images.js'
 import { getPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
+import { formatPrice } from '../lib/format.js'
 import { SparkIcon } from './Header.jsx'
 import usePopupExit from './usePopupExit.js'
 
@@ -22,7 +23,7 @@ const PERKS = [
 
 // the plans come from the backend (single source of prices and coins); the built-in list is only shown if it cannot be reached
 const fromFallback = (p) => ({ id: p.id, name: p.name, price: p.price, per: p.per, coins: Number(String(p.coins).replace(/[^\d]/g, '')), popular: !!p.popular })
-const fromApi = (p) => ({ id: p.id, name: p.name, price: new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.offer ? p.offer.price : p.price), was: p.offer ? new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.price) : '', per: p.per, coins: p.coins, popular: !!p.popular })
+const fromApi = (p) => ({ id: p.id, name: p.name, price: formatPrice(p.offer ? p.offer.price : p.price, p.currency), was: p.offer ? formatPrice(p.price, p.currency) : '', per: p.per, coins: p.coins, popular: !!p.popular })
 
 /**
  * Premium subscription popup, shown after the Welcome popup has been closed (see StudioContext `premiumOffer`). Plans, prices and coin amounts come from the

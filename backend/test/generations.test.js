@@ -1,6 +1,6 @@
 /**
  * Stored images (DigitalOcean Spaces): the storage service is replaced by an in-memory stand-in (test-only) and AILabTools by the local mock,
- * to check that the original and the AI result are saved together, can be fetched / listed / deleted, and that storage problems never break generation.
+ * to check that only the AI result is stored (the original photo stays in the browser), can be fetched / listed / deleted, and that storage problems never break generation.
  */
 const { test, before, after } = require('node:test')
 const assert = require('node:assert/strict')
@@ -38,15 +38,15 @@ const img = async () => ({ buffer: await h.solid(300, 400, { r: 5, g: 50, b: 90 
 const api = (path, init = {}) => fetch(`${app.base}/api${path}`, init)
 const as = (token) => ({ headers: { authorization: `Bearer ${token}` } })
 
-test('generate saves the original and the AI result and returns both signed URLs', async () => {
+test('generate stores only the AI result (the original photo is not stored) and returns its URL', async () => {
   const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { style_title: 'Golden hour', style_desc: 'Warm light', template_name: 'Retro Vibes' }) })
   assert.equal(res.status, 200)
   const { generation } = await res.json()
   assert.equal(generation.status, 'completed')
   assert.equal(generation.template, 'Retro Vibes')
-  assert.equal(generation.original.url, `https://public.invalid/generations/${generation.id}/original.jpg`)
+  assert.equal(generation.original, null)
   assert.equal(generation.result.url, `https://public.invalid/generations/${generation.id}/result.jpg`)
-  assert.deepEqual([...store.keys()].sort(), [`generations/${generation.id}/original.jpg`, `generations/${generation.id}/result.jpg`]) // ONLY the two images are stored
+  assert.deepEqual([...store.keys()].sort(), [`generations/${generation.id}/result.jpg`]) // ONLY the AI image is stored
 
   const got = await (await api(`/generations/${generation.id}`)).json()
   assert.equal(got.generation.id, generation.id)
@@ -64,11 +64,11 @@ test('GET /api/generations lists only the user\'s own generations; others cannot
   assert.equal((await api(`/generations/${id}`)).status, 200)
   assert.equal((await api(`/generations/${id}`, { method: 'DELETE' })).status, 200)
   assert.equal((await api(`/generations/${id}`)).status, 404)
-  assert.equal(store.size, 0) // both images are gone from storage
+  assert.equal(store.size, 0) // the image is gone from storage
   assert.equal((await (await api('/generations')).json()).generations.length, 0)
 })
 
-test('upload endpoint saves an original, result endpoint adds the AI image once', async () => {
+test('upload endpoint starts a record, result endpoint adds the AI image once', async () => {
   const created = await api('/generations', { method: 'POST', body: h.form({ image: await img() }) })
   assert.equal(created.status, 201)
   const { generation } = await created.json()
@@ -119,8 +119,6 @@ test('download sends the image as a file; only its owner can get it', async () =
   assert.equal(file.headers.get('content-type'), 'image/jpeg')
   assert.equal(file.headers.get('content-disposition'), 'attachment; filename="pictrify-vintage-sari-ai.jpg"')
   assert.deepEqual(Buffer.from(await file.arrayBuffer()), store.get(`generations/${generation.id}/result.jpg`))
-  const orig = await api(`/generations/${generation.id}/download?which=original`)
-  assert.equal(orig.headers.get('content-disposition'), 'attachment; filename="pictrify-vintage-sari-original.jpg"')
   assert.equal((await api(`/generations/${generation.id}/download`, as(other))).status, 404) // someone else's
   assert.equal((await api(`/generations/${generation.id}/download`, { headers: { authorization: '' } })).status, 401)
   const pending = (await (await api('/generations', { method: 'POST', body: h.form({ image: await img() }) })).json()).generation

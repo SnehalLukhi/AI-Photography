@@ -12,6 +12,7 @@ const { uploadImage } = require('../middleware/upload')
 const { requireAuth, optionalAuth, dailyQuota } = require('../middleware/requireAuth')
 const authCtl = require('../controllers/auth.controller')
 const chargeCoins = require('../middleware/chargeCoins')
+const region = require('../middleware/region')
 const walletCtl = require('../controllers/wallet.controller')
 const favoritesCtl = require('../controllers/favorites.controller')
 
@@ -46,11 +47,11 @@ router.get('/favorites', requireAuth, favoritesCtl.list)
 router.post('/favorites', requireAuth, favoritesCtl.add) // idempotent: liking twice keeps one row
 router.delete('/favorites', requireAuth, favoritesCtl.remove) // ?templateId=... (ids contain a slash)
 
-router.get('/plans', optionalAuth, walletCtl.listPlans)
-router.get('/coin-packs', optionalAuth, walletCtl.listPacks)
+router.get('/plans', region, optionalAuth, walletCtl.listPlans)
+router.get('/coin-packs', region, optionalAuth, walletCtl.listPacks)
 router.get('/wallet', requireAuth, walletCtl.getWallet)
 router.post('/wallet/redeem', authLimiter, requireAuth, walletCtl.redeem) // limited like login: codes must not be guessable by trying
-router.post('/wallet/checkout', requireAuth, walletCtl.checkout)
+router.post('/wallet/checkout', region, requireAuth, walletCtl.checkout)
 router.post('/wallet/verify-payment', requireAuth, walletCtl.verifyPayment)
 router.get('/wallet/purchases', requireAuth, walletCtl.purchases)
 router.get('/wallet/subscription', requireAuth, walletCtl.getSubscription)

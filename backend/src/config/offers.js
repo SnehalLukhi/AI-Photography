@@ -11,6 +11,7 @@
  *   endsAt       optional ISO date-time: the offer is not valid after it
  *   razorpayOfferId  needed for weekly / monthly / yearly when they are sold as auto-renewing subscriptions (RAZORPAY_PLAN_* set): the id (offer_xxx) of the matching Offer you create in
  *                    Razorpay Dashboard > Subscriptions > Offers. Razorpay then applies the discount to the subscription; without it the offer is not used for that plan.
+ *   razorpayOfferIdInr  the same for the rupee plan (visitors in India); needed when that plan is sold in rupees.
  *   popup        true = this is the offer shown by the "Wait! Create More for Less" popup (the first matching entry is used)
  *
  * If several offers match the same item, the biggest percentOff wins (they are never added together).
@@ -20,5 +21,5 @@
  */
 module.exports = [
   // the first-login popup: 50% off Yearly for 24 hours after signing up. For the auto-renewing Yearly plan set RAZORPAY_OFFER_YEARLY (the id of the 50% Offer you create in Razorpay).
-  { id: 'yearly-offer', itemId: 'yearly', percentOff: 50, audience: 'new', windowHours: 24, popup: true, razorpayOfferId: (process.env.RAZORPAY_OFFER_YEARLY || '').trim() },
+  { id: 'yearly-offer', itemId: 'yearly', percentOff: 50, audience: 'new', windowHours: 24, popup: true, razorpayOfferId: (process.env.RAZORPAY_OFFER_YEARLY || '').trim(), razorpayOfferIdInr: (process.env.RAZORPAY_OFFER_YEARLY_INR || '').trim() },
 ]

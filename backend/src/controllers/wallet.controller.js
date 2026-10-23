@@ -1,22 +1,23 @@
 const env = require('../config/env')
 const plans = require('../config/plans')
 const packs = require('../config/packs')
+const { localize } = require('../services/catalog')
 const offerRules = require('../services/offers.service')
 const wallet = require('../services/wallet.service')
 const payments = require('../services/payments.service')
 const subscriptions = require('../services/subscriptions.service')
 
-/** Items with the active offer for this user (if any) attached as `offer: { id, discountPercent, original, price, endsAt }`. `price` of the item stays the regular price. */
-const withOffers = (items, user) => items.map((i) => { const o = offerRules.bestFor(i.id, user); return o ? { ...i, offer: offerRules.badge(o, user) } : i })
+/** The items priced in the visitor's currency, each with the active offer for this user (if any) attached as `offer: { id, discountPercent, original, price, endsAt }`. `price` of an item stays the regular price. */
+const withOffers = (items, user, currency) => items.map((raw) => { const i = localize(raw, currency); const o = offerRules.bestFor(i.id, user, i.currency); return o ? { ...i, offer: offerRules.badge(o, user, i) } : i })
 
 /** GET /api/plans - the coin plans for the Pricing page, with the offers this visitor gets (offers for new users need a login token), and `offer` = the popup's special offer. */
 function listPlans(req, res) {
-  res.set('Cache-Control', 'no-store').json({ success: true, plans: withOffers(plans, req.user), offer: offerRules.popupOffer(req.user), costPerGeneration: env.coins.perGeneration })
+  res.set('Cache-Control', 'no-store').json({ success: true, plans: withOffers(plans, req.user, req.currency), offer: offerRules.popupOffer(req.user, req.currency), costPerGeneration: env.coins.perGeneration })
 }
 
 /** GET /api/coin-packs - the one-time coin packs for the Get Coins page, with the offers this visitor gets. */
 function listPacks(req, res) {
-  res.set('Cache-Control', 'no-store').json({ success: true, packs: withOffers(packs, req.user), costPerGeneration: env.coins.perGeneration })
+  res.set('Cache-Control', 'no-store').json({ success: true, packs: withOffers(packs, req.user, req.currency), costPerGeneration: env.coins.perGeneration })
 }
 
 /** GET /api/wallet - balance, cost of one generation and the latest coin movements. */
@@ -31,7 +32,7 @@ async function redeem(req, res) {
 
 /** POST /api/wallet/checkout - JSON { itemId (plan or coin pack id) } -> { order }: what the browser needs to open Razorpay's payment window (503 until the Razorpay keys are set). */
 async function checkout(req, res) {
-  res.set('Cache-Control', 'no-store').json({ success: true, order: await payments.createCheckout(req.user, req.body?.itemId ?? req.body?.planId, req.body?.currency) })
+  res.set('Cache-Control', 'no-store').json({ success: true, order: await payments.createCheckout(req.user, req.body?.itemId ?? req.body?.planId, req.currency) })
 }
 
 /** POST /api/wallet/verify-payment - JSON { orderId, paymentId, signature } (from Razorpay's payment window) -> { credited, balance } */

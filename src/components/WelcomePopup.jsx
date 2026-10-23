@@ -5,7 +5,7 @@ import Confetti from './Confetti.jsx'
 
 /**
  * One-time welcome popup shown after a first sign-in (see StudioContext `welcomeOffer`). DISPLAY ONLY: the app has no user accounts or coin-balance
- * backend yet, so "50 Free Coins" is a message - nothing is credited and no balance exists or changes here.
+ * backend yet, so "100 Free Coins" is a message - nothing is credited and no balance exists or changes here.
  */
 export default function WelcomePopup({ onClose: finish }) {
   const [closing, setClosing] = useState(false)

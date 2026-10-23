@@ -135,6 +135,7 @@ async function loginWithApple({ identityToken, nonce, name }) {
 }
 
 async function getUser(id) {
+  await wallet.expireEnded(id)
   const u = (await query('SELECT id, email, name, coins, created_at FROM users WHERE id = $1', [id])).rows[0]
   return u ? publicUser(u) : null
 }

@@ -90,9 +90,9 @@ test('the first payment: right signature adds the plan coins once; wrong order, 
   const ok = await pay(u, subscriptionId, 'pay_S1', 999)
   assert.equal(ok.status, 200)
   const body = await ok.json()
-  assert.deepEqual([body.credited, body.balance, body.purchase.name, body.purchase.kind, body.purchase.amount], [true, before + 220, 'Monthly Premium', 'plan', 999])
+  assert.deepEqual([body.credited, body.balance, body.purchase.name, body.purchase.kind, body.purchase.amount], [true, before + 2200, 'Monthly Premium', 'plan', 999])
   assert.equal((await (await pay(u, subscriptionId, 'pay_S1', 999)).json()).credited, false) // repeated check: nothing more
-  assert.equal(await wallet.balance(u.id), before + 220)
+  assert.equal(await wallet.balance(u.id), before + 2200)
   const mine = await getSub(u)
   assert.deepEqual([mine.name, mine.status, mine.cancelRequested], ['Monthly Premium', 'active', false])
   assert.ok(Date.parse(mine.renewsAt) > Date.now())
@@ -104,11 +104,11 @@ test('a renewal (webhook subscription.charged) adds the coins again, once per pa
   const before = await wallet.balance(u.id)
   await pay(u, subscriptionId, 'pay_R1', 999)
   assert.equal((await hook(charged(subscriptionId, 'pay_R1', 999, Date.now() + 30 * 86400000))).status, 200) // Razorpay's notice for the SAME first payment
-  assert.equal(await wallet.balance(u.id), before + 220)
+  assert.equal(await wallet.balance(u.id), before + 2200)
   assert.equal((await hook(charged(subscriptionId, 'pay_R2', 999, Date.now() + 60 * 86400000))).status, 200) // next month
-  assert.equal(await wallet.balance(u.id), before + 440)
+  assert.equal(await wallet.balance(u.id), before + 4400)
   assert.equal((await hook(charged(subscriptionId, 'pay_R2', 999, Date.now() + 60 * 86400000))).status, 200) // retry
-  assert.equal(await wallet.balance(u.id), before + 440)
+  assert.equal(await wallet.balance(u.id), before + 4400)
   const list = (await (await api('/wallet/purchases', { headers: { authorization: `Bearer ${u.token}` } })).json()).purchases
   assert.equal(list.filter((p) => p.name === 'Monthly Premium').length, 2) // both charges are in the history
   assert.equal((await hook(charged('sub_unknown', 'pay_X', 999, Date.now()))).status, 200) // not ours: ignored
@@ -146,9 +146,25 @@ test('a plan offer needs a Razorpay offer id: it is sent to Razorpay with the fi
   // the first payment is discounted by Razorpay: it is stored with the offer
   await pay(fresh, body.order.subscriptionId, 'pay_O1', 1999)
   const purchase = (await (await api('/wallet/purchases', { headers: { authorization: `Bearer ${fresh.token}` } })).json()).purchases[0]
-  assert.deepEqual([purchase.amount, purchase.listAmount, purchase.offerPercent, purchase.coins], [1999, 3999, 50, 2700])
+  assert.deepEqual([purchase.amount, purchase.listAmount, purchase.offerPercent, purchase.coins], [1999, 3999, 50, 27000])
   // a monthly offer without a Razorpay offer id is not applied (nor shown) for the auto-renewing plan
   const plans = (await (await api('/plans', { headers: { authorization: `Bearer ${fresh.token}` } })).json()).plans
   assert.equal(plans.find((p) => p.id === 'monthly').offer, undefined)
   assert.equal(plans.find((p) => p.id === 'yearly').offer.discountPercent, 50)
+})
+
+test('when a plan has ended, its unspent coins are taken away; coins from packs / signup stay; a plan that is still paid for keeps them', async () => {
+  const u = await h.createUser('expire@example.com') // signup bonus: 50 coins (not from a plan)
+  const { body } = await start(u, 'monthly')
+  const subId = body.order.subscriptionId
+  assert.equal((await pay(u, subId, 'pay_EXP1', 999)).status, 200) // +2200 plan coins
+  await wallet.charge(u.id, 15) // spending uses the plan coins first
+  assert.equal(await wallet.balance(u.id), 2235)
+  await post('/wallet/subscription/cancel', {}, u)
+  assert.equal(await wallet.balance(u.id), 2235) // cancelled but still inside the paid month: nothing taken
+  await db.query("UPDATE subscriptions SET current_end = now() - interval '1 hour' WHERE subscription_id = $1", [subId]) // the paid period is over
+  assert.equal(await wallet.balance(u.id), 50) // the 2185 unspent plan coins are gone, the 50 signup coins stay
+  assert.equal(await wallet.balance(u.id), 50) // only once
+  const row = (await db.query("SELECT delta FROM coin_ledger WHERE user_id = $1 AND reason = 'plan_expired'", [u.id])).rows
+  assert.deepEqual(row.map((r) => r.delta), [-2185])
 })

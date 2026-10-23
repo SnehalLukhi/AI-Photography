@@ -5,6 +5,7 @@ import { getPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { brandImages } from '../data/images.js'
 import { categoryItems } from '../data/templates.js'
+import { formatPrice } from '../lib/format.js'
 
 // The three plan perks shown under the title (label, icon path)
 const perks = [
@@ -33,7 +34,7 @@ export default function PlansSheet({ onClose }) {
   useEffect(() => {
     getPlans().then((r) => setPlans(r.plans.map((p) => {
       const card = fallbackPlans.find((f) => f.id === p.id) || {}
-      return { ...card, ...p, price: new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.price), coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
+      return { ...card, ...p, price: formatPrice(p.offer ? p.offer.price : p.price, p.currency), coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
     }))).catch(() => {})
   }, [])
   const close = () => { setShown(false); setTimeout(onClose, 300) }

@@ -5,6 +5,7 @@ import { getPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { brandImages } from '../data/images.js'
 import { SparkIcon } from '../components/Header.jsx'
+import { formatPrice } from '../lib/format.js'
 
 export default function Pricing() {
   const nav = useNavigate()
@@ -16,7 +17,7 @@ export default function Pricing() {
   useEffect(() => {
     getPlans().then((r) => setPlans(r.plans.map((p) => {
       const card = fallbackPlans.find((f) => f.id === p.id) || {}
-      const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(n)
+      const money = (n) => formatPrice(n, p.currency)
       // with an offer the discounted price is the price (the server charges exactly this); the regular price is shown struck through
       return { ...card, ...p, price: money(p.offer ? p.offer.price : p.price), originalPrice: p.offer ? money(p.price) : '', discount: p.offer?.discountPercent || 0, coins: `${p.coins.toLocaleString('en-US')} Coins${p.per.includes('year') ? ' / year' : ''}`, details: card.details || [] }
     }))).catch(() => {})
