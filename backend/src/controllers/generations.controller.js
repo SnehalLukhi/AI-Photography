@@ -31,10 +31,10 @@ async function get(req, res) {
   res.set('Cache-Control', 'no-store').json({ success: true, generation: await generations.get(req.params.id, req.user.id) })
 }
 
-/** GET /api/generations/:id/download - the AI result as a file download (Content-Disposition: attachment), only for the user who created it. */
+/** GET /api/generations/:id/download?which=result|original - the image as a file (Content-Disposition: attachment), so the browser saves it instead of opening it. Owner only. */
 async function download(req, res) {
-  const { buffer, mimeType, filename } = await generations.download(req.params.id, req.user.id)
-  res.set({ 'Content-Type': mimeType, 'Content-Length': buffer.length, 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'no-store', 'Access-Control-Expose-Headers': 'Content-Disposition' }).send(buffer)
+  const { buffer, mimeType, filename } = await generations.download(req.params.id, req.user.id, req.query.which === 'original' ? 'original' : 'result')
+  res.set({ 'Content-Type': mimeType, 'Content-Length': buffer.length, 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'private, no-store', 'Access-Control-Expose-Headers': 'Content-Disposition' }).send(buffer)
 }
 
 /** GET /api/generations?limit=20&nextToken=... - the logged-in user's generations, newest first. */

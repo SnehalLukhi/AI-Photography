@@ -354,6 +354,20 @@ export async function cancelSubscription() {
 }
 
 /**
+ * Saves one image of a creation to the user's device: `which` = 'result' (the AI image) | 'original'. The backend sends it as a file download (a plain link to the image
+ * would only open it in a tab), so this fetches it with the login token and saves it under the file name the backend gives.
+ */
+export async function downloadGeneration(id, which = 'result') {
+  const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}/download?which=${which}`, { headers: headers() })
+  if (!res.ok) throw failure(await readJson(res), res)
+  const filename = /filename="([^"]+)"/.exec(res.headers.get('content-disposition') || '')?.[1] || `pictrify-${which}.jpg`
+  const url = URL.createObjectURL(await res.blob())
+  const a = Object.assign(document.createElement('a'), { href: url, download: filename })
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 10_000)
+}
+
+/**
  * One page of the logged-in user's stored generations, newest first: { generations: [{ id, status, createdAt, template, original: { url }, result: { url } | null }], nextToken }.
  * Pass the previous `nextToken` to get the next page. Empty when storage is off.
  */
@@ -385,21 +399,6 @@ export async function setFavorite(templateId, on) {
     ? await fetch(`${API_BASE}/api/favorites`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...headers() }, body: JSON.stringify({ templateId }) })
     : await fetch(`${API_BASE}/api/favorites?templateId=${encodeURIComponent(templateId)}`, { method: 'DELETE', headers: headers() })
   if (!res.ok) throw failure(await readJson(res), res)
-}
-
-/**
- * Downloads the AI result of a generation as a file. The backend streams the image as an attachment (so the storage domain's CORS rules do not matter);
- * it is fetched with the login token and saved through a temporary link. Throws with a readable message on failure.
- */
-export async function downloadGeneration(id) {
-  let res
-  try { res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}/download`, { headers: headers() }) } catch { throw new Error('Could not reach the server. Please try again.') }
-  if (!res.ok) throw failure(await readJson(res), res)
-  const name = /filename="([^"]+)"/.exec(res.headers.get('Content-Disposition') || '')?.[1] || `pictrify-${id.slice(0, 8)}.jpg`
-  const url = URL.createObjectURL(await res.blob())
-  const a = document.createElement('a')
-  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 10_000)
 }
 
 /** Deletes both stored images of a generation (only works from the browser that created it). */

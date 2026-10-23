@@ -122,15 +122,17 @@ async function get(id, owner) {
   return toView(await load(id, owner))
 }
 
-/** The AI result image of one of the user's generations as bytes + a file name, for a browser download (never the original photo). */
-async function download(id, owner) {
+/** One of the two images of a generation as a file to download: { buffer, mimeType, filename }. `which` = 'result' (the AI image, default) | 'original'. */
+async function download(id, owner, which = 'result') {
   requireStorage()
   const row = await load(id, owner)
-  if (!row.result_key) throw new AppError(404, 'RESULT_NOT_READY', 'This generation has no result image yet.')
-  const { buffer, mimeType } = await storage.getImage(row.result_key)
-  const mime = row.result_mime || mimeType || 'application/octet-stream'
-  const base = String(row.template || 'pictrify').replace(/[^A-Za-z0-9 _-]+/g, '').trim().replace(/\s+/g, '-').slice(0, 60) || 'pictrify'
-  return { buffer, mimeType: mime, filename: `${base}-${id.slice(0, 8)}.${EXT[mime] || 'jpg'}` }
+  const original = which === 'original'
+  const key = original ? row.original_key : row.result_key
+  const mimeType = original ? row.original_mime : row.result_mime
+  const buffer = key ? await storage.getObject(key) : null
+  if (!buffer) throw new AppError(404, 'IMAGE_NOT_FOUND', original ? 'The original photo is not available.' : 'The AI image is not ready yet.')
+  const name = (row.template || 'creation').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'creation'
+  return { buffer, mimeType, filename: `pictrify-${name}-${original ? 'original' : 'ai'}.${EXT[mimeType] || 'jpg'}` }
 }
 
 async function saveResult(id, owner, image) {
