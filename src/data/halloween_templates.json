@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "id": "halloween",
+      "name": "Halloween",
+      "templates": [
+        {
+          "id": "enchanted_pumpkin_witch",
+          "name": "Enchanted Pumpkin Witch",
+          "preview_url": "https://YOUR-CDN/templates/enchanted_pumpkin_witch.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Use the uploaded reference image to create a photorealistic, cinematic Halloween portrait. Preserve the subject’s exact identity, facial features, skin tone, age, and natural appearance. Dress the subject in a black Halloween costume with vivid orange ruffled trim, decorative pumpkin patterns, lace-up detailing, and a wide-brimmed pointed black witch hat with an orange band and small pumpkin ornament. Adapt the costume naturally for any gender while preserving the reference subject’s identity.",
+          "style_desc_prompt": "Add a black choker with a tiny pumpkin pendant. Pose the subject sitting gracefully on rustic wooden porch steps, one knee raised, one hand gently supporting the cheek, and the other resting naturally near the leg, looking directly at the camera with a soft, confident expression. Surround the porch with glowing carved jack-o’-lanterns, vintage candle lanterns, autumn leaves, hanging cobwebs, decorative black spiders, and subtle skull accents. Use warm amber candlelight, dramatic soft shadows, rich orange and deep black tones, realistic skin texture, detailed fabrics, natural hands and anatomy, and beautifully defined hair. Compose a medium-to-full-body portrait with the subject as the central focus and a softly blurred, atmospheric Halloween background. Create a premium editorial photography look with realistic proportions and cinematic depth of field. Avoid distorted anatomy, extra fingers, artificial skin, cartoon effects, excessive retouching, and watermarks."
+        },
+        {
+          "id": "cozy_pumpkin_halloween",
+          "name": "Cozy Pumpkin Halloween",
+          "preview_url": "https://YOUR-CDN/templates/cozy_pumpkin_halloween.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Use the uploaded reference image to create a high-quality, photorealistic, cozy Halloween portrait. Preserve the subject’s exact identity, facial features, skin tone, age, and natural appearance. Show the subject wearing a black ribbed sweater and a cute Halloween headband decorated with small orange jack-o’-lantern pumpkins and green leaves. The subject smiles warmly at the camera while gently holding a large glowing carved pumpkin beside their face with both hands naturally positioned.",
+          "style_desc_prompt": "Create a cozy indoor Halloween setting with warm fairy lights, hanging black bat decorations, glowing jack-o’-lanterns, candles, vintage lanterns, a small ghost decoration, and wooden shelves. Include a comfortable sofa with orange and black cushions and a framed Halloween sign in the background. Use warm amber lighting, soft shadows, realistic skin texture, detailed hair, natural hands and fingers, and rich orange, black, and golden tones. Frame the subject in a medium close-up portrait, with the face and pumpkin in sharp focus and the background softly blurred. Maintain a cheerful, inviting, festive atmosphere with premium editorial photography, realistic proportions, and natural colors. Adapt clothing and styling appropriately for any gender while preserving the reference subject’s identity. Avoid distorted hands, extra fingers, artificial skin, cartoon effects, excessive retouching, and watermarks."
+        },
+        {
+          "id": "autumn_harvest_scarecrow",
+          "name": "Autumn Harvest Scarecrow",
+          "preview_url": "https://YOUR-CDN/templates/autumn_harvest_scarecrow.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Bright candid portrait of a young person dressed as a cheerful scarecrow at an autumn harvest festival, long dark brown wavy braided hair, big joyful laughing smile with white teeth, head tilted toward the camera, warm brown eyes. Scarecrow face paint: small orange triangle nose with black stitch lines, black stitched smile lines extending from the mouth corners, round rosy orange blush circles on cheeks, tiny straw strands tucked under the eyes.",
+          "style_desc_prompt": "Wearing a frayed woven straw hat decorated with a large yellow sunflower, a red-orange-cream plaid flannel shirt, blue denim overalls with brass buttons, and straw tufts poking out of the sleeves. Background: a rustic farm photoshoot set with stacked hay bales, big orange pumpkins, a white pumpkin, buckets of vivid sunflowers, an old wooden wagon wheel, red and orange maple leaves, a plaid blanket, and a wooden fence. Golden hour sunlight, warm backlight, sparkling yellow bokeh from autumn trees, shallow depth of field, subject sharply in focus. Color palette of golden yellow, burnt orange, rust red and warm brown. Shot on 85mm f/1.8 lens, soft natural light, glowing skin, ultra-detailed fabric and straw texture, joyful cozy fall mood, professional lifestyle photography, 16:9 widescreen, 8K, photorealistic, masterpiece."
+        },
+        {
+          "id": "cinematic_halloween_witch_portrait",
+          "name": "Cinematic Halloween Witch Portrait",
+          "preview_url": "https://YOUR-CDN/templates/cinematic_halloween_witch_portrait.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Cinematic Halloween portrait of a young person dressed as a whimsical gothic witch, long dark wavy flowing hair, soft warm smile, glowing hazel eyes, subtle heart-shaped face sticker on cheek, tilted head pose, gently cradling a fluffy black cat with bright amber eyes and a tiny pumpkin charm collar.",
+          "style_desc_prompt": "Wearing an oversized black pointed witch hat decorated with a mini jack-o'-lantern, dark flowers and orange ribbon, paired with an ornate black lace costume with orange corset lacing, sheer lace sleeves with orange bows, flowing cape and pumpkin-patterned fabric details. Background: an enchanted haunted Victorian house at dusk, covered in warm orange string lights, glowing windows, a gazebo wrapped in fairy lights, autumn trees with orange leaves, dark shrubs, carved glowing jack-o'-lanterns on a leaf-covered garden path. Moody twilight atmosphere, warm orange and deep black color palette, magical glow, golden bokeh lights, shallow depth of field, subject sharply in focus, blurred background. Shot on 85mm f/1.4 lens, cinematic lighting, soft rim light, rich warm tones, high contrast, ultra-detailed skin and fabric texture, professional fantasy photography, dreamy spooky-cute mood, 16:9 widescreen, 8K, photorealistic, masterpiece."
+        },
+        {
+          "id": "candlelit_halloween_witch",
+          "name": "Candlelit Halloween Witch",
+          "preview_url": "https://YOUR-CDN/templates/candlelit_halloween_witch.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Use the uploaded reference image to create a photorealistic, cinematic Halloween portrait. Preserve the subject’s exact identity, facial features, skin tone, age, and natural appearance. Style the subject in a black witch-inspired outfit with delicate lace sleeves, subtle gold celestial patterns, and a wide-brimmed black pointed witch hat decorated with golden moons and stars. Add a black choker with a crescent moon pendant and elegant layered necklaces.",
+          "style_desc_prompt": "The subject sits at a rustic wooden table, resting one cheek gently on one hand, with the other arm relaxed on the table, looking directly at the camera with a mysterious, confident expression. Create a cozy, spooky Halloween setting with glowing carved pumpkins, vintage lanterns, flickering candles, autumn leaves, dark wooden shelves, and a black bowl of colorful candy. Use warm amber candlelight, dramatic soft shadows, realistic skin texture, detailed fabric, natural hands, rich orange and deep black tones, and a softly blurred background. Frame the subject centrally in a medium portrait composition with sharp facial focus, shallow depth of field, and premium editorial photography quality. Adapt clothing and styling naturally to any gender while preserving the reference subject’s identity. Avoid distorted hands, extra fingers, artificial skin, cartoon effects, excessive retouching, and text or watermarks."
+        }
+      ]
+    }
+  ]
+}

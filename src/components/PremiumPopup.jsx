@@ -20,6 +20,7 @@ const PERKS = [
   { label: 'Pro Tools', icon: icon(<><path d="M14.5 6.5a4 4 0 0 0-5 5L3 18l3 3 6.5-6.5a4 4 0 0 0 5-5l-2.5 2.5-2-2z" /><path d="M14 14l5 5M18 3l-4 4" /></>) },
 ]
 
+// None of these four perks exists in the app yet (no plan-based discount, upscaling, ad-free mode or pro tools): they are shown as "Coming soon", not as active benefits.
 // the plans come from the backend (single source of prices and coins); the built-in list is only shown if it cannot be reached
 const fromFallback = (p) => ({ id: p.id, name: p.name, price: p.price, per: p.per, coins: Number(String(p.coins).replace(/[^\d]/g, '')), popular: !!p.popular })
 const fromApi = (p) => ({ id: p.id, name: p.name, price: new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.offer ? p.offer.price : p.price), was: p.offer ? new Intl.NumberFormat('en-US', { style: 'currency', currency: p.currency }).format(p.price) : '', per: p.per, coins: p.coins, popular: !!p.popular })
@@ -66,9 +67,10 @@ export default function PremiumPopup({ onClose: finish }) {
             <p className="welcome-rise welcome-rise-3 mt-3 max-w-lg text-sm leading-relaxed text-[#A0A0A0] sm:text-base">Supercharge your creativity with premium tools, ultra HD quality, and unlimited inspiration.</p>
             <div className="welcome-rise welcome-rise-3 mt-5 grid grid-cols-4 gap-2 sm:mt-7 sm:gap-3">
               {PERKS.map((f) => (
-                <div key={f.label} className="flex min-w-0 flex-col items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-[#2B2B2B] px-1 py-3 sm:h-[92px]">
-                  {f.icon}
-                  <p className="text-center text-[11px] font-semibold leading-tight text-white">{f.label}</p>
+                <div key={f.label} className="flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-white/[0.08] bg-[#2B2B2B] px-1 py-3 sm:h-[92px]" title="Coming soon - not available yet">
+                  <span className="opacity-50">{f.icon}</span>
+                  <p className="text-center text-[11px] font-semibold leading-tight text-white/60">{f.label}</p>
+                  <span className="rounded-full bg-white/10 px-2 py-px text-[9px] font-medium uppercase tracking-wide text-[#A0A0A0]">Coming soon</span>
                 </div>
               ))}
             </div>

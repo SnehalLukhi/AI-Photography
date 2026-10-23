@@ -56,6 +56,11 @@ export const exploreTabs = [
   // Beard: card title = file name up to the first space / opening bracket ('AnchorBeardClean (AnchorBeardClean).jpg' -> 'AnchorBeardClean'). Not part of "All".
   { id: 'beard', folders: ['explore/beard'], name: 'Beard', title: (stem) => stem.split(/[\s(]/)[0] || stem, hideFromAll: true, exclude: ['common_image'] }, // common_image is not a template: never listed or selectable
   // Hairstyle: three sub-categories (explore/Hairstyle/{baby,man,woman}); card title = file name without extension and without the trailing " (…)" part. Not part of "All".
+  // Seasonal / style categories (photos only, no JSON catalogue): every image in the folder becomes a card, titled with its file name. Not part of "All" or Trending.
+  { id: 'christmas', folders: ['explore/Christmas'], name: 'Christmas', hideFromAll: true },
+  { id: 'cinematic', folders: ['explore/Cinematic'], name: 'Cinematic', hideFromAll: true, landscapeLast: true, exclude: ['Golden Hour Car'] }, // portrait photos first, horizontal ones at the end
+  { id: 'diwali', folders: ['explore/Diwali'], name: 'Diwali', hideFromAll: true },
+  { id: 'halloween', folders: ['explore/Halloween'], name: 'Halloween', hideFromAll: true },
   { id: 'hairstyle-baby', parent: 'hairstyle', folders: ['explore/Hairstyle/baby'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Baby', category: 'Hairstyle · Baby', hideFromAll: true, exclude: ['Messy Bun (female_hairstyle_0039)'] }, // same style id as "Baby Soft Layered Bob" (and JSON 0039 is a bob, not a bun): unconfirmed
   { id: 'hairstyle-man', parent: 'hairstyle', folders: ['explore/Hairstyle/man'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Man', category: 'Hairstyle · Man', hideFromAll: true },
   { id: 'hairstyle-woman', parent: 'hairstyle', folders: ['explore/Hairstyle/woman'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Woman', category: 'Hairstyle · Woman', hideFromAll: true, exclude: ['Textured Pixie(female_hairstyle_00020)'] }, // "00020" is a typo, not a documented hair_style: unconfirmed
@@ -75,6 +80,7 @@ export const exploreFolderTemplates = Object.fromEntries(exploreTabs.map((tab) =
     const [w, h] = exploreSizes[`${dir}/${file}`] || []
     return { id: `${tab.id}/${assetId}`, categoryId: tab.id, category: tab.category || tab.name, name, assetId, type: 'image', slots: ['Photo'], coins: 120, index: i + 1, image: exploreImage(dir, file), landscape: !!(w && h && w > h) }
   })
+  if (tab.landscapeLast) items.sort((a, b) => Number(a.landscape) - Number(b.landscape)) // stable: each group keeps its file-name order
   return [tab.id, items]
 }))
 // Template gallery ("All" / "Trending" on Explore, Home > Trending Templates, hero cards, Login photo panel): the photos of the

@@ -6,17 +6,11 @@ const ailab = require('../services/ailab.service')
 const generations = require('../services/generations.service')
 
 const TASK_ID_RE = /^[A-Za-z0-9_-]{6,128}$/
-// Documented limits: style_title <= 500 chars, style_desc <= 1000 chars, English only. AILabTools truncates extra text itself.
-const MAX_TITLE = 500
-const MAX_DESC = 1000
-// "English only": reject text written in non-Latin scripts (a script check cannot identify the language itself).
-const NON_LATIN = /[^\p{Script=Latin}\p{N}\p{P}\p{S}\p{Z}\p{M}\n\r\t]/u
-
-function styleText(raw, field, max) {
-  const text = typeof raw === 'string' ? raw.trim() : ''
-  if (!text) throw new AppError(400, 'MISSING_FIELDS', `"${field}" is required (English text, up to ${max} characters).`)
-  if (NON_LATIN.test(text)) throw new AppError(422, 'INVALID_STYLE_TEXT', `"${field}" must be written in English (Latin letters).`)
-  return text.slice(0, max)
+// The template prompts (style_title / style_desc) come from the template JSON files and are passed to AILabTools EXACTLY as received: no trimming, truncation,
+// character filtering or any other change. Only a missing / empty value is refused (a replacement prompt is never created). AILabTools applies its own length limits.
+function styleText(raw, field) {
+  if (typeof raw !== 'string' || !raw.trim()) throw new AppError(400, 'MISSING_FIELDS', `"${field}" is required (the template's prompt text).`)
+  return raw
 }
 
 function parseImageSize(raw) {
@@ -60,8 +54,8 @@ async function generate(req, res) {
     if (!req.file) {
       throw new AppError(400, 'MISSING_FIELDS', 'Missing required file field "image". Send multipart/form-data with "image", "style_title" and "style_desc" (optional "image_size").')
     }
-    const styleTitle = styleText(req.body?.style_title, 'style_title', MAX_TITLE)
-    const styleDesc = styleText(req.body?.style_desc, 'style_desc', MAX_DESC)
+    const styleTitle = styleText(req.body?.style_title, 'style_title')
+    const styleDesc = styleText(req.body?.style_desc, 'style_desc')
     const imageSize = parseImageSize(req.body?.image_size)
 
     const image = await prepareImage(req.file.path, 'image')

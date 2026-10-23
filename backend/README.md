@@ -108,7 +108,7 @@ Errors always look like `{ "success": false, "error": { "code": "...", "message"
 | 400 | `MISSING_FIELDS`, `INVALID_IMAGE_SIZE`, `UNEXPECTED_FIELD`, `TOO_MANY_FILES` | missing / wrong form fields |
 | 413 | `FILE_TOO_LARGE`, `FILE_SIZE_EXCEEDS_LIMIT` | image over 10 MB |
 | 415 | `UNSUPPORTED_FILE_TYPE` | not JPG/PNG/WebP |
-| 422 | `INVALID_IMAGE`, `INVALID_STYLE_TEXT`, or an AILabTools code (e.g. `ERROR_NO_FACE_IN_FILE`) | unusable image / non-English style text / API rejection |
+| 422 | `INVALID_IMAGE`, or an AILabTools code (e.g. `ERROR_NO_FACE_IN_FILE`) | unusable image / API rejection |
 | 402 | `AILAB_INSUFFICIENT_CREDITS` | AILabTools account is out of credits |
 | 429 | `RATE_LIMITED`, `AILAB_RATE_LIMITED` | too many requests (ours: 10/min per IP) or AILabTools' limit |
 | 502 | `AILAB_AUTH_FAILED`, `AILAB_ERROR`, `AILAB_UNREACHABLE`, ... | key rejected / upstream failure |
