@@ -61,6 +61,7 @@ module.exports = {
   defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase() === 'INR' ? 'INR' : 'USD',
   // Visitors in India are charged in rupees, everyone else in dollars. The country comes from the hosting platform (Vercel: x-vercel-ip-country). DEFAULT_CURRENCY is used when no country is known (local development): USD or INR.
   defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase() === 'INR' ? 'INR' : 'USD',
+  adminApiKey: (process.env.ADMIN_API_KEY || '').trim(), // secret for the /api/admin/* endpoints (header x-admin-key); empty = those endpoints are off
   brandName: (process.env.BRAND_NAME || 'Pictrify').trim(), // the name of the site: shown at the top of Razorpay's payment window
 
   // Razorpay (payments for coin packs / plans). Without the keys checkout answers 503.

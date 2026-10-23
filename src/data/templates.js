@@ -109,23 +109,11 @@ export const exploreEverything = dedupe([...exploreAllTemplates, ...exploreTabs.
 /** Templates shown when an Explore category tab is selected. */
 export const categoryItems = (id) => exploreFolderTemplates[id] || byCategory(id)
 
-// Trending page: one template per category for the Spotlight Roll (the first six groups below, plus a second Old Money card) and up to 5 templates
-// from EACH category in the grid (Top Carousel is not part of Trending). A category made of sub-folders (Hairstyle) is sampled round-robin across its subs.
-const TRENDING_GROUPS = [['80s-and-90s'], ['cartoon'], ['linkedin-headshot'], ['old-money'], ['beard'], ['hairstyle-baby', 'hairstyle-man', 'hairstyle-woman']]
-const roundRobin = (ids, max) => {
-  const lists = ids.map((id) => categoryItems(id)); const out = []
-  for (let i = 0; out.length < max && lists.some((l) => i < l.length); i++) lists.forEach((l) => { if (i < l.length && out.length < max) out.push(l[i]) })
-  return out
+/** Templates by id (e.g. "old-money/vintage-sari"), in the order given; ids that do not exist (any more) are skipped. Used for the admin's Trending list. */
+export const templatesByIds = (ids) => {
+  const all = new Map([...folderTemplates, ...Object.values(exploreFolderTemplates).flat()].map((t) => [t.id, t]))
+  return ids.map((id) => all.get(id)).filter(Boolean)
 }
-// Spotlight Roll: the first six categories' lead templates, plus a second Old Money template as the 7th card
-export const trendingSpotlight = [...TRENDING_GROUPS.slice(0, 6).map((g) => roundRobin(g, 1)[0]), categoryItems('old-money')[1]].filter(Boolean)
-const trendingGroups = TRENDING_GROUPS.map((g) => roundRobin(g, 5))
-// Grid order: round-robin across the categories (one from each, then the next one from each, ...), so templates of a category are never next to each other
-export const trendingGrid = [0, 1, 2, 3, 4].flatMap((i) => trendingGroups.map((g) => g[i])).filter(Boolean)
-
-// A template that is in Trending is not repeated in its own category (it is still in All and in Trending).
-export const trendingIds = new Set([...trendingGrid, ...trendingSpotlight].map((t) => t.id))
-export const ownItems = (id) => categoryItems(id).filter((t) => !trendingIds.has(t.id))
 
 /** Resolve /generate?categoryId=&assetId= to an asset (with aliases for the reference's own spellings). */
 export function findAsset(categoryId, assetId) {

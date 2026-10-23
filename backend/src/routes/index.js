@@ -15,6 +15,8 @@ const chargeCoins = require('../middleware/chargeCoins')
 const region = require('../middleware/region')
 const walletCtl = require('../controllers/wallet.controller')
 const favoritesCtl = require('../controllers/favorites.controller')
+const trendingCtl = require('../controllers/trending.controller')
+const requireAdmin = require('../middleware/requireAdmin')
 
 const router = express.Router()
 
@@ -65,6 +67,12 @@ router.post('/beard/generate', generateLimiter, requireAuth, requireApiKey, dail
 router.post('/hairstyle/generate', generateLimiter, requireAuth, requireApiKey, dailyQuota, chargeCoins, uploadImage, hairstyle.generate) // Hairstyle Changer Premium (Fun: Baby / Men / Woman)
 
 // Stored images (DigitalOcean Spaces): original photo + AI result of one generation. Only the user who created a generation can read or change it.
+// Trending templates: everyone can read the list; only the admin (x-admin-key = ADMIN_API_KEY) can change it
+router.get('/trending', trendingCtl.list)
+router.post('/admin/trending', requireAdmin, trendingCtl.add)
+router.put('/admin/trending', requireAdmin, trendingCtl.replace)
+router.delete('/admin/trending', requireAdmin, trendingCtl.remove)
+
 router.post('/generations', generateLimiter, requireAuth, uploadImage, generationsCtl.create)
 router.post('/generations/:id/result', generateLimiter, requireAuth, uploadImage, generationsCtl.saveResult)
 router.get('/generations', requireAuth, generationsCtl.list) // the logged-in user's generations

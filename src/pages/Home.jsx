@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { categories, steps, exploreCategories, exploreTabs, byCategory, exploreList, folderTemplates, exploreEverything, categoryItems, ownItems, generateUrl } from '../data/templates.js'
+import { categories, steps, exploreCategories, exploreTabs, byCategory, exploreList, folderTemplates, exploreEverything, categoryItems, generateUrl, templatesByIds } from '../data/templates.js'
+import { useTrending } from '../lib/useTrending.js'
 import TemplateCard from '../components/TemplateCard.jsx'
 import PImage from '../components/PImage.jsx'
 import { SparkIcon } from '../components/Header.jsx'
@@ -278,7 +279,7 @@ const CATEGORY_INFO = {
 function MobileHome() {
   const top = categoryItems('top-carousel')
   const rows = exploreTabs.filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
-    id: tab.id, title: tab.category || tab.name, info: CATEGORY_INFO[tab.id], items: ownItems(tab.id), // templates that are in Trending are not repeated here
+    id: tab.id, title: tab.category || tab.name, info: CATEGORY_INFO[tab.id], items: categoryItems(tab.id),
     to: tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}&from=home` : `/explore?category=${tab.id}&from=home`, // from=home: Explore shows a phone-only back-to-Home bar for this one category
   })).filter((r) => r.items.length)
   return (
@@ -337,7 +338,9 @@ export default function Home() {
   // Trending Templates: twelve hand-picked templates (category, template name), ordered so no two neighbouring cards share a category
   const TRENDING_12 = [['80s-and-90s', 'Good Vibes'], ['cartoon', '3D Toon'], ['linkedin-headshot', 'Executive'], ['old-money', 'Retro Car'], ['beard', 'Bandholz'], ['hairstyle-woman', 'BoxBraids'],
     ['old-money', 'Vintage Sari'], ['cartoon', 'Neon Cyber'], ['80s-and-90s', 'Vintage Golden'], ['hairstyle-woman', 'Airy Short Curls'], ['linkedin-headshot', 'Corporate'], ['hairstyle-baby', 'Baby DoubleBun']]
-  const trendingPicks = TRENDING_12.map(([id, name]) => categoryItems(id).find((t) => t.name === name)).filter(Boolean)
+  const adminTrending = useTrending() // the templates marked as Trending in the admin; until some are set, the picks above
+  const custom = adminTrending ? templatesByIds(adminTrending).slice(0, 12) : []
+  const trendingPicks = custom.length ? custom : TRENDING_12.map(([id, name]) => categoryItems(id).find((t) => t.name === name)).filter(Boolean)
   const stepIcons = ['M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z', 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4', 'M8 5v14l11-7z']
 
   return (
