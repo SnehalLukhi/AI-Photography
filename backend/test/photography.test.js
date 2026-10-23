@@ -119,7 +119,7 @@ test('response=image tries to download the first result URL (reported as an erro
   assert.equal((await res.json()).error.code, 'AILAB_UNREACHABLE')
 })
 
-test('validation: image, style fields, English-only text, image_size, file type, fake image', async () => {
+test('validation: image, style fields, image_size, file type, fake image', async () => {
   let res = await post({}, fields())
   assert.equal(res.status, 400); assert.equal((await res.json()).error.code, 'MISSING_FIELDS')
 
@@ -128,9 +128,6 @@ test('validation: image, style fields, English-only text, image_size, file type,
 
   res = await post({ image: await img() }, { style_title: 'x' })
   assert.equal(res.status, 400); assert.match((await res.json()).error.message, /style_desc/)
-
-  res = await post({ image: await img() }, fields({ style_title: '黄金时刻肖像' }))
-  assert.equal(res.status, 422); assert.equal((await res.json()).error.code, 'INVALID_STYLE_TEXT')
 
   res = await post({ image: await img() }, fields({ image_size: '7:7' }))
   assert.equal(res.status, 400); assert.equal((await res.json()).error.code, 'INVALID_IMAGE_SIZE')
@@ -142,13 +139,15 @@ test('validation: image, style fields, English-only text, image_size, file type,
   assert.equal(res.status, 422); assert.equal((await res.json()).error.code, 'INVALID_IMAGE')
 })
 
-test('style text longer than the documented limits is truncated (500 / 1000 characters)', async () => {
+test('style text is sent to AILabTools exactly as received (no trimming, truncation or character filtering)', async () => {
   polls = 0
-  const res = await post({ image: await img() }, fields({ style_title: 'a'.repeat(700), style_desc: 'b'.repeat(1500) }))
+  const title = `  ${'a'.repeat(700)} subject’s “look” – é  `
+  const desc = `${'b'.repeat(1500)} jack-o’-lantern`
+  const res = await post({ image: await img() }, fields({ style_title: title, style_desc: desc }))
   assert.equal(res.status, 200)
   const submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
-  assert.equal(submit.parts.find((p) => p.name === 'style_title').data.length, 500)
-  assert.equal(submit.parts.find((p) => p.name === 'style_desc').data.length, 1000)
+  assert.equal(submit.parts.find((p) => p.name === 'style_title').data.toString(), title)
+  assert.equal(submit.parts.find((p) => p.name === 'style_desc').data.toString(), desc)
 })
 
 test('maps AILabTools errors: no credits -> 402, API error code passed through -> 422, unknown route -> 404', async () => {

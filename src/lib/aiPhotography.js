@@ -5,6 +5,10 @@ import topCarousel from '../data/top-carousel_templates.json'
 import cartoonYourself from '../data/cartoon-yourself_templates.json'
 import beardStyling from '../data/ai-beard-styling_templates.json'
 import hairstyleChanger from '../data/ai-hairstyle-changer_templates.json'
+import christmas from '../data/christmas_templates.json'
+import cinematic from '../data/cinematic_templates.json'
+import diwali from '../data/diwali_templates.json'
+import halloween from '../data/halloween_templates.json'
 
 /**
  * AILabTools AI Photography, called through the existing backend endpoint (POST /api/photos/generate). The AILabTools key lives only in the
@@ -45,6 +49,10 @@ const CATALOGUES = [
   { folder: '/explore/old-money/', templates: oldMoney.categories.flatMap((c) => c.templates) },
   { folder: '/explore/Linkedin Headshot/', templates: linkedin.categories.flatMap((c) => c.templates) },
   { folder: '/explore/Top Carousel/', templates: topCarousel.categories.flatMap((c) => c.templates) },
+  { folder: '/explore/Christmas/', templates: christmas.categories.flatMap((c) => c.templates) }, // same AI Photography flow as 80's & 90's: the JSON style_title_prompt / style_desc_prompt are sent unchanged
+  { folder: '/explore/Cinematic/', templates: cinematic.categories.flatMap((c) => c.templates) },
+  { folder: '/explore/Diwali/', templates: diwali.categories.flatMap((c) => c.templates) },
+  { folder: '/explore/Halloween/', templates: halloween.categories.flatMap((c) => c.templates) },
   { folder: '/explore/cartoon/', kind: 'cartoon', templates: cartoonYourself.categories.flatMap((c) => c.templates) }, // JSON `id` = API `type`; matched by name (the app's ids are slugs of the file names)
 ]
 const BEARD_TEMPLATES = beardStyling.categories.flatMap((c) => c.templates)

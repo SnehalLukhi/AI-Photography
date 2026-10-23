@@ -1,0 +1,70 @@
+{
+  "categories": [
+    {
+      "id": "christmas",
+      "name": "Christmas",
+      "templates": [
+        {
+          "id": "teddy_twin_trees_holiday_elegance",
+          "name": "Teddy & Twin Trees Holiday Elegance",
+          "preview_url": "https://YOUR-CDN/templates/teddy_twin_trees_holiday_elegance.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Elegant warm Christmas studio portrait of a young person sitting gracefully and centered between two grand decorated Christmas trees, hands gently folded on the lap holding a small plush teddy bear with a red ribbon bow, head slightly tilted, soft gentle smile, calm sweet expression, looking at the camera. Long dark brown wavy hair with soft curtain bangs, a red satin bow headband, defined eyebrows, soft natural makeup, small pearl earring.",
+          "style_desc_prompt": "Wearing a cream-white knit sleeveless dress with thin straps, a plush deep red faux-fur coat draped loosely off the shoulders. Background: two tall flocked Christmas trees with warm golden fairy lights, red and gold baubles, silver ornaments, candy canes, snowflake ornaments and red ribbon bows, many wrapped red and gold gift boxes with satin ribbons, a glowing vintage lantern, a red plaid blanket, a mini lit snow house, pine cones, a holly wreath on the wall, a black grand piano with sheet music, a warm table lamp, beige paneled walls. Warm golden-amber and rich red color palette, soft glowing light on the face, gentle rim light, magical twinkling bokeh, symmetrical composition, shallow depth of field, subject sharply in focus. Shot on 50mm f/1.8 lens, ultra-detailed skin, faux-fur, knit and ornament texture, romantic, cozy, luxurious holiday mood, professional Christmas studio photography, 16:9 widescreen, 8K, photorealistic, masterpiece."
+        },
+        {
+          "id": "reindeer_antler_snowfall_glow",
+          "name": "Reindeer Antler Snowfall Glow",
+          "preview_url": "https://YOUR-CDN/templates/reindeer_antler_snowfall_glow.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Warm cheerful Christmas street portrait of a young person standing in a snowy decorated holiday town while light snow falls, one hand playfully touching a reindeer antler headband, head tilted, soft sweet smile, joyful sparkling eyes looking at the camera. Long dark brown wavy hair flowing over the shoulders, defined eyebrows, natural soft makeup, small gold earring.",
+          "style_desc_prompt": "Wearing a plush red wool coat, a cream cable-knit turtleneck sweater, a red fringed scarf with white snowflake pattern, and a festive red reindeer antler headband with holly berries and white fur trim. Background: a charming snowy village street with glowing vintage lanterns, shop windows with warm lights, red ribbon bows and evergreen garlands, a tall Christmas tree covered in snow, golden fairy lights, red ornaments and wrapped red and gold gift boxes, a snow-covered bench, fresh snow on the ground, floating snowflakes. Warm golden and festive red color palette against soft white snow, glowing backlight, soft rim light on the hair, magical creamy golden bokeh, shallow depth of field, subject sharply in focus. Shot on 85mm f/1.8 lens, ultra-detailed skin, wool knit and snowflake texture, cozy, joyful, magical holiday mood, professional winter lifestyle photography, 16:9 widescreen, 8K, photorealistic, masterpiece."
+        },
+        {
+          "id": "winter_wonderland_stroll",
+          "name": "Winter Wonderland Stroll",
+          "preview_url": "https://YOUR-CDN/templates/winter_wonderland_stroll.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Bright cheerful Christmas street-style portrait of a young person walking confidently through a snowy holiday village, one hand tucked in the pocket, other arm relaxed, big warm toothy smile, joyful friendly expression, looking at the camera. Short dark brown tousled hair peeking from under a fluffy red Santa hat with a white fur trim and pom-pom, defined eyebrows, light stubble, a silver wristwatch.",
+          "style_desc_prompt": "Wearing a vibrant red tailored wool blazer with a navy pocket square, a cozy cream, red and navy Nordic reindeer and snowflake knit sweater, a matching patterned knit scarf, and dark slim trousers. Background: snow-dusted evergreen Christmas trees wrapped in warm golden string lights, rustic wooden cabin-style buildings with glowing lanterns, fresh snow on the ground and railings, soft winter haze, big golden bokeh orbs. Warm golden and festive red color palette against soft white snow, gentle glowing light on the face, soft rim light, cozy holiday atmosphere, shallow depth of field, subject sharply in focus. Shot on 85mm f/1.8 lens, ultra-detailed skin, wool, knit and snow texture, joyful, cozy, festive mood, professional winter lifestyle fashion photography, 16:9 widescreen, 8K, photorealistic, masterpiece."
+        },
+        {
+          "id": "reindeer_sweater_living_room_cheer",
+          "name": "Reindeer Sweater Living Room Cheer",
+          "preview_url": "https://YOUR-CDN/templates/reindeer_sweater_living_room_cheer.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Bright, warm, cozy Christmas living room portrait of a young person standing relaxed with both hands tucked in the pockets of dark jeans, head slightly tilted, soft friendly smile, calm happy expression, looking at the camera. Short dark wavy tousled hair under a fluffy red Santa hat with white fur trim and pom-pom, defined eyebrows, light stubble. Wearing a bright red knit turtleneck sweater with a white Nordic reindeer and snowflake pattern across the chest and sleeves.",
+          "style_desc_prompt": "Paired with dark denim jeans. Background: a beautifully decorated Christmas tree with red and gold baubles, golden bows, a Santa figurine, warm fairy lights and a gold star topper, wrapped red and gold gift boxes under the tree, a white lantern with a lit candle, a large bright window with soft daylight, a cream sofa with red plaid and snowflake cushions, a cozy knit blanket, a wooden coffee table with a Christmas mug and a holly wreath, a garland with glowing lights on the shelf, a small second tree. Soft warm natural window light mixed with golden fairy light glow, creamy white, red and gold color palette, gentle highlights on the face, airy cozy atmosphere, shallow depth of field, subject sharply in focus. Shot on 50mm f/1.8 lens, ultra-detailed skin, wool knit and ornament texture, cheerful, comforting, festive mood, professional holiday lifestyle photography, 16:9 widescreen, 8K, photorealistic, masterpiece."
+        },
+        {
+          "id": "cocoa_candy_cane_fireside_glow",
+          "name": "Cocoa & Candy Cane Fireside Glow",
+          "preview_url": "https://YOUR-CDN/templates/cocoa_candy_cane_fireside_glow.jpg",
+          "num_inputs": 1,
+          "min_people": 1,
+          "aspect_ratio": "9:16",
+          "cost_coins": 15,
+          "gender": "all",
+          "style_title_prompt": "Warm cozy Christmas fireside portrait of a young person standing gently in a decorated living room, holding a white mug of hot cocoa topped with a candy cane in both hands near the chest, head tilted slightly, soft sweet smile, bright happy eyes looking at the camera. Long dark brown wavy hair flowing over the shoulders, a red fabric headband, defined eyebrows, soft natural makeup, small pearl stud earring.",
+          "style_desc_prompt": "Wearing a chunky forest-green knit Christmas sweater with a white and red Nordic pattern, snowflakes, red poinsettia flowers, holly motifs and red reindeer embroidery. Background: a tall glowing Christmas tree with warm golden fairy lights, red and gold baubles, wrapped red and cream gift boxes, a white fireplace mantel with a lit crackling fire, a pine garland with lights and red berries, two red Christmas stockings, a holly wreath on the wall, soft beige walls, creamy golden bokeh. Warm golden-orange and festive red and green color palette, soft firelight glow on the face, gentle rim light, rich warm highlights, cozy intimate atmosphere, shallow depth of field, subject sharply in focus. Shot on 85mm f/1.8 lens, ultra-detailed skin, wool knit, ceramic mug and flame texture, cheerful, comforting, magical holiday mood, professional winter lifestyle photography, 16:9 widescreen, 8K, photorealistic, masterpiece."
+        }
+      ]
+    }
+  ]
+}

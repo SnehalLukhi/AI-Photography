@@ -43,6 +43,7 @@ export default function App() {
 
           <Route path="/help" element={<Help />} />
           <Route path="/contact-us" element={<Contact />} />
+          <Route path="/contact-support" element={<Contact />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<Legal kind="terms" />} />

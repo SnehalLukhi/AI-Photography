@@ -5,7 +5,7 @@ import { brandImages } from '../data/images.js'
 
 const cols = {
   'Explore': [['Explore Templates', '/explore'], ['Transactions', '/transactions']],
-  Company: [['Help Center', '/help'], ['Share Your Feedback', '/feedback'], ['Pricing & Plans', '/pricing'], ['My Creations', '/creations']],
+  Company: [['Help Center', '/help'], ['Contact Support', '/contact-support'], ['Share Your Feedback', '/feedback'], ['Pricing & Plans', '/pricing'], ['My Creations', '/creations']],
   Legal: [['Terms of Use', '/terms-conditions'], ['Privacy Policy', '/privacy-policy']],
 }
 // White line icons in an outlined circle, one per feature (same order as `features` in data/templates.js).

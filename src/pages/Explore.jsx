@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader, { pageWrap } from '../components/PageHeader.jsx'
 import TemplateCard from '../components/TemplateCard.jsx'
-import { exploreTabs, hairstyleTab, folderTemplates, exploreAllTemplates, exploreEverything, categoryItems, generateUrl } from '../data/templates.js'
+import { exploreTabs, isOriginalTab, hairstyleTab, folderTemplates, exploreAllTemplates, exploreEverything, categoryItems, generateUrl } from '../data/templates.js'
 
 const pad = (n) => String(n).padStart(2, '0')
 
@@ -30,7 +30,8 @@ export default function Explore() {
   const [openSub, setOpenSub] = useState(() => (['hairstyle'].includes(params.get('category')) ? params.get('category') : null)) // desktop sidebar accordion: the one parent (Hairstyle) that is expanded, or null
   const active = params.get('category') // null = All; 'trending' or a category slug
   const fromHome = !!active && params.get('from') === 'home' // arrived through a Home category's "More" (phones show a back bar and only that category)
-  const chips = [{ id: 'trending', name: 'Trending' }, ...exploreTabs.filter((t) => !t.parent && categoryItems(t.id).length), ...subsWithItems(hairstyleTab)] // a tab appears once its folder has images
+  const tabsWithItems = exploreTabs.filter((t) => !t.parent && categoryItems(t.id).length)
+  const chips = [{ id: 'trending', name: 'Trending' }, ...tabsWithItems.filter((t) => !isOriginalTab(t)).reverse(), ...tabsWithItems.filter(isOriginalTab), ...subsWithItems(hairstyleTab)] // a tab appears once its folder has images
   const chip = chips.find((c) => c.id === active) || chips[0]
   const sub = chip.subs ? (chip.subs.find((s) => s.id === params.get('sub')) || chip.subs[0]) : null // Hairstyle: the selected sub-category (Baby / Men / Woman)
   const setChip = (c) => setParams(c.id ? (c.subs ? { category: c.id, sub: c.subs[0].id } : { category: c.id }) : {}, { replace: false })

@@ -260,6 +260,7 @@ export default function Header({ generating = false }) {
       <header className={`relative z-50 flex h-[61px] items-center justify-between border-b border-white/[0.08] bg-[#0A0809] px-4 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
         <Logo size="sm" />
         <div className="flex items-center gap-2">
+          <LastManButton onClick={() => setLastMan('plans')} />
           {signedIn ? <><CoinBadge className="!h-7 !min-w-0 !gap-1.5 !px-2" /><ProfileMenu compact /></> : (
             <>
               <button type="button" onClick={openLogin} aria-label="Claim 100 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
@@ -270,7 +271,6 @@ export default function Header({ generating = false }) {
               </button>
             </>
           )}
-          <LastManButton onClick={() => setLastMan('plans')} />
         </div>
       </header>
       {lastMan === 'popup' && <LastManPopup onClose={() => setLastMan(null)} onUnlock={() => setLastMan('plans')} />}
@@ -284,7 +284,7 @@ export default function Header({ generating = false }) {
 const tabs = [
   { to: '/', label: 'Home', match: (p) => p === '/', d: 'M5 7v12a2 2 0 002 2h10M9 3h10a2 2 0 012 2v10a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2zM14 6.5l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
   { to: '/explore', label: 'Diy', match: (p) => p === '/explore', d: 'M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 9l2.5-5 3 1.5L6 10.5M9.5 5.5l3 1.5L10 10.5M16 5.5l3 1.5-2.5 3.5M16 13l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
-  { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/help', '/contact-us', '/feedback', '/transactions', '/profile'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
+  { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/help', '/contact-us', '/contact-support', '/feedback', '/transactions', '/profile'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
 ]
 
 function MobileTabs({ pathname }) {
