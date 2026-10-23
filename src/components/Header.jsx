@@ -260,6 +260,7 @@ export default function Header({ generating = false }) {
       <header className={`relative z-50 flex h-[61px] items-center justify-between border-b border-white/[0.08] bg-[#0A0809] px-4 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
         <Logo size="sm" />
         <div className="flex items-center gap-2">
+          <LastManButton onClick={() => setLastMan('plans')} />
           {signedIn ? <><CoinBadge className="!h-7 !min-w-0 !gap-1.5 !px-2" /><ProfileMenu compact /></> : (
             <>
               <button type="button" onClick={openLogin} aria-label="Claim 50 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
@@ -270,7 +271,6 @@ export default function Header({ generating = false }) {
               </button>
             </>
           )}
-          <LastManButton onClick={() => setLastMan('plans')} />
         </div>
       </header>
       {lastMan === 'popup' && <LastManPopup onClose={() => setLastMan(null)} onUnlock={() => setLastMan('plans')} />}
