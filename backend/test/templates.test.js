@@ -1,8 +1,7 @@
 /** Template catalogue: public read, admin-key protected writes, prompts optional except for the photography flow, bulk add across categories. */
 const { test, before, after } = require('node:test')
 const assert = require('node:assert/strict')
-process.env.ADMIN_API_KEY = 'admin-secret'
-const h = require('./helpers')
+const h = require('./helpers') // blanks ADMIN_API_KEY, so the key is set in before()
 
 let app
 const admin = { 'content-type': 'application/json', 'x-admin-key': 'admin-secret' }
@@ -14,6 +13,7 @@ const call = async (method, path, body, headers = admin) => {
 }
 const url = 'https://cdn.example.com/t.jpg'
 before(async () => {
+  process.env.ADMIN_API_KEY = 'admin-secret'
   app = await h.startApp(require('../src/app'))
   await call('POST', '/admin/template-categories', { id: 'retro', name: 'Retro', flow: 'photography' })
   await call('POST', '/admin/template-categories', { id: 'toon', name: 'Toon', flow: 'cartoon' })

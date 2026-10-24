@@ -134,6 +134,13 @@ const SCHEMA = `
   CREATE INDEX IF NOT EXISTS templates_category ON templates (category_id, sort_order, created_at);
   -- Supabase exposes every table through its public REST API. Row Level Security with NO policies shuts that door: only this backend
   -- (which connects directly as the database owner, and bypasses RLS) can read or write these tables.
+  -- templates marked as Trending in the admin (ids of the frontend's templates, in display order)
+  CREATE TABLE IF NOT EXISTS trending_templates (
+    template_id TEXT PRIMARY KEY,
+    position INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  ALTER TABLE trending_templates ENABLE ROW LEVEL SECURITY;
   ALTER TABLE users ENABLE ROW LEVEL SECURITY;
   ALTER TABLE usage ENABLE ROW LEVEL SECURITY;
   ALTER TABLE coin_ledger ENABLE ROW LEVEL SECURITY;

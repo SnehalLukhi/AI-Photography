@@ -16,7 +16,8 @@ const region = require('../middleware/region')
 const walletCtl = require('../controllers/wallet.controller')
 const favoritesCtl = require('../controllers/favorites.controller')
 const templatesCtl = require('../controllers/templates.controller')
-const requireAdminKey = require('../middleware/requireAdminKey')
+const trendingCtl = require('../controllers/trending.controller')
+const requireAdmin = require('../middleware/requireAdmin')
 
 const router = express.Router()
 
@@ -51,10 +52,10 @@ router.delete('/favorites', requireAuth, favoritesCtl.remove) // ?templateId=...
 
 // Template catalogue: public read for the app, writes need the x-admin-key header
 router.get('/templates', templatesCtl.list)
-router.post('/admin/template-categories', requireAdminKey, templatesCtl.createCategory)
-router.post('/admin/templates', requireAdminKey, uploadTemplateImage, templatesCtl.create)
-router.put('/admin/templates/:id', requireAdminKey, uploadTemplateImage, templatesCtl.update)
-router.delete('/admin/templates/:id', requireAdminKey, templatesCtl.remove)
+router.post('/admin/template-categories', requireAdmin, templatesCtl.createCategory)
+router.post('/admin/templates', requireAdmin, uploadTemplateImage, templatesCtl.create)
+router.put('/admin/templates/:id', requireAdmin, uploadTemplateImage, templatesCtl.update)
+router.delete('/admin/templates/:id', requireAdmin, templatesCtl.remove)
 
 router.get('/plans', region, optionalAuth, walletCtl.listPlans)
 router.get('/coin-packs', region, optionalAuth, walletCtl.listPacks)
@@ -74,6 +75,12 @@ router.post('/beard/generate', generateLimiter, requireAuth, requireApiKey, dail
 router.post('/hairstyle/generate', generateLimiter, requireAuth, requireApiKey, dailyQuota, chargeCoins, uploadImage, hairstyle.generate) // Hairstyle Changer Premium (Fun: Baby / Men / Woman)
 
 // Stored images (DigitalOcean Spaces): original photo + AI result of one generation. Only the user who created a generation can read or change it.
+// Trending templates: everyone can read the list; only the admin (x-admin-key = ADMIN_API_KEY) can change it
+router.get('/trending', trendingCtl.list)
+router.post('/admin/trending', requireAdmin, trendingCtl.add)
+router.put('/admin/trending', requireAdmin, trendingCtl.replace)
+router.delete('/admin/trending', requireAdmin, trendingCtl.remove)
+
 router.post('/generations', generateLimiter, requireAuth, uploadImage, generationsCtl.create)
 router.post('/generations/:id/result', generateLimiter, requireAuth, uploadImage, generationsCtl.saveResult)
 router.get('/generations', requireAuth, generationsCtl.list) // the logged-in user's generations

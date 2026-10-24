@@ -291,6 +291,20 @@ try { plansCache = JSON.parse(localStorage.getItem(PLANS_KEY) || 'null') } catch
 export const cachedPlans = () => plansCache
 if (typeof window !== 'undefined') getPlans().catch(() => {}) // start fetching as soon as the app loads
 
+// Templates marked as Trending in the admin (GET /api/trending): ids in display order. The last answer is kept (also between visits) so the page does not wait for it.
+const TRENDING_KEY = 'pictrify-trending'
+let trendingCache = null
+try { trendingCache = JSON.parse(localStorage.getItem(TRENDING_KEY) || 'null') } catch { /* nothing cached */ }
+export const cachedTrending = () => trendingCache
+export async function getTrending() {
+  const res = await fetch(`${API_BASE}/api/trending`)
+  const body = await readJson(res)
+  if (!res.ok) throw failure(body, res)
+  trendingCache = Array.isArray(body.templateIds) ? body.templateIds : []
+  try { localStorage.setItem(TRENDING_KEY, JSON.stringify(trendingCache)) } catch { /* private window */ }
+  return trendingCache
+}
+
 /** Coin balance, cost of one generation and the latest coin movements: { coins, costPerGeneration, history }. */
 export async function getWallet() {
   const res = await fetch(`${API_BASE}/api/wallet`, { headers: headers() })

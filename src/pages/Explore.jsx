@@ -2,14 +2,34 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader, { pageWrap } from '../components/PageHeader.jsx'
 import TemplateCard from '../components/TemplateCard.jsx'
-import { exploreTabs, isOriginalTab, hairstyleTab, folderTemplates, exploreAllTemplates, exploreEverything, categoryItems, generateUrl, trendingSpotlight, trendingGrid, ownItems } from '../data/templates.js'
+import { exploreTabs, isOriginalTab, hairstyleTab, folderTemplates, exploreAllTemplates, exploreEverything, categoryItems, generateUrl, templatesByIds } from '../data/templates.js'
+import { useTrending } from '../lib/useTrending.js'
 
 const pad = (n) => String(n).padStart(2, '0')
 
 // "Hairstyle" appears in the sidebar once at least one of its sub-folders has images; only non-empty subs are offered.
 const subsWithItems = (parent) => { const subs = parent.subs.filter((s) => categoryItems(s.tabId).length); return subs.length ? [{ ...parent, subs }] : [] }
 
+// Trending page: one template per category for the Spotlight Roll (the first six groups below, plus a second Old Money card) and up to 5 templates
+// from EACH category in the grid (Top Carousel is not part of Trending). A category made of sub-folders (Hairstyle) is sampled round-robin across its subs.
+const TRENDING_GROUPS = [['80s-and-90s'], ['cartoon'], ['linkedin-headshot'], ['old-money'], ['beard'], ['hairstyle-baby', 'hairstyle-man', 'hairstyle-woman']]
+const roundRobin = (ids, max) => {
+  const lists = ids.map((id) => categoryItems(id)); const out = []
+  for (let i = 0; out.length < max && lists.some((l) => i < l.length); i++) lists.forEach((l) => { if (i < l.length && out.length < max) out.push(l[i]) })
+  return out
+}
+// Spotlight Roll: the first six categories' lead templates, plus a second Old Money template as the 7th card
+const defaultSpotlight = [...TRENDING_GROUPS.slice(0, 6).map((g) => roundRobin(g, 1)[0]), categoryItems('old-money')[1]].filter(Boolean)
+const trendingGroups = TRENDING_GROUPS.map((g) => roundRobin(g, 5))
+// Grid order: round-robin across the categories (one from each, then the next one from each, ...), so templates of a category are never next to each other
+const defaultGrid = [0, 1, 2, 3, 4].flatMap((i) => trendingGroups.map((g) => g[i])).filter(Boolean)
+
 export default function Explore() {
+  // Trending = the templates marked in the admin (they also stay in their own category); until some are set, the built-in picks above
+  const trendingIds = useTrending()
+  const custom = trendingIds ? templatesByIds(trendingIds) : []
+  const trendingGrid = custom.length ? custom : defaultGrid
+  const trendingSpotlight = custom.length ? custom.slice(0, 7) : defaultSpotlight
   const nav = useNavigate()
   const [params, setParams] = useSearchParams()
   const drag = useRef(null)
@@ -23,7 +43,7 @@ export default function Explore() {
   const setChip = (c) => setParams(c.id ? (c.subs ? { category: c.id, sub: c.subs[0].id } : { category: c.id }) : {}, { replace: false })
   const setSub = (s) => setParams(fromHome ? { category: chip.id, sub: s.id, from: 'home' } : { category: chip.id, sub: s.id }, { replace: false })
   // "All" and "Trending" come from the template folder (same source as Home > Trending Templates); category chips keep their own lists.
-  const list = chip.id === null ? exploreEverything : chip.id === 'trending' ? trendingGrid : sub ? ownItems(sub.tabId) : ownItems(chip.id)
+  const list = chip.id === null ? exploreEverything : chip.id === 'trending' ? trendingGrid : sub ? categoryItems(sub.tabId) : categoryItems(chip.id)
   const allLandscape = list.length > 0 && list.every((t) => t.landscape) // e.g. Top Carousel: every photo is a horizontal 16:9 picture
   const pick = (t) => nav(generateUrl(t))
   // switching category / sub-category always starts from the top (first template), not the previous scroll position
@@ -32,7 +52,7 @@ export default function Explore() {
   useEffect(() => { if (firstView.current) { firstView.current = false; return } window.scrollTo(0, 0) }, [viewKey])
   const isTrending = chip.id === 'trending'
   const thumbs = isTrending ? trendingSpotlight : folderTemplates.slice(0, 9)
-  const countOf = (c) => (c.subs ? c.subs.reduce((n, s) => n + ownItems(s.tabId).length, 0) : c.id === null ? exploreEverything.length : c.id === 'trending' ? trendingGrid.length : ownItems(c.id).length)
+  const countOf = (c) => (c.subs ? c.subs.reduce((n, s) => n + categoryItems(s.tabId).length, 0) : c.id === null ? exploreEverything.length : c.id === 'trending' ? trendingGrid.length : categoryItems(c.id).length)
 
   const card = (t) => (
     <TemplateCard key={t.id} t={t} fav onSelect={pick}
