@@ -215,6 +215,11 @@ function Generator({ asset }) {
 
       {/* ---------- Tablet / desktop ---------- */}
       <div className="relative hidden w-full overflow-hidden sm:block">
+        {/* page glow: purple on the left, a softer pink on the right, fading into the dark page. Fixed to the whole viewport (behind the header and the content), so it has no top or bottom edge. */}
+        <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true" style={{ background: [
+          'radial-gradient(62% 85% at -4% 38%, rgba(112,92,255,0.36), rgba(112,92,255,0.12) 45%, transparent 72%)',
+          'radial-gradient(55% 80% at 104% 68%, rgba(252,72,231,0.20), rgba(252,72,231,0.06) 45%, transparent 72%)',
+        ].join(',') }} />
         <div className="relative z-[1] mx-auto flex h-[calc(100dvh-5rem)] max-h-[calc(100dvh-5rem)] w-full max-w-[1440px] flex-col overflow-hidden px-6 pb-2 pt-3 md:px-8 lg:px-12 xl:px-16">
           <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="relative mx-auto mb-2 w-full max-w-[840px] shrink-0 px-2 sm:mb-3">
@@ -229,14 +234,14 @@ function Generator({ asset }) {
             </div>
             <div className="relative mt-3 flex min-h-0 flex-1 items-center justify-center sm:mt-4">
               <div className="flex h-full max-h-full w-full flex-col items-center justify-center gap-4 sm:flex-row sm:items-start lg:gap-5 xl:gap-6">
-                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#2B2B2B]" style={{ width: W }}>
+                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#2B2B2B] shadow-[0_0_42px_rgba(112,92,255,0.30),0_0_100px_rgba(112,92,255,0.13)]" style={{ width: W }}>
                   <img src={asset.image} alt="" className="pointer-events-none absolute inset-0 size-full scale-110 object-cover object-center blur-2xl brightness-75 saturate-125" />
                   <div className="pointer-events-none absolute inset-0 bg-[#0A0809]/35" />
                   <img src={asset.image} alt={asset.name} width="1080" height="1920" className={`absolute inset-0 z-[1] size-full ${fitOf(asset)} object-center`} />
                   <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-20 bg-gradient-to-b from-[#0A0809]/55 to-transparent" />
                   <p className="absolute left-4 right-4 top-3.5 z-10 truncate text-[15px] font-semibold text-white">{asset.name}</p>
                 </article>
-                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#2B2B2B]" style={{ width: `calc((${W}) * ${slots.length})`, aspectRatio: `${9 * slots.length} / 16` }}>
+                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#2B2B2B] shadow-[0_0_42px_rgba(112,92,255,0.30),0_0_100px_rgba(112,92,255,0.13)]" style={{ width: `calc((${W}) * ${slots.length})`, aspectRatio: `${9 * slots.length} / 16` }}>
                   <div className="absolute inset-0 flex flex-col gap-3 p-2.5 lg:gap-4 lg:p-3">
                     <div className={`relative grid min-h-0 flex-1 gap-2.5 ${multi ? 'grid-cols-2' : 'grid-cols-1'}`}>
                       {slots.map((k, i) => <Slot key={k} kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}

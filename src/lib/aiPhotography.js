@@ -1,13 +1,5 @@
-import eightiesNineties from '../data/80s-90s_templates.json'
-import oldMoney from '../data/old-money_templates.json'
-import linkedin from '../data/linkedin-headshot_templates.json'
-import topCarousel from '../data/top-carousel_templates.json'
-import cartoonYourself from '../data/cartoon-yourself_templates.json'
 import beardStyling from '../data/ai-beard-styling_templates.json'
 import hairstyleChanger from '../data/ai-hairstyle-changer_templates.json'
-import christmas from '../data/christmas_templates.json'
-import cinematic from '../data/cinematic_templates.json'
-import halloween from '../data/halloween_templates.json'
 
 /**
  * AILabTools AI Photography, called through the existing backend endpoint (POST /api/photos/generate). The AILabTools key lives only in the
@@ -42,17 +34,9 @@ const devCurrency = () => { try { const c = import.meta.env.DEV ? new URLSearchP
 const headers = () => (token ? { Authorization: `Bearer ${token}` } : {})
 const GIVE_UP_MS = 5 * 60 * 1000
 
-// Each category with a JSON catalogue: the folder its template images live in, and its JSON templates (the single source of the prompts).
-const CATALOGUES = [
-  { folder: '/explore/80&90/', templates: eightiesNineties.categories.flatMap((c) => c.templates) },
-  { folder: '/explore/old-money/', templates: oldMoney.categories.flatMap((c) => c.templates) },
-  { folder: '/explore/Linkedin Headshot/', templates: linkedin.categories.flatMap((c) => c.templates) },
-  { folder: '/explore/Top Carousel/', templates: topCarousel.categories.flatMap((c) => c.templates) },
-  { folder: '/explore/Christmas/', templates: christmas.categories.flatMap((c) => c.templates) }, // same AI Photography flow as 80's & 90's: the JSON style_title_prompt / style_desc_prompt are sent unchanged
-  { folder: '/explore/Cinematic/', templates: cinematic.categories.flatMap((c) => c.templates) },
-  { folder: '/explore/Halloween/', templates: halloween.categories.flatMap((c) => c.templates) },
-  { folder: '/explore/cartoon/', kind: 'cartoon', templates: cartoonYourself.categories.flatMap((c) => c.templates) }, // JSON `id` = API `type`; matched by name (the app's ids are slugs of the file names)
-]
+// Categories that still have a local JSON catalogue: { folder, templates, kind? }. Empty now: the photography, cartoon and Top Carousel templates come from the backend
+// catalogue (their JSON files were removed from src/data) and are handled in promptFor() through `asset.template`.
+const CATALOGUES = []
 const BEARD_TEMPLATES = beardStyling.categories.flatMap((c) => c.templates)
 // Beard: confirmed link between each preview image (file name before " (", which is the card name) and its JSON entry `id`. Explicit on purpose:
 // the JSON `name`s differ from the file names (e.g. "Full Ducktail" = DucktailBeardFull), so a name or file-name guess would be wrong.
@@ -86,8 +70,7 @@ export function promptFor(asset) {
     if (t.flow === 'cartoon') return { id: t.id, name: t.name, cartoonType: t.id }
     if (t.flow === 'beard') return { id: t.id, name: t.name, beardTemplate: t.id }
     if (t.flow === 'hairstyle') return { id: t.id, name: t.name, hairTemplate: t.id }
-    if (!t.style_title_prompt || !t.style_desc_prompt) return { error: `This template (${asset.name || asset.assetId}) has no prompt, so it cannot be generated. Please choose another template.` }
-    return { id: t.id, name: t.name, title: t.style_title_prompt, desc: t.style_desc_prompt }
+    return { id: t.id, name: t.name, title: t.style_title_prompt || undefined, desc: t.style_desc_prompt || undefined } // both prompts are optional: a missing one is simply not sent
   }
   const src = (() => { try { return decodeURIComponent(asset.image) } catch { return asset.image } })() // image URLs are percent-encoded ("Linkedin%20Headshot")
   if (HAIRSTYLE_FOLDERS.some((f) => src.includes(f))) {
@@ -459,8 +442,8 @@ export async function generatePhoto({ file, title, desc, cartoonType, beardTempl
   else if (beardTemplate) form.append('template', beardTemplate) // Beard: the JSON id only; the backend sends the template's reference image as `image_template`
   else if (cartoonType) form.append('type', cartoonType) // Cartoon Yourself: the style is chosen with `type`; no prompts, no image_size
   else {
-    form.append('style_title', title)
-    form.append('style_desc', desc)
+    if (title) form.append('style_title', title) // both prompts are optional; only a prompt the template really has is sent, unchanged
+    if (desc) form.append('style_desc', desc)
     form.append('image_size', IMAGE_SIZE)
   }
 

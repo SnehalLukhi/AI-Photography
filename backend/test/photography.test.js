@@ -123,12 +123,6 @@ test('validation: image, style fields, image_size, file type, fake image', async
   let res = await post({}, fields())
   assert.equal(res.status, 400); assert.equal((await res.json()).error.code, 'MISSING_FIELDS')
 
-  res = await post({ image: await img() }, { style_desc: 'x' })
-  assert.equal(res.status, 400); assert.match((await res.json()).error.message, /style_title/)
-
-  res = await post({ image: await img() }, { style_title: 'x' })
-  assert.equal(res.status, 400); assert.match((await res.json()).error.message, /style_desc/)
-
   res = await post({ image: await img() }, fields({ image_size: '7:7' }))
   assert.equal(res.status, 400); assert.equal((await res.json()).error.code, 'INVALID_IMAGE_SIZE')
 
@@ -148,6 +142,19 @@ test('style text is sent to AILabTools exactly as received (no trimming, truncat
   const submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
   assert.equal(submit.parts.find((p) => p.name === 'style_title').data.toString(), title)
   assert.equal(submit.parts.find((p) => p.name === 'style_desc').data.toString(), desc)
+})
+
+test('style_title and style_desc are optional: a missing prompt is left out of the AILabTools request, never replaced', async () => {
+  polls = 0
+  let res = await post({ image: await img() }, { style_desc: 'only a description' })
+  assert.equal(res.status, 200)
+  let submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
+  assert.deepEqual(submit.parts.map((p) => p.name).sort(), ['image', 'style_desc'])
+  polls = 0
+  res = await post({ image: await img() }, {})
+  assert.equal(res.status, 200)
+  submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
+  assert.deepEqual(submit.parts.map((p) => p.name), ['image'])
 })
 
 test('maps AILabTools errors: no credits -> 402, API error code passed through -> 422, unknown route -> 404', async () => {

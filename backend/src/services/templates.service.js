@@ -82,8 +82,8 @@ async function saveCategory(b, { upsert = false } = {}) {
 }
 
 /**
- * Validates a template body against its category's flow and returns the row values. Prompts are OPTIONAL everywhere except the photography flow,
- * where AILabTools needs both. Cartoon ids must be a real Cartoon Yourself `type`; hairstyle needs the API's hair_style in `api_value`.
+ * Validates a template body against its category's flow and returns the row values. Prompts are OPTIONAL in every flow (a missing one is stored as null and
+ * simply not sent to the AI). Cartoon ids must be a real Cartoon Yourself `type`; hairstyle needs the API's hair_style in `api_value`.
  */
 function templateValues(b, category) {
   const id = text(b?.id)
@@ -97,7 +97,6 @@ function templateValues(b, category) {
   const title = optText(b.style_title_prompt, 500)
   const desc = optText(b.style_desc_prompt, 1000)
   const apiValue = optText(b.api_value, 100)
-  if (category.flow === 'photography' && (!title || !desc)) throw bad(`Template "${id}": "style_title_prompt" and "style_desc_prompt" are required for the photography flow (category "${category.id}").`)
   if (category.flow === 'cartoon' && !CARTOON_TYPES.includes(apiValue || id)) throw bad(`Template "${id}": for a cartoon category the id (or "api_value") must be a supported Cartoon Yourself style.`)
   if (category.flow === 'hairstyle' && !apiValue) throw bad(`Template "${id}": "api_value" (the Hairstyle Changer hair_style) is required for the hairstyle flow.`)
   const extra = b.extra && typeof b.extra === 'object' && !Array.isArray(b.extra) ? b.extra : {}
