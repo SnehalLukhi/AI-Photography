@@ -6,11 +6,13 @@ const ailab = require('../services/ailab.service')
 const generations = require('../services/generations.service')
 
 const TASK_ID_RE = /^[A-Za-z0-9_-]{6,128}$/
-// The template prompts (style_title / style_desc) come from the template JSON files and are passed to AILabTools EXACTLY as received: no trimming, truncation,
-// character filtering or any other change. Only a missing / empty value is refused (a replacement prompt is never created). AILabTools applies its own length limits.
+// The template prompts (style_title / style_desc) are OPTIONAL. When sent they come from the template JSON files and are passed to AILabTools EXACTLY as received: no
+// trimming, truncation, character filtering or any other change. When omitted (or empty) the field is simply not sent - a replacement prompt is never created.
+// AILabTools applies its own length limits and answers with its own error if it needs a field that is missing.
 function styleText(raw, field) {
-  if (typeof raw !== 'string' || !raw.trim()) throw new AppError(400, 'MISSING_FIELDS', `"${field}" is required (the template's prompt text).`)
-  return raw
+  if (raw == null || raw === '') return undefined
+  if (typeof raw !== 'string') throw new AppError(400, 'INVALID_STYLE_TEXT', `"${field}" must be text.`)
+  return raw.trim() ? raw : undefined
 }
 
 function parseImageSize(raw) {
@@ -52,7 +54,7 @@ async function generate(req, res) {
 
   try {
     if (!req.file) {
-      throw new AppError(400, 'MISSING_FIELDS', 'Missing required file field "image". Send multipart/form-data with "image", "style_title" and "style_desc" (optional "image_size").')
+      throw new AppError(400, 'MISSING_FIELDS', 'Missing required file field "image". Send multipart/form-data with "image" (optional "style_title", "style_desc" and "image_size").')
     }
     const styleTitle = styleText(req.body?.style_title, 'style_title')
     const styleDesc = styleText(req.body?.style_desc, 'style_desc')

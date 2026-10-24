@@ -61,8 +61,8 @@ Base URL: `http://localhost:5001`
 | Field | Type | Required | Description (from the official docs) |
 |---|---|---|---|
 | `image` | file | yes | Original image. JPEG, JPG, PNG or WEBP, max 10 MB, resolution below 4096x4096 px (larger images are downscaled automatically). |
-| `style_title` | text | yes | Style name. **English only**, max 500 characters (extra text is truncated). Use standard vocabulary to pass AILabTools' content review. |
-| `style_desc` | text | yes | Style description. **English only**, max 1000 characters (extra text is truncated). Standard vocabulary again. |
+| `style_title` | text | no | Style name. **English only**, max 500 characters (extra text is truncated). Use standard vocabulary to pass AILabTools' content review. |
+| `style_desc` | text | no | Style description. **English only**, max 1000 characters (extra text is truncated). Standard vocabulary again. |
 | `image_size` | text | no | Output aspect ratio: `auto` (default), `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`. |
 
 Optional query `?response=image` streams the first result image as binary instead of JSON.

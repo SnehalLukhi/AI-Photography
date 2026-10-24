@@ -84,9 +84,9 @@ export default function Templates({ api }) {
     setBusy(false)
   }
 
-  const needPrompts = flow === 'photography'
+  const showPrompts = flow === 'photography' // the prompt fields are shown for this flow but are optional
   const needHair = flow === 'hairstyle'
-  const canSave = form && form.id && form.name && form.category_id && (file || form.preview_url) && (!needPrompts || (form.style_title_prompt && form.style_desc_prompt)) && (!needHair || form.api_value)
+  const canSave = form && form.id && form.name && form.category_id && (file || form.preview_url) && (!needHair || form.api_value)
 
   return (
     <>
@@ -153,7 +153,7 @@ export default function Templates({ api }) {
             </div>
             <Field label="Id" hint={flow === 'cartoon' ? 'For Cartoon this must be a supported cartoon style.' : form.isNew ? 'Unique across all templates. Cannot be changed later.' : 'The id cannot be changed.'}><input className="input font-mono" value={form.id} disabled={!form.isNew} onChange={(e) => set('id', e.target.value.trim())} placeholder="old-money-vintage-sari" /></Field>
 
-            {needPrompts && <>
+            {showPrompts && <>
               <Field label="Title prompt" hint="Sent to the AI as the style title."><input className="input" value={form.style_title_prompt} onChange={(e) => set('style_title_prompt', e.target.value)} placeholder="Golden hour portrait" /></Field>
               <Field label="Description prompt" hint="Describe the look, light and mood."><textarea className="input min-h-[96px] resize-y" value={form.style_desc_prompt} onChange={(e) => set('style_desc_prompt', e.target.value)} placeholder="Warm sunset light, soft film grain…" /></Field>
             </>}

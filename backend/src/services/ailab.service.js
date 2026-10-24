@@ -96,14 +96,14 @@ function collectUrls(value) {
 
 /**
  * Submit an AI Photography job.
- * @param {{ image: {buffer, mimeType, filename}, styleTitle: string, styleDesc: string, imageSize?: string }} p
+ * @param {{ image: {buffer, mimeType, filename}, styleTitle?: string, styleDesc?: string, imageSize?: string }} p
  * @returns {{ taskId: string, taskType: string, requestId: string, logId: string }}
  */
 async function submitPhotography({ image, styleTitle, styleDesc, imageSize }) {
   const form = new FormData()
   form.append('image', new Blob([image.buffer], { type: image.mimeType }), image.filename)
-  form.append('style_title', styleTitle)
-  form.append('style_desc', styleDesc)
+  if (styleTitle !== undefined) form.append('style_title', styleTitle) // both prompts are optional: a missing one is left out, never replaced
+  if (styleDesc !== undefined) form.append('style_desc', styleDesc)
   if (imageSize) form.append('image_size', imageSize)
 
   const res = await ailabFetch(`${env.ailab.baseUrl}${SUBMIT_PATH}`, {
