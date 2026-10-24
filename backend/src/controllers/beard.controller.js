@@ -9,20 +9,34 @@ const { removeFiles } = require('../utils/tempFiles')
 const { prepareImage } = require('../services/image.service')
 const ailab = require('../services/ailab.service')
 const generations = require('../services/generations.service')
+const templates = require('../services/templates.service')
 
 // AI Beard Styling image requirements (official docs, image and image_template): JPEG / JPG / PNG / WEBP, <= 10 MB, < 4096 x 4096 px.
 const LIMITS = { maxBytes: 10 * 1024 * 1024 }
 
-// Reference image on disk; when WEB_URL (service binding to the frontend) is set it is downloaded from the frontend's /images/explore/beard/ first.
+// Reference image of a bundled template on disk; when WEB_URL (service binding to the frontend) is set it is downloaded from the frontend's /images/explore/beard/ first.
 async function templatePath(file, tmp) {
   if (!env.webUrl) return path.join(env.beardTemplateDir, file)
-  const res = await fetch(new URL(`images/explore/beard/${encodeURIComponent(file)}`, env.webUrl.replace(/\/*$/, '/')))
+  return download(new URL(`images/explore/beard/${encodeURIComponent(file)}`, env.webUrl.replace(/\/*$/, '/')), tmp)
+}
+
+async function download(url, tmp) {
+  const res = await fetch(url)
   if (!res.ok) throw new Error(`template fetch failed: HTTP ${res.status}`)
   await fsp.mkdir(UPLOAD_DIR, { recursive: true, mode: 0o700 })
   const p = path.join(UPLOAD_DIR, `${crypto.randomUUID()}.upload`)
   tmp.push(p)
   await fsp.writeFile(p, Buffer.from(await res.arrayBuffer()))
   return p
+}
+
+// Reference image of a template added through the API: its preview_url is an http(s) address, or a site path (/images/...) of the frontend.
+async function previewPath(previewUrl, tmp) {
+  if (/^https?:\/\//i.test(previewUrl)) return download(previewUrl, tmp)
+  if (env.webUrl) return download(new URL(previewUrl.replace(/^\/+/, ''), env.webUrl.replace(/\/*$/, '/')), tmp)
+  const file = path.resolve(env.publicDir, `.${decodeURIComponent(previewUrl)}`)
+  if (!file.startsWith(path.resolve(env.publicDir) + path.sep)) throw new Error('template path outside the public folder')
+  return file
 }
 
 function payload(result) {
@@ -41,13 +55,15 @@ async function generate(req, res) {
     if (!req.file) throw new AppError(400, 'MISSING_FIELDS', 'Missing required file field "image". Send multipart/form-data with "image" and "template".')
     const id = typeof req.body?.template === 'string' ? req.body.template.trim() : ''
     if (!id) throw new AppError(400, 'MISSING_FIELDS', '"template" is required (the id of a Beard template, for example "beard_balbo").')
-    if (!Object.hasOwn(TEMPLATES, id)) throw new AppError(400, 'INVALID_TEMPLATE', `"template" is not a known Beard template id: ${id.slice(0, 60)}`)
-    const file = TEMPLATES[id]
+    const row = await templates.getTemplate(id)
+    const dynamic = row?.flow === 'beard' && row.active ? row : null // added through the API; otherwise a bundled template
+    if (!dynamic && !Object.hasOwn(TEMPLATES, id)) throw new AppError(400, 'INVALID_TEMPLATE', `"template" is not a known Beard template id: ${id.slice(0, 60)}`)
+    const file = dynamic ? dynamic.preview_url : TEMPLATES[id]
     if (!file) throw new AppError(422, 'TEMPLATE_IMAGE_MISSING', `The Beard template "${id}" has no reference image, so it cannot be generated.`)
 
     const image = await prepareImage(req.file.path, 'image', LIMITS)
     await removeFiles(tmp)
-    const template = await templatePath(file, tmp).then((p) => prepareImage(p, 'image_template', LIMITS)).catch((e) => {
+    const template = await (dynamic ? previewPath(file, tmp) : templatePath(file, tmp)).then((p) => prepareImage(p, 'image_template', LIMITS)).catch((e) => {
       if (e instanceof AppError && e.status !== 422) throw e
       throw new AppError(500, 'TEMPLATE_IMAGE_UNAVAILABLE', `The reference image of the Beard template "${id}" could not be read on the server.`)
     })

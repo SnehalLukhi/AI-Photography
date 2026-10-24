@@ -7,7 +7,6 @@ import beardStyling from '../data/ai-beard-styling_templates.json'
 import hairstyleChanger from '../data/ai-hairstyle-changer_templates.json'
 import christmas from '../data/christmas_templates.json'
 import cinematic from '../data/cinematic_templates.json'
-import diwali from '../data/diwali_templates.json'
 import halloween from '../data/halloween_templates.json'
 
 /**
@@ -23,7 +22,7 @@ import halloween from '../data/halloween_templates.json'
 // Where the backend is. Local development: http://localhost:5001. Deployed (Vercel services, backend under /api on the same domain): '' = same origin.
 // A production build ignores a localhost VITE_API_BASE_URL (copied from the local .env by mistake): it could never work for visitors.
 const CONFIGURED_API = import.meta.env.VITE_API_BASE_URL
-const API_BASE = ((CONFIGURED_API && !(import.meta.env.PROD && /(^|\/\/)(localhost|127\.0\.0\.1)(:|\/|$)/.test(CONFIGURED_API))) ? CONFIGURED_API : (import.meta.env.DEV ? 'http://localhost:5001' : '')).replace(/\/+$/, '')
+export const API_BASE = ((CONFIGURED_API && !(import.meta.env.PROD && /(^|\/\/)(localhost|127\.0\.0\.1)(:|\/|$)/.test(CONFIGURED_API))) ? CONFIGURED_API : (import.meta.env.DEV ? 'http://localhost:5001' : '')).replace(/\/+$/, '')
 export const IMAGE_SIZE = '9:16'
 export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 export const MAX_BYTES = 10 * 1024 * 1024
@@ -51,7 +50,6 @@ const CATALOGUES = [
   { folder: '/explore/Top Carousel/', templates: topCarousel.categories.flatMap((c) => c.templates) },
   { folder: '/explore/Christmas/', templates: christmas.categories.flatMap((c) => c.templates) }, // same AI Photography flow as 80's & 90's: the JSON style_title_prompt / style_desc_prompt are sent unchanged
   { folder: '/explore/Cinematic/', templates: cinematic.categories.flatMap((c) => c.templates) },
-  { folder: '/explore/Diwali/', templates: diwali.categories.flatMap((c) => c.templates) },
   { folder: '/explore/Halloween/', templates: halloween.categories.flatMap((c) => c.templates) },
   { folder: '/explore/cartoon/', kind: 'cartoon', templates: cartoonYourself.categories.flatMap((c) => c.templates) }, // JSON `id` = API `type`; matched by name (the app's ids are slugs of the file names)
 ]
@@ -83,6 +81,14 @@ const norm = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').re
  */
 export function promptFor(asset) {
   if (!asset?.image) return null
+  if (asset.template) { // a template from the backend catalogue: it carries everything the generation needs, nothing is looked up by folder or name
+    const t = asset.template
+    if (t.flow === 'cartoon') return { id: t.id, name: t.name, cartoonType: t.id }
+    if (t.flow === 'beard') return { id: t.id, name: t.name, beardTemplate: t.id }
+    if (t.flow === 'hairstyle') return { id: t.id, name: t.name, hairTemplate: t.id }
+    if (!t.style_title_prompt || !t.style_desc_prompt) return { error: `This template (${asset.name || asset.assetId}) has no prompt, so it cannot be generated. Please choose another template.` }
+    return { id: t.id, name: t.name, title: t.style_title_prompt, desc: t.style_desc_prompt }
+  }
   const src = (() => { try { return decodeURIComponent(asset.image) } catch { return asset.image } })() // image URLs are percent-encoded ("Linkedin%20Headshot")
   if (HAIRSTYLE_FOLDERS.some((f) => src.includes(f))) {
     // Hairstyle sidebar entry (Baby / Man / Woman): the file name ends with the template's hair style in brackets, "Baby Bun (ManBun).jpg" - the API's own `hair_style` name.

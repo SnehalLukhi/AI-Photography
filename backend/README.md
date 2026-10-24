@@ -281,3 +281,17 @@ curl -X POST http://localhost:5001/api/photos/generate \
 | `RATE_LIMIT_MAX` / `RATE_LIMIT_WINDOW_MS` | `10` / `60000` | generate requests per IP per window |
 | `AILAB_REQUEST_TIMEOUT_MS`, `AILAB_POLL_INTERVAL_MS`, `AILAB_POLL_TIMEOUT_MS` | `90000`, `5000`, `120000` | timeouts / polling |
 | `AILAB_BASE_URL` | `https://www.ailabapi.com` | override only for testing |
+
+## Template catalogue API
+
+Templates live in the database (`templates`, `template_categories`). Import the bundled JSON once with `node scripts/seed-templates.js`.
+
+- `GET /api/templates[?category=id]` - public; `{ categories, templates }`.
+- Writes need the header `x-admin-key: <ADMIN_API_KEY>`:
+  - `POST /api/admin/template-categories` `{ id, name, flow, parent_id?, sort_order?, hide_from_all? }` (`flow`: `photography | cartoon | beard | hairstyle`; `?upsert=true` replaces).
+  - `POST /api/admin/templates` one template or an **array** (all-or-nothing, up to 500, each with its own `category_id`). Fields: `id`, `category_id`, `name`, `preview_url` (http(s) URL or `/images/...` site path); `style_title_prompt` + `style_desc_prompt` are **required only for photography categories**; `api_value` is required for hairstyle (the API's `hair_style`); optional `aspect_ratio`, `cost_coins`, `gender`, `sort_order`, `active`, `extra`. `?upsert=true` replaces existing ids (otherwise 409).
+  - `PUT /api/admin/templates/:id` changes only the sent fields; `DELETE /api/admin/templates/:id`.
+- Cartoon template ids must be a supported Cartoon Yourself style (or set `api_value` to one). Beard templates use `preview_url` as the reference image.
+
+### Adding a template with a picture from your computer
+`POST /api/admin/templates` also accepts `multipart/form-data` (one template per request): the picture in the **file** field `image` (JPG / PNG / WebP, up to 10 MB) and `id`, `category_id`, `name`, optional `style_title_prompt`, `style_desc_prompt`, `api_value`, `aspect_ratio`, `cost_coins`, `gender`, `sort_order`, `active`, `extra` (JSON) as **text** fields. The picture is stored in DigitalOcean Spaces under `templates/<category>/` and its public URL becomes `preview_url` (needs `SPACES_KEY`, `SPACES_SECRET`, `SPACES_BUCKET`; otherwise 503). `PUT /api/admin/templates/:id` accepts the same form to change fields and/or replace the picture. Blank text fields are ignored.

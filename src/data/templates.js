@@ -1,4 +1,5 @@
 import exploreFolderFiles, { sizes as exploreSizes } from 'virtual:explore-folders'
+import { getCatalogue } from '../lib/catalogue.js'
 import { categoryImage, templateImage, exploreImage, danceImage, featureImage, creationImage, creationVideo } from './images.js'
 
 export const categories = [
@@ -65,6 +66,25 @@ export const exploreTabs = [
   { id: 'hairstyle-man', parent: 'hairstyle', folders: ['explore/Hairstyle/man'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Man', category: 'Hairstyle · Man', hideFromAll: true },
   { id: 'hairstyle-woman', parent: 'hairstyle', folders: ['explore/Hairstyle/woman'], title: (stem) => stem.replace(/\s*\(.*$/, '').trim() || stem, name: 'Woman', category: 'Hairstyle · Woman', hideFromAll: true, exclude: ['Textured Pixie(female_hairstyle_00020)'] }, // "00020" is a typo, not a documented hair_style: unconfirmed
 ]
+// Templates from the backend catalogue (see lib/catalogue.js), grouped by category. A category whose id is not a tab above becomes a new tab (newest
+// first in the sidebar, like any appended tab); a category with templates here replaces the folder photos of its tab. Null = bundled folders + JSON.
+const apiCatalogue = getCatalogue()
+const apiByCategory = Object.fromEntries((apiCatalogue?.categories || []).map((c) => [c.id, { category: c, items: [] }]))
+const isLandscape = (ratio) => { const [w, h] = String(ratio || '').split(':').map(Number); return w > 0 && h > 0 && w > h }
+apiCatalogue?.templates.forEach((t) => apiByCategory[t.category_id]?.items.push(t))
+for (const { category: c, items } of Object.values(apiByCategory)) {
+  if (!items.length || exploreTabs.some((t) => t.id === c.id)) continue
+  const parent = c.parent_id && exploreTabs.some((t) => t.id === c.parent_id || t.parent === c.parent_id) ? c.parent_id : undefined
+  exploreTabs.push({ id: c.id, name: c.name, folders: [], ...(parent ? { parent, category: c.name } : {}), hideFromAll: c.hide_from_all })
+}
+const apiCards = (tab) => {
+  const entry = apiByCategory[tab.id]
+  if (!entry?.items.length) return null
+  return entry.items.map((t, i) => ({
+    id: `${tab.id}/${t.id}`, categoryId: tab.id, category: tab.category || tab.name, name: t.name, assetId: t.id, type: 'image', slots: ['Photo'], coins: t.cost_coins || 120,
+    index: i + 1, image: t.preview_url, landscape: isLandscape(t.aspect_ratio), template: t,
+  }))
+}
 // Explore sidebar: Trending stays first, then every category added after these original ones - newest (the last one in `exploreTabs`) first - then the originals in
 // their usual order. To add a category: append it to `exploreTabs`; it is not listed here, so it takes position 2 automatically.
 const ORIGINAL_TAB_IDS = ['80s-and-90s', 'cartoon', 'linkedin-headshot', 'old-money', 'top-carousel', 'beard', 'hairstyle-baby', 'hairstyle-man', 'hairstyle-woman']
@@ -74,6 +94,8 @@ const parentTab = (id, name) => ({ id, name, subs: exploreTabs.filter((t) => t.p
 export const hairstyleTab = parentTab('hairstyle', 'Hairstyle')
 const folderStem = (file) => file.replace(/\.[^.]+$/, '')
 export const exploreFolderTemplates = Object.fromEntries(exploreTabs.map((tab) => {
+  const fromApi = apiCards(tab)
+  if (fromApi) { if (tab.landscapeLast) fromApi.sort((a, b) => Number(a.landscape) - Number(b.landscape)); return [tab.id, fromApi] }
   const used = new Set()
   const dir = tab.folders.find((d) => (exploreFolderFiles[d] || []).length) || tab.folders[0]
   const items = (exploreFolderFiles[dir] || []).filter((file) => !tab.exclude?.includes(folderStem(file))).map((file, i) => {

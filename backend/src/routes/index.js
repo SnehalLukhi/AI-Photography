@@ -8,13 +8,15 @@ const beard = require('../controllers/beard.controller')
 const hairstyle = require('../controllers/hairstyle.controller')
 const generationsCtl = require('../controllers/generations.controller')
 const requireApiKey = require('../middleware/requireApiKey')
-const { uploadImage } = require('../middleware/upload')
+const { uploadImage, uploadTemplateImage } = require('../middleware/upload')
 const { requireAuth, optionalAuth, dailyQuota } = require('../middleware/requireAuth')
 const authCtl = require('../controllers/auth.controller')
 const chargeCoins = require('../middleware/chargeCoins')
 const region = require('../middleware/region')
 const walletCtl = require('../controllers/wallet.controller')
 const favoritesCtl = require('../controllers/favorites.controller')
+const templatesCtl = require('../controllers/templates.controller')
+const requireAdminKey = require('../middleware/requireAdminKey')
 
 const router = express.Router()
 
@@ -46,6 +48,13 @@ router.get('/auth/me', requireAuth, authCtl.me)
 router.get('/favorites', requireAuth, favoritesCtl.list)
 router.post('/favorites', requireAuth, favoritesCtl.add) // idempotent: liking twice keeps one row
 router.delete('/favorites', requireAuth, favoritesCtl.remove) // ?templateId=... (ids contain a slash)
+
+// Template catalogue: public read for the app, writes need the x-admin-key header
+router.get('/templates', templatesCtl.list)
+router.post('/admin/template-categories', requireAdminKey, templatesCtl.createCategory)
+router.post('/admin/templates', requireAdminKey, uploadTemplateImage, templatesCtl.create)
+router.put('/admin/templates/:id', requireAdminKey, uploadTemplateImage, templatesCtl.update)
+router.delete('/admin/templates/:id', requireAdminKey, templatesCtl.remove)
 
 router.get('/plans', region, optionalAuth, walletCtl.listPlans)
 router.get('/coin-packs', region, optionalAuth, walletCtl.listPacks)

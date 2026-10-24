@@ -104,6 +104,34 @@ const SCHEMA = `
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     PRIMARY KEY (user_id, template_id)
   );
+  -- template catalogue, managed through /api/admin/templates. A category runs on one generation flow (photography | cartoon | beard | hairstyle).
+  CREATE TABLE IF NOT EXISTS template_categories (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    flow TEXT NOT NULL,
+    parent_id TEXT,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    hide_from_all BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  -- prompts are only needed by the photography flow; api_value = the provider's own value when it differs from id (hairstyle: hair_style)
+  CREATE TABLE IF NOT EXISTS templates (
+    id TEXT PRIMARY KEY,
+    category_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    preview_url TEXT NOT NULL,
+    style_title_prompt TEXT,
+    style_desc_prompt TEXT,
+    api_value TEXT,
+    aspect_ratio TEXT NOT NULL DEFAULT '9:16',
+    cost_coins INTEGER,
+    gender TEXT,
+    extra JSONB NOT NULL DEFAULT '{}',
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  CREATE INDEX IF NOT EXISTS templates_category ON templates (category_id, sort_order, created_at);
   -- Supabase exposes every table through its public REST API. Row Level Security with NO policies shuts that door: only this backend
   -- (which connects directly as the database owner, and bypasses RLS) can read or write these tables.
   ALTER TABLE users ENABLE ROW LEVEL SECURITY;
@@ -114,6 +142,8 @@ const SCHEMA = `
   ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
   ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
   ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE template_categories ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE templates ENABLE ROW LEVEL SECURITY;
 `
 
 let impl

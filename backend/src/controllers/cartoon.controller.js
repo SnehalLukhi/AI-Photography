@@ -4,6 +4,7 @@ const { removeFiles } = require('../utils/tempFiles')
 const { prepareImage } = require('../services/image.service')
 const ailab = require('../services/ailab.service')
 const generations = require('../services/generations.service')
+const templates = require('../services/templates.service')
 
 // Cartoon Yourself image requirements (official docs): JPEG / JPG / PNG, <= 5 MB, < 4096 x 4096 px (no WebP).
 const LIMITS = { formats: ['jpeg', 'png'], maxBytes: 5 * 1024 * 1024 }
@@ -21,12 +22,14 @@ async function generate(req, res) {
     if (!req.file) throw new AppError(400, 'MISSING_FIELDS', 'Missing required file field "image". Send multipart/form-data with "image" and "type".')
     const type = typeof req.body?.type === 'string' ? req.body.type.trim() : ''
     if (!type) throw new AppError(400, 'MISSING_FIELDS', '"type" is required (the Cartoon Yourself style, for example "anime").')
-    if (!CARTOON_TYPES.includes(type)) throw new AppError(400, 'INVALID_TYPE', `"type" must be one of the ${CARTOON_TYPES.length} supported Cartoon Yourself styles.`)
+    const row = await templates.getTemplate(type)
+    const style = row?.flow === 'cartoon' && row.active ? (row.api_value || row.id) : type // a template added through the API may map its id to the provider's style
+    if (!CARTOON_TYPES.includes(style)) throw new AppError(400, 'INVALID_TYPE', `"type" must be one of the ${CARTOON_TYPES.length} supported Cartoon Yourself styles.`)
 
     const image = await prepareImage(req.file.path, 'image', LIMITS)
     await removeFiles(tmp) // the upload is in memory now: delete it before the (slow) API call
 
-    const submitted = await ailab.submitCartoon({ image, type })
+    const submitted = await ailab.submitCartoon({ image, type: style })
     const gen = await generations.begin(image, { api: 'cartoon-yourself', template: generations.label(req, type), owner: req.user.id }) // original photo -> Spaces, only for a job AILabTools accepted (null when storage is off)
     await generations.linkTask(gen, submitted.taskId)
     let result

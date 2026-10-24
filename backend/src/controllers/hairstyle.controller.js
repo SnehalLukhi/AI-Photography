@@ -5,6 +5,7 @@ const { removeFiles } = require('../utils/tempFiles')
 const { prepareImage } = require('../services/image.service')
 const ailab = require('../services/ailab.service')
 const generations = require('../services/generations.service')
+const templates = require('../services/templates.service')
 
 // Hairstyle Changer Premium image requirements (official docs): JPEG / JPG / PNG, <= 5 MB, larger than 200 x 200 px and smaller than 4090 x 4090 px.
 const LIMITS = { formats: ['jpeg', 'png'], maxBytes: 5 * 1024 * 1024, maxSide: 4089 }
@@ -26,7 +27,9 @@ async function generate(req, res) {
     if (!req.file) throw new AppError(400, 'MISSING_FIELDS', 'Missing required file field "image". Send multipart/form-data with "image", "template" and "color".')
     const id = typeof req.body?.template === 'string' ? req.body.template.trim() : ''
     if (!id) throw new AppError(400, 'MISSING_FIELDS', '"template" is required (the id of a Hairstyle template, for example "hair_men_manbun").')
-    if (!Object.hasOwn(TEMPLATES, id)) throw new AppError(400, 'INVALID_TEMPLATE', `"template" is not a known Hairstyle template id: ${id.slice(0, 60)}`)
+    const row = await templates.getTemplate(id)
+    const hairStyle = row?.flow === 'hairstyle' && row.active && row.api_value ? row.api_value : Object.hasOwn(TEMPLATES, id) ? TEMPLATES[id] : '' // added through the API, else bundled
+    if (!hairStyle) throw new AppError(400, 'INVALID_TEMPLATE', `"template" is not a known Hairstyle template id: ${id.slice(0, 60)}`)
     const color = typeof req.body?.color === 'string' ? req.body.color.trim() : ''
     if (color && !COLORS.includes(color)) throw new AppError(400, 'INVALID_COLOR', `"color" must be one of the supported hair colours (received: ${color.slice(0, 40)}).`)
 
@@ -34,7 +37,7 @@ async function generate(req, res) {
     await removeFiles(tmp)
     if (Math.min(image.width, image.height) <= MIN_SIDE) throw new AppError(422, 'IMAGE_TOO_SMALL', `"image" must be larger than ${MIN_SIDE} x ${MIN_SIDE} pixels.`)
 
-    const submitted = await ailab.submitHairstyle({ image, hairStyle: TEMPLATES[id], color })
+    const submitted = await ailab.submitHairstyle({ image, hairStyle, color })
     const gen = await generations.begin(image, { api: 'hairstyle-changer-premium', template: generations.label(req, id), owner: req.user.id }) // original photo -> Spaces, only for a job AILabTools accepted (null when storage is off)
     await generations.linkTask(gen, submitted.taskId)
     let result

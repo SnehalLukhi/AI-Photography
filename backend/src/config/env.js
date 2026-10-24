@@ -30,7 +30,10 @@ module.exports = {
     pollTimeoutMs: int(process.env.AILAB_POLL_TIMEOUT_MS, 120_000),
   },
 
+  adminApiKey: (process.env.ADMIN_API_KEY || '').trim(), // sent as the x-admin-key header to add / change templates (/api/admin/*); admin routes answer 503 while empty
+
   webUrl: (process.env.WEB_URL || '').trim(), // Vercel Services binding to the frontend service: beard reference images are fetched from it (the api function has no /public folder)
+  publicDir: process.env.PUBLIC_DIR || path.join(__dirname, '..', '..', '..', 'public'), // the frontend's public folder: reference images of database templates with a site path (/images/...) are read from it
   beardTemplateDir: process.env.BEARD_TEMPLATE_DIR || path.join(__dirname, '..', '..', '..', 'public', 'images', 'explore', 'beard'), // preview images sent as `image_template`
 
   // DigitalOcean Spaces (S3-compatible object storage) for the user's original photo and the AI result. Storage is skipped when not configured.

@@ -16,19 +16,28 @@ const storage = multer.diskStorage({
   filename: (_req, _file, cb) => cb(null, `${crypto.randomUUID()}.upload`),
 })
 
+function fileFilter(_req, file, cb) {
+  if (!ALLOWED_MIME.has(file.mimetype)) {
+    return cb(new AppError(415, 'UNSUPPORTED_FILE_TYPE', `"${file.fieldname}" must be a JPG, JPEG, PNG or WebP image (received ${file.mimetype || 'unknown type'}).`))
+  }
+  cb(null, true)
+}
+
 const upload = multer({
   storage,
   // style_desc is at most 1000 characters (up to ~4 KB in UTF-8); leave headroom for the other text fields.
   limits: { fileSize: env.upload.maxFileSizeBytes, files: 1, fields: 6, parts: 8, fieldSize: 8 * 1024 },
-  fileFilter(_req, file, cb) {
-    if (!ALLOWED_MIME.has(file.mimetype)) {
-      return cb(new AppError(415, 'UNSUPPORTED_FILE_TYPE', `"${file.fieldname}" must be a JPG, JPEG, PNG or WebP image (received ${file.mimetype || 'unknown type'}).`))
-    }
-    cb(null, true)
-  },
+  fileFilter,
 })
 
 /** multipart/form-data: one image in the field "image" (same name as the AILabTools parameter). */
 const uploadImage = upload.single('image')
 
-module.exports = { uploadImage }
+/**
+ * Template admin forms: the picture in the field "image" plus the template's text fields (prompts are up to 1000 characters).
+ * Only parsed when the request is multipart; a JSON request passes straight through.
+ */
+const templateForm = multer({ storage, limits: { fileSize: env.upload.maxFileSizeBytes, files: 1, fields: 20, parts: 24, fieldSize: 16 * 1024 }, fileFilter }).single('image')
+const uploadTemplateImage = (req, res, next) => (req.is('multipart/form-data') ? templateForm(req, res, next) : next())
+
+module.exports = { uploadImage, uploadTemplateImage }
