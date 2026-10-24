@@ -4,6 +4,9 @@ const plans = require('../config/plans')
 const packs = require('../config/packs')
 const { localize } = require('./catalog')
 
+/** The Razorpay offer id for a plan in this currency: razorpayOfferId (dollars), razorpayOfferIdInr (rupees), razorpayOfferIds: { EUR: '...' } for the rest. '' = none (the plan is then not discounted). */
+const offerIdFor = (offer, currency) => (currency === 'USD' ? offer.razorpayOfferId : currency === 'INR' ? offer.razorpayOfferIdInr : offer.razorpayOfferIds?.[currency]) || ''
+
 /** Offers (config/offers.js): who gets which discount, and what the discounted price is. Prices are in the visitor's currency (dollars or rupees); "cents" are integers (cents / paise). */
 const itemOf = (id) => [...plans, ...packs].find((i) => i.id === id)
 const HOUR = 3600 * 1000
@@ -14,7 +17,7 @@ function isActive(offer, user, { currency = 'USD', now = Date.now() } = {}) {
   if (!item) return false
   // a plan that renews automatically (Razorpay Subscription) can only be discounted through an Offer created in the Razorpay dashboard: the offer entry must carry its id (razorpayOfferIdInr for the rupee plan)
   const local = localize(item, currency)
-  if (isPlanSold(local) && !(local.currency === 'INR' ? offer.razorpayOfferIdInr : offer.razorpayOfferId)) return false
+  if (isPlanSold(local) && !offerIdFor(offer, local.currency)) return false
   if (offer.startsAt && now < Date.parse(offer.startsAt)) return false
   if (offer.endsAt && now > Date.parse(offer.endsAt)) return false
   if (offer.audience === 'new') return !!user && now < user.createdAt + (offer.windowHours || 24) * HOUR
@@ -56,4 +59,4 @@ function popupOffer(user, currency = 'USD') {
   return { ...badge(offer, user, item), itemId: item.id, name: item.name, per: item.per ?? null, coins: item.coins, currency: item.currency }
 }
 
-module.exports = { offers, itemOf, isActive, endsAtOf, discountedCents, bestFor, badge, popupOffer }
+module.exports = { offers, offerIdFor, itemOf, isActive, endsAtOf, discountedCents, bestFor, badge, popupOffer }

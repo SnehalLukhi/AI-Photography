@@ -174,6 +174,13 @@ const SCHEMA = `
     last_login_at TIMESTAMPTZ
   );
   ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
+  -- exchange rates (per 1 US dollar), refreshed at most once a day and shared by every server instance (see pricing.service)
+  CREATE TABLE IF NOT EXISTS fx_rates (
+    id INTEGER PRIMARY KEY,
+    rates JSONB NOT NULL,
+    fetched_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  ALTER TABLE fx_rates ENABLE ROW LEVEL SECURITY;
   ALTER TABLE users ENABLE ROW LEVEL SECURITY;
   ALTER TABLE usage ENABLE ROW LEVEL SECURITY;
   ALTER TABLE coin_ledger ENABLE ROW LEVEL SECURITY;

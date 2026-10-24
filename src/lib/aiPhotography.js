@@ -29,7 +29,7 @@ export function setAuthToken(value) {
   token = value || ''
   try { token ? localStorage.setItem(TOKEN_KEY, token) : localStorage.removeItem(TOKEN_KEY) } catch { /* ignore */ }
 }
-// Local development only: open any page with ?currency=INR (or USD) to see / pay in that currency (the backend ignores it in production, where the visitor's country decides).
+// Local development only: open any page with ?currency=INR (or USD, EUR, GBP, AUD, CAD, SGD, AED) to see / pay in that currency (the backend ignores it in production, where the visitor's country decides).
 const devCurrency = () => { try { const c = import.meta.env.DEV ? new URLSearchParams(window.location.search).get('currency') : ''; return c ? `?currency=${encodeURIComponent(c)}` : '' } catch { return '' } }
 const headers = () => (token ? { Authorization: `Bearer ${token}` } : {})
 const GIVE_UP_MS = 5 * 60 * 1000
