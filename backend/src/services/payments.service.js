@@ -7,6 +7,7 @@ const offers = require('../config/offers')
 const offerRules = require('./offers.service')
 const wallet = require('./wallet.service')
 const { itemById, isPlan, localize } = require('./catalog')
+const pricing = require('./pricing.service')
 const razorpay = require('./razorpay.client')
 const subscriptions = require('./subscriptions.service')
 const { query, tx } = require('../db')
@@ -45,7 +46,8 @@ async function listPurchases(userId, limit = 50) {
 async function createCheckout(user, itemId, currency) {
   const userId = user.id
   const direct = offers.find((o) => o.id === itemId)
-  const item = localize(itemById(itemId), currency === 'INR' ? 'INR' : 'USD')
+  await pricing.ensureRates()
+  const item = localize(itemById(itemId), pricing.supported(currency) ? currency : 'USD')
   if (direct && !offerRules.isActive(direct, user, { currency: item.currency })) throw new AppError(400, 'OFFER_EXPIRED', 'This offer has expired.')
   const offer = direct || offerRules.bestFor(item.id, user, item.currency)
   if (!isConfigured()) throw new AppError(503, 'PAYMENTS_NOT_CONFIGURED', 'Online payments are not available yet. Please check back soon.')

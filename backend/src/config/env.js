@@ -58,10 +58,10 @@ module.exports = {
     rateLimitMax: int(process.env.AUTH_RATE_LIMIT_MAX, 20), // sign-in attempts per IP per 15 minutes
   },
 
-  // Visitors in India are charged in rupees, everyone else in dollars. The country comes from the hosting platform (Vercel: x-vercel-ip-country). DEFAULT_CURRENCY is used when no country is known (local development): USD or INR.
-  defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase() === 'INR' ? 'INR' : 'USD',
-  // Visitors in India are charged in rupees, everyone else in dollars. The country comes from the hosting platform (Vercel: x-vercel-ip-country). DEFAULT_CURRENCY is used when no country is known (local development): USD or INR.
-  defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase() === 'INR' ? 'INR' : 'USD',
+  // Visitors are charged in their own currency (rupees in India, euros in the euro countries ...), everyone else in dollars. The country comes from the hosting platform (Vercel: x-vercel-ip-country). DEFAULT_CURRENCY is used when no country is known (local development): e.g. USD or INR.
+  defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase(),
+  // Visitors are charged in their own currency (rupees in India, euros in the euro countries ...), everyone else in dollars. The country comes from the hosting platform (Vercel: x-vercel-ip-country). DEFAULT_CURRENCY is used when no country is known (local development): e.g. USD or INR.
+  defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase(),
   // What the image provider costs you per finished call, in US dollars, only to show an ESTIMATED spend in the admin dashboard (the provider reports no price per call).
   // AILAB_COST_PER_CALL=0.03 for all APIs; AILAB_API_COSTS='{"cartoon-yourself":0.02}' to override some.
   apiCostPerCall: Number(process.env.AILAB_COST_PER_CALL) || 0,

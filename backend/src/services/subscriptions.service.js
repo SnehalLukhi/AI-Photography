@@ -4,6 +4,8 @@ const plans = require('../config/plans')
 const wallet = require('./wallet.service')
 const razorpay = require('./razorpay.client')
 const { itemById, localize } = require('./catalog')
+const offers = require('./offers.service')
+const pricing = require('./pricing.service')
 const { query, tx } = require('../db')
 
 /**
@@ -17,20 +19,21 @@ const TOTAL_COUNT = { weekly: 100, monthly: 60, yearly: 10, test: 4 } // billing
 const LIVE = ['active', 'authenticated', 'pending']
 /**
  * Is this item sold as a subscription, and with which Razorpay plan? A plan is a subscription when its dollar plan id is set in .env (RAZORPAY_PLAN_*).
- * Returns the id for dollars, the optional override for rupees (RAZORPAY_PLAN_*_INR), or 'auto' for rupees: resolvePlanId() then finds / creates the rupee plan. '' = not a subscription.
+ * Returns the id for dollars, the optional override for rupees (RAZORPAY_PLAN_*_INR), or 'auto' for any other currency: resolvePlanId() then finds / creates the plan for that currency and price. '' = not a subscription.
  */
 const planIdFor = (item) => {
   if (item.test) return env.razorpay.planIds.test || ''
   const usd = env.razorpay.planIds[item.id]
   if (!usd) return ''
-  return item.currency === 'INR' ? env.razorpay.planIdsInr[item.id] || 'auto' : usd
+  if (item.currency === 'USD') return usd
+  return (item.currency === 'INR' && env.razorpay.planIdsInr[item.id]) || 'auto' // other currencies: the plan is found / created in Razorpay with the converted price
 }
 
 // Razorpay plans are looked up (or created once) by what they are: period, currency and amount - so no plan id has to be configured for the rupee versions.
 const planCache = new Map()
 async function findOrCreatePlan(item) {
   const amount = Math.round(item.price * 100)
-  const name = item.currency === 'INR' ? `${item.name} (INR)` : item.name
+  const name = item.currency === 'USD' ? item.name : `${item.name} (${item.currency})`
   for (let skip = 0; skip < 500; skip += 100) {
     const page = await razorpay.call('GET', `/plans?count=100&skip=${skip}`)
     const found = (page.items || []).find((p) => p.period === item.period && p.interval === 1 && p.item?.currency === item.currency && p.item?.amount === amount && String(p.item?.name || '').startsWith(item.name))
@@ -74,7 +77,7 @@ async function createSubscription(user, item, offer) {
   const sub = await razorpay.call('POST', '/subscriptions', {
     plan_id: await resolvePlanId(item), total_count: TOTAL_COUNT[item.id] || 12, quantity: 1, customer_notify: 1,
     notes: { user_id: user.id, item_id: item.id, ...(offer ? { offer_id: offer.id } : {}) },
-    ...((item.currency === 'INR' ? offer?.razorpayOfferIdInr : offer?.razorpayOfferId) ? { offer_id: item.currency === 'INR' ? offer.razorpayOfferIdInr : offer.razorpayOfferId } : {}),
+    ...(offer && offers.offerIdFor(offer, item.currency) ? { offer_id: offers.offerIdFor(offer, item.currency) } : {}),
   })
   if (!sub.id) throw new AppError(502, 'PAYMENT_PROVIDER_ERROR', 'The payment could not be started. Please try again later.')
   await query('INSERT INTO subscriptions (subscription_id, user_id, item_id, offer_id) VALUES ($1, $2, $3, $4)', [sub.id, user.id, item.id, offer ? offer.id : null])
@@ -88,6 +91,7 @@ function fulfilCharge(subscriptionId, payment, subEntity) {
   return tx(async (db) => {
     const sub = (await db.query('SELECT * FROM subscriptions WHERE subscription_id = $1 FOR UPDATE', [subscriptionId])).rows[0]
     if (!sub) throw new AppError(404, 'SUBSCRIPTION_NOT_FOUND', 'Subscription not found.')
+    await pricing.ensureRates()
     const item = localize(itemById(sub.item_id), payment.currency) // the regular price in the currency that was charged
     const listAmount = Math.round(item.price * 100)
     const discounted = payment.amount < listAmount
