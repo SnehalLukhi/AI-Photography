@@ -19,7 +19,7 @@ function spacesEndpoint() {
 module.exports = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: int(process.env.PORT, 5001),
-  corsOrigins: list(process.env.CORS_ORIGIN, ['http://localhost:5173', 'http://localhost:5174']),
+  corsOrigins: list(process.env.CORS_ORIGIN, ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5180']),
 
   ailab: {
     apiKey: (process.env.AILAB_API_KEY || '').trim(),
@@ -62,6 +62,13 @@ module.exports = {
   defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase() === 'INR' ? 'INR' : 'USD',
   // Visitors in India are charged in rupees, everyone else in dollars. The country comes from the hosting platform (Vercel: x-vercel-ip-country). DEFAULT_CURRENCY is used when no country is known (local development): USD or INR.
   defaultCurrency: (process.env.DEFAULT_CURRENCY || 'USD').trim().toUpperCase() === 'INR' ? 'INR' : 'USD',
+  // What the image provider costs you per finished call, in US dollars, only to show an ESTIMATED spend in the admin dashboard (the provider reports no price per call).
+  // AILAB_COST_PER_CALL=0.03 for all APIs; AILAB_API_COSTS='{"cartoon-yourself":0.02}' to override some.
+  apiCostPerCall: Number(process.env.AILAB_COST_PER_CALL) || 0,
+  apiCosts: (() => { try { return JSON.parse(process.env.AILAB_API_COSTS || '{}') } catch { return {} } })(),
+  adminUsername: (process.env.ADMIN_USERNAME || '').trim(), // the admin dashboard signs in with these two (POST /api/admin/login)
+  adminPassword: process.env.ADMIN_PASSWORD || '',
+  adminTokenHours: Number(process.env.ADMIN_TOKEN_HOURS) > 0 ? Number(process.env.ADMIN_TOKEN_HOURS) : 12, // how long one sign-in lasts
   adminApiKey: (process.env.ADMIN_API_KEY || '').trim(), // secret for the /api/admin/* endpoints (header x-admin-key); empty = those endpoints are off
   brandName: (process.env.BRAND_NAME || 'Pictrify').trim(), // the name of the site: shown at the top of Razorpay's payment window
 

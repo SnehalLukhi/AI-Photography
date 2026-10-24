@@ -132,6 +132,9 @@ const SCHEMA = `
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
   CREATE INDEX IF NOT EXISTS templates_category ON templates (category_id, sort_order, created_at);
+  -- Trending: a template marked here shows in Trending AND stays in its own category (see trending.service)
+  ALTER TABLE templates ADD COLUMN IF NOT EXISTS trending BOOLEAN NOT NULL DEFAULT false;
+  ALTER TABLE templates ADD COLUMN IF NOT EXISTS trending_position INTEGER NOT NULL DEFAULT 0;
   -- Supabase exposes every table through its public REST API. Row Level Security with NO policies shuts that door: only this backend
   -- (which connects directly as the database owner, and bypasses RLS) can read or write these tables.
   -- templates marked as Trending in the admin (ids of the frontend's templates, in display order)
@@ -141,6 +144,36 @@ const SCHEMA = `
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
   );
   ALTER TABLE trending_templates ENABLE ROW LEVEL SECURITY;
+  -- one row per call to the image provider (AILabTools): outcome, time, ids and coins; shown in the admin dashboard
+  CREATE TABLE IF NOT EXISTS api_calls (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    api TEXT NOT NULL,
+    template TEXT,
+    status TEXT NOT NULL,
+    error_code TEXT,
+    http_status INTEGER,
+    duration_ms INTEGER,
+    coins INTEGER NOT NULL DEFAULT 0,
+    task_id TEXT,
+    request_id TEXT,
+    log_id TEXT,
+    generation_id TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  CREATE INDEX IF NOT EXISTS api_calls_created ON api_calls (created_at DESC);
+  CREATE INDEX IF NOT EXISTS api_calls_task ON api_calls (task_id);
+  ALTER TABLE api_calls ENABLE ROW LEVEL SECURITY;
+  -- admins of the dashboard (created with POST /api/admin/admins); only a scrypt hash of the password is kept
+  CREATE TABLE IF NOT EXISTS admin_users (
+    id TEXT PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    last_login_at TIMESTAMPTZ
+  );
+  ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
   ALTER TABLE users ENABLE ROW LEVEL SECURITY;
   ALTER TABLE usage ENABLE ROW LEVEL SECURITY;
   ALTER TABLE coin_ledger ENABLE ROW LEVEL SECURITY;

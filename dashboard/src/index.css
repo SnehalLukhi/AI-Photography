@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+html, body, #root { height: 100%; }
+body { margin: 0; background: #0B0A12; color: #ECEAF5; font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: 'Bricolage Grotesque', Inter, system-ui, sans-serif; letter-spacing: -0.02em; }
+::selection { background: rgba(139, 108, 255, .45); }
+* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.15) transparent; }
+
+@layer components {
+  .card { @apply rounded-2xl border border-line bg-panel/80 backdrop-blur; }
+  .input { @apply w-full rounded-xl border border-line bg-ink/60 px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-brand/70 focus:ring-4 focus:ring-brand/15 disabled:opacity-50; }
+  .label { @apply mb-1.5 block text-xs font-medium text-white/55; }
+  .btn { @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-gradient-to-r from-brand to-pink text-white shadow-[0_8px_24px_-8px_rgba(139,108,255,.7)] hover:brightness-110; }
+  .btn-ghost { @apply btn border border-line bg-white/[0.04] text-white/85 hover:bg-white/[0.09]; }
+  .btn-danger { @apply btn border border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20; }
+  .th { @apply px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-white/40; }
+  .td { @apply px-4 py-3 text-sm; }
+}

@@ -40,4 +40,8 @@ const uploadImage = upload.single('image')
 const templateForm = multer({ storage, limits: { fileSize: env.upload.maxFileSizeBytes, files: 1, fields: 20, parts: 24, fieldSize: 16 * 1024 }, fileFilter }).single('image')
 const uploadTemplateImage = (req, res, next) => (req.is('multipart/form-data') ? templateForm(req, res, next) : next())
 
-module.exports = { uploadImage, uploadTemplateImage }
+/** Bulk template add: up to 100 pictures in the field "images" plus the text fields "templates" (a JSON array) and "defaults" (JSON). Only parsed for multipart requests. */
+const bulkForm = multer({ storage, limits: { fileSize: env.upload.maxFileSizeBytes, files: 100, fields: 10, parts: 120, fieldSize: 2 * 1024 * 1024 }, fileFilter }).array('images', 100)
+const uploadTemplateImages = (req, res, next) => (req.is('multipart/form-data') ? bulkForm(req, res, next) : next())
+
+module.exports = { uploadImage, uploadTemplateImage, uploadTemplateImages }

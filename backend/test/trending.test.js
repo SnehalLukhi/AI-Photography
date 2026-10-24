@@ -33,3 +33,23 @@ test('only the admin key may change it; bad ids are refused', async () => {
   assert.equal((await call('PUT', '/admin/trending', { templateIds: 'x' })).status, 400)
   assert.equal((await ids()).length, 2)
 })
+
+test('catalogue templates: the flag lives on the template, shows in /api/templates, follows the shared order and goes away with a delete', async () => {
+  await call('PUT', '/admin/trending', { templateIds: [] })
+  const tpl = (id) => ({ id, category_id: 'retro', name: id, preview_url: 'https://cdn.example.com/t.jpg', style_title_prompt: 't', style_desc_prompt: 'd' })
+  await call('POST', '/admin/template-categories', { id: 'retro', name: 'Retro', flow: 'photography' })
+  await call('POST', '/admin/templates', [tpl('r1'), tpl('r2')])
+  await call('POST', '/admin/trending', { templateId: 'cartoon/3d-toon' }) // a bundled (folder) template
+  await call('POST', '/admin/trending', { templateId: 'retro/r2' })
+  assert.deepEqual(await ids(), ['cartoon/3d-toon', 'retro/r2'])
+  const listed = (await (await call('GET', '/templates?category=retro', undefined, {})).json()).templates
+  assert.deepEqual(listed.map((t) => [t.id, t.trending]), [['r1', false], ['r2', true]]) // still in its own category
+  await call('PUT', '/admin/trending', { templateIds: ['retro/r2', 'cartoon/3d-toon', 'retro/r1'] })
+  assert.deepEqual(await ids(), ['retro/r2', 'cartoon/3d-toon', 'retro/r1'])
+  assert.equal((await call('PUT', '/admin/templates/r1', { trending: false })).status, 200) // the template's own PUT works too
+  assert.deepEqual(await ids(), ['retro/r2', 'cartoon/3d-toon'])
+  await call('POST', '/admin/templates?upsert=true', tpl('r2')) // re-sent without a flag: still trending
+  assert.deepEqual(await ids(), ['retro/r2', 'cartoon/3d-toon'])
+  await call('DELETE', '/admin/templates/r2')
+  assert.deepEqual(await ids(), ['cartoon/3d-toon'])
+})

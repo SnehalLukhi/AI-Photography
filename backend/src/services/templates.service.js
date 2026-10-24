@@ -13,6 +13,7 @@ const templateOut = (r) => ({
   id: r.id, category_id: r.category_id, flow: r.flow, name: r.name, preview_url: r.preview_url,
   style_title_prompt: r.style_title_prompt, style_desc_prompt: r.style_desc_prompt, api_value: r.api_value,
   aspect_ratio: r.aspect_ratio, cost_coins: r.cost_coins, gender: r.gender, extra: r.extra || {}, sort_order: r.sort_order, active: r.active,
+  trending: r.trending, trending_position: r.trending_position,
 })
 const categoryOut = (r) => ({ id: r.id, name: r.name, flow: r.flow, parent_id: r.parent_id, sort_order: r.sort_order, hide_from_all: r.hide_from_all })
 
@@ -49,6 +50,28 @@ function categoryValues(b) {
   return { id, name, flow, parent_id: optText(b.parent_id, 100), sort_order: Number.isInteger(b.sort_order) ? b.sort_order : 0, hide_from_all: b.hide_from_all === true }
 }
 
+/** Changes the sent fields of a category (its id cannot change). */
+async function updateCategory(id, patch) {
+  const { rows } = await query('SELECT * FROM template_categories WHERE id = $1', [id])
+  if (!rows[0]) throw new AppError(404, 'CATEGORY_NOT_FOUND', `Unknown category "${id}".`)
+  const v = categoryValues({ ...categoryOut(rows[0]), ...patch, id })
+  if (v.flow !== rows[0].flow && (await query('SELECT 1 FROM templates WHERE category_id = $1 LIMIT 1', [id])).rows.length) throw new AppError(409, 'CATEGORY_NOT_EMPTY', 'The generation flow of a category with templates cannot change: move or delete its templates first.')
+  const out = await query('UPDATE template_categories SET name = $2, flow = $3, parent_id = $4, sort_order = $5, hide_from_all = $6 WHERE id = $1 RETURNING *', [id, v.name, v.flow, v.parent_id, v.sort_order, v.hide_from_all])
+  return categoryOut(out.rows[0])
+}
+
+/** Deletes a category. One that still has templates is refused (409) unless `cascade` - then its templates go too. Returns how many templates were deleted. */
+async function deleteCategory(id, { cascade = false } = {}) {
+  const count = (await query('SELECT count(*)::int AS n FROM templates WHERE category_id = $1', [id])).rows[0].n
+  if (count && !cascade) throw new AppError(409, 'CATEGORY_NOT_EMPTY', `Category "${id}" has ${count} template(s). Delete them first or confirm deleting them together with the category.`)
+  return tx(async (db) => {
+    await db.query('DELETE FROM templates WHERE category_id = $1', [id])
+    const res = await db.query('DELETE FROM template_categories WHERE id = $1', [id])
+    if (!res.rowCount) throw new AppError(404, 'CATEGORY_NOT_FOUND', `Unknown category "${id}".`)
+    return count
+  })
+}
+
 async function saveCategory(b, { upsert = false } = {}) {
   const v = categoryValues(b)
   const sql = `INSERT INTO template_categories (id, name, flow, parent_id, sort_order, hide_from_all) VALUES ($1, $2, $3, $4, $5, $6)
@@ -82,10 +105,11 @@ function templateValues(b, category) {
     id, category_id: category.id, name, preview_url: previewUrl, style_title_prompt: title, style_desc_prompt: desc, api_value: apiValue,
     aspect_ratio: optText(b.aspect_ratio, 10) || '9:16', cost_coins: Number.isInteger(b.cost_coins) && b.cost_coins >= 0 ? b.cost_coins : null,
     gender: optText(b.gender, 20), extra: JSON.stringify(extra), sort_order: Number.isInteger(b.sort_order) ? b.sort_order : 0, active: b.active !== false,
+    trending: b.trending === true, trending_position: Number.isInteger(b.trending_position) ? b.trending_position : 0,
   }
 }
 
-const COLS = ['id', 'category_id', 'name', 'preview_url', 'style_title_prompt', 'style_desc_prompt', 'api_value', 'aspect_ratio', 'cost_coins', 'gender', 'extra', 'sort_order', 'active']
+const COLS = ['id', 'category_id', 'name', 'preview_url', 'style_title_prompt', 'style_desc_prompt', 'api_value', 'aspect_ratio', 'cost_coins', 'gender', 'extra', 'sort_order', 'active', 'trending', 'trending_position']
 
 async function categoryById(db, id) {
   const { rows } = await db.query('SELECT * FROM template_categories WHERE id = $1', [id])
@@ -103,7 +127,8 @@ async function createTemplates(bodies, { upsert = false } = {}) {
     for (const b of list) {
       const category = await categoryById(db, text(b?.category_id))
       const v = templateValues(b, category)
-      const set = COLS.filter((c) => c !== 'id').map((c) => `${c} = EXCLUDED.${c}`).join(', ')
+      const keep = 'trending' in b ? [] : ['trending', 'trending_position'] // re-sending a template (upsert) without a trending flag does not un-trend it
+      const set = COLS.filter((c) => c !== 'id' && !keep.includes(c)).map((c) => `${c} = EXCLUDED.${c}`).join(', ')
       const { rows } = await db.query(
         `INSERT INTO templates (${COLS.join(', ')}) VALUES (${COLS.map((_, i) => `$${i + 1}`).join(', ')}) ON CONFLICT (id) DO ${upsert ? `UPDATE SET ${set}` : 'NOTHING'} RETURNING id`,
         COLS.map((c) => v[c]),
@@ -133,4 +158,4 @@ async function deleteTemplate(id) {
   if (!rowCount) throw new AppError(404, 'TEMPLATE_NOT_FOUND', `Unknown template "${id}".`)
 }
 
-module.exports = { FLOWS, listTemplates, getTemplate, listCategories, saveCategory, createTemplates, updateTemplate, deleteTemplate }
+module.exports = { FLOWS, listTemplates, getTemplate, listCategories, saveCategory, updateCategory, deleteCategory, createTemplates, updateTemplate, deleteTemplate }
