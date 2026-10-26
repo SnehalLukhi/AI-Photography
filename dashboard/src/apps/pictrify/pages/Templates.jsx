@@ -6,7 +6,7 @@ import { slug } from '../../../core/format.js'
 import { FLOW_LABEL, FLOW_TONE, imageUrl, tid, useCatalogue } from '../catalogue.js'
 
 const RATIOS = ['9:16', '3:4', '1:1', '4:3', '16:9']
-const blank = { id: '', category_id: '', name: '', preview_url: '', style_title_prompt: '', style_desc_prompt: '', api_value: '', aspect_ratio: '9:16', cost_coins: '', gender: '', sort_order: 0, active: true, trending: false }
+const blank = { id: '', category_id: '', flow: 'photography', name: '', preview_url: '', style_title_prompt: '', style_desc_prompt: '', api_value: '', aspect_ratio: '9:16', cost_coins: '', gender: '', sort_order: 0, active: true, trending: false }
 
 export default function Templates({ api }) {
   const { toast } = useConsole()
@@ -26,10 +26,11 @@ export default function Templates({ api }) {
   const cats = data?.categories || []
   const catById = useMemo(() => Object.fromEntries(cats.map((c) => [c.id, c])), [cats])
   const all = data?.templates || []
-  const shown = all.filter((t) => (!cat || t.category_id === cat) && (view === 'all' || (view === 'trending' ? t.trending : !t.active)) && (!q || `${t.name} ${t.id}`.toLowerCase().includes(q.toLowerCase())))
+  const shown = all.filter((t) => (!cat || (cat === 'uncategorized' ? !t.category_id : t.category_id === cat)) && (view === 'all' || (view === 'trending' ? t.trending : !t.active)) && (!q || `${t.name} ${t.id}`.toLowerCase().includes(q.toLowerCase())))
   const counts = { all: all.length, trending: all.filter((t) => t.trending).length, hidden: all.filter((t) => !t.active).length }
 
   const star = async (t) => {
+    if (!t.category_id) { toast('This template has no category, so it can only be in Trending. Give it a category to take it out.', 'error'); return }
     setStarring(tid(t))
     try {
       if (t.trending) await api.del('/api/admin/trending', { templateId: tid(t) }); else await api.post('/api/admin/trending', { templateId: tid(t) })
@@ -49,14 +50,14 @@ export default function Templates({ api }) {
     if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { setFormError('Choose a JPG, PNG or WebP picture.'); return }
     setFormError(''); setFile(f); setPreview(URL.createObjectURL(f))
   }
-  const flow = catById[form?.category_id]?.flow
+  const flow = form?.category_id ? catById[form.category_id]?.flow : form?.flow // a template without a category carries its own flow
   const suggestId = (name, category) => (flow === 'cartoon' ? form.id : slug(`${category}-${name}`))
 
   const save = async () => {
     setBusy(true); setFormError('')
     const text = (v) => (v === '' || v == null ? null : v)
     const fields = {
-      id: form.id, category_id: form.category_id, name: form.name, style_title_prompt: text(form.style_title_prompt), style_desc_prompt: text(form.style_desc_prompt), api_value: text(form.api_value),
+      id: form.id, category_id: form.category_id || '', ...(form.category_id ? {} : { flow: form.flow }), name: form.name, style_title_prompt: text(form.style_title_prompt), style_desc_prompt: text(form.style_desc_prompt), api_value: text(form.api_value),
       aspect_ratio: form.aspect_ratio, gender: text(form.gender), sort_order: Number(form.sort_order) || 0, active: !!form.active, ...(form.cost_coins !== '' ? { cost_coins: Number(form.cost_coins) } : {}),
     }
     try {
@@ -69,7 +70,7 @@ export default function Templates({ api }) {
       const wasTrending = !form.isNew && all.find((t) => t.id === form.id)?.trending
       if (form.isNew) await api.post('/api/admin/templates', body)
       else await api.put(`/api/admin/templates/${encodeURIComponent(form.id)}`, body)
-      if (!!form.trending !== !!wasTrending) {
+      if (form.category_id && !!form.trending !== !!wasTrending) {
         const id = `${form.category_id}/${form.id}`
         if (form.trending) await api.post('/api/admin/trending', { templateId: id }); else await api.del('/api/admin/trending', { templateId: id })
       }
@@ -86,23 +87,23 @@ export default function Templates({ api }) {
 
   const showPrompts = flow === 'photography' // the prompt fields are shown for this flow but are optional
   const needHair = flow === 'hairstyle'
-  const canSave = form && form.id && form.name && form.category_id && (file || form.preview_url) && (!needHair || form.api_value)
+  const canSave = form && form.id && form.name && (file || form.preview_url) && (!needHair || form.api_value)
 
   return (
     <>
       <PageHeader title="Templates" subtitle="Add, change or remove the styles people can choose. The star puts a template in Trending too.">
-        <button type="button" className="btn-primary" disabled={!cats.length} title={cats.length ? '' : 'Create a category first'} onClick={() => openForm(null)}><Icon name="plus" className="size-4" />Add template</button>
+        <button type="button" className="btn-primary" onClick={() => openForm(null)}><Icon name="plus" className="size-4" />Add template</button>
       </PageHeader>
       <ErrorNote error={error} onRetry={reload} />
 
       <div className="mb-5 flex flex-wrap items-center gap-3 animate-rise">
         <Tabs value={view} onChange={setView} tabs={[{ id: 'all', label: 'All', count: counts.all }, { id: 'trending', label: 'Trending', count: counts.trending }, { id: 'hidden', label: 'Hidden', count: counts.hidden }]} />
-        <select className="input !w-auto" value={cat} onChange={(e) => setCat(e.target.value)} aria-label="Category"><option value="">All categories</option>{cats.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.templates})</option>)}</select>
+        <select className="input !w-auto" value={cat} onChange={(e) => setCat(e.target.value)} aria-label="Category"><option value="">All categories</option>{cats.map((c) => <option key={c.id} value={c.id}>{c.name} ({c.templates})</option>)}{data?.uncategorized > 0 && <option value="uncategorized">No category ({data.uncategorized})</option>}</select>
         <SearchBox value={q} onChange={setQ} placeholder="Search templates" className="w-64 max-w-full flex-1 sm:flex-none" />
       </div>
 
       {loading && !data ? <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">{Array.from({ length: 12 }, (_, i) => <Skeleton key={i} className="aspect-[9/14] w-full !rounded-2xl" />)}</div>
-        : shown.length === 0 ? <Empty icon="image" title={all.length ? 'No templates match' : 'No templates yet'} text={all.length ? 'Change the filters or the search.' : 'Add the first one — upload a picture, name it and pick a category.'}>{!all.length && cats.length > 0 && <button type="button" className="btn-primary" onClick={() => openForm(null)}>Add template</button>}</Empty>
+        : shown.length === 0 ? <Empty icon="image" title={all.length ? 'No templates match' : 'No templates yet'} text={all.length ? 'Change the filters or the search.' : 'Add the first one — upload a picture, name it and pick a category.'}>{!all.length && <button type="button" className="btn-primary" onClick={() => openForm(null)}>Add template</button>}</Empty>
         : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
             {shown.map((t) => (
@@ -117,7 +118,7 @@ export default function Templates({ api }) {
                   {!t.active && <span className="absolute left-2 top-2"><Badge tone="amber">Hidden</Badge></span>}
                   <div className="absolute inset-x-0 bottom-0 p-3">
                     <p className="truncate text-sm font-semibold text-white">{t.name}</p>
-                    <div className="mt-1 flex items-center gap-1.5"><Badge tone={FLOW_TONE[catById[t.category_id]?.flow]}>{catById[t.category_id]?.name || t.category_id}</Badge></div>
+                    <div className="mt-1 flex items-center gap-1.5"><Badge tone={FLOW_TONE[catById[t.category_id]?.flow || t.flow]}>{catById[t.category_id]?.name || t.category_id || 'No category'}</Badge></div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between gap-1 px-3 py-2">
@@ -148,9 +149,10 @@ export default function Templates({ api }) {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Category"><select className="input" value={form.category_id} disabled={!form.isNew} onChange={(e) => { set('category_id', e.target.value); if (form.isNew && form.name) set('id', slug(`${e.target.value}-${form.name}`)) }}>{cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
+              <Field label="Category"><select className="input" value={form.category_id} disabled={!form.isNew && !!form.category_id} onChange={(e) => { set('category_id', e.target.value); if (form.isNew && form.name) set('id', slug(`${e.target.value}-${form.name}`)) }}><option value="">No category (Trending only)</option>{cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
               <Field label="Name"><input className="input" value={form.name} onChange={(e) => { set('name', e.target.value); if (form.isNew && flow !== 'cartoon') set('id', suggestId(e.target.value, form.category_id)) }} placeholder="Vintage Sari" /></Field>
             </div>
+            {!form.category_id && <Field label="How it is generated" hint="A template without a category only shows in Trending, so it needs its own generation type."><select className="input" value={form.flow} disabled={!form.isNew} onChange={(e) => set('flow', e.target.value)}>{(data?.flows || Object.keys(FLOW_LABEL)).map((f) => <option key={f} value={f}>{FLOW_LABEL[f] || f}</option>)}</select></Field>}
             <Field label="Id" hint={flow === 'cartoon' ? 'For Cartoon this must be a supported cartoon style.' : form.isNew ? 'Unique across all templates. Cannot be changed later.' : 'The id cannot be changed.'}><input className="input font-mono" value={form.id} disabled={!form.isNew} onChange={(e) => set('id', e.target.value.trim())} placeholder="old-money-vintage-sari" /></Field>
 
             {showPrompts && <>
@@ -166,7 +168,7 @@ export default function Templates({ api }) {
             </div>
 
             <div className="divide-y divide-line rounded-xl border border-line bg-white/[0.03]">
-              <div className="flex items-center justify-between px-4 py-3"><div><p className="flex items-center gap-1.5 text-sm font-medium text-white"><Icon name="flame" className="size-4 text-amber-300" />Trending</p><p className="text-xs text-white/40">Also show it in Trending. It stays in its own category.</p></div><Toggle checked={!!form.trending} onChange={(v) => set('trending', v)} label="Trending" /></div>
+              <div className="flex items-center justify-between px-4 py-3"><div><p className="flex items-center gap-1.5 text-sm font-medium text-white"><Icon name="flame" className="size-4 text-amber-300" />Trending</p><p className="text-xs text-white/40">{form.category_id ? 'Also show it in Trending. It stays in its own category.' : 'Always on: without a category, Trending is the only place it shows.'}</p></div><Toggle checked={!form.category_id || !!form.trending} disabled={!form.category_id} onChange={(v) => set('trending', v)} label="Trending" /></div>
               <div className="flex items-center justify-between px-4 py-3"><div><p className="text-sm font-medium text-white">Visible in the app</p><p className="text-xs text-white/40">Turn off to hide it without deleting.</p></div><Toggle checked={!!form.active} onChange={(v) => set('active', v)} label="Visible" /></div>
             </div>
             {formError && <p role="alert" className="rounded-xl border border-red-500/25 bg-red-500/10 px-3 py-2 text-sm text-red-200">{formError}</p>}

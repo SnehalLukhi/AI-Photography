@@ -77,6 +77,11 @@ for (const { category: c, items } of Object.values(apiByCategory)) {
   const parent = c.parent_id && exploreTabs.some((t) => t.id === c.parent_id || t.parent === c.parent_id) ? c.parent_id : undefined
   exploreTabs.push({ id: c.id, name: c.name, folders: [], ...(parent ? { parent, category: c.name } : {}), hideFromAll: c.hide_from_all })
 }
+// Templates with no category (category_id null): they only show in Trending. Their card id is "uncategorized/<id>", the one the Trending API uses.
+const uncategorizedCards = (apiCatalogue?.templates || []).filter((t) => !t.category_id).map((t, i) => ({
+  id: `uncategorized/${t.id}`, categoryId: 'uncategorized', category: 'Trending', name: t.name, assetId: t.id, type: 'image', slots: ['Photo'], coins: t.cost_coins || 120,
+  index: i + 1, image: t.preview_url, landscape: isLandscape(t.aspect_ratio), template: t,
+}))
 const apiCards = (tab) => {
   const entry = apiByCategory[tab.id]
   if (!entry?.items.length) return null
@@ -133,7 +138,7 @@ export const categoryItems = (id) => exploreFolderTemplates[id] || byCategory(id
 
 /** Templates by id (e.g. "old-money/vintage-sari"), in the order given; ids that do not exist (any more) are skipped. Used for the admin's Trending list. */
 export const templatesByIds = (ids) => {
-  const all = new Map([...folderTemplates, ...Object.values(exploreFolderTemplates).flat()].map((t) => [t.id, t]))
+  const all = new Map([...folderTemplates, ...Object.values(exploreFolderTemplates).flat(), ...uncategorizedCards].map((t) => [t.id, t]))
   return ids.map((id) => all.get(id)).filter(Boolean)
 }
 
@@ -141,9 +146,9 @@ export const templatesByIds = (ids) => {
 export function findAsset(categoryId, assetId) {
   if (!categoryId || !assetId) return undefined
   const key = assetAliases[`${categoryId}/${assetId}`] || `${categoryId}/${assetId}`
-  return [...templates, ...dances, ...folderTemplates, ...Object.values(exploreFolderTemplates).flat()].find((t) => t.id === key)
+  return [...templates, ...dances, ...folderTemplates, ...Object.values(exploreFolderTemplates).flat(), ...uncategorizedCards].find((t) => t.id === key)
 }
-export const siblingsOf = (asset) => (asset.categoryId === 'dance-videos' ? dances : asset.categoryId === 'trending-templates' ? folderTemplates : exploreFolderTemplates[asset.categoryId] || byCategory(asset.categoryId))
+export const siblingsOf = (asset) => (asset.categoryId === 'dance-videos' ? dances : asset.categoryId === 'trending-templates' ? folderTemplates : asset.categoryId === 'uncategorized' ? uncategorizedCards : exploreFolderTemplates[asset.categoryId] || byCategory(asset.categoryId))
 export const generateUrl = (t) => `/generate?categoryId=${t.categoryId}&assetId=${t.assetId}`
 
 export const steps = [

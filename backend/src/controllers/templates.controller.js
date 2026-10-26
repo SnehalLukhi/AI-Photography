@@ -23,7 +23,7 @@ async function createCategory(req, res) {
 async function adminCatalogue(req, res) {
   const [categories, templates] = await Promise.all([svc.listCategories(), svc.listTemplates({ includeInactive: true })])
   const counts = templates.reduce((m, t) => ({ ...m, [t.category_id]: (m[t.category_id] || 0) + 1 }), {})
-  res.set('Cache-Control', 'no-store').json({ success: true, flows: svc.FLOWS, categories: categories.map((c) => ({ ...c, templates: counts[c.id] || 0 })), templates })
+  res.set('Cache-Control', 'no-store').json({ success: true, flows: svc.FLOWS, categories: categories.map((c) => ({ ...c, templates: counts[c.id] || 0 })), uncategorized: templates.filter((t) => !t.category_id).length, templates })
 }
 
 /** PUT /api/admin/template-categories/:id */
@@ -111,7 +111,7 @@ async function bulk(req, res) {
       }
       items.push(t)
     }
-    const wantTrending = items.map((t) => (t.trending === true || t.trending === 'true') && `${t.category_id}/${t.id}`).filter(Boolean)
+    const wantTrending = items.map((t) => (t.trending === true || t.trending === 'true') && `${t.category_id || svc.UNCATEGORIZED}/${t.id}`).filter(Boolean)
     const clean = items.map(({ image, trending: _t, ...t }) => t) // eslint-disable-line no-unused-vars
     const templates = await svc.createTemplates(clean, { upsert: req.query.upsert === 'true' })
     for (const id of wantTrending) await trending.add(id)

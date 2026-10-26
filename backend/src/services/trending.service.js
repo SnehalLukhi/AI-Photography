@@ -21,18 +21,21 @@ const split = (id) => { const i = id.indexOf('/'); return [id.slice(0, i), id.sl
 /** Template ids, first = shown first. */
 async function list(db = { query }) {
   const rows = (await db.query(
-    `SELECT category_id || '/' || id AS tid, trending_position AS position, created_at FROM templates WHERE trending AND active
+    `SELECT COALESCE(category_id, 'uncategorized') || '/' || id AS tid, trending_position AS position, created_at FROM templates WHERE trending AND active
      UNION ALL SELECT template_id, position, created_at FROM trending_templates ORDER BY position, created_at`)).rows
   return [...new Set(rows.map((r) => r.tid))]
 }
 
-const inCatalogue = async (db, id) => { const [c, t] = split(id); return (await db.query('SELECT 1 FROM templates WHERE category_id = $1 AND id = $2', [c, t])).rows.length > 0 }
+// templates without a category are written "uncategorized/<id>" (their category_id is null)
+const where = (c) => (c === 'uncategorized' ? 'category_id IS NULL AND id = $1' : 'category_id = $1 AND id = $2')
+const args = (c, t, ...more) => (c === 'uncategorized' ? [t, ...more] : [c, t, ...more])
+const inCatalogue = async (db, id) => { const [c, t] = split(id); return (await db.query(`SELECT 1 FROM templates WHERE ${where(c)}`, args(c, t))).rows.length > 0 }
 
 /** Saves one id at a position: on the template when it is in the catalogue, else in trending_templates. */
 async function put(db, id, position) {
   if (await inCatalogue(db, id)) {
     const [c, t] = split(id)
-    await db.query('UPDATE templates SET trending = true, trending_position = $3 WHERE category_id = $1 AND id = $2', [c, t, position])
+    await db.query(`UPDATE templates SET trending = true, trending_position = $${c === 'uncategorized' ? 2 : 3} WHERE ${where(c)}`, args(c, t, position))
   } else {
     await db.query('INSERT INTO trending_templates (template_id, position) VALUES ($1, $2) ON CONFLICT (template_id) DO UPDATE SET position = EXCLUDED.position', [id, position])
   }
@@ -53,6 +56,7 @@ async function add(templateId) {
 async function remove(templateId) {
   const id = cleanId(templateId)
   const [c, t] = split(id)
+  if (c === 'uncategorized') throw new AppError(400, 'NO_CATEGORY', 'A template without a category only shows in Trending. Give it a category first, or hide / delete it.')
   await query('UPDATE templates SET trending = false WHERE category_id = $1 AND id = $2', [c, t])
   await query('DELETE FROM trending_templates WHERE template_id = $1', [id])
   return list()
@@ -63,7 +67,7 @@ async function replace(templateIds) {
   if (!Array.isArray(templateIds) || templateIds.length > MAX) throw new AppError(400, 'INVALID_LIST', `templateIds must be an array of at most ${MAX} ids.`)
   const ids = [...new Set(templateIds.map(cleanId))]
   return tx(async (db) => {
-    await db.query('UPDATE templates SET trending = false')
+    await db.query('UPDATE templates SET trending = false WHERE category_id IS NOT NULL') // a template without a category stays in Trending
     await db.query('DELETE FROM trending_templates')
     for (let i = 0; i < ids.length; i++) await put(db, ids[i], i)
     return list(db)

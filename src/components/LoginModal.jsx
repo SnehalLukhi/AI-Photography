@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStudio, WELCOME_COINS } from '../context/StudioContext.jsx'
-import { categoryItems } from '../data/templates.js'
+import { categoryItems, exploreEverything } from '../data/templates.js'
 import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '../lib/aiPhotography.js'
 
 /**
@@ -11,9 +11,9 @@ import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '..
  * stays on the page they were on. Closes with the X, the Escape key, or a click outside.
  */
 // Side-panel photos: Cartoon, LinkedIn Headshot, Beard, Old Money and 80's & 90's templates in a repeating sequence (one from each, then the next one from each, ...), spread over 4 columns.
-const PANEL_SOURCES = ['cartoon', 'linkedin-headshot', 'beard', 'old-money', '80s-and-90s'].map((id) => categoryItems(id))
-const PER_CATEGORY = Math.min(5, ...PANEL_SOURCES.map((l) => l.length))
-const PANEL_IMAGES = Array.from({ length: PER_CATEGORY }, (_, k) => PANEL_SOURCES.map((l) => l[k].image)).flat()
+// A category that has no templates (or is named differently in the catalogue, e.g. '80s-90s') is skipped; with none of them the first templates of the site are used, so the panel is never empty.
+const PANEL_SOURCES = ['cartoon', 'linkedin-headshot', 'beard', 'old-money', '80s-and-90s', '80s-90s'].map((id) => categoryItems(id)).filter((l) => l.length)
+const PANEL_IMAGES = Array.from({ length: 5 }, (_, k) => (PANEL_SOURCES.length ? PANEL_SOURCES : [exploreEverything]).map((l) => l[k]?.image)).flat().filter(Boolean)
 const COLUMNS = [ // [animation, seconds] - alternating directions, like the reference
   ['login-marquee-down', 90], ['login-marquee-up', 90], ['login-marquee-down', 90], ['login-marquee-up', 90], // slow, calm pace (about the reference's real speed)
 ].map(([anim, secs], i) => {

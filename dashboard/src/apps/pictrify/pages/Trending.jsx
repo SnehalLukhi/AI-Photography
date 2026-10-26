@@ -59,12 +59,12 @@ export default function Trending({ api }) {
                     {t ? <img src={imageUrl(api, t)} alt="" className="h-14 w-10 shrink-0 rounded-lg object-cover" /> : <span className="grid h-14 w-10 shrink-0 place-items-center rounded-lg bg-white/[0.05] text-white/25"><Icon name="image" className="size-5" /></span>}
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-medium text-white">{t ? t.name : id.split('/')[1]}</p>
-                      <p className="flex items-center gap-2 truncate text-xs text-white/40"><span className="truncate font-mono">{id}</span>{t ? <Badge>{categories[t.category_id]?.name || t.category_id}</Badge> : <Badge tone="amber">built into the app</Badge>}</p>
+                      <p className="flex items-center gap-2 truncate text-xs text-white/40"><span className="truncate font-mono">{id}</span>{t ? <Badge>{categories[t.category_id]?.name || t.category_id || 'No category'}</Badge> : <Badge tone="amber">built into the app</Badge>}</p>
                     </div>
                     <div className="flex shrink-0 gap-1">
                       <button type="button" aria-label="Move up" disabled={i === 0} onClick={() => move(i, i - 1)} className="cursor-pointer rounded-lg p-2 text-white/50 transition hover:bg-white/10 hover:text-white disabled:opacity-25"><Icon name="up" className="size-4" /></button>
                       <button type="button" aria-label="Move down" disabled={i === order.length - 1} onClick={() => move(i, i + 1)} className="cursor-pointer rounded-lg p-2 text-white/50 transition hover:bg-white/10 hover:text-white disabled:opacity-25"><Icon name="down" className="size-4" /></button>
-                      <button type="button" aria-label="Remove from Trending" onClick={() => setOrder(order.filter((x) => x !== id))} className="cursor-pointer rounded-lg p-2 text-white/50 transition hover:bg-red-500/15 hover:text-red-300"><Icon name="x" className="size-4" /></button>
+                      <button type="button" aria-label="Remove from Trending" disabled={!!t && !t.category_id} title={t && !t.category_id ? 'No category: Trending is the only place it shows' : ''} onClick={() => setOrder(order.filter((x) => x !== id))} className="cursor-pointer rounded-lg p-2 text-white/50 transition hover:bg-red-500/15 hover:text-red-300 disabled:opacity-25"><Icon name="x" className="size-4" /></button>
                     </div>
                   </li>
                 )
@@ -81,7 +81,7 @@ export default function Trending({ api }) {
             {available.slice(0, 80).map((t) => (
               <button key={t.id} type="button" onClick={() => setOrder([...(order || []), tid(t)])} className="group relative cursor-pointer overflow-hidden rounded-xl border border-line text-left transition hover:border-brand/70">
                 <img src={imageUrl(api, t)} alt={t.name} loading="lazy" className="aspect-[9/13] w-full object-cover transition group-hover:scale-105" />
-                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-2 pt-6"><span className="block truncate text-xs font-medium text-white">{t.name}</span><span className="block truncate text-[10px] text-white/50">{categories[t.category_id]?.name}</span></span>
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-2 pt-6"><span className="block truncate text-xs font-medium text-white">{t.name}</span><span className="block truncate text-[10px] text-white/50">{categories[t.category_id]?.name || (t.category_id ? t.category_id : 'No category')}</span></span>
                 <span className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-brand text-white opacity-0 transition group-hover:opacity-100"><Icon name="plus" className="size-3.5" /></span>
               </button>
             ))}
