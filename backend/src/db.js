@@ -133,9 +133,6 @@ const SCHEMA = `
   );
   CREATE INDEX IF NOT EXISTS templates_category ON templates (category_id, sort_order, created_at);
   -- Trending: a template marked here shows in Trending AND stays in its own category (see trending.service)
-  -- a template can have NO category: it then only shows in Trending, and carries its own generation flow
-  ALTER TABLE templates ALTER COLUMN category_id DROP NOT NULL;
-  ALTER TABLE templates ADD COLUMN IF NOT EXISTS flow TEXT;
   ALTER TABLE templates ADD COLUMN IF NOT EXISTS trending BOOLEAN NOT NULL DEFAULT false;
   ALTER TABLE templates ADD COLUMN IF NOT EXISTS trending_position INTEGER NOT NULL DEFAULT 0;
   -- Supabase exposes every table through its public REST API. Row Level Security with NO policies shuts that door: only this backend

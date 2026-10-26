@@ -79,7 +79,7 @@ export default function Trending({ api }) {
         {available.length === 0 ? <p className="py-10 text-center text-sm text-white/40">{templates.length ? 'No more templates to add.' : 'There are no templates yet.'}</p> : (
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
             {available.slice(0, 80).map((t) => (
-              <button key={t.id} type="button" onClick={() => setOrder([...(order || []), tid(t)])} className="group relative cursor-pointer overflow-hidden rounded-xl border border-line text-left transition hover:border-brand/70">
+              <button key={t.id} type="button" onClick={() => setOrder([tid(t), ...(order || [])])} className="group relative cursor-pointer overflow-hidden rounded-xl border border-line text-left transition hover:border-brand/70">
                 <img src={imageUrl(api, t)} alt={t.name} loading="lazy" className="aspect-[9/13] w-full object-cover transition group-hover:scale-105" />
                 <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-2 pt-6"><span className="block truncate text-xs font-medium text-white">{t.name}</span><span className="block truncate text-[10px] text-white/50">{categories[t.category_id]?.name || (t.category_id ? t.category_id : 'No category')}</span></span>
                 <span className="absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-brand text-white opacity-0 transition group-hover:opacity-100"><Icon name="plus" className="size-3.5" /></span>

@@ -71,10 +71,12 @@ function GetApp({ small }) {
 }
 
 /** Compact coin badge (74 x 32, border-box) for signed-in users: the existing coin.svg + the welcome-coin amount. Display only - there is no coin balance in the app. The whole badge links to the Pricing page. */
+// Below this balance the coin badge opens the Pricing page (the Weekly / Monthly / Yearly plans); at or above it, the Get More Coins page as before. Follows the live balance.
+const LOW_COINS = 150
 const CoinBadge = ({ className = '' }) => {
   const { coins } = useStudio()
   return (
-  <Link to="/coins" aria-label={`${coins} coins - get more coins`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-white/10 bg-[#2B2B2B] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-white/30 hover:bg-[#2B2B2B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] ${className}`}>
+  <Link to={coins >= LOW_COINS ? '/coins' : '/pricing'} aria-label={coins >= LOW_COINS ? `${coins} coins - get more coins` : `${coins} coins - see the premium plans`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-white/10 bg-[#2B2B2B] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-white/30 hover:bg-[#2B2B2B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] ${className}`}>
     <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] shrink-0 object-contain" />
     <span className="text-[15px] font-bold leading-none tabular-nums text-white">{coins.toLocaleString()}</span>
   </Link>

@@ -1,8 +1,12 @@
 const AppError = require('../utils/AppError')
 const { query, tx } = require('../db')
 const CARTOON_TYPES = require('../config/cartoonTypes')
+const trending = require('./trending.service')
 
 const FLOWS = ['photography', 'cartoon', 'beard', 'hairstyle']
+// A template that belongs to no category (it exists only for Trending) lives in this reserved, hidden category. It is created on first use, never shown as a category
+// in the app, and its templates are always trending-capable; un-trending one leaves it stored (and invisible) - nothing is deleted.
+const UNCATEGORISED = { id: 'trending-only', name: 'No category (Trending only)', flow: 'photography' }
 const ID = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/
 
 const text = (v) => (typeof v === 'string' ? v.trim() : '')
@@ -17,20 +21,15 @@ const templateOut = (r) => ({
 })
 const categoryOut = (r) => ({ id: r.id, name: r.name, flow: r.flow, parent_id: r.parent_id, sort_order: r.sort_order, hide_from_all: r.hide_from_all })
 
-// a template without a category (category_id null) carries its own flow; the others use their category's
-const SELECT = 'SELECT t.*, COALESCE(c.flow, t.flow) AS flow FROM templates t LEFT JOIN template_categories c ON c.id = t.category_id'
-/** The id the app and the Trending API use for a template card: "<category>/<id>"; without a category: "uncategorized/<id>". */
-const UNCATEGORIZED = 'uncategorized'
-const cardId = (t) => `${t.category_id || UNCATEGORIZED}/${t.id}`
+const SELECT = 'SELECT t.*, c.flow FROM templates t JOIN template_categories c ON c.id = t.category_id'
 
 /** Active templates, optionally of one category, in display order. */
 async function listTemplates({ category, includeInactive = false } = {}) {
   const where = []
   const params = []
-  if (category === UNCATEGORIZED) where.push('t.category_id IS NULL')
-  else if (category) { params.push(category); where.push(`t.category_id = $${params.length}`) }
+  if (category) { params.push(category); where.push(`t.category_id = $${params.length}`) }
   if (!includeInactive) where.push('t.active')
-  const { rows } = await query(`${SELECT} ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY c.sort_order NULLS LAST, t.category_id NULLS LAST, t.sort_order, t.created_at, t.id`, params)
+  const { rows } = await query(`${SELECT} ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY c.sort_order, t.category_id, t.sort_order, t.created_at, t.id`, params)
   return rows.map(templateOut)
 }
 
@@ -89,7 +88,6 @@ async function saveCategory(b, { upsert = false } = {}) {
 /**
  * Validates a template body against its category's flow and returns the row values. Prompts are OPTIONAL in every flow (a missing one is stored as null and
  * simply not sent to the AI). Cartoon ids must be a real Cartoon Yourself `type`; hairstyle needs the API's hair_style in `api_value`.
- * `category` is { id, flow }; with id null the template has no category: it is always in Trending (that is the only place it shows) and stores its own flow.
  */
 function templateValues(b, category) {
   const id = text(b?.id)
@@ -107,26 +105,17 @@ function templateValues(b, category) {
   if (category.flow === 'hairstyle' && !apiValue) throw bad(`Template "${id}": "api_value" (the Hairstyle Changer hair_style) is required for the hairstyle flow.`)
   const extra = b.extra && typeof b.extra === 'object' && !Array.isArray(b.extra) ? b.extra : {}
   return {
-    id, category_id: category.id, flow: category.id ? null : category.flow, name, preview_url: previewUrl, style_title_prompt: title, style_desc_prompt: desc, api_value: apiValue,
+    id, category_id: category.id, name, preview_url: previewUrl, style_title_prompt: title, style_desc_prompt: desc, api_value: apiValue,
     aspect_ratio: optText(b.aspect_ratio, 10) || '9:16', cost_coins: Number.isInteger(b.cost_coins) && b.cost_coins >= 0 ? b.cost_coins : null,
     gender: optText(b.gender, 20), extra: JSON.stringify(extra), sort_order: Number.isInteger(b.sort_order) ? b.sort_order : 0, active: b.active !== false,
-    trending: category.id ? b.trending === true : true, trending_position: Number.isInteger(b.trending_position) ? b.trending_position : 0,
+    trending: b.trending === true, trending_position: Number.isInteger(b.trending_position) ? b.trending_position : 0,
   }
 }
 
-const COLS = ['id', 'category_id', 'flow', 'name', 'preview_url', 'style_title_prompt', 'style_desc_prompt', 'api_value', 'aspect_ratio', 'cost_coins', 'gender', 'extra', 'sort_order', 'active', 'trending', 'trending_position']
-
-/** The category of a template body: a real one (404 when unknown), or { id: null, flow } when the body names none - then "flow" says how it is generated (photography by default). */
-async function categoryOf(db, b) {
-  const id = text(b?.category_id)
-  if (id && id !== UNCATEGORIZED) return categoryById(db, id)
-  const flow = text(b?.flow) || 'photography'
-  if (!FLOWS.includes(flow)) throw bad(`"flow" must be one of: ${FLOWS.join(', ')}.`)
-  if (b?.trending === false) throw bad('A template without a category only shows in Trending, so it cannot be taken out of it. Give it a category first, or hide / delete it.')
-  return { id: null, flow }
-}
+const COLS = ['id', 'category_id', 'name', 'preview_url', 'style_title_prompt', 'style_desc_prompt', 'api_value', 'aspect_ratio', 'cost_coins', 'gender', 'extra', 'sort_order', 'active', 'trending', 'trending_position']
 
 async function categoryById(db, id) {
+  if (id === UNCATEGORISED.id) await db.query('INSERT INTO template_categories (id, name, flow, sort_order, hide_from_all) VALUES ($1, $2, $3, 9999, true) ON CONFLICT (id) DO NOTHING', [UNCATEGORISED.id, UNCATEGORISED.name, UNCATEGORISED.flow])
   const { rows } = await db.query('SELECT * FROM template_categories WHERE id = $1', [id])
   if (!rows[0]) throw new AppError(404, 'CATEGORY_NOT_FOUND', `Unknown category "${id}". Create it first with POST /api/admin/template-categories.`)
   return rows[0]
@@ -140,8 +129,10 @@ async function createTemplates(bodies, { upsert = false } = {}) {
   const ids = await tx(async (db) => {
     const out = []
     for (const b of list) {
-      const category = await categoryOf(db, b)
+      const category = await categoryById(db, text(b?.category_id) || UNCATEGORISED.id) // no category given = the Trending-only (uncategorised) group
       const v = templateValues(b, category)
+      if (category.id === UNCATEGORISED.id) v.trending = true // an uncategorised template exists for Trending
+      if (v.trending && !Number.isInteger(b.trending_position)) v.trending_position = await trending.frontPosition(db) // a newly trending template is shown first
       const keep = 'trending' in b ? [] : ['trending', 'trending_position'] // re-sending a template (upsert) without a trending flag does not un-trend it
       const set = COLS.filter((c) => c !== 'id' && !keep.includes(c)).map((c) => `${c} = EXCLUDED.${c}`).join(', ')
       const { rows } = await db.query(
@@ -161,8 +152,9 @@ async function updateTemplate(id, patch) {
   const current = await getTemplate(id)
   if (!current) throw new AppError(404, 'TEMPLATE_NOT_FOUND', `Unknown template "${id}".`)
   const merged = { ...current, ...patch, id }
-  const category = await categoryOf({ query }, merged)
+  const category = await categoryById({ query }, text(merged.category_id))
   const v = templateValues(merged, category)
+  if (v.trending && !current.trending && !Number.isInteger(patch.trending_position)) v.trending_position = await trending.frontPosition() // newly trending: shown first
   const set = COLS.filter((c) => c !== 'id')
   await query(`UPDATE templates SET ${set.map((c, i) => `${c} = $${i + 2}`).join(', ')} WHERE id = $1`, [id, ...set.map((c) => v[c])])
   return getTemplate(id)
@@ -173,4 +165,4 @@ async function deleteTemplate(id) {
   if (!rowCount) throw new AppError(404, 'TEMPLATE_NOT_FOUND', `Unknown template "${id}".`)
 }
 
-module.exports = { FLOWS, UNCATEGORIZED, cardId, listTemplates, getTemplate, listCategories, saveCategory, updateCategory, deleteCategory, createTemplates, updateTemplate, deleteTemplate }
+module.exports = { UNCATEGORISED, FLOWS, listTemplates, getTemplate, listCategories, saveCategory, updateCategory, deleteCategory, createTemplates, updateTemplate, deleteTemplate }

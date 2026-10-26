@@ -1,7 +1,7 @@
 import { useLoad } from '../../core/hooks.js'
 
 /** The id the website uses for a template card, and the one the Trending API takes: "<category>/<template id>". */
-export const tid = (t) => `${t.category_id || 'uncategorized'}/${t.id}` // a template without a category is "uncategorized/<id>"
+export const tid = (t) => `${t.category_id}/${t.id}`
 
 export const FLOW_LABEL = { photography: 'AI Photography', cartoon: 'Cartoon', beard: 'Beard', hairstyle: 'Hairstyle' }
 export const FLOW_TONE = { photography: 'violet', cartoon: 'pink', beard: 'amber', hairstyle: 'blue' }
