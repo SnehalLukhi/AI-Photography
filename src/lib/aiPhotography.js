@@ -1,5 +1,3 @@
-import beardStyling from '../data/ai-beard-styling_templates.json'
-import hairstyleChanger from '../data/ai-hairstyle-changer_templates.json'
 
 /**
  * AILabTools AI Photography, called through the existing backend endpoint (POST /api/photos/generate). The AILabTools key lives only in the
@@ -37,24 +35,8 @@ const GIVE_UP_MS = 5 * 60 * 1000
 // Categories that still have a local JSON catalogue: { folder, templates, kind? }. Empty now: the photography, cartoon and Top Carousel templates come from the backend
 // catalogue (their JSON files were removed from src/data) and are handled in promptFor() through `asset.template`.
 const CATALOGUES = []
-const BEARD_TEMPLATES = beardStyling.categories.flatMap((c) => c.templates)
-// Beard: confirmed link between each preview image (file name before " (", which is the card name) and its JSON entry `id`. Explicit on purpose:
-// the JSON `name`s differ from the file names (e.g. "Full Ducktail" = DucktailBeardFull), so a name or file-name guess would be wrong.
-// JSON `beard_vandykerefined` has no preview image; `common_image` is not a template.
-const BEARD_IDS = {
-  AnchorBeardClean: 'beard_anchorbeardclean', AnchorBeardFull: 'beard_anchorbeardfull', Balbo: 'beard_balbo', Bandholz: 'beard_bandholz',
-  ChevronMoustache: 'beard_chevronmoustache', ChinStrap: 'beard_chinstrap', CircleBeard: 'beard_circlebeard', CorporateBeard: 'beard_corporatebeard',
-  DucktailBeardFull: 'beard_ducktailbeardfull', DucktailBeardPointed: 'beard_ducktailbeardpointed', ExtendedGoatee: 'beard_extendedgoatee',
-  FullBeardClassic: 'beard_fullbeardclassic', FullBeardTapered: 'beard_fullbeardtapered', Garibaldi: 'beard_garibaldi', Goatee: 'beard_goatee',
-  HandlebarMoustache: 'beard_handlebarmoustache', HeavyStubble: 'beard_heavystubble', ImperialMoustache: 'beard_imperialmoustache',
-  MuttonChops: 'beard_muttonchops', PetiteGoatee: 'beard_petitegoatee', SoulPatch: 'beard_soulpatch', VanDyke: 'beard_vandyke', Verdi: 'beard_verdi',
-}
-export const BEARD_FOLDER = '/explore/beard/'
-
-// Hairstyle (Baby / Man / Woman): the JSON is the single source for all three sub-categories; Baby has no category of its own in it, so its cards use the Men / Women entries.
-const HAIR_TEMPLATES = hairstyleChanger.categories.flatMap((c) => c.templates.map((t) => ({ ...t, category: c })))
-const HAIRSTYLE_FOLDERS = ['/explore/Hairstyle/baby/', '/explore/Hairstyle/man/', '/explore/Hairstyle/woman/']
-const hairKey = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+// Beard and Hairstyle templates (and every other category) come from the backend catalogue: promptFor() reads them from `asset.template`. Their local JSON files and
+// lookup tables were removed from the app.
 const norm = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') // "retro-80s-lounge" / "Retro 80s Lounge" -> "retro_80s_lounge"
 
 /**
@@ -73,19 +55,6 @@ export function promptFor(asset) {
     return { id: t.id, name: t.name, title: t.style_title_prompt || undefined, desc: t.style_desc_prompt || undefined } // both prompts are optional: a missing one is simply not sent
   }
   const src = (() => { try { return decodeURIComponent(asset.image) } catch { return asset.image } })() // image URLs are percent-encoded ("Linkedin%20Headshot")
-  if (HAIRSTYLE_FOLDERS.some((f) => src.includes(f))) {
-    // Hairstyle sidebar entry (Baby / Man / Woman): the file name ends with the template's hair style in brackets, "Baby Bun (ManBun).jpg" - the API's own `hair_style` name.
-    // It is matched to the JSON entry whose id has the same style name (same letters and digits); no match or more than one = no confirmed template = error. Cards have no colour.
-    const style = /\(([^()]+)\)\.[a-z]+$/i.exec(src)?.[1]
-    const found = style ? HAIR_TEMPLATES.filter((x) => hairKey(x.id.replace(/^hair_(men|women)_/, '')) === hairKey(style)) : []
-    return found.length === 1
-      ? { id: found[0].id, name: found[0].name, hairTemplate: found[0].id }
-      : { error: `This template (${asset.name || asset.assetId}) has no entry in its template data, so it cannot be generated. Please choose another template.` }
-  }
-  if (src.includes(BEARD_FOLDER)) {
-    const entry = BEARD_TEMPLATES.find((x) => x.id === BEARD_IDS[asset.name])
-    return entry ? { id: entry.id, name: entry.name, beardTemplate: entry.id } : { error: `This template (${asset.name || asset.assetId}) has no entry in its template data, so it cannot be generated. Please choose another template.` }
-  }
   const cat = CATALOGUES.find((c) => src.includes(c.folder))
   if (!cat) return null
   // A template of a catalogue category that has no entry in its JSON is an ERROR (never another template's data, never a silent demo fallback).
