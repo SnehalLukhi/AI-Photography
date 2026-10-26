@@ -73,7 +73,7 @@ const apiByCategory = Object.fromEntries((apiCatalogue?.categories || []).map((c
 const isLandscape = (ratio) => { const [w, h] = String(ratio || '').split(':').map(Number); return w > 0 && h > 0 && w > h }
 apiCatalogue?.templates.forEach((t) => apiByCategory[t.category_id]?.items.push(t))
 for (const { category: c, items } of Object.values(apiByCategory)) {
-  if (!items.length || exploreTabs.some((t) => t.id === c.id)) continue
+  if (!items.length || c.id === 'trending-only' || exploreTabs.some((t) => t.id === c.id)) continue // 'trending-only' = templates without a category: never a tab of their own
   const parent = c.parent_id && exploreTabs.some((t) => t.id === c.parent_id || t.parent === c.parent_id) ? c.parent_id : undefined
   exploreTabs.push({ id: c.id, name: c.name, folders: [], ...(parent ? { parent, category: c.name } : {}), hideFromAll: c.hide_from_all })
 }
@@ -92,6 +92,11 @@ export const isOriginalTab = (t) => ORIGINAL_TAB_IDS.includes(t.id)
 /** The "Hairstyle" sidebar entry: a parent whose subs are the hairstyle-* tabs above ({ id: URL ?sub=, tabId: key for categoryItems }). */
 const parentTab = (id, name) => ({ id, name, subs: exploreTabs.filter((t) => t.parent === id).map((t) => ({ id: t.id.replace(`${id}-`, ''), name: t.name, tabId: t.id })) })
 export const hairstyleTab = parentTab('hairstyle', 'Hairstyle')
+// Templates that belong to no category (admin: "No category (Trending only)"): not part of any tab; they are reachable through Trending and open like any other template.
+const uncategorised = (apiByCategory['trending-only']?.items || []).map((t, i) => ({
+  id: `trending-only/${t.id}`, categoryId: 'trending-only', category: 'Trending', name: t.name, assetId: t.id, type: 'image', slots: ['Photo'], coins: t.cost_coins || 120,
+  index: i + 1, image: t.preview_url, landscape: isLandscape(t.aspect_ratio), template: t,
+}))
 const folderStem = (file) => file.replace(/\.[^.]+$/, '')
 export const exploreFolderTemplates = Object.fromEntries(exploreTabs.map((tab) => {
   const fromApi = apiCards(tab)
@@ -133,7 +138,7 @@ export const categoryItems = (id) => exploreFolderTemplates[id] || byCategory(id
 
 /** Templates by id (e.g. "old-money/vintage-sari"), in the order given; ids that do not exist (any more) are skipped. Used for the admin's Trending list. */
 export const templatesByIds = (ids) => {
-  const all = new Map([...folderTemplates, ...Object.values(exploreFolderTemplates).flat()].map((t) => [t.id, t]))
+  const all = new Map([...folderTemplates, ...Object.values(exploreFolderTemplates).flat(), ...uncategorised].map((t) => [t.id, t]))
   return ids.map((id) => all.get(id)).filter(Boolean)
 }
 
@@ -141,9 +146,9 @@ export const templatesByIds = (ids) => {
 export function findAsset(categoryId, assetId) {
   if (!categoryId || !assetId) return undefined
   const key = assetAliases[`${categoryId}/${assetId}`] || `${categoryId}/${assetId}`
-  return [...templates, ...dances, ...folderTemplates, ...Object.values(exploreFolderTemplates).flat()].find((t) => t.id === key)
+  return [...templates, ...dances, ...folderTemplates, ...Object.values(exploreFolderTemplates).flat(), ...uncategorised].find((t) => t.id === key)
 }
-export const siblingsOf = (asset) => (asset.categoryId === 'dance-videos' ? dances : asset.categoryId === 'trending-templates' ? folderTemplates : exploreFolderTemplates[asset.categoryId] || byCategory(asset.categoryId))
+export const siblingsOf = (asset) => (asset.categoryId === 'dance-videos' ? dances : asset.categoryId === 'trending-templates' ? folderTemplates : asset.categoryId === 'trending-only' ? uncategorised : exploreFolderTemplates[asset.categoryId] || byCategory(asset.categoryId))
 export const generateUrl = (t) => `/generate?categoryId=${t.categoryId}&assetId=${t.assetId}`
 
 export const steps = [

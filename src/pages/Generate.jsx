@@ -293,7 +293,7 @@ function Generator({ asset }) {
           <div role="alert" className="welcome-card w-full max-w-sm rounded-xl border border-red-500/40 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <p className="mb-1 font-medium">Generation failed</p>
             <p className="mb-4 text-sm text-[#A0A0A0]">{apiError || 'Something went wrong. Please try again.'}</p>
-            <div className="flex flex-col gap-2">{needCoins && <button className="btn-grad" onClick={() => nav('/coins')}>Get coins</button>}<button className={needCoins ? 'btn-dark' : 'btn-grad'} onClick={() => setPhase('idle')}>{needCoins ? 'Close' : 'Try again'}</button></div>
+            <div className="flex flex-col gap-2">{needCoins && <button className="btn-grad" onClick={() => nav(coins < 150 ? '/pricing' : '/coins')}>Get coins</button>}<button className={needCoins ? 'btn-dark' : 'btn-grad'} onClick={() => setPhase('idle')}>{needCoins ? 'Close' : 'Try again'}</button></div>
           </div>
         </div>
       )}

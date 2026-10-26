@@ -6,6 +6,7 @@ import { slug } from '../../../core/format.js'
 import { FLOW_LABEL, FLOW_TONE, imageUrl, tid, useCatalogue } from '../catalogue.js'
 
 const RATIOS = ['9:16', '3:4', '1:1', '4:3', '16:9']
+const NO_CAT = 'trending-only' // reserved category of templates that belong to no category (they exist only for Trending); the server creates it on first use
 const blank = { id: '', category_id: '', name: '', preview_url: '', style_title_prompt: '', style_desc_prompt: '', api_value: '', aspect_ratio: '9:16', cost_coins: '', gender: '', sort_order: 0, active: true, trending: false }
 
 export default function Templates({ api }) {
@@ -23,8 +24,9 @@ export default function Templates({ api }) {
   const [starring, setStarring] = useState('')
   const input = useRef(null)
 
-  const cats = data?.categories || []
-  const catById = useMemo(() => Object.fromEntries(cats.map((c) => [c.id, c])), [cats])
+  const allCats = data?.categories || []
+  const cats = allCats.filter((c) => c.id !== NO_CAT) // real categories; "No category" is offered separately in the form
+  const catById = useMemo(() => ({ ...Object.fromEntries(allCats.map((c) => [c.id, c])), [NO_CAT]: { id: NO_CAT, name: 'No category', flow: 'photography' } }), [allCats])
   const all = data?.templates || []
   const shown = all.filter((t) => (!cat || t.category_id === cat) && (view === 'all' || (view === 'trending' ? t.trending : !t.active)) && (!q || `${t.name} ${t.id}`.toLowerCase().includes(q.toLowerCase())))
   const counts = { all: all.length, trending: all.filter((t) => t.trending).length, hidden: all.filter((t) => !t.active).length }
@@ -41,7 +43,7 @@ export default function Templates({ api }) {
 
   const openForm = (t) => {
     setFormError(''); setFile(null); setPreview('')
-    setForm(t ? { ...blank, ...Object.fromEntries(Object.entries(t).map(([k, v]) => [k, v ?? ''])), isNew: false } : { ...blank, category_id: cat || cats[0]?.id || '', isNew: true })
+    setForm(t ? { ...blank, ...Object.fromEntries(Object.entries(t).map(([k, v]) => [k, v ?? ''])), isNew: false } : { ...blank, category_id: cat || cats[0]?.id || NO_CAT, trending: (cat || cats[0]?.id || NO_CAT) === NO_CAT, isNew: true })
   }
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
   const pick = (f) => {
@@ -91,7 +93,7 @@ export default function Templates({ api }) {
   return (
     <>
       <PageHeader title="Templates" subtitle="Add, change or remove the styles people can choose. The star puts a template in Trending too.">
-        <button type="button" className="btn-primary" disabled={!cats.length} title={cats.length ? '' : 'Create a category first'} onClick={() => openForm(null)}><Icon name="plus" className="size-4" />Add template</button>
+        <button type="button" className="btn-primary" onClick={() => openForm(null)}><Icon name="plus" className="size-4" />Add template</button>
       </PageHeader>
       <ErrorNote error={error} onRetry={reload} />
 
@@ -148,7 +150,7 @@ export default function Templates({ api }) {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Category"><select className="input" value={form.category_id} disabled={!form.isNew} onChange={(e) => { set('category_id', e.target.value); if (form.isNew && form.name) set('id', slug(`${e.target.value}-${form.name}`)) }}>{cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
+              <Field label="Category"><select className="input" value={form.category_id} disabled={!form.isNew} onChange={(e) => { set('category_id', e.target.value); if (e.target.value === NO_CAT) set('trending', true); if (form.isNew && form.name) set('id', slug(`${e.target.value}-${form.name}`)) }}>{cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}<option value={NO_CAT}>No category (Trending only)</option></select></Field>
               <Field label="Name"><input className="input" value={form.name} onChange={(e) => { set('name', e.target.value); if (form.isNew && flow !== 'cartoon') set('id', suggestId(e.target.value, form.category_id)) }} placeholder="Vintage Sari" /></Field>
             </div>
             <Field label="Id" hint={flow === 'cartoon' ? 'For Cartoon this must be a supported cartoon style.' : form.isNew ? 'Unique across all templates. Cannot be changed later.' : 'The id cannot be changed.'}><input className="input font-mono" value={form.id} disabled={!form.isNew} onChange={(e) => set('id', e.target.value.trim())} placeholder="old-money-vintage-sari" /></Field>
@@ -166,7 +168,7 @@ export default function Templates({ api }) {
             </div>
 
             <div className="divide-y divide-line rounded-xl border border-line bg-white/[0.03]">
-              <div className="flex items-center justify-between px-4 py-3"><div><p className="flex items-center gap-1.5 text-sm font-medium text-white"><Icon name="flame" className="size-4 text-amber-300" />Trending</p><p className="text-xs text-white/40">Also show it in Trending. It stays in its own category.</p></div><Toggle checked={!!form.trending} onChange={(v) => set('trending', v)} label="Trending" /></div>
+              <div className="flex items-center justify-between px-4 py-3"><div><p className="flex items-center gap-1.5 text-sm font-medium text-white"><Icon name="flame" className="size-4 text-amber-300" />Trending</p><p className="text-xs text-white/40">{form.category_id === NO_CAT ? 'Needed for a template with no category: it only appears in Trending.' : 'Also show it in Trending. It stays in its own category.'}</p></div><Toggle checked={!!form.trending} onChange={(v) => { if (form.category_id !== NO_CAT) set('trending', v) }} label="Trending" /></div>
               <div className="flex items-center justify-between px-4 py-3"><div><p className="text-sm font-medium text-white">Visible in the app</p><p className="text-xs text-white/40">Turn off to hide it without deleting.</p></div><Toggle checked={!!form.active} onChange={(v) => set('active', v)} label="Visible" /></div>
             </div>
             {formError && <p role="alert" className="rounded-xl border border-red-500/25 bg-red-500/10 px-3 py-2 text-sm text-red-200">{formError}</p>}

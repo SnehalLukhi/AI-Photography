@@ -339,8 +339,14 @@ export default function Home() {
   const TRENDING_12 = [['80s-and-90s', 'Good Vibes'], ['cartoon', '3D Toon'], ['linkedin-headshot', 'Executive'], ['old-money', 'Retro Car'], ['beard', 'Bandholz'], ['hairstyle-woman', 'BoxBraids'],
     ['old-money', 'Vintage Sari'], ['cartoon', 'Neon Cyber'], ['80s-and-90s', 'Vintage Golden'], ['hairstyle-woman', 'Airy Short Curls'], ['linkedin-headshot', 'Corporate'], ['hairstyle-baby', 'Baby DoubleBun']]
   const adminTrending = useTrending() // the templates marked as Trending in the admin; until some are set, the picks above
-  const custom = adminTrending ? templatesByIds(adminTrending).slice(0, 12) : []
+  const custom = adminTrending ? templatesByIds(adminTrending) : []
   const trendingPicks = custom.length ? custom : TRENDING_12.map(([id, name]) => categoryItems(id).find((t) => t.name === name)).filter(Boolean)
+  // Trending Templates is paged: 36 at a time (6 rows x 6 columns on desktop), left / right arrows below the grid when there are more than 36
+  const TREND_PAGE = 36
+  const [trendPage, setTrendPage] = useState(0)
+  const trendPages = Math.max(1, Math.ceil(trendingPicks.length / TREND_PAGE))
+  const trendNow = Math.min(trendPage, trendPages - 1) // the list can shrink (a template removed): never stay on a page that no longer exists
+  const trendShown = trendingPicks.slice(trendNow * TREND_PAGE, (trendNow + 1) * TREND_PAGE)
   const stepIcons = ['M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z', 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4', 'M8 5v14l11-7z']
 
   return (
@@ -408,8 +414,19 @@ export default function Home() {
             {/* 6. Trending templates: a short selection + a button to the full Explore page */}
             <SectionHead id="trending-templates-section" a="Trending" b="Templates" text="Discover popular AI styles, viral portraits, and creative templates from all categories." to="/explore?category=trending" cta="View All Templates" mt="mt-20" button />
             <div className="grid grid-cols-2 gap-2 min-[480px]:grid-cols-3 sm:gap-2.5 md:gap-3 xl:grid-cols-6">
-              {trendingPicks.map((t) => <TemplateCard key={t.id} t={t} fit="cover" onSelect={pick} />)}
+              {trendShown.map((t) => <TemplateCard key={t.id} t={t} fit="cover" onSelect={pick} />)}
             </div>
+            {trendPages > 1 && (
+              <nav aria-label="Trending templates pages" className="mt-8 flex items-center justify-center gap-4">
+                <button type="button" aria-label="Previous templates" disabled={trendNow === 0} onClick={() => setTrendPage(trendNow - 1)} className="grid size-11 cursor-pointer place-items-center rounded-full border border-white/15 bg-[#2B2B2B] text-white transition-colors hover:border-white/30 hover:bg-white/[0.12] disabled:cursor-not-allowed disabled:opacity-30 sm:size-12">
+                  <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+                </button>
+                <span className="min-w-[3.5rem] text-center text-sm tabular-nums text-[#A0A0A0]">{trendNow + 1} / {trendPages}</span>
+                <button type="button" aria-label="Next templates" disabled={trendNow >= trendPages - 1} onClick={() => setTrendPage(trendNow + 1)} className="grid size-11 cursor-pointer place-items-center rounded-full border border-white/15 bg-[#2B2B2B] text-white transition-colors hover:border-white/30 hover:bg-white/[0.12] disabled:cursor-not-allowed disabled:opacity-30 sm:size-12">
+                  <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                </button>
+              </nav>
+            )}
           </div>
         </div>
       </div>

@@ -1,8 +1,12 @@
 const AppError = require('../utils/AppError')
 const { query, tx } = require('../db')
 const CARTOON_TYPES = require('../config/cartoonTypes')
+const trending = require('./trending.service')
 
 const FLOWS = ['photography', 'cartoon', 'beard', 'hairstyle']
+// A template that belongs to no category (it exists only for Trending) lives in this reserved, hidden category. It is created on first use, never shown as a category
+// in the app, and its templates are always trending-capable; un-trending one leaves it stored (and invisible) - nothing is deleted.
+const UNCATEGORISED = { id: 'trending-only', name: 'No category (Trending only)', flow: 'photography' }
 const ID = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/
 
 const text = (v) => (typeof v === 'string' ? v.trim() : '')
@@ -111,6 +115,7 @@ function templateValues(b, category) {
 const COLS = ['id', 'category_id', 'name', 'preview_url', 'style_title_prompt', 'style_desc_prompt', 'api_value', 'aspect_ratio', 'cost_coins', 'gender', 'extra', 'sort_order', 'active', 'trending', 'trending_position']
 
 async function categoryById(db, id) {
+  if (id === UNCATEGORISED.id) await db.query('INSERT INTO template_categories (id, name, flow, sort_order, hide_from_all) VALUES ($1, $2, $3, 9999, true) ON CONFLICT (id) DO NOTHING', [UNCATEGORISED.id, UNCATEGORISED.name, UNCATEGORISED.flow])
   const { rows } = await db.query('SELECT * FROM template_categories WHERE id = $1', [id])
   if (!rows[0]) throw new AppError(404, 'CATEGORY_NOT_FOUND', `Unknown category "${id}". Create it first with POST /api/admin/template-categories.`)
   return rows[0]
@@ -124,8 +129,10 @@ async function createTemplates(bodies, { upsert = false } = {}) {
   const ids = await tx(async (db) => {
     const out = []
     for (const b of list) {
-      const category = await categoryById(db, text(b?.category_id))
+      const category = await categoryById(db, text(b?.category_id) || UNCATEGORISED.id) // no category given = the Trending-only (uncategorised) group
       const v = templateValues(b, category)
+      if (category.id === UNCATEGORISED.id) v.trending = true // an uncategorised template exists for Trending
+      if (v.trending && !Number.isInteger(b.trending_position)) v.trending_position = await trending.frontPosition(db) // a newly trending template is shown first
       const keep = 'trending' in b ? [] : ['trending', 'trending_position'] // re-sending a template (upsert) without a trending flag does not un-trend it
       const set = COLS.filter((c) => c !== 'id' && !keep.includes(c)).map((c) => `${c} = EXCLUDED.${c}`).join(', ')
       const { rows } = await db.query(
@@ -147,6 +154,7 @@ async function updateTemplate(id, patch) {
   const merged = { ...current, ...patch, id }
   const category = await categoryById({ query }, text(merged.category_id))
   const v = templateValues(merged, category)
+  if (v.trending && !current.trending && !Number.isInteger(patch.trending_position)) v.trending_position = await trending.frontPosition() // newly trending: shown first
   const set = COLS.filter((c) => c !== 'id')
   await query(`UPDATE templates SET ${set.map((c, i) => `${c} = $${i + 2}`).join(', ')} WHERE id = $1`, [id, ...set.map((c) => v[c])])
   return getTemplate(id)
@@ -157,4 +165,4 @@ async function deleteTemplate(id) {
   if (!rowCount) throw new AppError(404, 'TEMPLATE_NOT_FOUND', `Unknown template "${id}".`)
 }
 
-module.exports = { FLOWS, listTemplates, getTemplate, listCategories, saveCategory, updateCategory, deleteCategory, createTemplates, updateTemplate, deleteTemplate }
+module.exports = { UNCATEGORISED, FLOWS, listTemplates, getTemplate, listCategories, saveCategory, updateCategory, deleteCategory, createTemplates, updateTemplate, deleteTemplate }

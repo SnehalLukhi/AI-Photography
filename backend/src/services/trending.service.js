@@ -22,8 +22,14 @@ const split = (id) => { const i = id.indexOf('/'); return [id.slice(0, i), id.sl
 async function list(db = { query }) {
   const rows = (await db.query(
     `SELECT category_id || '/' || id AS tid, trending_position AS position, created_at FROM templates WHERE trending AND active
-     UNION ALL SELECT template_id, position, created_at FROM trending_templates ORDER BY position, created_at`)).rows
+     UNION ALL SELECT template_id, position, created_at FROM trending_templates ORDER BY position, created_at DESC`)).rows // equal positions: the newest first
   return [...new Set(rows.map((r) => r.tid))]
+}
+
+/** A position that sorts before every trending template now in the list, so the template put there is shown FIRST (newest first). */
+async function frontPosition(db = { query }) {
+  const { rows } = await db.query('SELECT MIN(p) AS min FROM (SELECT trending_position AS p FROM templates WHERE trending UNION ALL SELECT position FROM trending_templates) x')
+  return rows[0]?.min == null ? 0 : Number(rows[0].min) - 1
 }
 
 const inCatalogue = async (db, id) => { const [c, t] = split(id); return (await db.query('SELECT 1 FROM templates WHERE category_id = $1 AND id = $2', [c, t])).rows.length > 0 }
@@ -38,14 +44,14 @@ async function put(db, id, position) {
   }
 }
 
-/** Adds one template to the end of the list (nothing changes when it is already in). */
+/** Adds one template to the START of the list - the newest trending template is shown first (nothing changes when it is already in). */
 async function add(templateId) {
   const id = cleanId(templateId)
   return tx(async (db) => {
     const current = await list(db)
     if (current.includes(id)) return current
     if (current.length >= MAX) throw new AppError(400, 'TOO_MANY', `At most ${MAX} templates can be trending.`)
-    await put(db, id, current.length)
+    await put(db, id, await frontPosition(db))
     return list(db)
   })
 }
@@ -70,4 +76,4 @@ async function replace(templateIds) {
   })
 }
 
-module.exports = { list, add, remove, replace }
+module.exports = { list, add, remove, replace, frontPosition }

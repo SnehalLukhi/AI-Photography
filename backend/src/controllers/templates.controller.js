@@ -67,6 +67,7 @@ async function create(req, res) {
   let stored
   try {
     const body = formBody(req)
+    if (!body.category_id) body.category_id = svc.UNCATEGORISED.id // no category: the Trending-only group
     if (req.file) { stored = await storeImage(req.file, body.category_id, body.id); body.preview_url = stored.url }
     const templates = await svc.createTemplates(body, { upsert: req.query.upsert === 'true' })
     res.status(201).json({ success: true, templates })
@@ -103,6 +104,7 @@ async function bulk(req, res) {
     const items = []
     for (const raw of list) {
       const t = { ...defaults, ...(raw && typeof raw === 'object' ? raw : {}) }
+      if (!t.category_id) t.category_id = svc.UNCATEGORISED.id // no category: the Trending-only group
       if (t.image) {
         const file = byName.get(t.image)
         if (!file) throw new AppError(400, 'INVALID_TEMPLATE', `Template "${t.id}": no uploaded file named "${t.image}".`)
