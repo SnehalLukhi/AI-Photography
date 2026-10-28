@@ -110,3 +110,15 @@ test('multipart: the picture is stored in Spaces and its URL becomes preview_url
     Object.assign(storage, real)
   }
 })
+
+test('prompts of any length are stored and returned complete (no 500 / 1000 character cut)', async () => {
+  const title = `T${'x'.repeat(2999)}`, desc = `D${'y '.repeat(5000)}end`
+  const res = await call('POST', '/admin/templates', { id: 'long1', category_id: 'retro', name: 'Long', preview_url: url, style_title_prompt: title, style_desc_prompt: desc })
+  assert.equal(res.status, 201)
+  const get = async () => (await (await call('GET', '/templates?category=retro', undefined, {})).json()).templates.find((t) => t.id === 'long1')
+  assert.equal((await get()).style_title_prompt, title)
+  assert.equal((await get()).style_desc_prompt, desc)
+  const longer = `${desc} and more ${'z'.repeat(4000)}`
+  assert.equal((await call('PUT', '/admin/templates/long1', { style_desc_prompt: longer })).status, 200) // edit keeps it whole too
+  assert.equal((await get()).style_desc_prompt, longer)
+})

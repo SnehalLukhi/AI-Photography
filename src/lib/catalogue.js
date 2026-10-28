@@ -27,7 +27,11 @@ async function fetchFresh(timeoutMs) {
 
 export async function loadCatalogue(timeoutMs = 4000) {
   const cached = readCache()
-  if (cached) { catalogue = cached; fetchFresh(timeoutMs); return catalogue } // known templates: no waiting; the refresh is for the next visit
+  if (cached) { // known templates: wait only briefly for a fresh copy (so templates just added / changed in the admin show up at once), else use the cached one
+    const fresh = fetchFresh(timeoutMs)
+    catalogue = await Promise.race([fresh, new Promise((r) => setTimeout(() => r(null), 1500))]) || cached
+    return catalogue
+  }
   catalogue = await fetchFresh(timeoutMs) // first visit: nothing to show yet, so this request is the only wait
   return catalogue
 }

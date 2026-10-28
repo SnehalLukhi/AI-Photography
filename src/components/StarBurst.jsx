@@ -22,7 +22,7 @@ export default function StarBurst() {
     ctx.scale(dpr, dpr)
     const parts = Array.from({ length: COUNT }, () => {
       const a = Math.random() * Math.PI * 2, v = 4 + Math.random() * 9
-      return { x: w / 2, y: h / 2, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2, r: 5 + Math.random() * 10, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.15, c: Math.random() < 0.8 ? '#FFD60A' : '#FFF08A' }
+      return { x: w / 2, y: h / 2, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2, r: 5 + Math.random() * 10, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.15, c: Math.random() < 0.8 ? '#B653F6' : '#FAFAFA' }
     })
     let raf, start
     const tick = (t) => {
@@ -56,9 +56,9 @@ export default function StarBurst() {
       <span className="star-ring" />
       <svg className="star-hero size-[150px]" viewBox="0 0 100 100">
         <defs>
-          <linearGradient id="star-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#FFF59D" /><stop offset="1" stopColor="#F59E0B" /></linearGradient>
+          <linearGradient id="star-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#FAFAFA" /><stop offset="1" stopColor="#B653F6" /></linearGradient>
         </defs>
-        <polygon points={HERO} fill="url(#star-fill)" stroke="url(#star-fill)" strokeWidth="9" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px rgba(251,191,36,0.6))' }} />
+        <polygon points={HERO} fill="url(#star-fill)" stroke="url(#star-fill)" strokeWidth="9" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px rgba(182,83,246,0.6))' }} />
       </svg>
     </div>
   )

@@ -6,25 +6,46 @@ import { useStudio } from '../context/StudioContext.jsx'
 import PlansSheet from './PlansSheet.jsx'
 import LastManPopup, { LastManButton } from './LastMan.jsx'
 
-export const SparkIcon = ({ className = 'size-3.5 text-[#FF55AA]' }) => (
+export const SparkIcon = ({ className = 'size-3.5 text-[#B653F6]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
 )
 const Chevron = ({ open }) => (
-  <svg className={`size-3 text-[#A0A0A0] transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+  <svg className={`size-3 text-[#B4B0C0] transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
 )
 const PhoneIcon = () => (
-  <svg className="size-3.5 text-[#FF55AA]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" strokeLinecap="round" /></svg>
+  <svg className="size-3.5 text-[#B4B0C0]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" strokeLinecap="round" /></svg>
 )
 
-const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
-export const Logo = ({ size = 'md', imgHeight, fontSize }) => (
-  <Link to="/" className={`group inline-flex shrink-0 items-center ${size === 'sm' ? 'gap-2' : 'gap-2.5'}`}>
-    <img src={brandImages.logo} alt="Logo" style={imgHeight ? { height: imgHeight, transition: `height 420ms ${EASE}` } : undefined} className={`w-auto rounded-[10px] object-contain ${imgHeight ? '' : size === 'lg' ? 'h-10' : size === 'sm' ? 'h-[26px]' : 'h-8'}`} />
-    <span style={fontSize ? { fontSize, transition: `font-size 420ms ${EASE}` } : undefined} className={`whitespace-nowrap font-display font-bold tracking-tight text-white ${fontSize ? '' : size === 'lg' ? 'text-2xl' : size === 'sm' ? 'text-[19px]' : 'text-xl'}`}>Pictrify</span>
+/** Wordmark: a small ivory diamond mark and the spaced name. */
+export const Logo = ({ size = 'md' }) => (
+  <Link to="/" aria-label="Pictrify home" className="inline-flex shrink-0 items-center gap-2.5 text-[#FAFAFA]">
+    <span className={`grid place-items-center rounded-[10px] bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] text-white ${size === 'sm' ? 'size-8' : 'size-9'}`}>
+      <svg className={size === 'sm' ? 'size-4' : 'size-[18px]'} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.6 6.9L22 12l-7.4 3.1L12 22l-2.6-6.9L2 12l7.4-3.1z" /></svg>
+    </span>
+    <span className={`whitespace-nowrap font-display font-semibold tracking-tight ${size === 'sm' ? 'text-[19px]' : 'text-[22px]'}`}>Pictrify</span>
   </Link>
 )
 
-/** Glymo behaviour: header "floats" as a rounded pill once the page has scrolled more than 20px (no hide-on-scroll-up). */
+// ---------- navigation model: one rail on desktop / tablet, a bottom bar on phones ----------
+const ICONS = {
+  Home: 'M4 11l8-7 8 7v9a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z',
+  Discover: 'M12 3a9 9 0 100 18 9 9 0 000-18zM15.5 8.5l-2 5-5 2 2-5z',
+  Explore: 'M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4-4',
+  Looks: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  Create: 'M12 4v16M4 12h16',
+  Creations: 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4',
+  Wallet: 'M3 7h15a3 3 0 013 3v8a2 2 0 01-2 2H5a2 2 0 01-2-2zM3 7l11-3v3M16 14h3',
+  Account: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 3.5-6 8-6s8 2 8 6',
+}
+const NAV = [
+  { label: 'Home', to: '/', match: (p) => p === '/' },
+  { label: 'Explore', to: '/explore', match: (p) => p === '/explore' || p === '/generate' },
+  { label: 'My Creations', to: '/creations', match: (p) => p === '/creations' },
+  { label: 'Pricing', to: '/pricing', match: (p) => ['/pricing', '/coins', '/transactions', '/payment-success'].includes(p) },
+]
+const ACCOUNT_LINKS = [['/profile', 'Account'], ['/transactions', 'Transactions'], ['/help', 'Help'], ['/feedback', 'Share Your Feedback'], ['/privacy-policy', 'Privacy Policy'], ['/terms-conditions', 'Terms & Conditions']]
+const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
+const GRAD = 'bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)]'
 function useScrolled(threshold = 20) {
   const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > threshold)
   useEffect(() => {
@@ -35,67 +56,45 @@ function useScrolled(threshold = 20) {
   }, [threshold])
   return scrolled
 }
-function useXl() {
-  const [xl, setXl] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1280px)').matches)
-  useEffect(() => {
-    const q = window.matchMedia('(min-width: 1280px)')
-    const f = () => setXl(q.matches)
-    q.addEventListener('change', f)
-    return () => q.removeEventListener('change', f)
-  }, [])
-  return xl
-}
+const Icon = ({ name, className = 'size-5' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={ICONS[name]} /></svg>
+)
 
-const main = [
-  { to: '/', label: 'Home' },
-  { to: '/explore', label: 'Explore' },
-]
+// Below this balance the balance card opens the Plans tab of the Wallet; at or above it, the Coin packs tab. Follows the live balance.
+const LOW_COINS = 150
+const walletTarget = (coins) => (coins >= LOW_COINS ? '/coins' : '/pricing')
 
-function GetApp({ small }) {
+// ---------- top bar (desktop / tablet): search, premium, app, account ----------
+function GetApp() {
   const [open, setOpen] = useState(false)
   return (
     <div className="relative shrink-0" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button type="button" onClick={() => setOpen(!open)} className={`flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] font-medium text-white transition-colors hover:border-white/30 hover:bg-white/[0.08] ${small ? 'h-8 px-3 text-xs' : 'h-10 px-4 text-[13px]'}`}>
-        <PhoneIcon /><span>Get App</span><Chevron open={open} />
+      <button type="button" onClick={() => setOpen(!open)} className="flex h-10 cursor-pointer items-center gap-1.5 rounded-full border border-[#2C2529] bg-[#1D181B] px-3.5 text-[13px] font-medium text-[#FAFAFA] transition-colors hover:border-[#B4B0C0]">
+        <PhoneIcon /><span>Get app</span><Chevron open={open} />
       </button>
-      <div className={`absolute right-0 top-full z-50 w-[200px] pt-2.5 transition-all duration-300 ${open ? 'visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-2 opacity-0'}`}>
-        <div className="relative flex flex-col items-center space-y-2.5 rounded-2xl border border-white/15 bg-[#2B2B2B]/95 p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.85)] backdrop-blur-2xl">
-          <span aria-hidden="true" className="absolute -top-[6px] right-10 size-2.5 rotate-45 border-l border-t border-white/15 bg-[#2B2B2B]" />
-          <div className="flex w-full items-center justify-center gap-1.5 rounded-full bg-white/[0.08] px-2 py-1 text-[11px] font-semibold text-white">Android App</div>
-          <div className="my-0.5 rounded-xl bg-white p-1.5 shadow-inner transition-transform hover:scale-105"><img src={brandImages.qr} alt="QR code" className="size-24 rounded-md object-contain" /></div>
-          <p className="text-[10px] font-medium leading-tight text-[#A0A0A0]">Scan for the app</p>
+      <div className={`absolute right-0 top-full z-50 w-[200px] pt-2 transition-all duration-200 ${open ? 'visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-1 opacity-0'}`}>
+        <div className="flex flex-col items-center space-y-2.5 rounded-md border border-[#2C2529] bg-[#141011] p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.7)]">
+          <div className="w-full rounded bg-[#251E22] px-2 py-1 text-[11px] font-semibold text-[#FAFAFA]">Android app</div>
+          <div className="rounded bg-white p-1.5"><img src={brandImages.qr} alt="QR code" className="size-24 rounded object-contain" /></div>
+          <p className="text-[11px] font-medium leading-tight text-[#B4B0C0]">Scan for the app</p>
         </div>
       </div>
     </div>
   )
 }
 
-/** Compact coin badge (74 x 32, border-box) for signed-in users: the existing coin.svg + the welcome-coin amount. Display only - there is no coin balance in the app. The whole badge links to the Pricing page. */
-// Below this balance the coin badge opens the Pricing page (the Weekly / Monthly / Yearly plans); at or above it, the Get More Coins page as before. Follows the live balance.
-const LOW_COINS = 150
-const CoinBadge = ({ className = '' }) => {
-  const { coins } = useStudio()
-  return (
-  <Link to={coins >= LOW_COINS ? '/coins' : '/pricing'} aria-label={coins >= LOW_COINS ? `${coins} coins - get more coins` : `${coins} coins - see the premium plans`} className={`box-border inline-flex h-8 min-w-[74px] shrink-0 cursor-pointer select-none items-center justify-center gap-2 rounded-full border border-white/10 bg-[#2B2B2B] px-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-[border-color,background-color,box-shadow] duration-200 hover:border-white/30 hover:bg-[#2B2B2B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] ${className}`}>
-    <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] shrink-0 object-contain" />
-    <span className="text-[15px] font-bold leading-none tabular-nums text-white">{coins.toLocaleString()}</span>
-  </Link>
-  )
-}
-
-// Profile dropdown (signed-in users). Name / e-mail come from the saved demo session: there is no profile page and no stored display name, so the name is derived
-// from the e-mail. Every item opens an existing route; Log out clears the saved demo session (there is no real auth provider).
+export const displayName = (email) => (email.split('@')[0] || '').split(/[._-]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') || 'Pictrify user'
 const PROFILE_ITEMS = [
   ['/transactions', 'Transactions', 'M4 7h16M4 12h16M4 17h10'],
   ['/help', 'Help', 'M9.5 9a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17.2v.1M12 21a9 9 0 100-18 9 9 0 000 18z'],
   ['/contact-us', 'Contact Support', 'M4 6h16v12H4zM4 7l8 6 8-6'],
   ['/feedback', 'Share Your Feedback', 'M4 5h16v11H9l-5 4z'],
   ['/privacy-policy', 'Privacy Policy', 'M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z'],
+  ['/terms-conditions', 'Terms & Conditions', 'M7 3h8l4 4v14H7zM15 3v4h4M10 12h6M10 16h6'],
 ]
-export const displayName = (email) => (email.split('@')[0] || '').split(/[._-]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') || 'Pictrify user'
 
 function ProfileMenu({ compact = false }) {
-  const { userEmail, signOut } = useStudio()
+  const { userEmail, signOut, coins } = useStudio()
   const nav = useNavigate()
   const { pathname } = useLocation()
   const btn = useRef(null)
@@ -131,33 +130,34 @@ function ProfileMenu({ compact = false }) {
     return () => { window.removeEventListener('mousedown', down); window.removeEventListener('touchstart', down); window.removeEventListener('keydown', key); window.removeEventListener('resize', place); window.removeEventListener('scroll', place, true) }
   }, [open, close, place])
 
+  const item = 'group flex items-center gap-3 rounded-xl px-2.5 py-2 text-[14px] font-medium text-[#FAFAFA] transition-colors hover:bg-white/[0.06] focus-visible:bg-white/[0.06]'
   return (
     <>
-      <button ref={btn} type="button" onClick={toggle} aria-label="Open profile menu" aria-haspopup="menu" aria-expanded={open}
-        className={`grid ${compact ? 'size-7 text-[12px]' : 'size-8 text-[14px]'} shrink-0 cursor-pointer place-items-center rounded-full bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] font-bold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.12)] transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF55AA] active:scale-95`}>{initial}</button>
+      <button ref={btn} type="button" onClick={toggle} aria-label="Open account menu" aria-haspopup="menu" aria-expanded={open}
+        className={`grid ${compact ? 'size-8 text-[13px]' : 'size-10 text-[14px]'} shrink-0 cursor-pointer place-items-center rounded-full border border-[#2C2529] bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] font-semibold text-white transition-colors hover:border-[#B4B0C0]`}>{initial}</button>
       {shown && createPortal(
-        <div ref={panel} role="menu" aria-label="Profile" data-closing={!open} style={{ top: pos.top, right: pos.right }}
-          className="profile-menu fixed z-[400] w-[300px] max-w-[calc(100vw-24px)] rounded-2xl border border-white/10 bg-[#2B2B2B] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.65)]">
-          <Link to="/profile" role="menuitem" onClick={() => close()} className="flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors hover:bg-white/[0.07] focus-visible:bg-white/[0.07] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#FF55AA]">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-[16px] font-bold text-white">{initial}</span>
+        <div ref={panel} role="menu" aria-label="Account" data-closing={!open} style={{ top: pos.top, right: pos.right }}
+          className="profile-menu fixed z-[400] w-[320px] max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-white/15 bg-[#0F0C0E]/95 p-2 shadow-[0_24px_60px_rgba(0,0,0,0.7)] backdrop-blur-2xl">
+          <Link to="/profile" role="menuitem" onClick={() => close()} className="relative flex items-center gap-3 overflow-hidden rounded-xl border border-white/10 bg-[linear-gradient(135deg,rgba(112,92,255,0.18),rgba(252,72,231,0.12))] p-3 transition-colors hover:border-[#705CFF]/60">
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] text-[18px] font-semibold text-white">{initial}</span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[15px] font-semibold text-white">{name}</span>
-              <span className="block truncate text-xs text-[#A0A0A0]" title={userEmail}>{userEmail}</span>
+              <span className="block truncate text-xs text-[#B4B0C0]" title={userEmail}>{userEmail}</span>
+              <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-black/30 py-0.5 pl-1 pr-2.5 text-[11px] font-medium text-white"><img src="/images/features/coin.svg" alt="" className="size-4 object-contain" />{coins.toLocaleString()} coins</span>
             </span>
-            <svg className="size-4 shrink-0 text-[#A0A0A0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            <svg className="size-4 shrink-0 text-[#B4B0C0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
           </Link>
-          <div className="my-1.5 h-px bg-white/10" />
-          {[...PROFILE_ITEMS, ['/terms-conditions', 'Terms & Conditions', 'M7 3h8l4 4v14H7zM15 3v4h4M10 12h6M10 16h6']].map(([to, label, d]) => (
-            <Link key={to} to={to} role="menuitem" onClick={() => close()}
-              className={`flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-[14px] font-medium text-[#FFFFFF] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#FF55AA]`}>
-              <svg className="size-[18px] shrink-0 text-[#FF55AA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
-              {label}
-            </Link>
-          ))}
-          <div className="my-1.5 h-px bg-white/10" />
-          <button type="button" role="menuitem" onClick={() => { close(); signOut(); nav('/') }}
-            className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2.5 text-left text-[14px] font-medium text-[#FFFFFF] transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:bg-white/[0.07] focus-visible:text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#FF55AA]">
-            <svg className="size-[18px] shrink-0 text-[#FF55AA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9" /></svg>
+          <div className="mt-2 flex flex-col gap-0.5">
+            {PROFILE_ITEMS.map(([to, label, d]) => (
+              <Link key={to} to={to} role="menuitem" onClick={() => close()} className={item}>
+                <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-white/[0.05] text-[#B4B0C0] transition-colors group-hover:bg-[linear-gradient(135deg,rgba(112,92,255,0.3),rgba(252,72,231,0.25))] group-hover:text-white"><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
+                <span className="flex-1">{label}</span>
+              </Link>
+            ))}
+          </div>
+          <div className="my-2 h-px bg-white/10" />
+          <button type="button" role="menuitem" onClick={() => { close(); signOut(); nav('/') }} className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#D98282]/30 bg-[#D98282]/10 px-3 py-2.5 text-[14px] font-medium text-[#F2A0A0] transition-colors hover:bg-[#D98282]/20">
+            <svg className="size-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9" /></svg>
             Log out
           </button>
         </div>, document.body)}
@@ -165,69 +165,35 @@ function ProfileMenu({ compact = false }) {
   )
 }
 
-const Claim = ({ small }) => {
-  const { signedIn, openLogin } = useStudio()
-  if (signedIn) return <CoinBadge />
-  return (
-  <button type="button" onClick={openLogin} className={`group btn-grad shrink-0 ${small ? '!h-8 !gap-1.5 !px-3 !py-0 !text-[11px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}>
-    <SparkIcon className="size-3.5 text-white transition-transform group-hover:scale-110" />
-    <span className="whitespace-nowrap">Claim 100 Coins</span>
-  </button>
-  )
-}
-
-const navLink = ({ isActive }) => `relative rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors cursor-pointer ${isActive ? 'bg-white/[0.06] text-white ring-1 ring-inset ring-white/15' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`
-const Underline = () => null
-const DLink = ({ to, children }) => (
-  <NavLink to={to} end={to === '/'} className={navLink}>
-    {({ isActive }) => <>{children}{isActive && <Underline />}</>}
-  </NavLink>
-)
-
-const accountLinks = [['/transactions', 'Transactions'], ['/help', 'Help'], ['/feedback', 'Share Your Feedback'], ['/privacy-policy', 'Privacy Policy']]
-
-export default function Header({ generating = false }) {
-  const [menu, setMenu] = useState(false)
-  const [lastMan, setLastMan] = useState(null) // phone header crown: null | 'popup' | 'plans' (Unlock Now opens the existing plans sheet)
+/** Desktop / tablet top navigation (sticky): logo, main links, coin balance, Premium, Get app and the account. */
+export function TopNav() {
   const { pathname } = useLocation()
-  const { signedIn, openLogin } = useStudio()
-  useEffect(() => { setMenu(false) }, [pathname])
+  const { signedIn, coins, openLogin } = useStudio()
+  const [menu, setMenu] = useState(false)
   const scrolled = useScrolled()
-  const xl = useXl()
-
+  useEffect(() => { setMenu(false) }, [pathname])
+  const link = (on) => `rounded-full px-4 py-2 text-[14px] font-medium leading-normal whitespace-nowrap transition-colors ${on ? 'bg-white/[0.06] text-white ring-1 ring-inset ring-white/15' : 'text-[#B4B0C0] hover:bg-white/[0.06] hover:text-white'}`
+  const coinPill = (cls = '') => <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-[#2C2529] bg-[#141011] pl-2.5 pr-3.5 text-[13px] font-medium text-white transition-colors hover:border-[#705CFF] ${cls}`}><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}<span className="text-[#B653F6]">+</span></Link>
+  const claim = (small) => <button type="button" onClick={openLogin} className={`btn-grad shrink-0 ${small ? '!h-9 !gap-1.5 !px-3.5 !py-0 !text-[12px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}><SparkIcon className="size-3.5 text-white" /><span className="whitespace-nowrap">Claim 100 Coins</span></button>
   return (
     <>
-      {/* Tablet / desktop nav */}
-      <div className="pointer-events-none fixed left-0 right-0 z-50 hidden justify-center md:flex" style={{ top: scrolled ? 10 : 14, transition: `top 400ms ${EASE}` }}>
-        <nav className={`pointer-events-auto relative mx-auto border border-solid bg-[rgb(10,8,9)] backdrop-blur-2xl ${menu ? 'max-lg:!rounded-[28px] max-lg:!bg-[rgb(10,8,9)]' : ''}`}
-          style={{
-            width: `calc(100% - ${xl ? 48 : 32}px)`,
-            maxWidth: '96rem',
-            borderRadius: 9999,
-            borderColor: 'rgba(255,255,255,0.15)',
-            boxShadow: `inset 0 1px 0 rgba(255, 255, 255, 0.06), ${scrolled ? '0 14px 40px rgba(0, 0, 0, 0.45)' : '0 6px 24px rgba(0, 0, 0, 0.25)'}`,
-            transition: ['border-color', 'box-shadow'].map((p) => `${p} 400ms ${EASE}`).join(', '),
-          }}>
-          <div className="mx-auto w-full px-3 sm:px-4 lg:pl-6 lg:pr-3">
+      <div className="pointer-events-none fixed inset-x-0 z-50 hidden justify-center md:flex" style={{ top: scrolled ? 10 : 14, transition: `top 400ms ${EASE}` }}>
+        <nav aria-label="Main" className={`pointer-events-auto relative w-[calc(100%-32px)] max-w-[96rem] border border-white/15 bg-[#0A0809] backdrop-blur-2xl xl:w-[calc(100%-48px)] ${menu ? 'rounded-[28px] lg:rounded-full' : 'rounded-full'}`} style={{ boxShadow: `inset 0 1px 0 rgba(255,255,255,0.06), ${scrolled ? '0 14px 40px rgba(0,0,0,0.45)' : '0 6px 24px rgba(0,0,0,0.25)'}`, transition: `box-shadow 400ms ${EASE}` }}>
+          <div className="px-3 sm:px-4 lg:pl-6 lg:pr-3">
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-4" style={{ height: scrolled ? 56 : 64, transition: `height 420ms ${EASE}` }}>
-              <Logo imgHeight={scrolled ? 26 : 30} fontSize={scrolled ? 21 : 24} />
+              <Logo />
               <div className="hidden min-w-0 items-center justify-center lg:flex">
                 <div className="flex items-center gap-0.5 xl:gap-2">
-                  {main.map((l) => <DLink key={l.to} to={l.to}>{l.label}</DLink>)}
-                  <DLink to="/creations">My Creations</DLink>
-                  <DLink to="/pricing">Pricing</DLink>
+                  {NAV.map((n) => <NavLink key={n.label} to={n.to} aria-current={n.match(pathname) ? 'page' : undefined} className={link(n.match(pathname))}>{n.label}</NavLink>)}
                 </div>
               </div>
               <div className="hidden shrink-0 items-center justify-end gap-2 lg:flex xl:gap-3">
-                <Claim />
-                {signedIn && <ProfileMenu />}
+                {signedIn ? <>{coinPill()}<ProfileMenu /></> : claim(false)}
                 <GetApp />
               </div>
-              <div className="flex items-center justify-end gap-2 lg:hidden">
-                <GetApp small />
-                <Claim small />
-                {signedIn && <ProfileMenu />}
-                <button type="button" aria-label="Open main menu" aria-expanded={menu} onClick={() => setMenu(!menu)} className="inline-flex cursor-pointer items-center justify-center rounded-xl p-2 text-[#A0A0A0] transition-colors hover:text-white focus:outline-none">
+              <div className="col-start-3 flex items-center justify-end gap-2 lg:hidden">
+                {signedIn ? <>{coinPill('!h-9')}<ProfileMenu compact /></> : claim(true)}
+                <button type="button" aria-label="Open main menu" aria-expanded={menu} onClick={() => setMenu(!menu)} className="inline-flex size-9 cursor-pointer items-center justify-center rounded-full text-[#B4B0C0] transition-colors hover:bg-white/[0.06] hover:text-white focus:outline-none">
                   <svg className="block size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" d={menu ? 'M6 6l12 12M6 18L18 6' : 'M4 6h16M4 12h16M4 18h16'} /></svg>
                 </button>
               </div>
@@ -236,71 +202,81 @@ export default function Header({ generating = false }) {
           <div className={`overflow-hidden transition-all duration-300 ease-in-out lg:hidden ${menu ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0'}`}>
             <div className="no-scrollbar max-h-[70vh] overflow-y-auto border-t border-white/10">
               <div className="space-y-0.5 px-3 pb-3 pt-2">
-                {[...main, { to: '/creations', label: 'My Creations' }, { to: '/pricing', label: 'Pricing' }].slice(0, main.length).map((l) => (
-                  <NavLink key={l.to} to={l.to} end className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-white/[0.06] text-white ring-1 ring-inset ring-white/15' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`}>{l.label}</NavLink>
-                ))}
-                {[['/creations', 'My Creations'], ['/pricing', 'Pricing']].map(([to, label]) => (
-                  <NavLink key={to} to={to} className={({ isActive }) => `block cursor-pointer rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${isActive ? 'bg-white/[0.06] text-white ring-1 ring-inset ring-white/15' : 'text-[#A0A0A0] hover:bg-white/[0.06] hover:text-white'}`}>{label}</NavLink>
-                ))}
+                {NAV.map((n) => <NavLink key={n.label} to={n.to} tabIndex={menu ? 0 : -1} className={`block rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${n.match(pathname) ? 'bg-white/[0.06] text-white ring-1 ring-inset ring-white/15' : 'text-[#B4B0C0] hover:bg-white/[0.06] hover:text-white'}`}>{n.label}</NavLink>)}
                 <div className="!mt-2 space-y-0.5 border-t border-white/10 pt-2">
-                  <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#A0A0A0]">Account &amp; Support</div>
-                  {accountLinks.map(([to, label]) => <Link key={to} to={to} className="block cursor-pointer rounded-xl px-3 py-2 text-sm font-medium text-[#A0A0A0] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
-                  {signedIn ? <CoinBadge className="!mt-2 w-full" /> : (
-                  <button type="button" onClick={openLogin} className="!mt-2 flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#FF55AA]/50 bg-[#FF55AA]/10 px-4 text-sm font-medium tracking-wide text-white transition-colors hover:border-[#FF55AA] hover:bg-[#FF55AA]/20">
-                    <SparkIcon className="size-3.5 text-[#FF55AA]" /><span className="whitespace-nowrap">Claim 100 Coins</span>
-                  </button>
-                  )}
+                  <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#B4B0C0]">Account &amp; Support</div>
+                  {ACCOUNT_LINKS.filter(([to]) => signedIn || to !== '/profile').map(([to, label]) => <Link key={to} to={to} tabIndex={menu ? 0 : -1} className="block rounded-xl px-3 py-2 text-sm font-medium text-[#B4B0C0] transition-colors hover:bg-white/[0.06] hover:text-white">{label}</Link>)}
                 </div>
               </div>
             </div>
           </div>
         </nav>
       </div>
-      <div className="hidden h-[92px] md:block" />
-
-      {/* Mobile header */}
-      <header className={`relative z-50 flex h-[61px] items-center justify-between border-b border-white/[0.08] bg-[#0A0809] px-4 md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
-        <Logo size="sm" />
-        <div className="flex items-center gap-2">
-          <LastManButton onClick={() => setLastMan('plans')} />
-          {signedIn ? <><CoinBadge className="!h-7 !min-w-0 !gap-1.5 !px-2" /><ProfileMenu compact /></> : (
-            <>
-              <button type="button" onClick={openLogin} aria-label="Claim 100 coins" className="grid size-8 place-items-center rounded-full border border-[#2B2B2B] bg-[#2B2B2B] transition-transform active:scale-95">
-                <img src={brandImages.coin} alt="" width="22" height="22" className="size-[22px] object-contain" />
-              </button>
-              <button type="button" onClick={openLogin} aria-label="Log in" className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-[#FF88C7] to-[#FF55AA] text-white transition-transform active:scale-95">
-                <svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0116 0" /></svg>
-              </button>
-            </>
-          )}
-        </div>
-      </header>
-      {lastMan === 'popup' && <LastManPopup onClose={() => setLastMan(null)} onUnlock={() => setLastMan('plans')} />}
-      {lastMan === 'plans' && <PlansSheet onClose={() => setLastMan(null)} />}
-      {!generating && <MobileTabs pathname={pathname} />}
-      {generating && <div className="hidden sm:block md:hidden"><MobileTabs pathname={pathname} /></div>}
+      <div className="hidden h-[92px] md:block" aria-hidden="true" />
     </>
   )
 }
 
+// ---------- phone chrome: top bar + a floating three-tab pill (Home, Diy, Me), like the reference ----------
 const tabs = [
   { to: '/', label: 'Home', match: (p) => p === '/', d: 'M5 7v12a2 2 0 002 2h10M9 3h10a2 2 0 012 2v10a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2zM14 6.5l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
-  { to: '/explore', label: 'Diy', match: (p) => p === '/explore', d: 'M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 9l2.5-5 3 1.5L6 10.5M9.5 5.5l3 1.5L10 10.5M16 5.5l3 1.5-2.5 3.5M16 13l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
-  { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/help', '/contact-us', '/contact-support', '/feedback', '/transactions', '/profile'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
+  { to: '/explore', label: 'Diy', match: (p) => p === '/explore' || p === '/generate', d: 'M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 9l2.5-5 3 1.5L6 10.5M9.5 5.5l3 1.5L10 10.5M16 5.5l3 1.5-2.5 3.5M16 13l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
+  { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/coins', '/payment-success', '/help', '/contact-us', '/contact-support', '/feedback', '/transactions', '/profile', '/privacy-policy', '/terms-conditions'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
 ]
 
 function MobileTabs({ pathname }) {
   const { signedIn, openLogin } = useStudio()
   const idx = Math.max(0, tabs.findIndex((t) => t.match(pathname)))
   return (
-    <div className="fixed left-1/2 z-[99] flex h-[62px] w-[68%] min-w-[280px] max-w-[320px] -translate-x-1/2 select-none items-center justify-around rounded-full border border-white/[0.06] bg-[#0F0D0F]/95 p-[5px] shadow-[0_10px_35px_rgba(0,0,0,0.9)] backdrop-blur-xl md:hidden" style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
+    <nav aria-label="Main" className="fixed left-1/2 z-[99] flex h-[62px] w-[68%] min-w-[280px] max-w-[320px] -translate-x-1/2 select-none items-center justify-around rounded-full border border-white/[0.06] bg-[#0F0D0F]/95 p-[5px] shadow-[0_10px_35px_rgba(0,0,0,0.9)] backdrop-blur-xl md:hidden" style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
       <div className="pointer-events-none absolute top-1/2 z-[1] h-[50px] -translate-y-1/2 rounded-full bg-white/[0.06] ring-1 ring-inset ring-white/15 transition-all duration-300" style={{ width: 'calc((100% - 10px) / 3)', left: `calc(5px + ${idx} * (100% - 10px) / 3)` }} />
       {tabs.map((t, i) => (
-        <Link key={t.label} to={t.to} onClick={t.to === '/profile' && !signedIn ? (e) => { e.preventDefault(); openLogin() } : undefined} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
+        <Link key={t.label} to={t.to} aria-label={t.label} aria-current={i === idx ? 'page' : undefined} onClick={t.to === '/profile' && !signedIn ? (e) => { e.preventDefault(); openLogin() } : undefined} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
           <svg className={`size-6 transition-all duration-300 ${i === idx ? 'text-white opacity-100' : 'text-white opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
           <span className={`text-[11px] tracking-wide transition-all duration-300 ${i === idx ? 'font-semibold text-white' : 'font-semibold text-white/50'}`}>{t.label}</span>
         </Link>
       ))}
-    </div>
+    </nav>
+  )
+}
+
+function MobileHeader({ generating }) {
+  const { signedIn, openLogin, coins } = useStudio()
+  const [lastMan, setLastMan] = useState(null)
+  return (
+    <>
+      <header className={`sticky top-0 z-50 flex h-[60px] items-center justify-between border-b border-white/[0.08] bg-[#0A0809]/95 px-4 backdrop-blur md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
+        <Logo size="sm" />
+        <div className="flex items-center gap-2">
+          <LastManButton onClick={() => setLastMan('plans')} />
+          {signedIn ? (
+            <>
+              <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className="flex h-8 items-center gap-1.5 rounded-full border border-[#2C2529] bg-[#141011] pl-1.5 pr-3 text-[12px] font-medium text-white"><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}</Link>
+              <ProfileMenu compact />
+            </>
+          ) : (
+            <>
+              <button type="button" onClick={openLogin} aria-label="Claim 100 coins" className="grid size-8 place-items-center rounded-full border border-[#2C2529] bg-[#141011] transition-transform active:scale-95"><img src="/images/features/coin.svg" alt="" className="size-[22px] object-contain" /></button>
+              <button type="button" onClick={openLogin} aria-label="Log in" className={`grid size-8 place-items-center rounded-full ${GRAD} text-white transition-transform active:scale-95`}><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0116 0" /></svg></button>
+            </>
+          )}
+        </div>
+      </header>
+      {lastMan === 'popup' && <LastManPopup onClose={() => setLastMan(null)} onUnlock={() => setLastMan('plans')} />}
+      {lastMan === 'plans' && <PlansSheet onClose={() => setLastMan(null)} />}
+    </>
+  )
+}
+
+/** The navigation: the sticky top bar (md+) and the phone top bar + bottom bar. No sidebar. */
+export default function Header({ generating = false }) {
+  const { pathname } = useLocation()
+  return (
+    <>
+      <TopNav />
+      <MobileHeader generating={generating} />
+      {!generating && <MobileTabs pathname={pathname} />}
+      {generating && <div className="hidden sm:block md:hidden"><MobileTabs pathname={pathname} /></div>}
+    </>
   )
 }

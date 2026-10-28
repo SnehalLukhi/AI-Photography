@@ -188,3 +188,13 @@ test('no uploaded file is left on disk after any request (success and every fail
   await post({ image: await img() }, fields({ style_title: 'NO CREDITS' })) // upstream error
   assert.deepEqual(h.newTempFiles(before), [])
 })
+
+test('a very long prompt (far over 1000 characters) reaches AILabTools complete and unchanged', async () => {
+  const title = `T${'a'.repeat(2999)}`, desc = ` D${'b '.repeat(9000)}end ` // 3,000 and 18,000+ characters, with edge spaces
+  const res = await post({ image: await img() }, fields({ style_title: title, style_desc: desc }))
+  assert.equal(res.status, 200)
+  const submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
+  const val = (n) => submit.parts.find((p) => p.name === n).data.toString()
+  assert.equal(val('style_title'), title)
+  assert.equal(val('style_desc'), desc)
+})

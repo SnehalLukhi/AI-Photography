@@ -3,20 +3,19 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from '../components/Header.jsx'
 import PlansSheet from '../components/PlansSheet.jsx'
-import { brandImages } from '../data/images.js'
 import { getPurchases, getSubscription, cancelSubscription } from '../lib/aiPhotography.js'
 import { formatDate, formatMoney } from '../lib/format.js'
 import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
-const Hero = ({ eyebrow, title, sub }) => (
-  <header className="mx-auto max-w-3xl px-4 pt-10 text-center">
-    <p className="text-xs font-semibold uppercase tracking-wide text-[#FF55AA]">{eyebrow}</p>
-    <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight text-[#ffffff] sm:text-5xl">{title}</h1>
-    <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#A0A0A0] sm:text-lg">{sub}</p>
+const Hero = ({ eyebrow, title, sub, center = false }) => (
+  <header className={`mx-auto w-full max-w-none px-5 pt-8 sm:px-8 sm:pt-10 lg:px-10 ${center ? 'flex flex-col items-center text-center' : ''}`}>
+    <p className="eyebrow">{eyebrow}</p>
+    <h1 className="gradient-text mt-3 w-fit text-[48px] leading-none sm:text-[64px]">{title}</h1>
+    <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[#B4B0C0]">{sub}</p>
   </header>
 )
-const field = 'w-full rounded-xl border border-white/10 bg-[#2B2B2B] px-4 text-sm text-white outline-none transition placeholder:text-[#A0A0A0] focus:border-[#FF55AA]/60'
-const submitBtn = 'grad-bg flex h-12 w-full cursor-pointer items-center justify-center rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50'
+const field = 'w-full rounded-md border border-[#2C2529] bg-[#141011] px-4 text-[14px] text-[#FAFAFA] outline-none transition placeholder:text-[#B4B0C0] focus:border-[#FAFAFA]'
+const submitBtn = 'btn-grad !w-full !py-3.5 !text-[15px] disabled:cursor-not-allowed disabled:opacity-50'
 
 const topics = [
   ['Getting Started', 'Learn the basic workflow.', [
@@ -65,24 +64,30 @@ const topics = [
 ]
 
 export function Help() {
-  const [open, setOpen] = useState(-1)
+  const [open, setOpen] = useState(0)
   return (
-    <div className="px-4 pb-24 md:pb-16">
-      <Hero eyebrow="Support" title="How Can We Help?" sub="Find answers, tutorials and troubleshooting guides." />
-      <div className="mx-auto mt-14 grid max-w-[1120px] gap-5 sm:grid-cols-2">
-        {topics.map(([t, d, body], i) => (
-          <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer self-start rounded-[20px] border bg-[#2B2B2B] px-6 py-6 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 ${open === i ? 'border-white/20' : 'border-white/[0.06]'}`}>
-            <span className="block text-[17px] font-semibold text-white">{t}</span>
-            <span className="mt-1.5 block text-sm text-[#A0A0A0]">{d}</span>
-            {open === i && <span className="mt-3 block space-y-2 border-t border-white/10 pt-3 text-sm leading-relaxed text-[#A0A0A0]">{body.map((line) => <span key={line} className="block">{line}</span>)}</span>}
-          </button>
-        ))}
+    <div className="pb-8">
+      <Hero eyebrow="Support" title="Help" sub="Answers, how-tos and troubleshooting for Pictrify." />
+      <div className="mx-auto mt-8 w-full max-w-none px-5 sm:px-8 lg:px-10">
+        <div className="overflow-hidden rounded-md border border-[#2C2529] bg-[#141011]">
+          {topics.map(([t, d, body], i) => (
+            <div key={t} className="border-b border-[#2C2529] last:border-b-0">
+              <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full cursor-pointer items-center gap-4 px-5 py-5 text-left sm:px-6">
+                <span className="min-w-0 flex-1"><span className="block text-[16px] font-semibold">{t}</span><span className="mt-0.5 block text-[14px] text-[#B4B0C0]">{d}</span></span>
+                <svg className={`size-4 shrink-0 text-[#B4B0C0] transition-transform ${open === i ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+              </button>
+              {open === i && <ul className="space-y-2.5 px-5 pb-6 text-[14px] leading-relaxed text-[#B4B0C0] sm:px-6">{body.map((line) => <li key={line} className="flex gap-3"><span className="mt-2 size-1 shrink-0 rounded-full bg-[#B4B0C0]" />{line}</li>)}</ul>}
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 flex flex-wrap items-center gap-4"><p className="text-[14px] text-[#B4B0C0]">Still stuck?</p><Link to="/contact-support" className="btn-dark !px-5 !py-2.5 !text-[14px]">Contact support<span aria-hidden="true">→</span></Link></div>
       </div>
     </div>
   )
 }
 
-const Card = ({ children, w = 'max-w-[760px]' }) => <div className={`mx-auto mt-10 w-full ${w} rounded-[28px] border border-white/[0.06] bg-[#2B2B2B] p-6 sm:p-8`}>{children}</div>
+const Card = ({ children, w = 'max-w-[760px]' }) => <div className={`mx-auto mt-8 w-[calc(100%-40px)] sm:w-[calc(100%-64px)] ${w} rounded-md border border-[#2C2529] bg-[#141011] p-6 sm:p-8`}>{children}</div>
+const Label = ({ children }) => <span className="font-plexmono text-[11px] uppercase tracking-[0.08em] text-[#B4B0C0]">{children}</span>
 
 export function Contact() {
   const { userEmail } = useStudio()
@@ -102,29 +107,29 @@ export function Contact() {
   }
   const valid = title.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()) && text.trim()
   return (
-    <div className="px-4 pb-24 md:pb-16">
-      <Hero eyebrow="Support Request" title="Contact Support" sub="Tell us what happened and our team will review it." />
+    <div className="mx-auto w-full max-w-none pb-8">
+      <Hero center eyebrow="Support request" title="Contact support" sub="Tell us what happened and our team will review it." />
       <Card w="max-w-[760px]">
         {sent ? (
-          <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Request noted</p><button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-grad">Write another</button></div>
+          <div className="py-10 text-center"><p className="mb-5 font-serif text-[30px]">Request noted</p><button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-dark !px-5 !py-2.5 !text-[14px]">Write another</button></div>
         ) : (
           <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); if (valid) setSent(true) }}>
-            <label className="block text-sm font-semibold text-white">Title<input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Title" className={`${field} mt-2 h-12`} /></label>
-            <label className="block text-sm font-semibold text-white">Email<input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" className={`${field} mt-2 h-12`} /></label>
-            <label className="block text-sm font-semibold text-white">Description<textarea required value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} placeholder="Enter Description" className={`${field} mt-2 h-[150px] resize-none py-3`} /></label>
-            <div>
-              <p className="text-sm font-semibold text-white">Attachment (Optional)</p>
+            <label className="block space-y-2"><Label>Title</Label><input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter title" className={`${field} h-12`} /></label>
+            <label className="block space-y-2"><Label>Email</Label><input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" className={`${field} h-12`} /></label>
+            <label className="block space-y-2"><Label>Description</Label><textarea required value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} placeholder="Enter description" className={`${field} h-[150px] resize-none py-3`} /></label>
+            <div className="space-y-2">
+              <Label>Attachment (optional)</Label>
               <div onClick={() => input.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); pick(e.dataTransfer.files?.[0]) }}
-                className="mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 px-4 py-8 text-center transition hover:border-[#FF55AA]/60">
-                <span className="inline-flex items-center gap-2 rounded-lg bg-white/[0.07] px-3.5 py-2 text-[13px] font-semibold text-white"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload Image</span>
-                <span className="text-sm text-white/90">{file ? file.name : 'Click or drag image here (Max 5MB)'}</span>
-                <span className="text-xs text-[#A0A0A0]">JPG, JPEG, PNG, and WEBP supported</span>
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed border-[#2C2529] px-4 py-8 text-center transition hover:border-[#FAFAFA]">
+                <span className="inline-flex items-center gap-2 rounded-md border border-[#2C2529] bg-[#1D181B] px-3.5 py-2 text-[13px] font-semibold"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload image</span>
+                <span className="text-[14px]">{file ? file.name : 'Click or drag an image here (max 5 MB)'}</span>
+                <span className="text-[12px] text-[#B4B0C0]">JPG, JPEG, PNG and WEBP supported</span>
                 <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { pick(e.target.files?.[0]); e.target.value = '' }} />
               </div>
-              {file && <button type="button" onClick={() => setFile(null)} className="mt-2 cursor-pointer text-xs text-[#A0A0A0] underline underline-offset-2 hover:text-white">Remove image</button>}
-              {err && <p role="alert" className="mt-2 text-xs text-red-400">{err}</p>}
+              {file && <button type="button" onClick={() => setFile(null)} className="cursor-pointer text-[12px] text-[#B4B0C0] underline underline-offset-2 hover:text-[#FAFAFA]">Remove image</button>}
+              {err && <p role="alert" className="text-[12px] text-[#D98282]">{err}</p>}
             </div>
-            <button className={submitBtn} disabled={!valid}>Submit Request</button>
+            <button className={submitBtn} disabled={!valid}>Submit request</button>
           </form>
         )}
       </Card>
@@ -159,13 +164,13 @@ function CurrentPlan({ className, purchases, lastPlan, plan, tabIndex }) {
   const { sub, busy, error, cancel } = plan
   return (
     <div className={className}>
-      <p className="text-xs text-[#A0A0A0]">Current plan</p>
-      <p className="mt-1 text-[15px] font-bold text-white">{sub ? sub.name : purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>
+      <p className="eyebrow">Current plan</p>
+      <p className="mt-2 text-[17px] font-semibold">{sub ? sub.name : purchases === null ? '…' : lastPlan ? lastPlan.name : 'No plan purchased'}</p>
       {sub
-        ? <p className="mt-0.5 text-xs text-[#A0A0A0]">{sub.cancelRequested ? `Will not renew - ends ${formatDate(sub.endsAt)}` : sub.renewsAt ? `Renews automatically on ${formatDate(sub.renewsAt)}` : 'Renews automatically'}</p>
-        : lastPlan && <p className="mt-0.5 text-xs text-[#A0A0A0]">Bought {formatDate(lastPlan.paidAt)}</p>}
-      {sub && !sub.cancelRequested && <button type="button" tabIndex={tabIndex} disabled={busy} onClick={cancel} className="mt-2 cursor-pointer text-xs font-semibold text-[#FF88C7] underline disabled:opacity-60">{busy ? 'Cancelling…' : 'Cancel plan'}</button>}
-      {error && <p role="alert" className="mt-1 text-xs text-red-300">{error}</p>}
+        ? <p className="mt-0.5 text-xs text-[#B4B0C0]">{sub.cancelRequested ? `Will not renew - ends ${formatDate(sub.endsAt)}` : sub.renewsAt ? `Renews automatically on ${formatDate(sub.renewsAt)}` : 'Renews automatically'}</p>
+        : lastPlan && <p className="mt-0.5 text-xs text-[#B4B0C0]">Bought {formatDate(lastPlan.paidAt)}</p>}
+      {sub && !sub.cancelRequested && <button type="button" tabIndex={tabIndex} disabled={busy} onClick={cancel} className="btn-dark mt-3 !px-4 !py-2 !text-[13px] disabled:opacity-60">{busy ? 'Cancelling…' : 'Cancel plan'}</button>}
+      {error && <p role="alert" className="mt-1 text-xs text-[#D98282]">{error}</p>}
     </div>
   )
 }
@@ -191,28 +196,28 @@ const meItems = [
 ]
 const Chev = () => <svg className="size-4 shrink-0 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
 
-/** Phone-only "Me" menu (Glymo layout): Premium card + list of existing pages. */
+/** Phone-only "Me" menu, like the reference: Premium card, a Plan & purchases dropdown and a short list of pages. */
 function MobileMe() {
   const { signedIn, userEmail, coins } = useStudio()
   const purchases = usePurchases()
   const plan = useSubscription()
   const lastPlan = purchases?.find((p) => p.kind === 'plan')
   const [plansOpen, setPlansOpen] = useState(false)
-  const [planOpen, setPlanOpen] = useState(false) // Plan & Purchases dropdown
+  const [planOpen, setPlanOpen] = useState(false)
   const row = 'flex h-[54px] w-full items-center gap-3.5 border-b border-white/[0.06] px-4 text-left text-[14px] text-white last:border-b-0'
   return (
     <div className="mx-auto w-full max-w-[560px] px-4 pb-32 pt-4 md:hidden">
-      {signedIn && <p className="mb-3 truncate px-1 text-[13px] text-[#A0A0A0]">{userEmail}</p>}
-      <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-br from-[#3a2c22] via-[#1d1815] to-[#141212] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-        <div className="absolute right-6 top-6 text-[#F8A85B]"><svg className="size-11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6.5" /><path d="M8.2 14.2V21.5l3.8-2.4 3.8 2.4V14.2" /><path d="M12 5.6l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3z" fill="currentColor" stroke="none" /></svg></div>
-        <h2 className="text-[26px] font-semibold text-[#F8A85B]">Premium</h2>
+      {signedIn && <p className="mb-3 truncate px-1 text-[13px] text-[#B4B0C0]">{userEmail}</p>}
+      <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-br from-[#241B3D] via-[#1A1322] to-[#141011] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+        <div className="absolute right-6 top-6 text-[#FC48E7]"><svg className="size-11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6.5" /><path d="M8.2 14.2V21.5l3.8-2.4 3.8 2.4V14.2" /><path d="M12 5.6l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3z" fill="currentColor" stroke="none" /></svg></div>
+        <h2 className="gradient-text w-fit !font-semibold text-[26px]">Premium</h2>
         <p className="mt-2 text-[14px] text-white">Unlock ultimate creative power.</p>
         <ul className="mt-4 space-y-2.5 text-[14px] text-white">
-          {['1000+ Templates', 'HD Quality Outputs'].map((t) => <li key={t} className="flex items-center gap-2.5"><span className="size-1.5 rounded-full bg-[#F8A85B]" />{t}</li>)}
+          {['1000+ Templates', 'HD Quality Outputs'].map((t) => <li key={t} className="flex items-center gap-2.5"><span className="size-1.5 rounded-full bg-[#FC48E7]" />{t}</li>)}
         </ul>
-        <button type="button" onClick={() => setPlansOpen(true)} className="mt-6 flex h-14 cursor-pointer w-full items-center justify-center rounded-full text-[16px] font-semibold text-[#1a1208] shadow-[0_6px_24px_rgba(240,140,40,0.35)]" style={{ background: 'linear-gradient(90deg, #FDB171 0%, #E07B0A 100%)' }}>Upgrade to Pro</button>
+        <button type="button" onClick={() => setPlansOpen(true)} className="btn-grad mt-6 !h-14 !w-full !text-[16px]">Upgrade to Pro</button>
       </div>
-      <div className="mt-4 overflow-hidden rounded-[24px] border border-white/10 bg-[#1C1C1C]">
+      <div className="mt-4 overflow-hidden rounded-[24px] border border-white/10 bg-[#141011]">
         <button type="button" onClick={() => setPlanOpen((o) => !o)} aria-expanded={planOpen} aria-controls="plan-purchases" className="flex h-[54px] w-full cursor-pointer items-center gap-3.5 px-4 text-left text-[14px] font-semibold text-white">
           {I('M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z')}<span className="flex-1">Plan &amp; purchases</span>
           <svg className={`size-4 shrink-0 text-white/50 transition-transform duration-300 ${planOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
@@ -220,14 +225,14 @@ function MobileMe() {
         <div id="plan-purchases" className={`grid transition-[grid-template-rows] duration-300 ease-out ${planOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`} aria-hidden={!planOpen}>
           <div className="min-h-0 overflow-hidden">
             <div className="space-y-2 border-t border-white/[0.06] p-3.5">
-              <CurrentPlan className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-3.5 py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} />
-              <div className="rounded-2xl border border-white/[0.06] bg-[#2B2B2B] px-3.5 py-2.5"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" tabIndex={planOpen ? 0 : -1} className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
-              <Link to="/transactions" tabIndex={planOpen ? 0 : -1} className="inline-block pt-1 text-[13px] font-semibold text-[#A0A0A0] underline">View all transactions</Link>
+              <CurrentPlan className="rounded-2xl border border-white/[0.06] bg-[#0F0C0E] px-3.5 py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} tabIndex={planOpen ? 0 : -1} />
+              <div className="rounded-2xl border border-white/[0.06] bg-[#0F0C0E] px-3.5 py-2.5"><p className="eyebrow">Coin balance</p><p className="mt-2 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" tabIndex={planOpen ? 0 : -1} className="mt-1 inline-block text-xs font-semibold text-[#B4B0C0] underline">Get more coins</Link></div>
+              <Link to="/transactions" tabIndex={planOpen ? 0 : -1} className="inline-block pt-1 text-[13px] font-semibold text-[#B4B0C0] underline">View all transactions</Link>
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-4 overflow-hidden rounded-[24px] border border-white/10 bg-[#1C1C1C]">
+      <div className="mt-4 overflow-hidden rounded-[24px] border border-white/10 bg-[#141011]">
         {meItems.map(([label, to, d]) => <Link key={label} to={to} className={row}>{I(d)}<span className="flex-1">{label}</span><Chev /></Link>)}
       </div>
       {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
@@ -236,115 +241,90 @@ function MobileMe() {
 }
 
 export function Profile() {
-  const { signedIn, userEmail, coins, openLogin } = useStudio()
+  const { signedIn, userEmail, coins, openLogin, signOut } = useStudio()
+  const settings = useSearchParams()[0].get('view') === 'settings' // phones: the Me menu is the default view, the details open from "Profile Settings"
   const purchases = usePurchases()
   const plan = useSubscription()
   const lastPlan = purchases?.find((p) => p.kind === 'plan') // plans are one-time coin purchases: the latest one is "your plan"
   const name = displayName(userEmail || '')
   const [first, ...rest] = name.split(' ')
   const last = rest.join(' ')
-  const settings = useSearchParams()[0].get('view') === 'settings' // phones: the account menu is the default view, the form opens from "Profile Settings"
-  const lbl = 'mb-1.5 max-md:mb-1 block text-[13px] font-bold text-white'
-  const box = 'h-11 max-md:h-10 w-full min-w-0 truncate rounded-2xl max-md:rounded-xl max-md:px-3.5 border border-white/10 bg-[#1D1B1D] px-4 text-[13px] outline-none'
+  const box = 'h-11 w-full min-w-0 truncate rounded-md border border-[#2C2529] bg-[#141011] px-4 text-[14px] outline-none'
+  const lbl = 'mb-1.5 block font-plexmono text-[11px] uppercase tracking-[0.08em] text-[#B4B0C0]'
   return (
     <>
     {!settings && <MobileMe />}
-    <div className={`px-4 pb-32 pt-8 max-md:h-auto max-md:overflow-visible max-md:pb-[calc(9rem+env(safe-area-inset-bottom,0px))] max-md:pt-4 md:pb-16 md:pt-10 ${settings ? '' : 'max-md:hidden'}`}>
-      <div className="mx-auto w-full max-w-[640px]">
-        <h1 className="text-[34px] font-bold leading-[1.05] tracking-tight text-white sm:text-[38px]">Profile Settings</h1>
-        <p className="mt-2 text-[13px] text-[#A0A0A0]">Manage your personal information and account details.</p>
-        <div className="mt-7 max-md:mt-5 rounded-[24px] max-md:rounded-[22px] border border-white/[0.07] bg-[#2B2B2B] p-6 max-md:p-4 sm:p-6">
-          {signedIn ? (
-            <>
-              <div className="flex items-center gap-4 max-md:gap-3.5 border-b border-white/[0.08] pb-5 max-md:pb-4">
-                <span className="grid size-[68px] max-md:size-14 shrink-0 place-items-center rounded-full border-[3px] border-[#2B2B2B] bg-[#8d7468] text-[32px] max-md:text-[26px] font-light leading-none text-white">{(name[0] || 'P').toUpperCase()}</span>
-                <div className="min-w-0"><p className="truncate text-xl font-bold text-white sm:text-[22px]">{name}</p><p className="mt-1.5 truncate text-[13px] text-[#A0A0A0]" title={userEmail}>{userEmail}</p></div>
+    <div className={`mx-auto w-full max-w-none px-5 pb-32 pt-8 text-[#FAFAFA] sm:px-8 sm:pt-10 md:pb-8 lg:px-10 ${settings ? '' : 'max-md:hidden'}`}>
+      {!signedIn ? (
+        <div className="relative overflow-hidden rounded-2xl border border-[#2C2529] bg-[#141011] px-6 py-16 text-center sm:py-24">
+          <div className="pointer-events-none absolute left-1/2 top-0 size-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(112,92,255,0.3),transparent)]" aria-hidden="true" />
+          <div className="relative">
+            <h1 className="gradient-text mx-auto w-fit text-[44px] font-semibold leading-[1.05] sm:text-[60px]">Your account</h1>
+            <p className="mx-auto mt-4 max-w-sm text-[15px] text-[#B4B0C0]">Sign in to see your coins, plan and creations in one place.</p>
+            <button type="button" onClick={openLogin} className="btn-grad mt-8 !px-7 !py-3 !text-[15px]">Sign in</button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-6">
+          <section aria-label="Profile" className="relative overflow-hidden rounded-2xl border border-[#2C2529] bg-[#141011]">
+            <div className="pointer-events-none absolute -right-20 -top-24 size-[360px] rounded-full bg-[radial-gradient(closest-side,rgba(112,92,255,0.3),transparent)]" aria-hidden="true" />
+            <div className="pointer-events-none absolute -bottom-28 left-1/4 size-[320px] rounded-full bg-[radial-gradient(closest-side,rgba(252,72,231,0.16),transparent)]" aria-hidden="true" />
+            <div className="relative flex flex-wrap items-center gap-5 p-6 sm:gap-6 sm:p-9">
+              <span className="grid size-20 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] text-[34px] font-semibold text-white sm:size-24 sm:text-[40px]">{(name[0] || 'P').toUpperCase()}</span>
+              <div className="min-w-0 flex-1">
+                <p className="eyebrow">Account</p>
+                <h1 className="gradient-text mt-2 w-fit max-w-full truncate text-[34px] font-semibold leading-[1.1] sm:text-[48px]">{name}</h1>
+                <p className="mt-1 truncate text-[14px] text-[#B4B0C0] sm:text-[15px]" title={userEmail}>{userEmail}</p>
               </div>
-              <div className="mt-6 max-md:mt-4 grid gap-4 max-md:gap-3.5 sm:grid-cols-2 sm:gap-x-4">
-                <div><label htmlFor="pf-first" className={lbl}>First name</label><input id="pf-first" readOnly value={first || ''} placeholder="Not set" className={`${box} font-bold text-white`} /></div>
-                <div><label htmlFor="pf-last" className={lbl}>Last name</label><input id="pf-last" readOnly value={last} placeholder="Not set" className={`${box} font-bold text-white`} /></div>
+              <div className="flex flex-wrap gap-3">
+                <Link to="/creations" className="btn-dark !px-5 !py-2.5 !text-[14px]">My Creations</Link>
+                <button type="button" onClick={signOut} className="btn-dark !px-5 !py-2.5 !text-[14px] !text-[#F2A0A0]">Log out</button>
               </div>
-              <div className="mt-4 max-md:mt-3.5"><label htmlFor="pf-email" className={lbl}>Email address</label><input id="pf-email" readOnly value={userEmail || ''} title={userEmail} className={`${box} text-[#A0A0A0]/70`} /></div>
-              <div className="mt-4 max-md:mt-3.5"><label htmlFor="pf-country" className={lbl}>Country</label><input id="pf-country" readOnly disabled placeholder="Not set" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
-              <div className="mt-4 max-md:mt-3.5"><label htmlFor="pf-since" className={lbl}>Member since</label><input id="pf-since" readOnly disabled placeholder="Not available" className={`${box} text-[#A0A0A0]/70 placeholder:text-[#A0A0A0]/55`} /></div>
-              <div className="mt-6 max-md:hidden border-t border-white/[0.08] pt-5 max-md:rounded-2xl max-md:border max-md:border-white/[0.1] max-md:bg-black/20 max-md:p-3.5">
-                <h2 className="text-[15px] font-bold text-white">Plan &amp; purchases</h2>
-                <div className="mt-4 max-md:mt-3 grid gap-3 max-md:gap-2 sm:grid-cols-2">
-                  <CurrentPlan className="rounded-2xl border border-white/10 bg-[#1D1B1D] px-4 py-3 max-md:px-3.5 max-md:py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} />
-                  <div className="rounded-2xl border border-white/10 bg-[#1D1B1D] px-4 py-3 max-md:px-3.5 max-md:py-2.5"><p className="text-xs text-[#A0A0A0]">Coin balance</p><p className="mt-1 text-[15px] font-bold text-white">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" className="mt-0.5 inline-block text-xs font-semibold text-[#A0A0A0] underline">Get more coins</Link></div>
+            </div>
+          </section>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
+            <section aria-label="Personal details" className="self-start rounded-2xl border border-[#2C2529] bg-[#141011] p-6 sm:p-8">
+              <h2 className="mb-6 text-[22px] font-semibold">Personal details</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div><label htmlFor="pf-first" className={lbl}>First name</label><input id="pf-first" readOnly value={first || ''} placeholder="Not set" className={box} /></div>
+                <div><label htmlFor="pf-last" className={lbl}>Last name</label><input id="pf-last" readOnly value={last} placeholder="Not set" className={box} /></div>
+              </div>
+              <div className="mt-4"><label htmlFor="pf-email" className={lbl}>Email address</label><input id="pf-email" readOnly value={userEmail || ''} title={userEmail} className={`${box} text-[#B4B0C0]`} /></div>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <div><label htmlFor="pf-country" className={lbl}>Country</label><input id="pf-country" readOnly disabled placeholder="Not set" className={`${box} text-[#B4B0C0] placeholder:text-[#B4B0C0]`} /></div>
+                <div><label htmlFor="pf-since" className={lbl}>Member since</label><input id="pf-since" readOnly disabled placeholder="Not available" className={`${box} text-[#B4B0C0] placeholder:text-[#B4B0C0]`} /></div>
+              </div>
+              <p className="mt-5 text-[13px] text-[#B4B0C0]">These details come from your sign-in account and are for viewing only.</p>
+            </section>
+
+            <div className="flex flex-col gap-6">
+              <section aria-label="Coins" className="relative overflow-hidden rounded-2xl border border-[#2C2529] bg-[#141011] p-6 sm:p-8">
+                <div className="pointer-events-none absolute -right-16 -top-16 size-[220px] rounded-full bg-[radial-gradient(closest-side,rgba(252,72,231,0.2),transparent)]" aria-hidden="true" />
+                <div className="relative flex items-center gap-4">
+                  <span className="grid size-14 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/[0.04]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
+                  <div className="flex flex-col"><span className="text-[13px] text-[#B4B0C0]">Coin balance</span><span className="flex items-baseline gap-2"><span className="gradient-text text-[44px] font-semibold leading-none tabular-nums">{coins.toLocaleString('en-US')}</span><span className="text-[14px] text-[#B4B0C0]">coins</span></span></div>
                 </div>
+                <Link to="/coins" className="btn-grad relative mt-6 !w-full !py-3 !text-[14px]">Get more coins</Link>
+              </section>
+
+              <section aria-label="Plan" className="rounded-2xl border border-[#2C2529] bg-[#141011] p-6 sm:p-8">
+                <CurrentPlan className="" purchases={purchases} lastPlan={lastPlan} plan={plan} />
                 {purchases?.length > 0 && (
-                  <ul className="mt-4 divide-y divide-white/[0.06] rounded-2xl border border-white/10 bg-[#1D1B1D]">
+                  <ul className="mt-5 divide-y divide-[#2C2529] border-t border-[#2C2529]">
                     {purchases.slice(0, 3).map((p) => (
-                      <li key={p.paymentId} className="flex items-center justify-between gap-3 px-[18px] py-3 text-[13px]"><span className="min-w-0"><span className="block truncate font-semibold text-white">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}</span><span className="text-xs text-[#A0A0A0]">{formatDate(p.paidAt)} · +{p.coins.toLocaleString('en-US')} coins</span></span><span className="shrink-0 font-semibold text-white">{formatMoney(p.amount, p.currency)}</span></li>
+                      <li key={p.paymentId} className="flex items-center justify-between gap-3 py-3 text-[13px]"><span className="min-w-0"><span className="block truncate font-semibold">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}</span><span className="text-[12px] text-[#B4B0C0]">{formatDate(p.paidAt)} · +{p.coins.toLocaleString('en-US')} coins</span></span><span className="shrink-0 font-semibold">{formatMoney(p.amount, p.currency)}</span></li>
                     ))}
                   </ul>
                 )}
-                <Link to="/transactions" className="mt-4 inline-block text-[13px] font-semibold text-[#A0A0A0] underline">View all transactions</Link>
-              </div>
-              <button type="button" disabled title="Editing your profile is not available yet" className="mt-6 max-md:mt-5 h-11 max-md:h-11 max-md:w-full cursor-not-allowed rounded-2xl px-[25px] text-sm font-bold text-white opacity-60" style={{ background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' }}>Save Changes</button>
-            </>
-          ) : (
-            <div className="py-8 text-center"><p className="mb-5 text-lg font-medium text-white">Sign in to see your profile</p><button type="button" onClick={openLogin} className="btn-grad">Sign in to Pictrify</button></div>
-          )}
+                <Link to="/transactions" className="btn-dark mt-5 !w-full !py-2.5 !text-[14px]">View all transactions<span aria-hidden="true">→</span></Link>
+              </section>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
     </>
-  )
-}
-
-// Receipt-with-coin illustration for the empty Transactions state (existing coin.svg + a drawn receipt and sparkles).
-const Sparkle = ({ className }) => <svg className={`absolute size-2.5 text-white/80 ${className}`} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.4 8.6L23 12l-8.6 2.4L12 23l-2.4-8.6L1 12l8.6-2.4z" /></svg>
-const EmptyReceipt = () => (
-  <div className="relative mx-auto h-[128px] w-[140px]" aria-hidden="true">
-    <svg className="absolute left-[24px] top-[10px] h-[100px] w-[80px]" viewBox="0 0 80 100" fill="none">
-      <defs><linearGradient id="rc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2B2B2B" /><stop offset="1" stopColor="#23222f" /></linearGradient></defs>
-      <path d="M8 2h64a6 6 0 016 6v70a10 10 0 01-10 10H18a10 10 0 01-10-10V8a6 6 0 016-6z" fill="url(#rc)" stroke="#2B2B2B" strokeWidth="1.5" />
-      <rect x="14" y="16" width="32" height="5" rx="2.5" fill="#2B2B2B" /><rect x="14" y="31" width="52" height="5" rx="2.5" fill="#2B2B2B" /><rect x="14" y="46" width="42" height="5" rx="2.5" fill="#2B2B2B" />
-      <path d="M8 74h40a10 10 0 000 .1" stroke="#2B2B2B" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-    <img src={brandImages.coin} alt="" width="46" height="46" className="absolute bottom-[16px] right-[22px] size-[46px] object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
-    <Sparkle className="left-0 top-[44px]" /><Sparkle className="right-[2px] top-[4px]" /><Sparkle className="right-0 top-[44px]" /><Sparkle className="bottom-[22px] left-[12px]" /><Sparkle className="bottom-[6px] right-[8px]" />
-  </div>
-)
-
-export function Transactions() {
-  const { signedIn, openLogin } = useStudio()
-  const purchases = usePurchases()
-  return (
-    <div className="px-4 pb-24 pt-8 md:pb-16 md:pt-10">
-      <div className="mx-auto w-full max-w-[1040px]">
-        <p className="text-xs font-bold uppercase tracking-wide text-[#FF55AA]">Payments and Coins</p>
-        <h1 className="mt-3 text-[34px] font-bold leading-[1.05] tracking-tight text-white sm:text-[44px] lg:text-[48px]">Transaction History</h1>
-        <p className="mt-4 text-base text-[#A0A0A0]">Track subscriptions, coin purchases and refunds.</p>
-        <div className="mt-9 rounded-[24px] border border-white/[0.07] bg-[#2B2B2B] px-6 py-12 text-center">
-          {signedIn ? (
-            purchases?.length ? (
-              <ul className="divide-y divide-white/[0.06] text-left">
-                {purchases.map((p) => (
-                  <li key={p.paymentId} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-4">
-                    <span className="min-w-0"><span className="block text-[15px] font-bold text-white">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}</span><span className="text-xs text-[#A0A0A0]">{formatDate(p.paidAt, true)} · Payment ID {p.paymentId}</span></span>
-                    <span className="text-right"><span className="block text-[15px] font-bold text-white">{formatMoney(p.amount, p.currency)}{p.offerPercent > 0 && <span className="ml-2 text-xs font-semibold text-[#FF88C7]">{p.offerPercent}% off</span>}</span><span className="text-xs font-semibold text-emerald-300">+{p.coins.toLocaleString('en-US')} coins</span></span>
-                  </li>
-                ))}
-              </ul>
-            ) : purchases === null ? (
-              <p className="py-8 text-sm text-[#A0A0A0]">Loading…</p>
-            ) : (
-              <>
-                <EmptyReceipt />
-                <p className="mt-5 text-[15px] font-bold text-white">No transactions yet</p>
-                <p className="mt-2 text-[13px] text-[#A0A0A0]/80">Subscriptions and coin purchases will show up here.</p>
-                <Link to="/coins" className="grad-bg mt-6 inline-flex h-10 items-center justify-center rounded-[10px] px-5 text-[13px] font-bold">Get coins</Link>
-              </>
-            )
-          ) : (
-            <><p className="mb-5 text-lg font-medium text-white">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-grad">Sign in to Pictrify</button></>
-          )}
-        </div>
-      </div>
-    </div>
   )
 }
 
@@ -354,30 +334,27 @@ export function Feedback() {
   const [text, setText] = useState('')
   const [sent, setSent] = useState(false)
   return (
-    <div className="px-4 pb-32 md:pb-16">
-      <div className="mx-auto flex w-full max-w-[560px] items-center gap-4 pt-4 md:hidden">
-        <Link to="/profile" aria-label="Back" className="grid size-10 cursor-pointer place-items-center rounded-full bg-[#2B2B2B] text-white"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></Link>
-        <h1 className="text-xl font-bold text-white">Feedback</h1>
-      </div>
-      <div className="max-md:hidden"><Hero eyebrow="Product Feedback" title="Share Your Feedback" sub="Tell us about your experience and how we can make Pictrify better for you." /></div>
-      <div className="mx-auto mt-6 w-full max-w-[560px] md:mt-10 md:max-w-[640px] md:rounded-[28px] md:border md:border-white/[0.06] md:bg-[#2B2B2B] md:p-8">
+    <div className="mx-auto w-full max-w-none pb-8">
+      <Hero center eyebrow="Product feedback" title="Feedback" sub="Tell us about your experience and how we can make Pictrify better." />
+      <Card w="max-w-[640px]">
         {sent ? (
-          <div className="py-10 text-center"><p className="mb-1 text-lg font-medium">✓ Thanks for your feedback</p><button className="btn-dark" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
+          <div className="py-10 text-center"><p className="mb-5 font-serif text-[30px]">Thanks for your feedback</p><button className="btn-dark !px-5 !py-2.5 !text-[14px]" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
         ) : (
           <form onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
-            <div className="flex justify-center gap-3 py-6 min-[400px]:gap-5 md:py-8" onMouseLeave={() => setHover(0)}>
+            <Label>How was it?</Label>
+            <div className="flex gap-3 py-4" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} type="button" aria-label={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setStars(n)} onMouseEnter={() => setHover(n)} className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                  <svg className={`size-10 min-[400px]:size-11 transition-colors ${n <= (hover || stars) ? 'fill-[#fbbf24] text-[#fbbf24] max-md:fill-[#FF55AA] max-md:text-[#FF55AA]' : 'fill-none text-white/25'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
+                  <svg className={`size-10 transition-colors ${n <= (hover || stars) ? 'fill-[#B653F6] text-[#B653F6]' : 'fill-none text-[#2C2529]'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
                 </button>
               ))}
             </div>
-            <div className="mb-3 flex items-center justify-between text-sm max-md:mb-2"><label htmlFor="fb" className="font-semibold text-white">Description</label><span className="text-xs text-[#A0A0A0]">{text.length}/500</span></div>
-            <textarea id="fb" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder="Tell us what you like or how we can improve..." className={`${field} h-[150px] resize-none py-3 max-md:rounded-2xl max-md:border-white/[0.08] max-md:bg-[#1A181A]`} />
-            <button className={`${submitBtn} mt-6 max-md:h-[52px] max-md:rounded-full max-md:shadow-[0_6px_24px_rgba(255,85,170,0.35)] md:mt-8`} disabled={!stars || !text.trim()}>Submit Feedback</button>
+            <div className="mb-2 mt-2 flex items-center justify-between"><label htmlFor="fb"><Label>Description</Label></label><span className="font-plexmono text-[11px] text-[#B4B0C0]">{text.length}/500</span></div>
+            <textarea id="fb" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder="Tell us what you like or how we can improve..." className={`${field} h-[150px] resize-none py-3`} />
+            <button className={`${submitBtn} mt-6`} disabled={!stars || !text.trim()}>Submit feedback</button>
           </form>
         )}
-      </div>
+      </Card>
     </div>
   )
 }
@@ -388,21 +365,22 @@ const legal = {
 }
 // One block of a legal page: a string = paragraph, { ul } = bullet list, { kv } = bold label + value (optionally a link)
 const legalBlock = (b, i) => {
-  if (typeof b === 'string') return <p key={i} className="mb-4 leading-relaxed text-[#A0A0A0]">{b}</p>
-  if (b.ul) return <ul key={i} className="mb-4 list-disc space-y-2 pl-6 leading-relaxed text-[#A0A0A0] marker:text-[#FF55AA]">{b.ul.map((x, j) => <li key={j}>{typeof x === 'string' ? x : <><strong className="font-semibold text-white">{x.b}</strong>{x.t}</>}</li>)}</ul>
-  return <p key={i} className="mb-4 leading-relaxed text-[#A0A0A0]"><strong className="font-semibold text-white">{b.kv[0]}</strong> {b.kv[2] ? <a href={b.kv[2]} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 transition-colors hover:text-white">{b.kv[1]}</a> : b.kv[1]}</p>
+  if (typeof b === 'string') return <p key={i} className="mb-4 leading-relaxed text-[#B4B0C0]">{b}</p>
+  if (b.ul) return <ul key={i} className="mb-4 list-disc space-y-2 pl-6 leading-relaxed text-[#B4B0C0] marker:text-[#B4B0C0]">{b.ul.map((x, j) => <li key={j}>{typeof x === 'string' ? x : <><strong className="font-semibold text-[#FAFAFA]">{x.b}</strong>{x.t}</>}</li>)}</ul>
+  return <p key={i} className="mb-4 leading-relaxed text-[#B4B0C0]"><strong className="font-semibold text-[#FAFAFA]">{b.kv[0]}</strong> {b.kv[2] ? <a href={b.kv[2]} target="_blank" rel="noopener noreferrer" className="text-[#B653F6] underline underline-offset-2">{b.kv[1]}</a> : b.kv[1]}</p>
 }
 export function Legal({ kind }) {
   const [title, sections, date] = legal[kind]
   const nav = useNavigate()
   return (
-    <div className="relative z-10 px-4 pb-32 pt-4 sm:px-6 sm:pt-16 md:pb-16 lg:px-8">
-      <button type="button" aria-label="Back" onClick={() => nav(-1)} className="mb-3 grid size-10 cursor-pointer place-items-center rounded-full bg-[#2B2B2B] text-white md:hidden"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
-      <div className="mx-auto max-w-4xl space-y-4 break-words text-[#A0A0A0]">
-        <h1 className="mb-6 text-3xl font-bold text-[#ffffff] sm:mb-8 sm:text-4xl">{title}</h1>
-        <p className="mb-4 leading-relaxed"><strong className="font-semibold text-white">Effective Date:</strong> {date || 'Placeholder'}</p>
+    <div className="px-5 pb-8 pt-8 sm:px-8 sm:pt-10 lg:px-10">
+      <div className="mx-auto max-w-3xl break-words text-[15px] text-[#B4B0C0]">
+        <button type="button" onClick={() => nav(-1)} className="mb-3 inline-flex cursor-pointer items-center gap-1.5 text-[13px] hover:text-[#FAFAFA] md:hidden"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Back</button>
+        <p className="eyebrow">Legal</p>
+        <h1 className="gradient-text mb-6 mt-3 w-fit text-[40px] leading-[1.05] sm:text-[56px]">{title}</h1>
+        <p className="mb-4 leading-relaxed"><strong className="font-semibold text-[#FAFAFA]">Effective Date:</strong> {date || 'Placeholder'}</p>
         {sections.map(([h, blocks]) => (
-          <div key={h}><h2 className="mb-4 mt-8 text-xl font-semibold text-[#ffffff] sm:text-2xl">{h}</h2>{blocks.map(legalBlock)}</div>
+          <div key={h}><h2 className="mb-3 mt-10 text-[26px] leading-tight text-[#FAFAFA]">{h}</h2>{blocks.map(legalBlock)}</div>
         ))}
       </div>
     </div>

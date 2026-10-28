@@ -77,24 +77,25 @@ const sections = [
 ]
 
 const Block = ({ b }) => (b.p
-  ? <p className="mb-4 text-[16px] leading-[1.65] text-[#FFFFFF]/90">{b.p}</p>
-  : <ul className="mb-5 list-disc space-y-1.5 pl-6 text-[15px] leading-[1.6] text-[#FFFFFF]/85 marker:text-[#FF55AA]">{b.ul.map((i) => <li key={i}>{i}</li>)}</ul>)
+  ? <p className="mb-4 text-[15px] leading-[1.65] text-[#B4B0C0]">{b.p}</p>
+  : <ul className="mb-5 list-disc space-y-1.5 pl-6 text-[15px] leading-[1.6] text-[#B4B0C0] marker:text-[#B4B0C0]">{b.ul.map((i) => <li key={i}>{i}</li>)}</ul>)
 
 export default function PrivacyPolicy() {
   const nav = useNavigate()
   return (
-    <div className="relative z-10 px-4 pb-32 pt-4 sm:px-6 sm:pt-14 md:pb-16 lg:px-8">
-      <button type="button" aria-label="Back" onClick={() => nav(-1)} className="mb-3 grid size-10 cursor-pointer place-items-center rounded-full bg-[#2B2B2B] text-white md:hidden"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
-      <article className="mx-auto max-w-[900px]">
-        <h1 className="text-[30px] font-bold leading-tight tracking-tight text-white sm:text-[36px]">Privacy Policy</h1>
-        <p className="mb-2 mt-5 text-[16px] text-[#FFFFFF]/90"><strong className="font-semibold text-white">Effective Date:</strong> 21 October 2026</p>
+    <div className="px-5 pb-8 pt-8 sm:px-8 sm:pt-10 lg:px-10">
+      <button type="button" onClick={() => nav(-1)} className="mb-3 inline-flex cursor-pointer items-center gap-1.5 text-[13px] text-[#B4B0C0] hover:text-[#FAFAFA] md:hidden"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Back</button>
+      <article className="mx-auto max-w-3xl">
+        <p className="eyebrow">Legal</p>
+        <h1 className="gradient-text mt-3 w-fit text-[40px] leading-[1.05] sm:text-[56px]">Privacy Policy</h1>
+        <p className="mb-2 mt-5 text-[15px] text-[#B4B0C0]"><strong className="font-semibold text-[#FAFAFA]">Effective Date:</strong> 21 October 2026</p>
         {sections.map(([h, subs, blocks]) => (
           <section key={h}>
-            <h2 className="mb-4 mt-10 text-[22px] font-semibold text-white sm:text-[24px]">{h}</h2>
+            <h2 className="mb-3 mt-10 text-[26px] leading-tight">{h}</h2>
             {blocks && blocks.map((b, i) => <Block key={i} b={b} />)}
             {subs && subs.map(([sh, sb]) => (
               <div key={sh}>
-                <h3 className="mb-3 mt-7 text-[18px] font-medium text-white sm:text-[20px]">{sh}</h3>
+                <h3 className="mb-3 mt-7 text-[17px] font-semibold">{sh}</h3>
                 {sb.map((b, i) => <Block key={i} b={b} />)}
               </div>
             ))}

@@ -25,8 +25,8 @@ function fileFilter(_req, file, cb) {
 
 const upload = multer({
   storage,
-  // style_desc is at most 1000 characters (up to ~4 KB in UTF-8); leave headroom for the other text fields.
-  limits: { fileSize: env.upload.maxFileSizeBytes, files: 1, fields: 6, parts: 8, fieldSize: 8 * 1024 },
+  // the template prompts have no length limit of their own: a text field may be up to 2 MB (the same ceiling as the admin JSON bodies).
+  limits: { fileSize: env.upload.maxFileSizeBytes, files: 1, fields: 6, parts: 8, fieldSize: 2 * 1024 * 1024 },
   fileFilter,
 })
 
@@ -34,10 +34,10 @@ const upload = multer({
 const uploadImage = upload.single('image')
 
 /**
- * Template admin forms: the picture in the field "image" plus the template's text fields (prompts are up to 1000 characters).
+ * Template admin forms: the picture in the field "image" plus the template's text fields (prompts have no length limit).
  * Only parsed when the request is multipart; a JSON request passes straight through.
  */
-const templateForm = multer({ storage, limits: { fileSize: env.upload.maxFileSizeBytes, files: 1, fields: 20, parts: 24, fieldSize: 16 * 1024 }, fileFilter }).single('image')
+const templateForm = multer({ storage, limits: { fileSize: env.upload.maxFileSizeBytes, files: 1, fields: 20, parts: 24, fieldSize: 2 * 1024 * 1024 }, fileFilter }).single('image')
 const uploadTemplateImage = (req, res, next) => (req.is('multipart/form-data') ? templateForm(req, res, next) : next())
 
 /** Bulk template add: up to 100 pictures in the field "images" plus the text fields "templates" (a JSON array) and "defaults" (JSON). Only parsed for multipart requests. */

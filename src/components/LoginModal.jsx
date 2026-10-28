@@ -61,15 +61,15 @@ export default function LoginModal() {
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="login-title">
       <div className="login-fade absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={closeLogin} />
-      <div className="login-rise relative flex max-h-[94dvh] min-h-[560px] w-full max-w-[1030px] overflow-hidden rounded-[28px] border border-white/[0.06] bg-[#0A0809] shadow-[0_30px_90px_rgba(0,0,0,0.7)] max-sm:min-h-0">
+      <div className="login-rise relative flex max-h-[94dvh] min-h-[560px] w-full max-w-[1030px] overflow-hidden rounded-md border border-[#2C2529] bg-[#141011] max-sm:min-h-0">
         {/* left: the template photos (desktop only) */}
-        <aside className="relative m-3.5 hidden w-[48%] shrink-0 overflow-hidden rounded-[22px] bg-[#0A0809] lg:block" aria-hidden="true">
+        <aside className="relative m-3.5 hidden w-[48%] shrink-0 overflow-hidden rounded bg-[#0A0809] lg:block" aria-hidden="true">
           <div className="absolute inset-[-18%] flex origin-center items-stretch justify-center gap-3 px-3" style={{ rotate: '16deg' }} aria-hidden="true">
             {COLUMNS.map((col, ci) => (
               <div key={ci} className="relative h-full min-w-0 flex-1 overflow-hidden">
                 <div className="login-col flex w-full flex-col will-change-transform" style={{ animation: `${col.anim} ${col.secs}s linear infinite` }}>
                   {col.list.map((src, k) => (
-                    <div key={k} className="mb-3 aspect-[9/16] w-full shrink-0 overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809]">
+                    <div key={k} className="mb-3 aspect-[9/16] w-full shrink-0 overflow-hidden rounded border border-[#2C2529] bg-[#0A0809]">
                       <img src={src} alt="" loading="lazy" className="size-full object-cover object-center" draggable="false" />
                     </div>
                   ))}
@@ -84,32 +84,33 @@ export default function LoginModal() {
 
         {/* right: the form */}
         <div className="relative flex min-w-0 flex-1 flex-col justify-center overflow-y-auto px-5 py-12 sm:px-10">
-          <button type="button" onClick={closeLogin} aria-label="Close" className="absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-full text-white/90 transition-colors hover:bg-white/10 hover:text-white">
-            <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg>
+          <button type="button" onClick={closeLogin} aria-label="Close" className="absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-md border border-[#2C2529] bg-[#1D181B] text-[#FAFAFA] transition-colors hover:border-[#FAFAFA]">
+            <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg>
           </button>
-          <div className="mx-auto w-full max-w-[400px] text-center">
-            <h1 id="login-title" className="text-[30px] font-extrabold leading-tight tracking-tight text-white sm:text-[36px]">Create Your Account</h1>
-            <p className="mt-3 text-[15px] leading-snug text-white sm:text-base"><span className="grad-text text-[22px] font-extrabold">{WELCOME_COINS}</span> Free Credit are waiting for you.<br />Sign up and generate your first <strong className="font-extrabold">Trending Image!</strong></p>
+          <div className="mx-auto w-full max-w-[400px] text-left">
+            <p className="eyebrow">Sign in</p>
+            <h1 id="login-title" className="mt-3 text-[44px] leading-[1.02] sm:text-[52px]">Create your account</h1>
+            <p className="mt-3 text-[15px] leading-relaxed text-[#B4B0C0]"><span className="font-plexmono text-[#FAFAFA]">{WELCOME_COINS}</span> free coins are waiting for you. Sign up and make your first photo.</p>
 
-            <div className="mt-6 grid grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/10 bg-white/[0.04] py-4">
+            <div className="mt-6 grid grid-cols-3 divide-x divide-[#2C2529] rounded-md border border-[#2C2529] bg-[#141011] py-4">
               {['Browse all templates', 'Create Trending Images', 'Save your creation history'].map((text) => (
                 <div key={text} className="flex flex-col items-center gap-2 px-2">
-                  <svg className="size-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
-                  <p className="text-[11px] font-semibold leading-tight text-white">{text}</p>
+                  <svg className="size-5 text-[#B653F6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
+                  <p className="text-[11px] font-medium leading-tight text-[#FAFAFA]">{text}</p>
                 </div>
               ))}
             </div>
 
-            <button type="button" onClick={google} disabled={!!busy} className="mt-8 flex h-14 w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-white text-[16px] font-semibold text-[#0A0809] transition-opacity duration-200 hover:opacity-90 disabled:cursor-wait disabled:opacity-70">
+            <button type="button" onClick={google} disabled={!!busy} className="mt-8 flex h-14 w-full cursor-pointer items-center justify-center gap-3 rounded-md bg-[#FAFAFA] text-[16px] font-semibold text-[#0A0809] transition-opacity duration-200 hover:opacity-90 disabled:cursor-wait disabled:opacity-70">
               <GoogleLogo /><span>{busy === 'google' ? 'Please wait…' : 'Continue with Google'}</span>
             </button>
-            <button type="button" onClick={apple} disabled={!!busy} className="mt-3 flex h-14 w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-white text-[16px] font-semibold text-[#0A0809] transition-opacity duration-200 hover:opacity-90 disabled:cursor-wait disabled:opacity-70">
+            <button type="button" onClick={apple} disabled={!!busy} className="mt-3 flex h-14 w-full cursor-pointer items-center justify-center gap-3 rounded-md bg-[#FAFAFA] text-[16px] font-semibold text-[#0A0809] transition-opacity duration-200 hover:opacity-90 disabled:cursor-wait disabled:opacity-70">
               <AppleLogo /><span>{busy === 'apple' ? 'Please wait…' : 'Continue with Apple'}</span>
             </button>
-            {error && <p role="alert" className="mt-4 text-sm text-red-400">{error}</p>}
+            {error && <p role="alert" className="mt-4 text-sm text-[#D98282]">{error}</p>}
 
-            <p className="mt-7 text-center text-xs leading-relaxed text-[#A0A0A0]">
-              By continuing, you agree to our <Link to="/privacy-policy" className="underline hover:text-white">Privacy Policy</Link> and <Link to="/terms-conditions" className="underline hover:text-white">Terms of Service</Link>.
+            <p className="mt-7 text-xs leading-relaxed text-[#B4B0C0]">
+              By continuing, you agree to our <Link to="/privacy-policy" className="text-[#B653F6] underline underline-offset-2">Privacy Policy</Link> and <Link to="/terms-conditions" className="text-[#B653F6] underline underline-offset-2">Terms of Service</Link>.
             </p>
           </div>
         </div>

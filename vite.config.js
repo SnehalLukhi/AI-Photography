@@ -109,4 +109,6 @@ export const sizes = ${JSON.stringify(sizes)}`
   }
 }
 
-export default defineConfig({ plugins: [react(), templateFolder(), exploreFolders()] })
+// The dev server always runs on http://localhost:5173 (and fails loudly if that port is taken, instead of quietly moving to 5174, 5175...): Google sign-in only works from
+// origins listed under "Authorized JavaScript origins" of the OAuth client, so the origin must never change by surprise. The backend CORS_ORIGIN already allows it.
+export default defineConfig({ plugins: [react(), templateFolder(), exploreFolders()], server: { port: 5173, strictPort: true } })

@@ -1,209 +1,223 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import PageHeader, { pageWrap } from '../components/PageHeader.jsx'
 import TemplateCard from '../components/TemplateCard.jsx'
-import { exploreTabs, isOriginalTab, hairstyleTab, folderTemplates, exploreAllTemplates, exploreEverything, categoryItems, generateUrl, templatesByIds } from '../data/templates.js'
+import PImage from '../components/PImage.jsx'
+import { exploreTabs, isOriginalTab, hairstyleTab, exploreEverything, categoryItems, generateUrl, templatesByIds } from '../data/templates.js'
 import { useTrending } from '../lib/useTrending.js'
+import { useStudio } from '../context/StudioContext.jsx'
+import { getPlans } from '../lib/aiPhotography.js'
 
-const pad = (n) => String(n).padStart(2, '0')
-
-// "Hairstyle" appears in the sidebar once at least one of its sub-folders has images; only non-empty subs are offered.
+// "Hairstyle" is offered through its sub-categories (Man / Woman / Baby); only non-empty ones are listed.
 const subsWithItems = (parent) => { const subs = parent.subs.filter((s) => categoryItems(s.tabId).length); return subs.length ? [{ ...parent, subs }] : [] }
 
-// Trending page: one template per category for the Spotlight Roll (the first six groups below, plus a second Old Money card) and up to 5 templates
-// from EACH category in the grid (Top Carousel is not part of Trending). A category made of sub-folders (Hairstyle) is sampled round-robin across its subs.
+// Trending until some looks are marked in the admin: up to 5 from each category, round-robin so neighbours differ
 const TRENDING_GROUPS = [['80s-and-90s'], ['cartoon'], ['linkedin-headshot'], ['old-money'], ['beard'], ['hairstyle-baby', 'hairstyle-man', 'hairstyle-woman']]
 const roundRobin = (ids, max) => {
   const lists = ids.map((id) => categoryItems(id)); const out = []
   for (let i = 0; out.length < max && lists.some((l) => i < l.length); i++) lists.forEach((l) => { if (i < l.length && out.length < max) out.push(l[i]) })
   return out
 }
-// Spotlight Roll: the first six categories' lead templates, plus a second Old Money template as the 7th card
-const defaultSpotlight = [...TRENDING_GROUPS.slice(0, 6).map((g) => roundRobin(g, 1)[0]), categoryItems('old-money')[1]].filter(Boolean)
 const trendingGroups = TRENDING_GROUPS.map((g) => roundRobin(g, 5))
-// Grid order: round-robin across the categories (one from each, then the next one from each, ...), so templates of a category are never next to each other
 const defaultGrid = [0, 1, 2, 3, 4].flatMap((i) => trendingGroups.map((g) => g[i])).filter(Boolean)
 
+const Chip = ({ on, onClick, children, count }) => (
+  <button type="button" role="tab" aria-selected={on} onClick={onClick}
+    className={`inline-flex h-9 shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full border px-4 text-[14px] transition-colors ${on ? 'border-transparent bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)] font-semibold text-white' : 'border-[#2C2529] text-[#B4B0C0] hover:border-[#B4B0C0] hover:text-[#FAFAFA]'}`}>
+    {children}
+  </button>
+)
+
+/** Quick preview: the look large, what it needs and costs, "Use this look". A side panel on desktop, a bottom sheet on phones. */
+function Preview({ list, index, onClose, onStep, onUse }) {
+  const t = list[index]
+  const { signedIn, favorites, toggleFavorite, openLogin } = useStudio()
+  const [cost, setCost] = useState(null)
+  useEffect(() => { getPlans().then((r) => setCost(r.costPerGeneration)).catch(() => {}) }, [])
+  useEffect(() => {
+    const key = (e) => { if (e.key === 'Escape') onClose(); if (e.key === 'ArrowRight') onStep(1); if (e.key === 'ArrowLeft') onStep(-1) }
+    window.addEventListener('keydown', key)
+    return () => window.removeEventListener('keydown', key)
+  }, [onClose, onStep])
+  if (!t) return null
+  const liked = favorites.has(t.id)
+  return (
+    <div className="fixed inset-0 z-[200]" role="dialog" aria-modal="true" aria-label={`${t.name} preview`}>
+      <div onClick={onClose} className="absolute inset-0 bg-[#0A0809]/70" />
+      <aside className="absolute inset-x-0 bottom-0 flex max-h-[92dvh] flex-col gap-5 overflow-y-auto overscroll-contain rounded-t-md border-t border-[#2C2529] bg-[#141011] p-5 md:inset-y-0 md:left-auto md:right-0 md:max-h-none md:w-[440px] md:rounded-none md:border-l md:border-t-0 md:p-7">
+        <div className="flex items-center justify-between">
+          <span className="font-plexmono text-[11px] uppercase tracking-[0.1em] text-[#B4B0C0]">Look {index + 1} of {list.length}</span>
+          <button type="button" aria-label="Close preview" onClick={onClose} className="grid size-9 cursor-pointer place-items-center rounded-md border border-[#2C2529] bg-[#1D181B] text-[#FAFAFA]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+        </div>
+        <div className="relative mx-auto aspect-[9/16] w-full overflow-hidden rounded-md border border-[#2C2529] bg-[#0A0809]" style={{ maxWidth: 'max(200px, calc((100dvh - 330px) * 0.5625))' }}>
+          <PImage src={t.image} alt={t.name} className="absolute inset-0 h-full w-full object-cover" draggable="false" />
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0A0809] via-[#0A0809]/60 to-transparent px-4 pb-4 pt-20">
+            <span className="inline-block rounded-full border border-[#2C2529] bg-[#0A0809]/70 px-2.5 py-1 font-plexmono text-[10px] uppercase tracking-[0.1em] text-[#B4B0C0]">{t.category}</span>
+            <h2 className="mt-2 text-[30px] leading-[1.05]">{t.name}</h2>
+          </div>
+          <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-3 top-3 grid size-10 cursor-pointer place-items-center rounded-full bg-[#0A0809]/75 backdrop-blur-sm transition-transform hover:bg-[#0A0809] active:scale-90">
+            <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#B653F6] text-[#B653F6]' : 'fill-none text-[#FAFAFA]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+          </button>
+        </div>
+        <dl className="grid grid-cols-3 rounded-md border border-[#2C2529] bg-[#141011]">
+          {[['Cost', cost ? `${cost} coins` : '...'], ['Shape', '9:16'], ['Needs', t.slots?.length > 1 ? `${t.slots.length} photos` : '1 photo']].map(([k, v], i) => (
+            <div key={k} className={`px-3.5 py-3 ${i < 2 ? 'border-r border-[#2C2529]' : ''}`}><dt className="font-plexmono text-[10px] uppercase tracking-[0.08em] text-[#B4B0C0]">{k}</dt><dd className="mt-1 text-[15px] font-semibold">{v}</dd></div>
+          ))}
+        </dl>
+        <div className="flex flex-col gap-2.5">
+          <button type="button" onClick={() => onUse(t)} className="btn-grad !py-3.5 !text-[16px]">Use this look</button>
+          <div className="flex gap-2.5">
+            <button type="button" onClick={() => onStep(-1)} disabled={list.length < 2} className="btn-dark flex-1 !px-3 !py-2.5 !text-[14px]">← Previous</button>
+            <button type="button" onClick={() => onStep(1)} disabled={list.length < 2} className="btn-dark flex-1 !px-3 !py-2.5 !text-[14px]">Next →</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  )
+}
+
 export default function Explore() {
-  // Trending = the templates marked in the admin (they also stay in their own category); until some are set, the built-in picks above
+  // Trending = the looks marked in the admin (they also stay in their own collection); until some are set, the built-in picks above
   const trendingIds = useTrending()
   const custom = trendingIds ? templatesByIds(trendingIds) : []
   const trendingGrid = custom.length ? custom : defaultGrid
-  const trendingSpotlight = custom.length ? custom.slice(0, 7) : defaultSpotlight
   const nav = useNavigate()
   const [params, setParams] = useSearchParams()
-  const drag = useRef(null)
-  const [openSub, setOpenSub] = useState(() => (['hairstyle'].includes(params.get('category')) ? params.get('category') : null)) // desktop sidebar accordion: the one parent (Hairstyle) that is expanded, or null
-  // Hairstyle has no dropdown any more: each of its sub-categories is a visible category of its own ("Hairstyle Man", ...). Old links (?category=hairstyle&sub=man) still work.
+  // Hairstyle has no dropdown: each sub-category is a collection of its own ("Hairstyle Man", ...). Old links (?category=hairstyle&sub=man) still work.
   const hairstyleChips = subsWithItems(hairstyleTab).flatMap((p) => p.subs.map((sc) => ({ id: sc.tabId, subId: sc.id, name: `${p.name} ${sc.name}` })))
-  const rawCategory = params.get('category') // null = All; 'trending' or a category slug
+  const rawCategory = params.get('category')
   const active = rawCategory === 'hairstyle' ? (hairstyleChips.find((c) => c.subId === params.get('sub')) || hairstyleChips[0])?.id ?? rawCategory : rawCategory
-  const fromHome = !!active && params.get('from') === 'home' // arrived through a Home category's "More" (phones show a back bar and only that category)
   const tabsWithItems = exploreTabs.filter((t) => !t.parent && categoryItems(t.id).length)
-  const chips = [{ id: 'trending', name: 'Trending' }, ...tabsWithItems.filter((t) => !isOriginalTab(t)).reverse(), ...tabsWithItems.filter(isOriginalTab), ...hairstyleChips] // a tab appears once its folder has images
+  const chips = [{ id: 'trending', name: 'Trending' }, ...tabsWithItems.filter((t) => !isOriginalTab(t)).reverse(), ...tabsWithItems.filter(isOriginalTab), ...hairstyleChips] // a collection appears once it has looks
   const chip = chips.find((c) => c.id === active) || chips[0]
-  const sub = chip.subs ? (chip.subs.find((s) => s.id === params.get('sub')) || chip.subs[0]) : null // Hairstyle: the selected sub-category (Baby / Men / Woman)
-  const setChip = (c) => setParams(c.id ? (c.subs ? { category: c.id, sub: c.subs[0].id } : { category: c.id }) : {}, { replace: false })
-  const setSub = (s) => setParams(fromHome ? { category: chip.id, sub: s.id, from: 'home' } : { category: chip.id, sub: s.id }, { replace: false })
-  // "All" and "Trending" come from the template folder (same source as Home > Trending Templates); category chips keep their own lists.
-  const list = chip.id === null ? exploreEverything : chip.id === 'trending' ? trendingGrid : sub ? categoryItems(sub.tabId) : categoryItems(chip.id)
-  const allLandscape = list.length > 0 && list.every((t) => t.landscape) // e.g. Top Carousel: every photo is a horizontal 16:9 picture
-  const pick = (t) => nav(generateUrl(t))
-  // switching category / sub-category always starts from the top (first template), not the previous scroll position
-  const viewKey = `${chip.id}|${sub?.id || ''}`
-  const firstView = useRef(true)
-  useEffect(() => { if (firstView.current) { firstView.current = false; return } window.scrollTo(0, 0) }, [viewKey])
-  const isTrending = chip.id === 'trending'
-  const thumbs = isTrending ? trendingSpotlight : folderTemplates.slice(0, 9)
-  const countOf = (c) => (c.subs ? c.subs.reduce((n, s) => n + categoryItems(s.tabId).length, 0) : c.id === null ? exploreEverything.length : c.id === 'trending' ? trendingGrid.length : categoryItems(c.id).length)
+  const q = (params.get('q') || '').trim()
+  const setChip = (c) => setParams({ category: c.id }, { replace: false })
+  const countOf = (c) => (c.id === 'trending' ? trendingGrid.length : categoryItems(c.id).length)
 
-  const card = (t) => (
-    <TemplateCard key={t.id} t={t} fav onSelect={pick}
-      ratio={t.landscape ? '16 / 9' : '9 / 16'}
-      fit="cover" /* every photo fills its card edge to edge (no dark bands): exact 9:16 photos are unchanged, 2:3 / 3:4 photos lose a little at the sides, nothing is stretched */
-      objectPos="center"
-      className={t.landscape && !allLandscape ? 'col-span-2' : ''} />
+  // everything searchable: every look of every collection (de-duplicated)
+  const everything = useMemo(() => {
+    const seen = new Set()
+    return [...exploreEverything, ...chips.flatMap((c) => (c.id === 'trending' ? [] : categoryItems(c.id)))].filter((t) => !seen.has(t.id) && seen.add(t.id))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const results = q ? everything.filter((t) => `${t.name} ${t.category}`.toLowerCase().includes(q.toLowerCase())) : null
+  const list = results || (chip.id === 'trending' ? trendingGrid : categoryItems(chip.id))
+
+  // Top Carousel: every card takes the shape of its own picture (as in the admin) and shows it whole; the real width / height is read once per picture
+  const isTop = chip.id === 'top-carousel' && !results
+  const [shapes, setShapes] = useState({})
+  useEffect(() => {
+    if (!isTop) return
+    list.forEach((t) => {
+      const im = new Image()
+      im.onload = () => im.naturalWidth && im.naturalHeight && setShapes((m) => (m[t.image] ? m : { ...m, [t.image]: `${im.naturalWidth} / ${im.naturalHeight}` }))
+      im.src = t.image
+    })
+  }, [isTop, list.length]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const searchBox = useRef(null)
+  const [draft, setDraft] = useState(q)
+  useEffect(() => { setDraft(q) }, [q])
+  useEffect(() => { if (params.get('focus') === 'search') searchBox.current?.focus() }, [params])
+  const submitSearch = (e) => { e.preventDefault(); const v = draft.trim(); setParams(v ? { q: v } : {}) }
+
+  const [open, setOpen] = useState(-1) // index in `list` of the look shown in the preview
+  const viewKey = `${chip.id}|${q}`
+  const first = useRef(true)
+  useEffect(() => { setOpen(-1); if (first.current) { first.current = false; return } window.scrollTo(0, 0) }, [viewKey])
+  const step = (d) => setOpen((i) => (list.length ? (i + d + list.length) % list.length : -1))
+
+  const card = (t, i) => (
+    <TemplateCard key={t.id} t={t} fav selected={open === i} action="Quick preview" onSelect={() => setOpen(i)}
+      ratio={isTop ? shapes[t.image] || '9 / 16' : '9 / 16'} fit={isTop ? 'contain' : 'cover'} />
   )
 
+  const fromHome = params.get('from') === 'home' // phones: opened from a Home category's "More"
+  const { signedIn, favorites, toggleFavorite, openLogin } = useStudio()
+  const mobileTitle = chip.id === 'trending' ? 'Trending Templates' : `${chip.name} Templates`
+
   return (
-    <div className={pageWrap}>
-      {/* phone only, reached from a Home category's "More": a back-to-Home bar with the category name (the page below already lists only that category) */}
-      {fromHome && (
-        <div className="-mt-2 mb-4 flex items-center gap-3 md:hidden">
-          <Link to="/" aria-label="Back to Home" className="grid size-9 shrink-0 place-items-center rounded-full bg-[#2B2B2B] text-white transition-colors hover:text-[#FF55AA]">
-            <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
-          </Link>
-          <h1 className="truncate text-xl font-bold tracking-tight text-white">{chip.name}{sub ? ` · ${sub.name}` : ''}</h1>
+    <>
+    {/* ---------- phone Explore, like the reference: eyebrow + title, underlined tabs, one titled 2-column grid ---------- */}
+    <div className="pb-32 text-[#FAFAFA] md:hidden">
+      {fromHome ? (
+        <div className="flex items-center gap-3 px-4 pb-3 pt-3">
+          <Link to="/" aria-label="Back to Home" className="grid size-9 shrink-0 place-items-center rounded-full bg-[#141011] text-white"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></Link>
+          <h1 className="truncate text-xl font-bold tracking-tight text-white">{chip.name}</h1>
         </div>
-      )}
-      <div className={fromHome ? 'max-md:hidden' : undefined}>
-      <PageHeader pill="Discover AI styles" a="Explore" b="Templates" sub="Find the perfect AI photo for start creating in seconds."
-        right={<div className="hidden shrink-0 border-l-2 border-[#FF55AA] pl-4"><div className="font-display text-[40px] leading-none text-white tabular-nums sm:text-[52px]">{pad(list.length)}</div><div className="mono mt-1">{chip.id === null ? 'frames on the sheet' : `frames in ${sub ? `${chip.name} · ${sub.name}` : chip.name}`}</div></div>} />
-
-      <div className="mt-8 sprockets" />
-      </div>
-
-      {/* Tablet / phone: horizontal roll selector (drag to scroll) */}
-      <div className="sticky top-0 z-30 -mx-4 border-b border-[#2B2B2B] bg-[#0A0809]/90 px-4 backdrop-blur-xl min-[375px]:-mx-5 min-[375px]:px-5 sm:-mx-6 sm:px-6 md:top-[96px] lg:hidden">
-        <div className={`cursor-grab select-none overflow-x-auto [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden ${fromHome ? 'max-md:hidden' : ''}`}
-          onPointerDown={(e) => { drag.current = { x: e.clientX, left: e.currentTarget.scrollLeft } }}
-          onPointerMove={(e) => { if (drag.current && e.buttons) e.currentTarget.scrollLeft = drag.current.left - (e.clientX - drag.current.x) }}
-          onPointerUp={() => { drag.current = null }} onPointerLeave={() => { drag.current = null }}>
-          <div role="tablist" className="flex w-max flex-nowrap items-end gap-1">
-            {chips.map((c) => {
-              const on = chip.id === c.id
-              return (
-                <button key={c.name} type="button" role="tab" aria-selected={on} onClick={() => setChip(c)}
-                  className={`relative flex h-12 shrink-0 cursor-pointer select-none items-center gap-2 px-3 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors focus-visible:text-white ${on ? 'font-bold text-white' : 'text-[#A0A0A0] hover:text-white'}`}>
-                  <span className="pointer-events-none">{c.name}</span>
-                  <span className="pointer-events-none hidden text-[10px] tabular-nums opacity-70">{countOf(c)}</span>
-                  <span className={`absolute inset-x-2 -bottom-px h-[3px] bg-white transition-opacity ${on ? 'opacity-100' : 'opacity-0'}`} />
-                </button>
-              )
-            })}
-          </div>
-        </div>
-        {chip.subs && (
-          <div role="tablist" aria-label={`${chip.name} subcategories`} className="flex gap-2 pb-2.5 pt-1">
-            {chip.subs.map((sc) => {
-              const son = sub?.id === sc.id
-              return (
-                <button key={sc.id} type="button" role="tab" aria-selected={son} onClick={() => setSub(sc)}
-                  className={`h-8 cursor-pointer rounded-full border px-4 font-mono text-[11px] uppercase tracking-[0.14em] outline-none transition-colors ${son ? 'border-white/25 bg-white/[0.08] font-bold text-white' : 'border-[#2B2B2B] text-[#A0A0A0] hover:text-white'}`}>{sc.name}</button>
-              )
-            })}
-          </div>
-        )}
-      </div>
-
-      <div className="mt-8 lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[270px_minmax(0,1fr)] xl:gap-14">
-        {/* Desktop: vertical "roll index", sticks while the sheet scrolls */}
-        <aside className="hidden lg:block">
-          <nav role="tablist" aria-label="Template categories" className="sticky top-[116px]">
-            <p className="mono mb-3">Rolls</p>
-            <ul className="border-t border-[#2B2B2B]">
-              {chips.map((c, i) => {
+      ) : (
+        <>
+          <header className="px-5 pt-7">
+            <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#FC48E7]"><span className="size-1.5 rounded-full bg-[#FC48E7]" />Discover AI styles</p>
+            <h1 className="mt-4 text-[38px] font-bold leading-[1.05] tracking-tight text-white">Explore <span className="gradient-text">Templates</span></h1>
+            <p className="mt-4 text-[17px] leading-relaxed text-[#B4B0C0]">Find the perfect AI photo for start creating in seconds.</p>
+          </header>
+          <div className="mt-7 border-y border-[#2C2529]">
+            <div role="tablist" aria-label="Collections" className="no-scrollbar flex overflow-x-auto px-3">
+              {chips.map((c) => {
                 const on = chip.id === c.id
                 return (
-                  <li key={c.name}>
-                    <button type="button" role="tab" aria-selected={on} aria-expanded={c.subs ? openSub === c.id : undefined}
-                      onClick={() => { if (!c.subs) return setChip(c); if (!on) { setChip(c); setOpenSub(c.id) } else setOpenSub((o) => (o === c.id ? null : c.id)) }}
-                      className={`group/r relative flex w-full cursor-pointer items-baseline gap-3 border-b border-[#2B2B2B] py-3 pl-3 pr-2 text-left outline-none transition-colors focus-visible:bg-white/5 ${on ? 'bg-white/[0.06]' : 'hover:bg-gradient-to-br hover:from-[#2B2B2B] hover:to-[#2B2B2B]'}`}>
-                      <span className={`absolute inset-y-0 left-0 w-[3px] bg-white/70 transition-opacity ${on ? 'opacity-100' : 'opacity-0 group-hover/r:opacity-40'}`} />
-                      <span className="mono w-6 shrink-0 !tracking-[0.1em]">{pad(i + 1)}</span>
-                      <span className={`font-display min-w-0 flex-1 truncate text-[16px] font-medium leading-none ${on ? 'text-white' : 'text-white'}`}>{c.name}</span>
-                      <span className="mono hidden tabular-nums">{countOf(c)}</span>
-                      {c.subs && (
-                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                          className={`size-4 shrink-0 self-center transition-transform duration-300 ease-out ${openSub === c.id ? 'rotate-180' : ''} ${on ? 'text-white' : 'text-[#A0A0A0] group-hover/r:text-white'}`}><path d="M6 9l6 6 6-6" /></svg>
-                      )}
-                    </button>
-                    {c.subs && (
-                      <div className={`grid border-[#2B2B2B] bg-[#2B2B2B]/50 transition-[grid-template-rows,border-color] duration-300 ease-out ${openSub === c.id ? 'grid-rows-[1fr] border-b' : 'grid-rows-[0fr] border-b-0'}`} aria-hidden={openSub !== c.id}>
-                        <ul aria-label={`${c.name} subcategories`} className="min-h-0 overflow-hidden">
-                          {c.subs.map((sc) => {
-                            const son = on && sub?.id === sc.id
-                            return (
-                              <li key={sc.id}>
-                                <button type="button" role="tab" aria-selected={son} tabIndex={openSub === c.id ? 0 : -1} onClick={() => setSub(sc)}
-                                  className={`w-full cursor-pointer py-2.5 pl-[3.25rem] pr-3 text-left outline-none transition-colors focus-visible:bg-white/5 ${son ? 'bg-white/[0.06]' : 'hover:bg-white/[0.04]'}`}>
-                                  <span className={`font-display text-[14px] font-medium leading-none ${son ? 'text-white' : 'text-[#A0A0A0] hover:text-white'}`}>{sc.name}</span>
-                                </button>
-                              </li>
-                            )
-                          })}
-                        </ul>
-                      </div>
-                    )}
-                  </li>
+                  <button key={c.id} type="button" role="tab" aria-selected={on} onClick={() => setChip(c)} className={`relative h-12 shrink-0 cursor-pointer whitespace-nowrap px-3 text-[11px] uppercase tracking-[0.14em] outline-none ${on ? 'font-bold text-white' : 'text-[#B4B0C0]'}`}>
+                    {c.name}
+                    <span className={`absolute inset-x-2 -bottom-px h-[3px] rounded-full bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)] ${on ? 'opacity-100' : 'opacity-0'}`} />
+                  </button>
                 )
               })}
-            </ul>
-          </nav>
-        </aside>
-
-        <div className="min-w-0">
-          {(chip.id === null || chip.id === 'trending') && (
-          <section className="overflow-hidden rounded-[18px] border border-[#2B2B2B] max-md:hidden bg-gradient-to-b from-white/[0.05] to-white/[0.015]">
-            <div className="sprockets" />
-            <div className="flex flex-col gap-6 p-5 sm:p-6 xl:flex-row xl:items-center xl:gap-8">
-              {/* compact left column: title, description, button */}
-              <div className="min-w-0 xl:w-[250px] xl:shrink-0">
-                <div className="eyebrow"><span>Spotlight roll</span></div>
-                <h2 className="mt-3 text-[32px] leading-[1.1] text-[#ffffff] sm:text-[38px] xl:text-[34px]">Trending <span className="grad-text">This Week</span></h2>
-                <p className="mt-3 text-base leading-relaxed text-[#A0A0A0]">Fresh portraits, popular looks and trending AI photo styles.</p>
-                {chip.id === null && <button type="button" onClick={() => { nav('/explore?category=trending'); window.scrollTo(0, 0) }} className="btn-grad mt-5 !py-3">View Trending&nbsp;<span className="arrow" aria-hidden="true">→</span></button>}
-              </div>
-              {/* one row of equal portrait cards on the right (3 x 2 on phones); full image, never cropped */}
-              <div className={`grid min-w-0 grid-cols-3 gap-2.5 sm:grid-cols-6 xl:flex-1 ${isTrending ? 'xl:grid-cols-7' : '2xl:grid-cols-7'}`}>
-                {thumbs.slice(0, 7).map((t, i) => (
-                  <button key={t.id} type="button" onClick={() => pick(t)} aria-label={t.name} className={`group relative aspect-[9/16] min-w-0 cursor-pointer overflow-hidden rounded-xl border border-[#2B2B2B] bg-[#0A0809] transition-all duration-300 hover:-translate-y-1 hover:border-white/40 ${i === 6 ? (isTrending ? 'hidden xl:block' : 'hidden 2xl:block') : ''}`}>
-                    <img src={t.image} alt={t.name} loading="lazy" className={`absolute inset-0 h-full w-full object-center ${isTrending ? 'object-cover' : 'object-contain'}`} />
-                  </button>
-                ))}
-              </div>
             </div>
-            <div className="sprockets" />
-          </section>
-          )}
-
-          <section id="all-templates" className={chip.id === null || chip.id === 'trending' ? 'md:mt-10' : ''}>
-            <div className="flex items-baseline gap-4">
-              <h2 className="shrink-0 text-[30px] leading-[1.1] text-[#ffffff] sm:text-[38px] lg:text-[42px]">{chip.id === null ? 'All Templates' : chip.id === 'trending' ? 'Trending Templates' : sub ? `${chip.name} · ${sub.name}` : chip.name}</h2>
-              <span className="h-px flex-1 bg-[#2B2B2B]" />
-              <span className="mono hidden shrink-0 tabular-nums">{pad(list.length)} frames</span>
+          </div>
+          <div className="mt-7 flex items-center gap-4 px-5"><h2 className="text-[27px] font-bold tracking-tight text-white">{mobileTitle}</h2><span className="h-px flex-1 bg-white/20" /></div>
+        </>
+      )}
+      <div className="mt-5 grid grid-cols-2 gap-3 px-5">
+        {list.map((t) => {
+          const liked = favorites.has(t.id)
+          return (
+            <div key={t.id} className="relative">
+              <Link to={generateUrl(t)} aria-label={t.name} className="relative block aspect-[9/16] overflow-hidden rounded-2xl border border-white/5 bg-[#141011]">
+                <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
+                <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <span className="absolute inset-x-2 bottom-2.5 truncate text-center text-[12px] font-medium text-white">{t.name}</span>
+              </Link>
+              <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-2 top-2 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-black/55 backdrop-blur-sm">
+                <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#FC48E7] text-[#FC48E7]' : 'fill-none text-white'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+              </button>
             </div>
-            {list.length ? (
-              <div className={`mt-6 grid gap-2 sm:gap-2.5 md:gap-3 ${allLandscape ? 'grid-cols-1 min-[480px]:grid-cols-2 xl:grid-cols-3' : 'grid-cols-2 min-[480px]:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'}`} style={{ alignItems: 'start' }}>
-                {/* each card's shape follows its own photo: horizontal photos get 16:9, portrait photos keep the tall 9:16 card */}
-                {list.map((t) => card(t))}
-              </div>
-            ) : (
-              <div className="mt-6 rounded-[18px] border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-6 py-16 text-center text-[#A0A0A0]">No templates in this style yet.</div>
-            )}
-          </section>
-        </div>
+          )
+        })}
       </div>
     </div>
+
+    <div className="mx-auto hidden w-full max-w-none px-5 pb-8 pt-8 text-[#FAFAFA] sm:px-8 sm:pt-10 md:block lg:px-10">
+      <div className="mb-7 flex flex-col gap-2">
+        <h1 className="gradient-text w-fit text-[48px] leading-none sm:text-[64px]">{q ? 'Search' : 'Looks'}</h1>
+        <p className="text-[15px] text-[#B4B0C0]">
+          {q
+            ? <>{list.length} {list.length === 1 ? 'look' : 'looks'} for “{q}”. <Link to="/explore" className="text-[#B653F6] underline underline-offset-4">Clear search</Link></>
+            : <>{list.length} {list.length === 1 ? 'look' : 'looks'} in {chip.name}. Pick one to see it large.</>}
+        </p>
+      </div>
+
+      <form onSubmit={submitSearch} role="search" className="mb-5 flex h-12 w-full max-w-[560px] items-center gap-3 rounded-full border border-[#2C2529] bg-[#141011] px-5 focus-within:border-[#B653F6]">
+        <svg className="size-[18px] shrink-0 text-[#B4B0C0]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+        <input ref={searchBox} value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Search looks" placeholder="Search looks, styles, keywords..." className="min-w-0 flex-1 bg-transparent text-[14px] text-[#FAFAFA] outline-none placeholder:text-[#B4B0C0]" />
+      </form>
+
+      <div role="tablist" aria-label="Collections" className="no-scrollbar -mx-5 mb-8 flex gap-2 overflow-x-auto px-5 sm:-mx-8 sm:px-8 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
+        {chips.map((c) => <Chip key={c.id} on={!q && chip.id === c.id} count={countOf(c)} onClick={() => setChip(c)}>{c.name}</Chip>)}
+      </div>
+
+      {list.length ? (
+        <div className={`grid gap-x-3 gap-y-6 sm:gap-x-4 ${isTop ? 'grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 items-start' : 'grid-cols-2 min-[480px]:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'}`}>
+          {list.map(card)}
+        </div>
+      ) : (
+        <div className="rounded-md border border-[#2C2529] bg-[#141011] px-6 py-16 text-center">
+          <p className="font-serif text-[30px]">{q ? 'No looks match that search' : 'No looks here yet'}</p>
+          <p className="mt-2 text-[14px] text-[#B4B0C0]">{q ? 'Try another word, or browse a collection.' : 'Check back soon, or try another collection.'}</p>
+          {q && <Link to="/explore" className="btn-dark mt-5 !px-5 !py-2.5 !text-[14px]">Browse all looks</Link>}
+        </div>
+      )}
+
+      {open >= 0 && <Preview list={list} index={open} onClose={() => setOpen(-1)} onStep={step} onUse={(t) => nav(generateUrl(t))} />}
+    </div>
+    </>
   )
 }

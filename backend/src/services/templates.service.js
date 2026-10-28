@@ -11,6 +11,7 @@ const ID = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/
 
 const text = (v) => (typeof v === 'string' ? v.trim() : '')
 const optText = (v, max) => { const s = text(v); return s ? s.slice(0, max) : null }
+const promptText = (v) => (typeof v === 'string' && v.trim() ? v : null) // prompts are stored exactly as entered: no length limit, no trimming, no rewriting
 const bad = (message) => new AppError(400, 'INVALID_TEMPLATE', message)
 
 const templateOut = (r) => ({
@@ -98,8 +99,8 @@ function templateValues(b, category) {
   let ok = /^\/(?!\/)\S+$/.test(previewUrl) // a site-relative path (/images/...) served by the frontend
   try { ok ||= /^https?:$/.test(new URL(previewUrl).protocol) } catch { /* not a URL */ }
   if (!ok) throw bad(`Template "${id}": "preview_url" must be an http(s) image URL (or a site path starting with "/").`)
-  const title = optText(b.style_title_prompt, 500)
-  const desc = optText(b.style_desc_prompt, 1000)
+  const title = promptText(b.style_title_prompt)
+  const desc = promptText(b.style_desc_prompt)
   const apiValue = optText(b.api_value, 100)
   if (category.flow === 'cartoon' && !CARTOON_TYPES.includes(apiValue || id)) throw bad(`Template "${id}": for a cartoon category the id (or "api_value") must be a supported Cartoon Yourself style.`)
   if (category.flow === 'hairstyle' && !apiValue) throw bad(`Template "${id}": "api_value" (the Hairstyle Changer hair_style) is required for the hairstyle flow.`)

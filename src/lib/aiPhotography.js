@@ -319,7 +319,7 @@ export async function buyCoins(itemId, { name = '', email = '' } = {}) {
   const subscription = order.kind === 'subscription' // an auto-renewing plan: Razorpay's window gets the subscription id (the amount belongs to the plan)
   return new Promise((resolve, reject) => {
     const rzp = new window.Razorpay({
-      key: order.keyId, name: order.name, description: order.description, prefill: { name, email }, theme: { color: '#FF55AA' },
+      key: order.keyId, name: order.name, description: order.description, prefill: { name, email }, theme: { color: '#B653F6' },
       image: `${window.location.origin}/images/features/logo-256.png`, // the logo in Razorpay's payment window (it must be a small picture on a public address)
       ...(subscription ? { subscription_id: order.subscriptionId } : { amount: order.amount, currency: order.currency, order_id: order.orderId }),
       handler: (r) => post('/api/wallet/verify-payment', subscription

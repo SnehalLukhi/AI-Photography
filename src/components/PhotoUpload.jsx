@@ -28,7 +28,7 @@ export default function PhotoUpload({ photo, onChange }) {
           <div>
             <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full border border-accent bg-accent/10 text-2xl">⇪</div>
             <p className="font-medium">Tap to upload or drag a photo</p>
-            <p className="mt-1 text-sm text-[#A0A0A0]">JPG, PNG up to 20MB</p>
+            <p className="mt-1 text-sm text-[#B4B0C0]">JPG, PNG up to 20MB</p>
           </div>
         )}
       </div>
@@ -39,7 +39,7 @@ export default function PhotoUpload({ photo, onChange }) {
           <button className="btn-dark !rounded-xl !px-4 !py-2 text-sm" onClick={() => onChange(null)}>Remove</button>
         </div>
       )}
-      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-sm text-[#D98282]">{error}</p>}
     </div>
   )
 }

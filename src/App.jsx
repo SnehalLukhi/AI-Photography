@@ -7,10 +7,9 @@ import Explore from './pages/Explore.jsx'
 import Generate from './pages/Generate.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Creations from './pages/Creations.jsx'
-import Pricing from './pages/Pricing.jsx'
-import Coins from './pages/Coins.jsx'
+import Wallet from './pages/Wallet.jsx'
 import PaymentSuccess from './pages/PaymentSuccess.jsx'
-import { Help, Contact, Feedback, Legal, Profile, Transactions } from './pages/Support.jsx'
+import { Help, Contact, Feedback, Legal, Profile } from './pages/Support.jsx'
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import WelcomePopup from './components/WelcomePopup.jsx'
@@ -21,37 +20,39 @@ import { useStudio } from './context/StudioContext.jsx'
 export default function App() {
   const { pathname } = useLocation()
   const { signedIn, loginOpen, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer, offerPopup, closeOfferPopup } = useStudio()
-  const generating = pathname === '/generate' // fixed-height page: no footer, no mobile chrome
+  const generating = pathname === '/generate' // the Create workspace: collapsed rail, no footer, no phone chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
-    <div className="flex min-h-screen w-full flex-col overflow-x-clip bg-[#0A0809] selection:bg-[#FF55AA]/30">
+    <div className="min-h-screen w-full overflow-x-clip bg-[#0A0809] selection:bg-[#B653F6]/30">
       <Header generating={generating} />
-      <main className="flex-1 ">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/generate" element={<Generate />} />
-          <Route path="/studio" element={<Navigate to="/explore" replace />} />
-          <Route path="/result" element={<Navigate to="/creations" replace />} />
-          <Route path="/diy/*" element={<Navigate to="/explore" replace />} />
-          <Route path="/creations" element={<Creations />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/coins" element={<Coins />} />
-          <Route path="/payment-success" element={<PaymentSuccess />} />
-          <Route path="/transactions" element={<Transactions />} />
-          <Route path="/profile" element={<Profile />} />
+      <div className="flex min-h-screen min-w-0 flex-col">
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/generate" element={<Generate />} />
+            <Route path="/studio" element={<Navigate to="/explore" replace />} />
+            <Route path="/result" element={<Navigate to="/creations" replace />} />
+            <Route path="/diy/*" element={<Navigate to="/explore" replace />} />
+            <Route path="/creations" element={<Creations />} />
+            <Route path="/pricing" element={<Wallet tab="plans" />} />
+            <Route path="/coins" element={<Wallet tab="packs" />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/transactions" element={<Wallet tab="history" />} />
+            <Route path="/profile" element={<Profile />} />
 
-          <Route path="/help" element={<Help />} />
-          <Route path="/contact-us" element={<Contact />} />
-          <Route path="/contact-support" element={<Contact />} />
-          <Route path="/feedback" element={<Feedback />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-conditions" element={<Legal kind="terms" />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      {!generating && <Footer />}
-      {!generating && pathname !== '/' && <div className="h-24 md:hidden" aria-hidden="true" />} {/* phones: room for the fixed bottom nav now that the footer is hidden */}
+            <Route path="/help" element={<Help />} />
+            <Route path="/contact-us" element={<Contact />} />
+            <Route path="/contact-support" element={<Contact />} />
+            <Route path="/feedback" element={<Feedback />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-conditions" element={<Legal kind="terms" />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        {!generating && <div className="max-md:hidden"><Footer /></div>}
+        {!generating && <div className="h-20 md:hidden" aria-hidden="true" />} {/* phones: room for the fixed bottom bar */}
+      </div>
       {loginOpen && !signedIn && <LoginModal />}
       {signedIn && welcomeOffer && <WelcomePopup onClose={closeWelcomeOffer} />}
       {signedIn && premiumOffer && !welcomeOffer && <PremiumPopup onClose={closePremiumOffer} />}

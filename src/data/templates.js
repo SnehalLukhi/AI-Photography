@@ -87,7 +87,7 @@ const apiCards = (tab) => {
 }
 // Explore sidebar: Trending stays first, then every category added after these original ones - newest (the last one in `exploreTabs`) first - then the originals in
 // their usual order. To add a category: append it to `exploreTabs`; it is not listed here, so it takes position 2 automatically.
-const ORIGINAL_TAB_IDS = ['80s-and-90s', 'cartoon', 'linkedin-headshot', 'old-money', 'top-carousel', 'beard', 'hairstyle-baby', 'hairstyle-man', 'hairstyle-woman']
+const ORIGINAL_TAB_IDS = ['80s-and-90s', '80s-90s', 'cartoon', 'linkedin-headshot', 'old-money', 'top-carousel', 'beard', 'hairstyle-baby', 'hairstyle-man', 'hairstyle-woman']
 export const isOriginalTab = (t) => ORIGINAL_TAB_IDS.includes(t.id)
 /** The "Hairstyle" sidebar entry: a parent whose subs are the hairstyle-* tabs above ({ id: URL ?sub=, tabId: key for categoryItems }). */
 const parentTab = (id, name) => ({ id, name, subs: exploreTabs.filter((t) => t.parent === id).map((t) => ({ id: t.id.replace(`${id}-`, ''), name: t.name, tabId: t.id })) })

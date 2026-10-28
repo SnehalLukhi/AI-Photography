@@ -4,10 +4,10 @@ export default function PageHeader({ pill, a, b, sub, right }) {
     <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
         <div className="eyebrow"><span>{pill}</span></div>
-        <h1 className="mt-3 text-[36px] leading-[1.1] text-[#ffffff] min-[420px]:text-[42px] sm:text-[52px] lg:text-[60px]">
+        <h1 className="mt-3 text-[36px] leading-[1.1] text-[#FAFAFA] min-[420px]:text-[42px] sm:text-[52px] lg:text-[60px]">
           <span>{a}</span>{' '}<span className="grad-text">{b}</span>
         </h1>
-        {sub && <p className="mt-5 max-w-[640px] text-base leading-relaxed text-[#A0A0A0] sm:text-lg lg:text-xl">{sub}</p>}
+        {sub && <p className="mt-5 max-w-[640px] text-base leading-relaxed text-[#B4B0C0] sm:text-lg lg:text-xl">{sub}</p>}
       </div>
       {right}
     </div>

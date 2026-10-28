@@ -1,30 +1,10 @@
 import { saveOriginal } from '../lib/localPhotos.js'
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
-import { findAsset, siblingsOf, generateUrl, plans } from '../data/templates.js'
-
-// Beard / LinkedIn Headshot / Hairstyle photos fill the whole card (no empty bands above and below); every other category keeps showing the full image.
-// Display-only coin pill beside the Generate button: coins needed for one image, read from the plans' "Cost per image" (same value the Pricing page shows). Not the user's balance; nothing is deducted here.
-const IMAGE_COST = parseInt(plans[0].details.find(([label]) => label === 'Cost per image')?.[1], 10)
-const CoinPill = ({ className = '', cost = IMAGE_COST }) => (
-  <span className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.06] px-2.5 text-[12px] font-semibold text-white ${className}`}>
-    <img src={brandImages.coin} alt="" width="20" height="20" className="size-5 shrink-0 object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.45)]" />{cost} Coins
-  </span>
-)
-const fitOf = (t) => (t.categoryId === 'beard' || t.categoryId === 'linkedin-headshot' || /^hairstyle-/.test(t.categoryId) ? 'object-cover' : 'object-contain')
-import { SparkIcon } from './../components/Header.jsx'
-import { brandImages } from '../data/images.js'
+import { findAsset } from '../data/templates.js'
+import PImage from '../components/PImage.jsx'
 import { useStudio } from '../context/StudioContext.jsx'
-import { promptFor, inspectUpload, generatePhoto, getPlans } from '../lib/aiPhotography.js'
-
-const ICON_PATHS = {
-  Female: 'M12 12a4 4 0 100-8 4 4 0 000 8zM6 21c0-3.5 2.5-6 6-6s6 2.500 6 6M7.500 7C8 4.500 10 3 12 3s4 1.500 4.500 4',
-  Male: 'M12 12a4 4 0 100-8 4 4 0 000 8zM5 21c0-4 3-6.500 7-6.500s7 2.500 7 6.500',
-  Photo: 'M12 12a4 4 0 100-8 4 4 0 000 8zM5 21c0-4 3-6.500 7-6.500s7 2.500 7 6.500',
-}
-const SlotIcon = ({ kind, className }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d={ICON_PATHS[kind] || ICON_PATHS.Photo} /></svg>
-)
+import { promptFor, inspectUpload, generatePhoto, getPlans, downloadGeneration } from '../lib/aiPhotography.js'
 
 const BAD_FILE = 'The file is empty or corrupted. Please upload a valid image.'
 
@@ -41,7 +21,7 @@ async function readPhoto(file) {
   return { url, name: file.name, file }
 }
 
-/** 80's & 90's, Old Money, LinkedIn Headshot, Top Carousel (AI Photography API) and Cartoon (Cartoon Yourself API) templates: checks the real image format (JPG / PNG / WebP) and the 10 MB limit before accepting the photo. */
+/** Looks backed by the AI services: checks the real image format (JPG / PNG / WebP) and the size limit before accepting the photo. */
 async function readRealPhoto(file, kind) {
   const { file: checked, error } = await inspectUpload(file, kind)
   if (error) throw new Error(error)
@@ -50,37 +30,71 @@ async function readRealPhoto(file, kind) {
   return { url, name: checked.name, file: checked }
 }
 
-function Slot({ kind, photo, onPick, onClear, error, sheet }) {
+const kb = (n) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`)
+const Svg = ({ d, className = 'size-4' }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+
+/** One photo slot: a drop zone (drag a file, or browse / use the camera), then the chosen photo with Replace / Remove. */
+function Slot({ kind, photo, onPick, onClear, error }) {
   const input = useRef()
+  const cam = useRef()
   const [drag, setDrag] = useState(false)
   const choose = (f) => f && onPick(f)
   return (
-    <div className={sheet ? 'relative h-[132px] w-full max-[380px]:h-[116px]' : 'relative min-h-0 w-full flex-1'}>
+    <div className="relative aspect-[9/16] w-full">
       <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
+      <input ref={cam} type="file" hidden accept="image/*" capture="user" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
       {photo ? (
-        <div className="absolute inset-0 overflow-hidden rounded-[10px] border border-white/15 bg-[#0A0809] sm:rounded-xl">
-          <img src={photo.url} alt={`${kind} upload`} className="size-full object-cover" />
-          <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-8 cursor-pointer place-items-center rounded-full bg-[#2B2B2B]/90 text-white backdrop-blur transition hover:bg-[#FF55AA]">✕</button>
-          <button type="button" onClick={() => input.current.click()} className="absolute bottom-3 right-3 cursor-pointer rounded-full bg-[#2B2B2B]/80 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur transition hover:bg-[#2B2B2B]">Change Photo</button>
+        <div className="absolute inset-0 overflow-hidden rounded-md border border-[#2C2529] bg-[#0A0809]">
+          <img src={photo.url} alt={`Your ${kind === 'Photo' ? 'photo' : kind}`} className="size-full object-cover" />
+          <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-9 cursor-pointer place-items-center rounded-md bg-[#0A0809]/85 text-[#FAFAFA] backdrop-blur transition-colors hover:bg-[#0A0809]"><Svg d="M6 6l12 12M18 6L6 18" /></button>
+          <button type="button" onClick={() => input.current.click()} className="absolute bottom-2.5 right-2.5 cursor-pointer rounded-md bg-[#0A0809]/85 px-3 py-2 text-[13px] font-medium text-[#FAFAFA] backdrop-blur transition-colors hover:bg-[#0A0809]">Replace</button>
         </div>
       ) : (
-        <div role="button" tabIndex={0} onClick={() => input.current.click()} onKeyDown={(e) => e.key === 'Enter' && input.current.click()}
+        <div role="button" tabIndex={0} onClick={() => input.current.click()} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && input.current.click()}
           onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={(e) => { e.preventDefault(); setDrag(false); choose(e.dataTransfer.files[0]) }}
-          className={`absolute inset-0 flex min-h-[130px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[10px] border border-dashed bg-[#0A0809] transition-colors sm:min-h-0 sm:rounded-xl ${drag ? 'border-white/50' : 'border-white/20 hover:border-white/35'}`}>
-          <div className="flex flex-col items-center justify-center gap-1.5 px-1.5 py-3 text-center sm:gap-2.5 sm:px-2 sm:py-6">
-            <span className="inline-flex size-[52px] items-center justify-center rounded-full bg-white/10 sm:size-[68px]"><SlotIcon kind={kind} className="h-8 w-[26px] text-white sm:h-9 sm:w-[29px]" /></span>
-            <div>
-              <p className="text-[12px] font-medium text-white sm:text-[16px]">{kind === 'Photo' ? 'Add Photo' : `Add ${kind}`}</p>
-              <p className="mt-0.5 text-[9px] text-[#A0A0A0] sm:mt-1 sm:text-[12px]">Supports JPG, PNG, HEIC</p>
-            </div>
-            <button type="button" onClick={(e) => { e.stopPropagation(); input.current.click() }} className="hidden h-7 cursor-pointer items-center justify-center rounded-full border border-[#2B2B2B] bg-gradient-to-br from-[#2B2B2B]/90 to-[#2B2B2B]/90 px-3 text-[10px] font-semibold text-white backdrop-blur-sm transition-colors hover:border-[#FF55AA]/60 hover:bg-gradient-to-br hover:from-[#2B2B2B] hover:to-[#2B2B2B] sm:inline-flex sm:h-9 sm:px-5 sm:text-[12px]">Browse Files</button>
-          </div>
+          className={`absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-4 max-sm:gap-2.5 rounded-md border-[1.5px] border-dashed px-2 sm:px-4 text-center transition-colors ${drag ? 'border-[#B653F6] bg-[#1D181B]' : 'border-[#2C2529] bg-[#0A0809] hover:border-[#B4B0C0] hover:bg-[#120E10]'}`}>
+          <span className="grid size-16 place-items-center rounded-full max-sm:size-10 border border-[#2C2529] bg-[#141011] text-[#B653F6]"><Svg d="M12 16V5M7 10l5-5 5 5M4 19h16" className="size-7" /></span>
+          <span className="flex flex-col gap-1"><span className="text-[17px] font-semibold text-[#FAFAFA] max-sm:text-[14px]">{kind === 'Photo' ? 'Drop your photo here' : `Add ${kind}`}</span><span className="text-[13px] text-[#B4B0C0] max-sm:hidden">or choose one from your device</span></span>
+          <span className="flex w-full flex-wrap justify-center gap-2 max-sm:flex-col max-sm:px-1">
+            <button type="button" onClick={(e) => { e.stopPropagation(); input.current.click() }} className="btn-grad !px-5 !py-2.5 !text-[14px] max-sm:!w-full max-sm:!px-2 max-sm:!py-2 max-sm:!text-[13px] max-sm:!whitespace-nowrap">Browse files</button>
+            <button type="button" onClick={(e) => { e.stopPropagation(); cam.current.click() }} className="btn-dark hidden !px-4 !py-2.5 !text-[14px] max-sm:!w-full max-sm:!px-2 max-sm:!py-2 max-sm:!text-[13px] [@media(pointer:coarse)]:inline-flex">Camera</button>
+          </span>
+          <span className="font-plexmono text-[10px] uppercase tracking-[0.12em] text-[#B4B0C0] max-sm:hidden">JPG · PNG · HEIC</span>
         </div>
       )}
-      {error && <p role="alert" className="absolute inset-x-2 bottom-2 z-10 rounded-xl bg-[#0A0809]/70 px-2 py-1 text-center text-[11px] text-red-300">{error}</p>}
+      {error && <p role="alert" className="absolute inset-x-2 bottom-2 z-10 rounded border-l-[3px] border-[#D98282] bg-[#241518] px-2.5 py-2 text-[12px] leading-snug text-[#FAFAFA]">{error}</p>}
     </div>
   )
 }
+
+/** Before / after: the original on the left half, the result on the right, one range input drags the divider (mouse, touch and keyboard). */
+function Compare({ before, after, alt }) {
+  const [pos, setPos] = useState(50)
+  return (
+    <div className="relative mx-auto aspect-[3/3.7] w-full max-w-[640px] touch-none select-none overflow-hidden rounded-md border border-[#2C2529] bg-[#141011]">
+      <img src={after} alt={alt} className="absolute inset-0 size-full object-cover" draggable="false" />
+      {before && <img src={before} alt="Your original photo" className="absolute inset-0 size-full object-cover" draggable="false" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} />}
+      {before && (
+        <>
+          <div className="pointer-events-none absolute inset-y-0 w-0.5 -translate-x-1/2 bg-[#FAFAFA]" style={{ left: `${pos}%` }} />
+          <div className="pointer-events-none absolute top-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#FAFAFA] text-[#0A0809]" style={{ left: `${pos}%` }}><Svg d="M9 7l-5 5 5 5M15 7l5 5-5 5" className="size-[22px]" /></div>
+          <span className="absolute left-3.5 top-3.5 rounded bg-[#0A0809]/85 px-2.5 py-1.5 font-plexmono text-[11px] tracking-[0.1em]">ORIGINAL</span>
+          <span className="absolute right-3.5 top-3.5 rounded bg-[#0A0809]/85 px-2.5 py-1.5 font-plexmono text-[11px] tracking-[0.1em]">RESULT</span>
+          <input type="range" min="0" max="100" value={pos} onChange={(e) => setPos(Number(e.target.value))} aria-label="Compare your original with the result" className="absolute inset-0 size-full cursor-ew-resize opacity-0" />
+        </>
+      )}
+    </div>
+  )
+}
+
+const Step = ({ n, state, title, sub }) => (
+  <li className={`flex items-center gap-3.5 px-4 py-3.5 sm:px-5 ${state === 'now' ? 'bg-[#1D181B]' : ''}`}>
+    <span className={`grid size-7 shrink-0 place-items-center rounded-full font-plexmono text-[13px] ${state === 'done' ? 'bg-[#B653F6] text-white' : state === 'now' ? 'border-2 border-[#B653F6] text-[#B653F6]' : 'border border-[#2C2529] text-[#B4B0C0]'}`}>
+      {state === 'done' ? <Svg d="M5 12l5 5 9-10" className="size-4" /> : n}
+    </span>
+    <span className="min-w-0"><span className="block text-[15px] font-semibold leading-tight">{title}</span><span className="block truncate text-[13px] text-[#B4B0C0]">{sub}</span></span>
+  </li>
+)
 
 function Generator({ asset }) {
   const nav = useNavigate()
@@ -90,23 +104,21 @@ function Generator({ asset }) {
   const slots = asset.slots
   const [photos, setPhotos] = useState(() => slots.map(() => null))
   const [errors, setErrors] = useState(() => slots.map(() => ''))
-  const [sheet, setSheet] = useState(false)
   const [phase, setPhase] = useState('idle') // idle | loading | done | error
   const [result, setResult] = useState('') // real generated image URL (templates with a JSON catalogue only)
   const [resultOriginal, setResultOriginal] = useState('') // the stored copy of the uploaded photo (the local preview is used first)
+  const [resultId, setResultId] = useState('') // the stored generation (for the download)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
   const [apiError, setApiError] = useState('')
   const [needCoins, setNeedCoins] = useState(false) // the last failure was 'not enough coins'
   const timer = useRef()
   const abort = useRef()
   const info = promptFor(asset)
-  const real = !!info // templates with a JSON catalogue use the AILabTools API (AI Photography, or Cartoon Yourself for Cartoon); every other template keeps the demo flow
-  const stripRef = useRef()
+  const real = !!info // templates backed by an AI service use the AILabTools API; every other template keeps the demo flow
   useEffect(() => () => { clearTimeout(timer.current); abort.current?.abort() }, [])
-  useEffect(() => { stripRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ inline: 'center', block: 'nearest' }) }, [asset.id])
 
   const multi = slots.length > 1
-  const camRef = useRef(), galRef = useRef(), target = useRef(null) // mobile upload page: hidden camera / gallery inputs and the slot they fill
-  const nextSlot = () => Math.max(0, photos.findIndex((x) => !x))
   const ready = photos.every(Boolean)
   const pick = (i) => async (file) => {
     try {
@@ -122,7 +134,7 @@ function Generator({ asset }) {
     // dev-only trace: which template was selected and exactly which JSON entry / values go out (visible in the browser console, never in production)
     if (import.meta.env.DEV) console.info('[generate]', { template: asset.name, templateId: asset.assetId, category: asset.categoryId, api: prompt.cartoonType ? 'cartoon-yourself' : 'ai-photography', jsonId: prompt.id, jsonName: prompt.name, type: prompt.cartoonType, style_title: prompt.title, style_desc: prompt.desc })
     if (coins < cost) { setApiError(`You need ${cost} coins to generate, and you have ${coins}. Get more coins to continue.`); setNeedCoins(true); setPhase('error'); return }
-    setApiError(''); setNeedCoins(false); setResult(''); setPhase('loading')
+    setApiError(''); setNeedCoins(false); setResult(''); setSaveError(''); setPhase('loading')
     abort.current?.abort()
     const ctrl = new AbortController(); abort.current = ctrl
     try {
@@ -130,7 +142,7 @@ function Generator({ asset }) {
       saveOriginal(generationId, file) // the original photo stays in this browser (the server keeps only the AI image)
       addCreation({ type: asset.type, name: asset.name, image: url, original, generationId })
       refreshUser() // new coin balance
-      setResult(url); setResultOriginal(original); setPhase('done')
+      setResult(url); setResultOriginal(original); setResultId(generationId || ''); setPhase('done')
     } catch (e) {
       if (e.name === 'AbortError') return
       if (e.status === 401) { signOut(); openLogin(); return } // login expired
@@ -142,173 +154,140 @@ function Generator({ asset }) {
     if (!ready) return
     if (!signedIn) { openLogin(); return }
     const prompt = promptFor(asset)
-    if (prompt?.error) { setApiError(prompt.error); setPhase('error'); return } // category with JSON data but no entry for this template: stop, never fall back to the demo flow
+    if (prompt?.error) { setApiError(prompt.error); setPhase('error'); return } // a look with no usable data: stop, never fall back to the demo flow
     if (prompt) { generateReal(prompt); return }
     setPhase('loading')
     timer.current = setTimeout(() => { // demo only - no real generation, so nothing is added to My Creations
       setPhase('done')
     }, 2500)
   }
-  const ctaLabel = signedIn ? 'Generate' : 'Continue to Generate'
+  const download = async () => {
+    setSaving(true); setSaveError('')
+    try { await downloadGeneration(resultId) } catch (e) { setSaveError(e.message || 'Could not download the image. Please try again.') }
+    setSaving(false)
+  }
+  const again = () => { setPhotos(slots.map(() => null)); setErrors(slots.map(() => '')); setPhase('idle') }
+  const ctaLabel = signedIn ? `Generate${real ? ` · ${cost} coins` : ''}` : 'Continue to generate'
+  const collectionLink = /^hairstyle-/.test(asset.categoryId) ? `/explore?category=${asset.categoryId}` : `/explore?category=${asset.categoryId}`
+  const stepState = (n) => (n === 1 ? 'done' : n === 2 ? (ready ? 'done' : 'now') : ready ? 'now' : 'todo')
 
-  // Card width shared by the template card and each upload slot: min(half the row, height-limited 9:16)
-  const W = 'min(calc(50% - 0.6rem), calc((100dvh - 12rem) * 9 / 16))'
-
-  return (
-    <>
-      {/* ---------- Mobile: "Upload Photo" page (template card, big upload area, Camera / Gallery, Generate) ---------- */}
-      <div className="fixed inset-0 z-[60] flex h-dvh flex-col overflow-y-auto overscroll-contain bg-[#0A0809] sm:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        <div className="relative flex shrink-0 items-center justify-center px-4 pb-4 pt-6">
-          <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-4 flex size-10 cursor-pointer items-center justify-center rounded-full bg-[#2B2B2B] active:scale-90"><svg className="size-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
-          <h1 className="text-[18px] font-semibold text-white">Upload {multi ? 'Photos' : 'Photo'}</h1>
-        </div>
-        <div className="flex min-h-0 flex-1 flex-col gap-5 px-4 pb-6">
-          {/* selected template */}
-          <div className="flex shrink-0 items-center gap-3.5 rounded-[22px] border border-white/[0.08] bg-[#121012] p-2.5 pr-3.5">
-            <img src={asset.image} alt={asset.name} className="h-[68px] w-[52px] shrink-0 rounded-xl object-cover object-top" />
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#A0A0A0]">Template</p>
-              <p className="truncate text-[17px] font-semibold text-white">{asset.name}</p>
-              <p className="truncate text-[13px] text-[#A0A0A0]">{asset.category}</p>
+  // ---------- result ----------
+  if (phase === 'done') {
+    const after = real ? result : asset.image
+    const before = photos[0]?.url || resultOriginal
+    return (
+      <div className="mx-auto w-full max-w-none px-5 pb-10 pt-6 text-[#FAFAFA] sm:px-8 lg:px-10">
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-14">
+          <section aria-label="Before and after" className="flex flex-col gap-3">
+            <Compare before={before} after={after} alt={`${asset.name} result`} />
+            {before && <p className="mx-auto text-[13px] text-[#B4B0C0]">Drag the handle to compare.</p>}
+          </section>
+          <aside aria-label="Your result" className="flex flex-col gap-6 lg:pt-2">
+            <div role="status" className="flex items-center gap-2.5 rounded border-l-[3px] border-[#B653F6] bg-[#1A1520] px-3.5 py-3 text-[14px]"><Svg d="M5 12l5 5 9-10" className="size-[18px] text-[#B653F6]" />{real ? 'Saved to My Creations' : 'Demo preview · nothing was saved or charged'}</div>
+            <div className="flex flex-col gap-2.5">
+              <h1 className="text-[52px] leading-[0.98] sm:text-[60px]">Here it <span className="grad-text">is.</span></h1>
+              <p className="text-[16px] leading-relaxed text-[#B4B0C0]">Your photo in the {asset.name} look.</p>
             </div>
-            <Link to={/^hairstyle-/.test(asset.categoryId) ? `/explore?category=hairstyle&sub=${asset.categoryId.replace('hairstyle-', '')}` : `/explore?category=${asset.categoryId}`} replace className="shrink-0 rounded-full bg-[#2B2B2B] px-4 py-2.5 text-[13px] font-semibold text-white active:scale-95">Change</Link>
-          </div>
-          {/* upload area(s): shows the chosen photo as is */}
-          <div className={`grid min-h-[280px] flex-1 gap-3 ${multi ? 'grid-cols-2' : 'grid-cols-1'}`}>
-            {slots.map((k, i) => (
-              <div key={k} className="relative min-h-[220px]">
-                {photos[i] ? (
-                  <div className="absolute inset-0 overflow-hidden rounded-[28px] border border-white/15 bg-[#121012]">
-                    <img src={photos[i].url} alt={`Your ${k} upload`} className="size-full object-contain" />
-                    <button type="button" aria-label="Remove photo" onClick={clear(i)} className="absolute right-3 top-3 grid size-9 cursor-pointer place-items-center rounded-full bg-[#2B2B2B]/90 text-white backdrop-blur">✕</button>
-                    <button type="button" onClick={() => { target.current = i; galRef.current.click() }} className="absolute bottom-3 right-3 cursor-pointer rounded-full bg-[#2B2B2B]/85 px-3.5 py-2 text-xs font-semibold text-white backdrop-blur">Change Photo</button>
-                  </div>
-                ) : (
-                  <button type="button" onClick={() => { target.current = i; galRef.current.click() }} className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-[28px] border-[1.5px] border-dashed border-white/20 bg-[#0A0809] px-4 text-center">
-                    <span className="grid size-[68px] place-items-center rounded-full bg-[#2B2B2B] text-white"><svg className="size-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h5L15 8h1M4 8v11h14v-4M4 8M18 4v4M16 6h4M11 17a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" /></svg></span>
-                    <span><span className="block text-[18px] font-semibold text-white">{multi ? `Add ${k === 'Photo' ? `photo ${i + 1}` : k}` : 'Add your photo'}</span><span className="mt-1 block text-[13px] text-[#A0A0A0]">Use a clear, front-facing selfie</span></span>
-                  </button>
-                )}
-                {errors[i] && <p role="alert" className="absolute inset-x-3 bottom-3 z-10 rounded-xl bg-[#0A0809]/80 px-2 py-1 text-center text-[11px] text-red-300">{errors[i]}</p>}
-              </div>
-            ))}
-          </div>
-          <input ref={camRef} type="file" hidden accept="image/*" capture="user" onChange={(e) => { const f = e.target.files[0]; e.target.value = ''; if (f) pick(nextSlot())(f) }} />
-          <input ref={galRef} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { const f = e.target.files[0]; e.target.value = ''; if (f) pick(target.current ?? nextSlot())(f); target.current = null }} />
-          <div className="grid shrink-0 grid-cols-2 gap-3">
-            {[['Camera', 'Take a selfie', () => camRef.current.click(), 'M4 8h3l1.5-2h7L17 8h3v11H4zM12 17a3.5 3.5 0 100-7 3.5 3.5 0 000 7z'], ['Gallery', 'Choose a photo', () => { target.current = null; galRef.current.click() }, 'M7 4h13v13H7zM4 7v13h13M10 14l3-3 3 3 2-2 2 2M11 8h.01']].map(([t, sub, fn, d]) => (
-              <button key={t} type="button" onClick={fn} className="flex cursor-pointer items-center gap-3 rounded-[20px] border border-white/[0.08] bg-[#121012] p-2.5 text-left active:scale-[0.98]">
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white text-[#0A0809]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
-                <span className="min-w-0"><span className="block text-[15px] font-semibold text-white">{t}</span><span className="block truncate text-[12px] text-[#A0A0A0]">{sub}</span></span>
-              </button>
-            ))}
-          </div>
-          <div className="mt-1 flex shrink-0 items-center gap-2">
-            <button type="button" disabled={!ready} onClick={next} className="flex h-[54px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-full text-[16px] font-bold text-white transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#1C1A1C] disabled:text-white/35 disabled:shadow-none" style={ready ? { background: 'linear-gradient(90deg, #FF88C7 0%, #FF55AA 100%)' } : undefined}>
-              <SparkIcon className="size-5" />{ctaLabel}
-            </button>
-            <CoinPill cost={cost} className="h-[54px] shrink-0 !border-white/15 !bg-white/[0.06] !bg-none !shadow-none" />
-          </div>
-          <p className="shrink-0 text-center text-xs text-[#A0A0A0]">{real ? `${cost} coins per generation · returned if it fails` : 'Demo preview · no coins are used'}</p>
+            <div className="flex flex-col gap-2.5">
+              {real && resultId && <button type="button" onClick={download} disabled={saving} className="btn-grad !py-3.5 !text-[16px]"><Svg d="M12 4v11M7 11l5 5 5-5M5 20h14" className="size-5" />{saving ? 'Downloading…' : 'Download'}</button>}
+              {saveError && <p role="alert" className="rounded border-l-[3px] border-[#D98282] bg-[#241518] px-3 py-2.5 text-[13px]">{saveError}</p>}
+              <button type="button" onClick={again} className="btn-dark !py-3">Make another with this look</button>
+              <Link to="/explore" className="btn-dark !py-3">Try a different look</Link>
+            </div>
+            <dl className="rounded-md border border-[#2C2529] bg-[#141011] text-[14px]">
+              <div className="flex justify-between border-b border-[#2C2529] px-4 py-3"><dt className="text-[#B4B0C0]">Look</dt><dd>{asset.name}</dd></div>
+              {real && <div className="flex justify-between border-b border-[#2C2529] px-4 py-3"><dt className="text-[#B4B0C0]">Coins used</dt><dd className="font-plexmono">{cost}</dd></div>}
+              {real && <div className="flex justify-between px-4 py-3"><dt className="text-[#B4B0C0]">Left in wallet</dt><dd className="font-plexmono">{coins.toLocaleString()} coins</dd></div>}
+            </dl>
+            <Link to="/creations" className="text-[14px] text-[#B653F6] underline underline-offset-4">Open in My Creations</Link>
+          </aside>
         </div>
       </div>
+    )
+  }
 
-      {/* ---------- Tablet / desktop ---------- */}
-      <div className="relative hidden w-full overflow-hidden sm:block">
-        {/* page glow: purple on the left, a softer pink on the right, fading into the dark page. Fixed to the whole viewport (behind the header and the content), so it has no top or bottom edge. */}
-        <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true" style={{ background: [
-          'radial-gradient(62% 85% at -4% 38%, rgba(112,92,255,0.36), rgba(112,92,255,0.12) 45%, transparent 72%)',
-          'radial-gradient(55% 80% at 104% 68%, rgba(252,72,231,0.20), rgba(252,72,231,0.06) 45%, transparent 72%)',
-        ].join(',') }} />
-        <div className="relative z-[1] mx-auto flex h-[calc(100dvh-5rem)] max-h-[calc(100dvh-5rem)] w-full max-w-[1440px] flex-col overflow-hidden px-6 pb-2 pt-3 md:px-8 lg:px-12 xl:px-16">
-          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-            <div className="relative mx-auto mb-2 w-full max-w-[840px] shrink-0 px-2 sm:mb-3">
-              <div className="relative flex items-center justify-between">
-                <button type="button" onClick={() => nav(-1)} className="group inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-[#2B2B2B] bg-gradient-to-br bg-[#2B2B2B]/80 from-[#FF55AA]/[0.07] to-[#FF55AA]/0 px-3 py-1.5 text-xs font-medium text-[#A0A0A0] shadow-sm backdrop-blur-md transition-all duration-200 hover:bg-gradient-to-br hover:from-[#2B2B2B] hover:to-[#2B2B2B] hover:text-white sm:text-sm">
-                  <svg className="size-4 text-[#A0A0A0] transition group-hover:-translate-x-0.5 group-hover:text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M19 12H5m6-6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" /></svg><span>Back</span>
-                </button>
-                <div className="min-w-0 flex-1 px-2 text-center"><h1 className="truncate text-[20px] font-bold tracking-tight text-[#ffffff] sm:text-[26px] lg:text-[28px]">Upload <span className="bg-gradient-to-r from-[#FF88C7] to-[#FF55AA] bg-clip-text text-transparent">Your</span> {multi ? 'Photos' : 'Photo'}</h1></div>
-                <div className="pointer-events-none hidden w-[88px] shrink-0 sm:block" />
-              </div>
-              <p className="mt-0.5 truncate text-center text-[11px] text-[#A0A0A0] sm:text-[12px] lg:text-[13px]">{multi ? `This template needs ${slots.length} clear photos — upload each slot below.` : 'Use a clear, well-lit photo for the best personalized result.'}</p>
+  // ---------- workspace ----------
+  return (
+    <div className="mx-auto w-full max-w-none px-5 pb-10 pt-5 text-[#FAFAFA] sm:px-8 lg:px-10">
+      <div className="mb-6 flex items-center gap-3.5">
+        <button type="button" aria-label="Back" onClick={() => nav(-1)} className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-md border border-[#2C2529] bg-[#1D181B] text-[#FAFAFA] transition-colors hover:border-[#B4B0C0]"><Svg d="M15 6l-6 6 6 6" className="size-[18px]" /></button>
+        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-2.5 text-[14px] text-[#B4B0C0]">
+          <Link to="/explore" className="hover:text-[#FAFAFA]">Looks</Link><span aria-hidden="true">/</span>
+          <Link to={collectionLink} className="truncate hover:text-[#FAFAFA] max-sm:hidden">{asset.category}</Link><span aria-hidden="true" className="max-sm:hidden">/</span>
+          <span className="truncate text-[#FAFAFA]">{asset.name}</span>
+        </nav>
+      </div>
+
+      <ol aria-label="Steps" className="mb-8 grid grid-cols-1 divide-y divide-[#2C2529] overflow-hidden rounded-md border border-[#2C2529] bg-[#141011] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <Step n={1} state={stepState(1)} title="Look" sub={asset.name} />
+        <Step n={2} state={stepState(2)} title={multi ? 'Your photos' : 'Your photo'} sub={ready ? photos.map((p) => p.name).join(', ') : 'Add a clear photo'} />
+        <Step n={3} state={stepState(3)} title="Generate" sub={ready ? 'Review and create' : 'Finish step 2 first'} />
+      </ol>
+
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-10">
+        <section aria-label="Look and photo" style={{ '--tile': 'clamp(200px, calc((100dvh - 410px) * 0.5625), 460px)' }} className={`grid items-start gap-3 rounded-md border border-[#2C2529] bg-gradient-to-b from-[#141011] to-[#0A0809] p-4 sm:gap-4 sm:p-6 lg:p-8 ${multi ? 'grid-cols-1 sm:grid-cols-[minmax(0,1fr)_40px_minmax(0,2fr)]' : 'grid-cols-[minmax(0,1fr)_28px_minmax(0,1fr)] sm:grid-cols-[minmax(0,1fr)_40px_minmax(0,1fr)] lg:grid-cols-[var(--tile)_56px_var(--tile)] lg:justify-center lg:gap-6'}`}>
+          <figure className="flex flex-col gap-2.5">
+            <div className="relative aspect-[9/16] w-full overflow-hidden rounded-md border border-[#2C2529] bg-[#0A0809]">
+              <PImage src={asset.image} alt={`The look: ${asset.name}`} className="absolute inset-0 size-full object-cover" draggable="false" />
             </div>
-            <div className="relative mt-3 flex min-h-0 flex-1 items-center justify-center sm:mt-4">
-              <div className="flex h-full max-h-full w-full flex-col items-center justify-center gap-4 sm:flex-row sm:items-start lg:gap-5 xl:gap-6">
-                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#2B2B2B] shadow-[0_0_42px_rgba(112,92,255,0.30),0_0_100px_rgba(112,92,255,0.13)]" style={{ width: W }}>
-                  <img src={asset.image} alt="" className="pointer-events-none absolute inset-0 size-full scale-110 object-cover object-center blur-2xl brightness-75 saturate-125" />
-                  <div className="pointer-events-none absolute inset-0 bg-[#0A0809]/35" />
-                  <img src={asset.image} alt={asset.name} width="1080" height="1920" className={`absolute inset-0 z-[1] size-full ${fitOf(asset)} object-center`} />
-                  <div className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-20 bg-gradient-to-b from-[#0A0809]/55 to-transparent" />
-                  <p className="absolute left-4 right-4 top-3.5 z-10 truncate text-[15px] font-semibold text-white">{asset.name}</p>
-                </article>
-                <article className="relative aspect-[9/16] h-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-[#2B2B2B] shadow-[0_0_42px_rgba(112,92,255,0.30),0_0_100px_rgba(112,92,255,0.13)]" style={{ width: `calc((${W}) * ${slots.length})`, aspectRatio: `${9 * slots.length} / 16` }}>
-                  <div className="absolute inset-0 flex flex-col gap-3 p-2.5 lg:gap-4 lg:p-3">
-                    <div className={`relative grid min-h-0 flex-1 gap-2.5 ${multi ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                      {slots.map((k, i) => <Slot key={k} kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}
-                    </div>
-                    <div className="relative flex w-full shrink-0 flex-col items-center gap-1">
-                      <div className="flex w-full items-center gap-2">
-                      <button type="button" disabled={!ready} onClick={next} className="grad-bg flex h-[48px] min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-xl text-[14px] font-bold text-white transition-all duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60">
-                        <div className="flex items-center gap-1.5"><span className="text-base">✨</span><span>{ctaLabel}</span><span className="arrow ml-0.5" aria-hidden="true">→</span></div>
-                      </button>
-                      <CoinPill cost={cost} className="h-[48px]" />
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              </div>
+            <figcaption className="flex items-center justify-between gap-2 max-sm:flex-col max-sm:items-center max-sm:gap-2.5"><span className="whitespace-nowrap font-plexmono text-[11px] tracking-[0.1em] text-[#B4B0C0]">THE LOOK</span><Link to={collectionLink} replace className="btn-dark !px-4 !py-1.5 !text-[13px] max-sm:!w-full max-sm:!px-2 max-sm:!whitespace-nowrap">Change look</Link></figcaption>
+          </figure>
+          <Svg d="M5 12h14M13 6l6 6-6 6" className={`mx-auto size-6 self-center text-[#B4B0C0] sm:size-7 ${multi ? 'max-sm:rotate-90' : 'lg:size-9'}`} />
+          <figure className="flex flex-col gap-2.5">
+            <div className={`grid gap-2.5 ${multi ? 'grid-cols-2' : 'grid-cols-1'}`}>
+              {slots.map((k, i) => <Slot key={k} kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}
             </div>
+            <figcaption className="flex items-center justify-between gap-2 max-sm:flex-col max-sm:items-center max-sm:gap-2.5"><span className="whitespace-nowrap font-plexmono text-[11px] tracking-[0.1em] text-[#B4B0C0]">{multi ? 'YOUR PHOTOS' : 'YOUR PHOTO'}</span>{photos[0] && <span className="truncate text-[12px] text-[#B4B0C0]">{photos[0].name}{photos[0].file ? ` · ${kb(photos[0].file.size)}` : ''}</span>}</figcaption>
+          </figure>
+        </section>
+
+        <aside aria-label="Review" className="flex flex-col gap-5 rounded-md border border-[#2C2529] bg-[#141011] p-6 sm:p-7 lg:sticky lg:top-24">
+          <div className="flex flex-col gap-1.5">
+            <h2 className="text-[36px] leading-[1.02] sm:text-[40px]">{ready ? 'Ready when you are' : 'Add your photo'}</h2>
+            <p className="text-[14px] leading-relaxed text-[#B4B0C0]">{ready ? 'One image is created from your photo in this look. It usually takes under a minute.' : multi ? `This look needs ${slots.length} clear photos. Add each one to continue.` : 'Use a clear, well-lit, front-facing photo for the best result.'}</p>
           </div>
-        </div>
+          {real ? (
+            <dl className="rounded-md border border-[#2C2529] text-[14px]">
+              <div className="flex justify-between border-b border-[#2C2529] px-4 py-3"><dt className="text-[#B4B0C0]">Cost</dt><dd className="font-plexmono">{cost} coins</dd></div>
+              {signedIn && <div className="flex justify-between border-b border-[#2C2529] px-4 py-3"><dt className="text-[#B4B0C0]">Balance now</dt><dd className="font-plexmono">{coins.toLocaleString()} coins</dd></div>}
+              {signedIn && <div className="flex justify-between px-4 py-3"><dt className="text-[#B4B0C0]">Balance after</dt><dd className={`font-plexmono ${coins < cost ? 'text-[#D98282]' : ''}`}>{Math.max(0, coins - cost).toLocaleString()} coins</dd></div>}
+              {!signedIn && <div className="flex justify-between px-4 py-3"><dt className="text-[#B4B0C0]">Account</dt><dd>Sign in on generate</dd></div>}
+            </dl>
+          ) : <p className="rounded-md border border-[#2C2529] px-4 py-3 text-[14px] text-[#B4B0C0]">Demo preview · no coins are used.</p>}
+          {signedIn && real && coins < cost && (
+            <p role="alert" className="rounded border-l-[3px] border-[#D98282] bg-[#241518] px-3 py-2.5 text-[13px] leading-snug">You need {cost} coins and have {coins.toLocaleString()}. <Link to={coins < 150 ? '/pricing' : '/coins'} className="text-[#B653F6] underline underline-offset-2">Get coins</Link></p>
+          )}
+          <button type="button" disabled={!ready} onClick={next} className="btn-grad !py-4 !text-[17px]">{ctaLabel}</button>
+          <ul className="flex flex-col gap-2.5 text-[13px] text-[#B4B0C0]">
+            {(real ? ['Coins are returned automatically if it fails.', 'The result is saved to My Creations.', 'Most looks accept JPG, PNG or WebP up to 10 MB.'] : ['This look is a preview only.']).map((t) => (
+              <li key={t} className="flex items-center gap-2.5"><span className="size-1.5 shrink-0 rounded-full bg-[#B653F6]" />{t}</li>
+            ))}
+          </ul>
+        </aside>
       </div>
 
       {phase === 'loading' && (
-        <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center bg-[#0A0809]/85 backdrop-blur">
-          <div className="welcome-card text-center"><div className="mx-auto mb-4 size-14 animate-spin rounded-full border-4 border-[#2B2B2B] border-t-[#FF55AA]" /><p className="font-medium">AI is creating magic ✦</p><p className="text-sm text-[#A0A0A0]">{real ? 'This can take a minute…' : ''}</p></div>
-        </div>
-      )}
-      {phase === 'done' && real && result && (
-        <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0A0809]/80 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
-          {/* The card is as wide as the largest 9:16 image that still lets the whole card fit the screen height (--chrome = everything that is not the image: card padding, text, buttons, outer margin), capped at 24 rem. Screens under 640 px tall use a compact version (--pad / --chrome / gaps). */}
-          <div className="welcome-card mx-auto flex w-[min(100%,40rem,calc((100dvh-var(--chrome))*18/16+var(--pad)))] min-w-[18rem] flex-col rounded-2xl border border-[#FF55AA]/30 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 p-[calc(var(--pad)/2)] text-center shadow-2xl [--chrome:17.75rem] [--pad:2.5rem] [&_button]:px-4 [@media(max-height:640px)]:[--chrome:13.75rem] [@media(max-height:640px)]:[--pad:1.5rem] [@media(max-height:640px)]:[&_.gap-3]:gap-2 [@media(max-height:640px)]:[&_button]:py-2" onClick={(e) => e.stopPropagation()}>
-            {/* the uploaded photo next to the AI result. Results can have any shape (Cartoon and Beard keep the uploaded photo's own shape), so both fill a 9:16 card with object-cover: no bars, no stretching (the overflow is cropped) */}
-            <div className="mb-5 grid grid-cols-2 gap-3 [@media(max-height:640px)]:mb-3">
-              {[['Original', photos[0]?.url || resultOriginal], ['AI generated', result]].map(([label, src], i) => (
-                <figure key={label}>
-                  <div className={`relative aspect-[9/16] w-full overflow-hidden rounded-xl border bg-[#0A0809] ${i ? 'border-[#FF55AA] shadow-[0_0_40px_rgba(255,85,170,0.3)]' : 'border-[#FF55AA]/40'}`}>
-                    {src && <img src={src} alt={i ? `${asset.name} result` : 'Your original photo'} className="absolute inset-0 size-full object-cover object-center" />}
-                  </div>
-                  <figcaption className="mt-1.5 text-xs text-[#A0A0A0]">{label}</figcaption>
-                </figure>
-              ))}
-            </div>
-            <p className="mb-1 font-medium">Your photo is ready</p>
-            <p className="mb-5 text-xs text-[#A0A0A0] [@media(max-height:640px)]:mb-3">It was added to My Creations.</p>
-            <div className="flex flex-col gap-3"><button className="btn-grad w-full" onClick={() => nav('/creations')}>View in My Creations</button><button className="btn-dark w-full" onClick={() => setPhase('idle')}>Try another photo</button></div>
+        <div role="status" className="fixed inset-0 z-[300] grid place-items-center bg-[#0A0809]/92 p-6 backdrop-blur-sm">
+          <div className="flex w-full max-w-sm flex-col items-center gap-5 text-center">
+            <p className="font-serif text-[40px] leading-none">Creating your look</p>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#2C2529]"><div className="h-full w-1/3 animate-shimmer rounded-full bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)]" /></div>
+            <p className="text-[14px] text-[#B4B0C0]">Keep this tab open. {real ? 'It can take up to a minute.' : ''}</p>
+            {real && <p className="text-[13px] text-[#B4B0C0]">{cost} coins are returned if this fails.</p>}
           </div>
         </div>
       )}
       {phase === 'error' && (
-        <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0A0809]/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
-          <div role="alert" className="welcome-card w-full max-w-sm rounded-xl border border-red-500/40 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <p className="mb-1 font-medium">Generation failed</p>
-            <p className="mb-4 text-sm text-[#A0A0A0]">{apiError || 'Something went wrong. Please try again.'}</p>
-            <div className="flex flex-col gap-2">{needCoins && <button className="btn-grad" onClick={() => nav(coins < 150 ? '/pricing' : '/coins')}>Get coins</button>}<button className={needCoins ? 'btn-dark' : 'btn-grad'} onClick={() => setPhase('idle')}>{needCoins ? 'Close' : 'Try again'}</button></div>
-          </div>
-        </div>
-      )}
-      {phase === 'done' && !real && (
-        <div className="welcome-backdrop fixed inset-0 z-[120] grid place-items-center overflow-y-auto bg-[#0A0809]/85 p-4 backdrop-blur" onClick={() => setPhase('idle')}>
-          <div className="welcome-card w-full max-w-sm rounded-xl border border-[#FF55AA]/30 bg-gradient-to-br bg-[#2B2B2B] from-[#FF55AA]/[0.07] to-[#FF55AA]/0 p-5 text-center shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <div className="relative mb-4 aspect-[9/16] max-h-[60vh] overflow-hidden rounded-xl border border-[#FF55AA] shadow-[0_0_40px_rgba(255,85,170,0.3)]">
-              <img src={asset.image} alt="" className={`absolute inset-0 size-full ${fitOf(asset)}`} />
-              <img src={photos[0].url} alt="" className="absolute inset-0 size-full object-cover opacity-50 mix-blend-overlay" />
+        <div className="fixed inset-0 z-[300] grid place-items-center overflow-y-auto bg-[#0A0809]/85 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
+          <div role="alert" className="flex w-full max-w-sm flex-col gap-4 rounded-md border border-[#2C2529] bg-[#141011] p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="rounded border-l-[3px] border-[#D98282] bg-[#241518] px-4 py-3.5"><p className="text-[17px] font-semibold">Generation failed</p><p className="mt-1.5 text-[14px] leading-relaxed text-[#B4B0C0]">{apiError || 'Something went wrong. Please try again.'}</p></div>
+            <div className="flex flex-col gap-2.5">
+              {needCoins && <button type="button" className="btn-grad" onClick={() => nav(coins < 150 ? '/pricing' : '/coins')}>Get coins</button>}
+              <button type="button" className={needCoins ? 'btn-dark' : 'btn-grad'} onClick={() => setPhase('idle')}>{needCoins ? 'Close' : 'Try again'}</button>
             </div>
-            <div className="flex flex-col gap-2"><button className="btn-grad" onClick={() => nav('/creations')}>View in My Creations</button><button className="btn-dark" onClick={() => setPhase('idle')}>Try another photo</button></div>
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
@@ -320,9 +299,10 @@ export default function Generate() {
   const asset = findAsset(categoryId, assetId)
   if (!asset) {
     return (
-      <div className="px-4 pt-24 text-center">
-        <p className="text-lg text-[#A0A0A0]">Template not found. Please choose another from Explore.</p>
-        <Link to="/explore" className="grad-bg mt-5 inline-flex h-12 items-center justify-center rounded-xl px-6 text-sm font-semibold text-white transition-opacity hover:opacity-90">Browse Explore</Link>
+      <div className="px-5 pt-24 text-center">
+        <p className="font-serif text-[32px]">Look not found</p>
+        <p className="mt-2 text-[15px] text-[#B4B0C0]">Please choose another from Looks.</p>
+        <Link to="/explore" className="btn-grad mt-6 !px-6 !py-3">Browse looks</Link>
       </div>
     )
   }
