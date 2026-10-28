@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
-import { Logo, ProfileMenu, displayName, walletTarget } from './Header.jsx'
+import { displayName } from './Header.jsx'
 import TemplateCard from './TemplateCard.jsx'
-import { Head, SeeAll, FeaturedCarousel, CategoryRows, tabLink, getCollections, useTrendingPicks } from './homeParts.jsx'
+import { Head, SeeAll, FeaturedCarousel, CategoryRows, getCollections, useTrendingPicks } from './homeParts.jsx'
 import { templatesByIds, generateUrl, categoryItems } from '../data/templates.js'
-import { getPlans, listGenerations } from '../lib/aiPhotography.js'
+import { listGenerations } from '../lib/aiPhotography.js'
 
 /**
- * The logged-in home: a dashboard in the style of a creative-platform workspace (all of it only READS existing data and links to existing routes). Desktop: a fixed top bar (logo, search, coins, profile)
- * and a fixed left sidebar; phones keep the app's own top bar and bottom tabs. Main column: a featured carousel, quick tools, ready-made presets (category pills + a gallery), trending, the user's
- * recent creations and favourites, every photo style as its own row, and the video section (honestly marked as coming soon - the backend has no video generation yet).
+ * The logged-in home: a dashboard in the style of a creative-platform workspace (all of it only READS existing data and links to existing routes). Navigation is the app's shared top header
+ * (components/Header.jsx) and its profile menu; there is no sidebar. Main column: a featured carousel, quick tools, ready-made presets (category pills + a gallery), trending, the user's
+ * recent creations and favourites, every photo style as its own row, and the video section.
  */
 const I = {
   create: 'M12 4v16M4 12h16', discover: 'M12 3a9 9 0 100 18 9 9 0 000-18zM15.5 8.5l-2 5-5 2 2-5z', photo: 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4', video: 'M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM17 10l5-3v10l-5-3z',
@@ -19,64 +19,10 @@ const I = {
 }
 const Icon = ({ d, className = 'size-[18px]' }) => <svg className={`${className} shrink-0`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
 
-const SIDE = [
-  { to: '/', label: 'Create', icon: I.create, end: true },
-  { to: '/explore', label: 'Discover', icon: I.discover },
-  { to: '/explore?category=trending', label: 'Trending', icon: I.photo },
-  { to: '/video', label: 'Video', icon: I.video, soon: true },
-  { to: '/creations', label: 'My Creations', icon: I.library },
-]
-const SIDE2 = [['/pricing', 'Plans', I.plan], ['/coins', 'Coin packs', I.coin], ['/help', 'Help', I.help]]
 const TOOLS = [
   ['Photo studio', '/explore', I.photo], ['Video studio', '/video', I.video], ['My creations', '/creations', I.library], ['Trending looks', '/explore?category=trending', I.discover],
   ['Plans', '/pricing', I.plan], ['Coin packs', '/coins', I.coin], ['Transactions', '/transactions', I.list], ['Help', '/help', I.help],
 ]
-
-function Sidebar({ coins, cost }) {
-  const item = (on) => `flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] font-medium transition-colors ${on ? 'bg-[#1A1626] text-white' : 'text-[#A1A1AA] hover:bg-[#12101B] hover:text-white'}`
-  return (
-    <aside aria-label="Dashboard" className="no-scrollbar fixed bottom-0 left-0 top-16 z-30 hidden w-60 flex-col overflow-y-auto border-r border-[#272033] bg-[#0D0B14] p-3 md:flex">
-      <Link to="/explore" className="btn-grad !w-full !py-2.5 !text-[14px]"><span aria-hidden="true">+</span> Start creating</Link>
-      <nav className="mt-4 flex flex-col gap-0.5">
-        {SIDE.map((n) => (
-          <NavLink key={n.label} to={n.to} end={n.end} className={({ isActive }) => item(isActive && n.to === '/')}>
-            <Icon d={n.icon} />{n.label}{n.soon && <span className="ml-auto rounded-full bg-[#1A1626] px-1.5 py-px text-[10px] font-semibold text-[#C4B5FD]">Soon</span>}
-          </NavLink>
-        ))}
-      </nav>
-      <div className="mt-5 border-t border-[#272033] pt-4">
-        <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#71717A]">Account</p>
-        <nav className="flex flex-col gap-0.5">{SIDE2.map(([to, label, d]) => <Link key={to} to={to} className={item(false)}><Icon d={d} />{label}</Link>)}</nav>
-      </div>
-      <div className="mt-auto rounded-2xl border border-[#272033] bg-[#12101B] p-4">
-        <p className="text-[12px] text-[#A1A1AA]">Your coins</p>
-        <div className="mt-1 flex items-center gap-2"><img src="/images/features/coin.svg" alt="" className="size-6 object-contain" /><span className="font-display text-[26px] font-bold leading-none">{coins.toLocaleString()}</span></div>
-        <p className="mt-1.5 text-[12px] text-[#A1A1AA]">{cost ? `About ${Math.floor(coins / cost)} photo${Math.floor(coins / cost) === 1 ? '' : 's'} at ${cost} coins each` : 'Coins are used for each photo.'}</p>
-        <Link to={walletTarget(coins)} className="btn-dark !mt-3 !w-full !py-2 !text-[13px]">Get more coins</Link>
-      </div>
-    </aside>
-  )
-}
-
-function TopBar({ coins }) {
-  const nav = useNavigate()
-  const [q, setQ] = useState('')
-  const go = (e) => { e.preventDefault(); const v = q.trim(); nav(v ? `/explore?q=${encodeURIComponent(v)}` : '/explore') }
-  return (
-    <header className="fixed inset-x-0 top-0 z-40 hidden h-16 items-center gap-4 border-b border-[#272033] bg-[#08080D]/95 px-4 backdrop-blur-xl md:flex">
-      <div className="w-[216px] shrink-0"><Logo /></div>
-      <form onSubmit={go} role="search" className="flex h-11 min-w-0 max-w-[640px] flex-1 items-center gap-3 rounded-full border border-[#272033] bg-[#12101B] px-4 focus-within:border-[#8B5CF6]">
-        <Icon d={I.search} className="size-[17px] text-[#A1A1AA]" />
-        <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search templates" placeholder="Search for looks, styles, keywords..." className="min-w-0 flex-1 bg-transparent text-[14px] text-white outline-none placeholder:text-[#71717A]" />
-      </form>
-      <div className="ml-auto flex shrink-0 items-center gap-2.5">
-        <Link to="/explore" className="btn-primary !h-10 !px-5 !py-0 !text-[14px]"><span aria-hidden="true">+</span>Create</Link>
-        <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className="inline-flex h-10 items-center gap-2 rounded-full border border-[#272033] bg-[#12101B] pl-2.5 pr-3.5 text-[13px] font-medium text-white transition-colors hover:border-[#8B5CF6]"><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}<span className="text-[#A78BFA]">+</span></Link>
-        <ProfileMenu />
-      </div>
-    </header>
-  )
-}
 
 /** A horizontally scrolling row of image cards (each shown whole, at its own shape). */
 function Rail({ items, onSelect, h = 'h-[220px] lg:h-[260px]', label }) {
@@ -94,14 +40,11 @@ function Rail({ items, onSelect, h = 'h-[220px] lg:h-[260px]', label }) {
 
 export default function MemberHome() {
   const nav = useNavigate()
-  const { user, userEmail, coins, favorites } = useStudio()
+  const { user, userEmail, favorites } = useStudio()
   const collections = getCollections()
   const { custom, trendingPicks } = useTrendingPicks()
   const pick = (t) => nav(generateUrl(t))
   const first = (user?.name || displayName(userEmail || '')).split(' ')[0] || 'there'
-
-  const [cost, setCost] = useState(null) // coins per image, from the backend
-  useEffect(() => { getPlans().then((r) => setCost(r.costPerGeneration)).catch(() => {}) }, [])
 
   // the user's latest saved creations (read-only; the Creations page does the full list)
   const [recent, setRecent] = useState(null) // null while loading
@@ -126,10 +69,8 @@ export default function MemberHome() {
 
   return (
     <>
-      <TopBar coins={coins} />
-      <Sidebar coins={coins} cost={cost} />
-      <div className="w-full text-white md:pl-60 md:pt-16">
-        <div className="mx-auto w-full max-w-[1500px] px-4 pb-12 pt-5 sm:px-6 lg:px-8">
+      <div className="w-full text-white">
+        <div className="w-full px-4 pb-12 pt-5 sm:px-6 lg:px-8">
           {/* featured carousel */}
           <section aria-label="Featured">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
@@ -142,9 +83,9 @@ export default function MemberHome() {
           {/* quick tools */}
           <section aria-label="Tools" className="mt-8">
             <Head title="Tools & shortcuts" />
-            <div className="no-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
+            <div className="no-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:overflow-visible lg:px-0">
               {TOOLS.map(([label, to, d]) => (
-                <Link key={label} to={to} className="chip !gap-2.5 !rounded-2xl !px-4 !py-2.5"><span className="grid size-7 place-items-center rounded-full bg-[linear-gradient(135deg,#7C3AED,#C026D3)] text-white"><Icon d={d} className="size-4" /></span>{label}{label === 'Video studio' && <span className="rounded-full bg-[#1A1626] px-1.5 py-px text-[10px] font-semibold text-[#C4B5FD]">Soon</span>}</Link>
+                <Link key={label} to={to} className="chip !gap-2.5 !rounded-2xl !px-4 !py-2.5 lg:min-w-0 lg:flex-1 lg:justify-center"><span className="grid size-7 place-items-center rounded-full bg-[linear-gradient(135deg,#7C3AED,#C026D3)] text-white"><Icon d={d} className="size-4" /></span>{label}</Link>
               ))}
             </div>
           </section>
@@ -152,7 +93,7 @@ export default function MemberHome() {
           {/* ready-made presets */}
           {collections.length > 0 && (
             <section aria-label="Ready-made presets" className="mt-9">
-              <Head title="Ready-made presets" sub="Pick a style, then pick a look." to={activePreset ? tabLink(activePreset) : '/explore'} />
+              <Head title="Ready-made presets" sub="Pick a style, then pick a look." />
               <div role="tablist" aria-label="Preset categories" className="no-scrollbar -mx-4 mb-4 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
                 {presets.map((c) => <button key={c.id} type="button" role="tab" aria-selected={activePreset?.id === c.id} onClick={() => setPreset(c.id)} className={`chip shrink-0 ${activePreset?.id === c.id ? 'chip-on' : ''}`}>{c.category || c.name}</button>)}
               </div>
@@ -169,14 +110,6 @@ export default function MemberHome() {
               </div>
             </section>
           )}
-
-          {/* video creation */}
-          <section aria-label="Video creation" className="mt-9 max-md:hidden">
-            <Link to="/video" className="group relative isolate flex flex-col gap-4 overflow-hidden rounded-[28px] border border-[#272033] bg-[#0D0B14] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-              <div><span className="badge">Coming soon</span><h2 className="mt-3 text-[26px] sm:text-[32px]">Video creation</h2><p className="mt-1.5 max-w-xl text-[15px] text-[#A1A1AA]">Bring your photos to life with short clips. The studio is being built - open it to see what is planned.</p></div>
-              <span className="btn-primary shrink-0">Open video studio<span className="arrow" aria-hidden="true">→</span></span>
-            </Link>
-          </section>
 
           {/* recent creations */}
           <section aria-label="Recent creations" className="mt-9 max-md:hidden">

@@ -40,7 +40,7 @@ const ICONS = {
 const NAV = [
   { label: 'Home', to: '/', match: (p) => p === '/' },
   { label: 'Photo', to: '/explore', match: (p) => p === '/explore' || p === '/generate' },
-  { label: 'Video', to: '/video', match: (p) => p === '/video' },
+  { label: 'AI Video', to: '/video', match: (p) => p === '/video' },
   { label: 'My Creations', to: '/creations', match: (p) => p === '/creations' },
   { label: 'Pricing', to: '/pricing', match: (p) => ['/pricing', '/coins', '/transactions', '/payment-success'].includes(p) },
 ]
@@ -86,9 +86,11 @@ function GetApp() {
 
 export const displayName = (email) => (email.split('@')[0] || '').split(/[._-]+/).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(' ') || 'Pictrify user'
 const PROFILE_ITEMS = [
+  ['/profile', 'Profile', 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 3.5-6 8-6s8 2 8 6'],
+  ['/creations', 'My Creations', 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4'],
   ['/transactions', 'Transactions', 'M4 7h16M4 12h16M4 17h10'],
   ['/help', 'Help', 'M9.5 9a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17.2v.1M12 21a9 9 0 100-18 9 9 0 000 18z'],
-  ['/contact-us', 'Contact Support', 'M4 6h16v12H4zM4 7l8 6 8-6'],
+  ['/contact-us', 'Contact Us', 'M4 6h16v12H4zM4 7l8 6 8-6'],
   ['/feedback', 'Share Your Feedback', 'M4 5h16v11H9l-5 4z'],
   ['/privacy-policy', 'Privacy Policy', 'M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z'],
   ['/terms-conditions', 'Terms & Conditions', 'M7 3h8l4 4v14H7zM15 3v4h4M10 12h6M10 16h6'],
@@ -190,7 +192,7 @@ export function TopNav() {
             <Logo />
             <div className="hidden min-w-0 items-center justify-start pl-4 lg:flex">
               <div className="flex items-center gap-0.5 xl:gap-1.5">
-                {NAV.map((n) => <NavLink key={n.label} to={n.to} aria-current={n.match(pathname) ? 'page' : undefined} className={link(n.match(pathname))}>{n.label}{n.label === 'Video' && <span className="ml-1.5 rounded-full bg-[#8B5CF6]/20 px-1.5 py-px align-middle text-[10px] font-semibold text-[#8B5CF6]">New</span>}</NavLink>)}
+                {NAV.map((n) => <NavLink key={n.label} to={n.to} aria-current={n.match(pathname) ? 'page' : undefined} className={link(n.match(pathname))}>{n.label}</NavLink>)}
               </div>
             </div>
             <div className="hidden shrink-0 items-center justify-end gap-2 lg:flex xl:gap-3">
@@ -226,7 +228,7 @@ export function TopNav() {
 // ---------- phone chrome: top bar + a floating three-tab pill (Home, Diy, Me), like the reference ----------
 const tabs = [
   { to: '/', label: 'Home', match: (p) => p === '/', d: 'M5 7v12a2 2 0 002 2h10M9 3h10a2 2 0 012 2v10a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2zM14 6.5l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
-  { to: '/video', label: 'Video', match: (p) => p === '/video', d: 'M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM17 10l5-3v10l-5-3z' },
+  { to: '/video', label: 'AI Video', match: (p) => p === '/video', d: 'M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM17 10l5-3v10l-5-3z' },
   { to: '/explore', label: 'Photo', match: (p) => p === '/explore' || p === '/generate', d: 'M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 9l2.5-5 3 1.5L6 10.5M9.5 5.5l3 1.5L10 10.5M16 5.5l3 1.5-2.5 3.5M16 13l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
   { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/coins', '/payment-success', '/help', '/contact-us', '/contact-support', '/feedback', '/transactions', '/profile', '/privacy-policy', '/terms-conditions'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
 ]
@@ -276,11 +278,11 @@ function MobileHeader({ generating }) {
 }
 
 /** The navigation: the sticky top bar (md+) and the phone top bar + bottom bar. No sidebar. */
-export default function Header({ generating = false, dashboard = false }) {
+export default function Header({ generating = false }) {
   const { pathname } = useLocation()
   return (
     <>
-      {!dashboard && <TopNav />} {/* the signed-in home draws its own dashboard bar and sidebar (components/MemberHome.jsx) */}
+      <TopNav />
       <MobileHeader generating={generating} />
       {!generating && <MobileTabs pathname={pathname} />}
       {generating && <div className="hidden sm:block md:hidden"><MobileTabs pathname={pathname} /></div>}

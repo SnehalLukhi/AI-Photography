@@ -53,7 +53,7 @@ function GuestHome() {
               </div>
               {mode === 'photo'
                 ? <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search templates" placeholder="Search a look, e.g. corporate headshot, cartoon, diwali" className="min-w-0 flex-1 bg-transparent px-3 text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#71717A]" />
-                : <span className="min-w-0 flex-1 truncate px-3 text-left text-[15px] text-[#A1A1AA]">Video creation is coming soon. See what is planned.</span>}
+                : <span className="min-w-0 flex-1 truncate px-3 text-left text-[15px] text-[#A1A1AA]">Create videos from text, images or templates.</span>}
               <button type="submit" className="btn-primary shrink-0 !px-7 !py-3">{mode === 'video' ? 'Learn more' : 'Start creating'}<span className="arrow" aria-hidden="true">→</span></button>
             </form>
 
@@ -80,10 +80,9 @@ function GuestHome() {
                 <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[14px] font-semibold text-[#08080D]">Browse templates<span className="arrow transition-transform group-hover:translate-x-1" aria-hidden="true">→</span></span>
               </Link>
               <Link to="/video" className="group relative isolate flex min-h-[280px] flex-col justify-end overflow-hidden rounded-[36px] bg-[#271425] p-9 transition-transform duration-300 hover:-translate-y-1">
-                <span className="mb-4 inline-flex w-fit items-center rounded-full bg-[#12101B] px-3 py-1 text-[12px] font-semibold text-[#FFFFFF]">Coming soon</span>
                 <h3 className="font-display text-[34px] font-bold leading-tight">Create videos</h3>
-                <p className="mt-2 max-w-sm text-[16px] text-[#C4C4CC]">Bring your photos to life with short clips. We are building this now.</p>
-                <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-[#12101B] px-5 py-2.5 text-[14px] font-semibold text-[#FFFFFF]">See what is planned<span className="arrow transition-transform group-hover:translate-x-1" aria-hidden="true">→</span></span>
+                <p className="mt-2 max-w-sm text-[16px] text-[#C4C4CC]">Bring your photos to life with short clips.</p>
+                <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-[#12101B] px-5 py-2.5 text-[14px] font-semibold text-[#FFFFFF]">Open video studio<span className="arrow transition-transform group-hover:translate-x-1" aria-hidden="true">→</span></span>
               </Link>
             </div>
           </section>

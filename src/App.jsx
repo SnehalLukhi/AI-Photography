@@ -21,12 +21,12 @@ import { useStudio } from './context/StudioContext.jsx'
 export default function App() {
   const { pathname } = useLocation()
   const { signedIn, loginOpen, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer, offerPopup, closeOfferPopup } = useStudio()
-  const dashboard = signedIn && pathname === '/' // the signed-in home is a dashboard with its own sidebar and header (components/MemberHome.jsx)
+  const dashboard = signedIn && pathname === '/' // the signed-in home (components/MemberHome.jsx) keeps its footer-less layout
   const generating = pathname === '/generate' // the Create workspace: collapsed rail, no footer, no phone chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
     <div className="min-h-screen w-full overflow-x-clip bg-[#08080D] text-white selection:bg-[#8B5CF6]/40">
-      <Header generating={generating} dashboard={dashboard} />
+      <Header generating={generating} />
       <div className="flex min-h-screen min-w-0 flex-col">
         <main className="flex-1">
           <Routes>

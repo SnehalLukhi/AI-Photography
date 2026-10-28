@@ -1,11 +1,8 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import PImage from '../components/PImage.jsx'
-import { SeeAll } from '../components/homeParts.jsx'
-import { exploreTabs, categoryItems } from '../data/templates.js'
 
 // Video creation sits beside Photo creation. The backend has no video-generation integration yet (no endpoint, no provider key), so NOTHING on this page starts a job:
-// the studio below shows the planned interface with its controls switched off, and sends people to the photo flow, which works today.
+// the studio below has working controls (mode tabs, uploads shown locally, prompt, settings) but Generate stays off, and people are sent to the photo flow, which works today.
 const IDEAS = [
   ['Photo to video', 'Bring a styled photo to life with gentle motion.', '#1B1530'],
   ['Template videos', 'Pick a look, add a photo, get a short clip back.', '#271425'],
@@ -14,66 +11,162 @@ const IDEAS = [
 ]
 const RATIOS = ['9:16', '16:9', '1:1']
 const LENGTHS = ['5 s', '10 s']
+const MODES = [
+  { id: 'text', label: 'Text to Video', short: 'Text', hint: 'Describe a scene and get a video from the words alone.' },
+  { id: 'image', label: 'Image to Video', short: 'Image', hint: 'Upload a starting image and describe how it should move.' },
+  { id: 'frames', label: 'First + Last Frame', short: 'Frames', hint: 'Set where the video starts and ends; the motion in between is generated.' },
+  { id: 'template', label: 'Reference Templates', short: 'Templates', hint: 'Pick a video style made by Pictrify and add your own photo.' },
+]
+const PROMPT_PLACEHOLDER = {
+  text: 'A slow cinematic drone shot over a misty mountain lake at sunrise...',
+  image: 'Describe the motion or scene: the camera pushes in, hair moves in the wind...',
+  frames: 'Describe how the scene changes from the first frame to the last...',
+  template: 'Optional: add details to the template, e.g. mood or camera movement...',
+}
+// Video templates will come from the Admin Panel (each with its own prompt and reference image) once the backend has a video-template endpoint. Until then the list is empty
+// and the Reference Templates tab shows its empty state. Shape the grid below expects: { id, name, image }.
+const VIDEO_TEMPLATES = []
+
+const Icon = ({ d, className = 'size-5' }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+const UPLOAD = 'M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3'
+
+// One picture drop area. The file only stays in this browser tab (a local preview); nothing is uploaded or sent anywhere.
+function FrameUpload({ label, hint, file, onFile }) {
+  const [url, setUrl] = useState('')
+  useEffect(() => {
+    if (!file) { setUrl(''); return undefined }
+    const u = URL.createObjectURL(file)
+    setUrl(u)
+    return () => URL.revokeObjectURL(u)
+  }, [file])
+  return (
+    <div className="min-w-0">
+      <span className="mb-2 block text-[14px] font-semibold">{label}</span>
+      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#0D0B14] text-center transition-colors focus-within:border-[#8B5CF6] hover:border-[#8B5CF6]">
+        <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => { onFile(e.target.files?.[0] || null); e.target.value = '' }} />
+        {url ? <img src={url} alt={`${label} preview`} className="absolute inset-0 size-full object-cover" /> : (
+          <span className="px-4 py-6">
+            <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#1A1626] text-[#A78BFA] transition-colors group-hover:bg-[#241B3A]"><Icon d={UPLOAD} /></span>
+            <span className="mt-3 block text-[14px] font-semibold">Click to upload</span>
+            <span className="mt-1 block text-[12px] text-[#A1A1AA]">{hint}</span>
+          </span>
+        )}
+      </label>
+      {file && <button type="button" onClick={() => onFile(null)} className="mt-2 text-[13px] font-semibold text-[#A78BFA] hover:text-white">Remove</button>}
+    </div>
+  )
+}
 
 export default function Video() {
-  const samples = exploreTabs.flatMap((t) => categoryItems(t.id).slice(0, 1)).slice(0, 6)
+  const [mode, setMode] = useState('text')
+  const [prompt, setPrompt] = useState('')
+  const [image, setImage] = useState(null)
+  const [first, setFirst] = useState(null)
+  const [last, setLast] = useState(null)
+  const [tpl, setTpl] = useState(null)
+  const [tplPhoto, setTplPhoto] = useState(null)
   const [ratio, setRatio] = useState('9:16')
   const [len, setLen] = useState('5 s')
+  const cur = MODES.find((m) => m.id === mode)
+  const frame = ratio === '16:9' ? 'aspect-video' : ratio === '1:1' ? 'aspect-square' : 'aspect-[9/16]'
+  // what a future Generate call will need per mode (kept for the integration; Generate itself stays off for now)
+  const ready = { text: !!prompt.trim(), image: !!image && !!prompt.trim(), frames: !!first && !!last && !!prompt.trim(), template: !!tpl && !!tplPhoto }[mode]
   return (
     <div className="w-full text-[#FFFFFF]">
-      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#0D0B14_0%,#08080D_100%)] px-4 pb-14 pt-12 text-center sm:px-6 lg:pt-16">
-        <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[380px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(252,72,231,0.16),transparent)]" aria-hidden="true" />
-        <span className="badge">Coming soon</span>
-        <h1 className="mx-auto mt-5 max-w-3xl text-[40px] sm:text-[58px] lg:text-[68px]">Create <span className="grad-text">videos</span> as easily as photos</h1>
-        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[18px]">Video creation is being built for Pictrify. Until it is ready, create styled photos from any template.</p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link to="/explore" className="btn-primary !px-8 !py-3.5">Create a photo<span className="arrow" aria-hidden="true">→</span></Link>
-        </div>
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#0D0B14_0%,#08080D_100%)] px-4 pb-12 pt-12 text-center sm:px-6 lg:pt-16">
+        <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[380px] w-[820px] max-w-full -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(252,72,231,0.16),transparent)]" aria-hidden="true" />
+        <h1 className="mx-auto max-w-3xl text-[40px] sm:text-[58px] lg:text-[68px]">Create <span className="grad-text">videos</span> as easily as photos</h1>
+        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[18px]">Turn a prompt, a photo or a template into a short video.</p>
       </section>
 
       <div className="mx-auto w-full max-w-[1200px] px-4 pb-24 sm:px-6 lg:px-8">
-        {/* The planned studio. Every control is switched off: video generation is not connected yet. */}
-        <section aria-label="Video studio preview" className="-mt-2 overflow-hidden rounded-[32px] border border-[#272033] bg-[#12101B] shadow-[0_24px_60px_rgba(0,0,0,0.10)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#272033] bg-[#12101B] px-6 py-4">
+        <section aria-label="Video studio" className="overflow-hidden rounded-[32px] border border-[#272033] bg-[#12101B] shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#272033] px-5 py-4 sm:px-8">
             <h2 className="font-display text-[20px] font-bold">Video studio</h2>
-            <span className="rounded-full bg-[#262310] px-3 py-1 text-[12px] font-semibold text-[#E9D56A]">Preview only: video generation is not available yet</span>
           </div>
+
+          <div className="border-b border-[#272033] px-5 py-4 sm:px-8">
+            <div role="tablist" aria-label="Video mode" className="grid grid-cols-2 gap-1.5 rounded-[22px] bg-[#0D0B14] p-1.5 sm:grid-cols-4">
+              {MODES.map((m) => (
+                <button key={m.id} type="button" role="tab" aria-selected={mode === m.id} onClick={() => setMode(m.id)}
+                  className={`cursor-pointer rounded-full px-3 py-2.5 text-[13px] font-semibold transition-colors sm:text-[14px] ${mode === m.id ? 'bg-[linear-gradient(90deg,#7C3AED_0%,#C026D3_100%)] text-white shadow-[0_8px_22px_-10px_rgba(139,92,246,0.8)]' : 'text-[#A1A1AA] hover:bg-[#1A1626] hover:text-white'}`}>
+                  <span className="sm:hidden">{m.short}</span><span className="hidden sm:inline">{m.label}</span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-3 text-[14px] text-[#A1A1AA]">{cur.hint}</p>
+          </div>
+
           <div className="grid gap-0 lg:grid-cols-[1.1fr_1fr]">
-            <div className="flex flex-col gap-5 p-6 sm:p-8">
+            <div role="tabpanel" className="flex min-w-0 flex-col gap-6 p-5 sm:p-8">
+              {mode === 'image' && <FrameUpload label="Starting image" hint="PNG, JPG or WebP" file={image} onFile={setImage} />}
+              {mode === 'frames' && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FrameUpload label="Start frame" hint="How the video begins" file={first} onFile={setFirst} />
+                  <FrameUpload label="End frame" hint="How the video ends" file={last} onFile={setLast} />
+                </div>
+              )}
+              {mode === 'template' && (
+                <div>
+                  <span className="mb-2 block text-[14px] font-semibold">Choose a template</span>
+                  {VIDEO_TEMPLATES.length ? (
+                    <div className="grid grid-cols-3 gap-3">
+                      {VIDEO_TEMPLATES.map((t) => (
+                        <button key={t.id} type="button" onClick={() => setTpl(t.id)} aria-pressed={tpl === t.id} className={`tile group relative aspect-[3/4] overflow-hidden !rounded-[18px] border-2 ${tpl === t.id ? 'border-[#8B5CF6]' : 'border-transparent'}`}>
+                          <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
+                          <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/80 via-transparent to-transparent" />
+                          <span className="absolute inset-x-2 bottom-2 truncate text-[12px] font-semibold text-white">{t.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid min-h-[168px] place-items-center rounded-2xl border border-dashed border-[#3A2F52] bg-[#0D0B14] px-5 py-8 text-center">
+                      <div>
+                        <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#1A1626] text-[#A78BFA]"><Icon d="M4 5h16v14H4zM9 9l6 3-6 3z" /></span>
+                        <p className="mt-3 text-[14px] font-semibold">No video templates yet</p>
+                        <p className="mt-1 text-[12px] text-[#A1A1AA]">Templates added in the admin panel will appear here, each with its own style and reference image.</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="mt-5"><FrameUpload label="Your photo" hint="The photo the template is applied to" file={tplPhoto} onFile={setTplPhoto} /></div>
+                </div>
+              )}
+
               <label className="block">
-                <span className="mb-2 block text-[14px] font-semibold">Describe the video</span>
-                <textarea disabled rows={4} placeholder="Describe the motion, mood and style you want..." className="input !cursor-not-allowed resize-none !bg-[#12101B]" />
+                <span className="mb-2 flex items-center justify-between text-[14px] font-semibold">{mode === 'template' ? 'Extra details (optional)' : 'Describe the video'}<span className="text-[12px] font-normal text-[#A1A1AA]">{prompt.length}/500</span></span>
+                <textarea rows={4} maxLength={500} value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder={PROMPT_PLACEHOLDER[mode]} className="input resize-none !bg-[#0D0B14]" />
               </label>
-              <div>
-                <span className="mb-2 block text-[14px] font-semibold">Start from a photo</span>
-                <div className="grid h-28 cursor-not-allowed place-items-center rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#12101B] text-[14px] text-[#A1A1AA]">Upload a photo (not available yet)</div>
-              </div>
+
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <span className="mb-2 block text-[14px] font-semibold">Shape</span>
-                  <div className="flex gap-2">{RATIOS.map((r) => <button key={r} type="button" onClick={() => setRatio(r)} aria-pressed={ratio === r} className={`chip ${ratio === r ? 'chip-on' : ''}`}>{r}</button>)}</div>
+                  <span className="mb-2 block text-[14px] font-semibold">Aspect ratio</span>
+                  <div className="flex flex-wrap gap-2">{RATIOS.map((r) => <button key={r} type="button" onClick={() => setRatio(r)} aria-pressed={ratio === r} className={`chip ${ratio === r ? 'chip-on' : ''}`}>{r}</button>)}</div>
                 </div>
                 <div>
-                  <span className="mb-2 block text-[14px] font-semibold">Length</span>
-                  <div className="flex gap-2">{LENGTHS.map((l) => <button key={l} type="button" onClick={() => setLen(l)} aria-pressed={len === l} className={`chip ${len === l ? 'chip-on' : ''}`}>{l}</button>)}</div>
+                  <span className="mb-2 block text-[14px] font-semibold">Duration</span>
+                  <div className="flex flex-wrap gap-2">{LENGTHS.map((l) => <button key={l} type="button" onClick={() => setLen(l)} aria-pressed={len === l} className={`chip ${len === l ? 'chip-on' : ''}`}>{l}</button>)}</div>
                 </div>
               </div>
-              <button type="button" disabled className="btn-primary !w-full !py-4 !text-[16px]" title="Video generation is not available yet">Generate video (not available yet)</button>
-              <p className="text-[13px] text-[#A1A1AA]">Choices above are not saved or sent anywhere. Your photo creation and coins are not affected.</p>
+
+              <div>
+                <button type="button" disabled className="btn-grad !w-full !py-4 !text-[16px]" data-ready={ready ? 'true' : 'false'}>Generate video</button>
+              </div>
             </div>
-            <div className="grid place-items-center bg-[linear-gradient(135deg,#1B1530_0%,#271425_100%)] p-8">
-              <div className={`grid w-full max-w-[300px] place-items-center rounded-[28px] border-4 border-[#1A1626] bg-[#12101B]/60 shadow-[0_24px_50px_rgba(0,0,0,0.14)] ${ratio === '16:9' ? 'aspect-video' : ratio === '1:1' ? 'aspect-square' : 'aspect-[9/16]'}`}>
-                <div className="text-center">
+
+            <div className="grid place-items-center border-t border-[#272033] bg-[linear-gradient(135deg,#1B1530_0%,#271425_100%)] p-6 sm:p-8 lg:border-l lg:border-t-0">
+              <div className={`grid w-full place-items-center rounded-[28px] border-4 border-[#1A1626] bg-[#12101B]/60 shadow-[0_24px_50px_rgba(0,0,0,0.3)] ${frame} ${ratio === '16:9' ? 'max-w-[420px]' : 'max-w-[300px]'}`}>
+                <div className="px-4 text-center">
                   <span className="mx-auto grid size-14 place-items-center rounded-full bg-white text-[#08080D]"><svg className="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
                   <p className="mt-3 text-[14px] font-semibold">Your video will appear here</p>
+                  <p className="mt-1 text-[12px] text-[#A1A1AA]">{cur.label} · {ratio} · {len}</p>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="mt-20" aria-label="What is planned">
-          <div className="section-head"><h2 className="section-title">What video creation will do</h2></div>
+        <section className="mt-20" aria-label="What you can create">
+          <div className="section-head"><h2 className="section-title">What you can create with video</h2></div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {IDEAS.map(([t, d, bg]) => (
               <div key={t} className="rounded-[28px] p-7" style={{ background: bg }}>
@@ -84,24 +177,6 @@ export default function Video() {
             ))}
           </div>
         </section>
-
-        {samples.length > 0 && (
-          <section className="mt-20" aria-label="Start with a photo">
-            <div className="section-head">
-              <h2 className="section-title">Start with a photo today</h2>
-              <SeeAll to="/explore" />
-            </div>
-            <div className="grid grid-cols-2 gap-4 min-[560px]:grid-cols-3 lg:grid-cols-6">
-              {samples.map((t) => (
-                <Link key={t.id} to={`/generate?categoryId=${t.categoryId}&assetId=${t.assetId}`} className="tile group aspect-[3/4] !rounded-[24px]">
-                  <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" draggable="false" />
-                  <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/70 via-transparent to-transparent" />
-                  <span className="absolute inset-x-3 bottom-3 truncate text-[13px] font-semibold text-white">{t.name}</span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
       </div>
     </div>
   )

@@ -153,7 +153,7 @@ export default function MobileHome({ trending = [] }) {
     <div className="pb-2 text-[#FFFFFF] md:hidden">
       <section aria-label="Welcome" className="mx-4 mt-3 rounded-[28px] bg-[linear-gradient(135deg,#1B1530_0%,#271425_100%)] p-5">
         <h1 className="text-[28px] leading-[1.08]">Create stunning <span className="grad-text">photos</span> with AI</h1>
-        <p className="mt-2 text-[14px] leading-relaxed text-[#A1A1AA]">Pick a template, add your photo and get a professional result. Video creation is coming soon.</p>
+        <p className="mt-2 text-[14px] leading-relaxed text-[#A1A1AA]">Pick a template, add your photo and get a professional result.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={openLogin} className="btn-grad !px-5 !py-2.5 !text-[14px]">Sign up, get 100 coins</button>
           <Link to="/explore" className="btn-dark !px-5 !py-2.5 !text-[14px]">Browse</Link>
