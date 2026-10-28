@@ -12,7 +12,16 @@
 // Where the backend is. Local development: http://localhost:5001. Deployed (Vercel services, backend under /api on the same domain): '' = same origin.
 // A production build ignores a localhost VITE_API_BASE_URL (copied from the local .env by mistake): it could never work for visitors.
 const CONFIGURED_API = import.meta.env.VITE_API_BASE_URL
-export const API_BASE = ((CONFIGURED_API && !(import.meta.env.PROD && /(^|\/\/)(localhost|127\.0\.0\.1)(:|\/|$)/.test(CONFIGURED_API))) ? CONFIGURED_API : (import.meta.env.DEV ? 'http://localhost:5001' : '')).replace(/\/+$/, '')
+const LOOPBACK = /^(localhost|127\.0\.0\.1|\[::1\])$/
+const baseUrl = (CONFIGURED_API && !(import.meta.env.PROD && /(^|\/\/)(localhost|127\.0\.0\.1)(:|\/|$)/.test(CONFIGURED_API))) ? CONFIGURED_API : (import.meta.env.DEV ? 'http://localhost:5001' : '')
+// Dev only: "localhost" means the visitor's own device. When the app is opened from another device through this PC's LAN address (e.g. http://192.168.x.x:5173), a loopback API
+// address is pointed at the same host the page came from, so the backend (same machine, same port) is reached without editing any env file.
+const forLan = (u) => {
+  if (!import.meta.env.DEV || !u || typeof window === 'undefined' || LOOPBACK.test(window.location.hostname)) return u
+  try { const url = new URL(u); if (LOOPBACK.test(url.hostname)) { url.hostname = window.location.hostname; return url.origin + url.pathname } } catch { /* not an absolute URL: leave it */ }
+  return u
+}
+export const API_BASE = forLan(baseUrl).replace(/\/+$/, '')
 export const IMAGE_SIZE = '9:16'
 export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 export const MAX_BYTES = 10 * 1024 * 1024

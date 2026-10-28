@@ -2,12 +2,14 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { exploreTabs, categoryItems, generateUrl } from '../data/templates.js'
 import PImage from './PImage.jsx'
+import { useStudio } from '../context/StudioContext.jsx'
+import { SeeAll } from './homeParts.jsx'
 
 function SnapRow({ items, cardCls, rowCls, render }) {
   return (
     <div className={`no-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth ${rowCls}`} style={{ WebkitOverflowScrolling: 'touch' }}>
       {items.map((t) => (
-        <div key={t.id} className={`relative shrink-0 snap-start overflow-hidden border border-white/5 bg-[#141011] ${cardCls}`}>
+        <div key={t.id} className={`relative shrink-0 snap-start overflow-hidden border border-[#272033] bg-[#12101B] ${cardCls}`}>
           {render(t)}
         </div>
       ))}
@@ -97,13 +99,13 @@ function TopCarousel({ items }) {
         const copy = loop && (k === 0 || k === n + 1)
         return (
           <div key={copy ? `${t.id}-copy${k}` : t.id} className="w-full shrink-0 snap-start px-4" aria-hidden={copy ? 'true' : undefined}>
-            <div className="relative max-h-[78vh] w-full overflow-hidden rounded-[24px] border border-white/5 bg-[#141011] shadow-xl" style={{ aspectRatio: shapes[t.image] || '16 / 10' }}>
+            <div className="relative max-h-[78vh] w-full overflow-hidden rounded-[24px] border border-[#272033] bg-[#12101B] shadow-xl" style={{ aspectRatio: shapes[t.image] || '16 / 10' }}>
               <Link to={generateUrl(t)} aria-label={t.name} tabIndex={copy ? -1 : undefined} className="block size-full">
                 <PImage src={t.image} alt={t.name} className="absolute inset-0 size-full object-contain" draggable="false" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <span className="absolute inset-x-3.5 bottom-3 flex items-center justify-between gap-2">
-                  <span className="truncate text-[15px] text-white/90">{t.name}</span>
-                  <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-[11px] text-white/50">Try It</span>
+                  <span className="truncate text-[16px] font-semibold text-white">{t.name}</span>
+                  <span className="shrink-0 rounded-full bg-white px-3.5 py-1 text-[12px] font-semibold text-[#08080D]">Try It</span>
                 </span>
               </Link>
             </div>
@@ -116,7 +118,7 @@ function TopCarousel({ items }) {
         {items.map((t, i) => (
           <button key={t.id} type="button" role="tab" aria-selected={i === active} aria-label={`Slide ${i + 1}`}
             onClick={() => { pause(8000); if (!gliding.current) slideTo(i + 1) }}
-            className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${i === active ? 'w-6 bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)]' : 'w-2 bg-white/35'}`} />
+            className={`h-2 cursor-pointer rounded-full transition-all duration-300 ${i === active ? 'w-6 bg-[linear-gradient(90deg,#7C3AED_0%,#C026D3_100%)]' : 'w-2 bg-white/35'}`} />
         ))}
       </div>
     )}
@@ -138,6 +140,7 @@ const CATEGORY_INFO = {
 
 /** Phone home, laid out like the Glymo reference: a top carousel, then one titled snap row per category. No hero or intro before the templates. */
 export default function MobileHome({ trending = [] }) {
+  const { openLogin } = useStudio()
   const top = categoryItems('top-carousel')
   const rows = exploreTabs.filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
     id: tab.id, title: tab.category || tab.name, info: CATEGORY_INFO[tab.id], items: categoryItems(tab.id),
@@ -147,26 +150,32 @@ export default function MobileHome({ trending = [] }) {
   rows.sort((x, y) => { const f = (r) => { const i = FIRST.indexOf(r.id); return i < 0 ? FIRST.length : i }; return f(x) - f(y) }) // stable: the rest keep their order
   if (trending.length) rows.unshift({ id: 'trending', title: 'Trending Templates', info: 'Chosen by the Pictrify team, newest first.', items: trending.slice(0, 20), to: '/explore?category=trending&from=home' }) // first section on the phone home
   return (
-    <div className="pb-32 text-white md:hidden">
+    <div className="pb-2 text-[#FFFFFF] md:hidden">
+      <section aria-label="Welcome" className="mx-4 mt-3 rounded-[28px] bg-[linear-gradient(135deg,#1B1530_0%,#271425_100%)] p-5">
+        <h1 className="text-[28px] leading-[1.08]">Create stunning <span className="grad-text">photos</span> with AI</h1>
+        <p className="mt-2 text-[14px] leading-relaxed text-[#A1A1AA]">Pick a template, add your photo and get a professional result. Video creation is coming soon.</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button type="button" onClick={openLogin} className="btn-grad !px-5 !py-2.5 !text-[14px]">Sign up, get 100 coins</button>
+          <Link to="/explore" className="btn-dark !px-5 !py-2.5 !text-[14px]">Browse</Link>
+        </div>
+      </section>
       {top.length > 0 && (
         <div className="mt-1">
           <TopCarousel items={top} />
         </div>
       )}
       {rows.map((r) => (
-        <section key={r.id} className="mt-[34px] space-y-3 first:mt-4">
+        <section key={r.id} className="mt-6 space-y-2 first:mt-4">
           <div className="flex items-center justify-between gap-3 px-4">
-            <div className="min-w-0"><h2 className="text-base font-normal tracking-wide text-white">{r.title}</h2>{r.info && <p className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-[#B4B0C0]">{r.info}</p>}</div>
-            <Link to={r.to} className="flex cursor-pointer items-center gap-1 rounded-full bg-white/[0.06] px-3 py-1 text-[11px] font-semibold text-white ring-1 ring-inset ring-white/15 transition-colors hover:bg-white/10">
-              More <svg className="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
-            </Link>
+            <div className="min-w-0"><h2 className="text-base font-normal tracking-wide text-[#FFFFFF]">{r.title}</h2>{r.info && <p className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-[#A1A1AA]">{r.info}</p>}</div>
+            <SeeAll to={r.to} />
           </div>
-          <SnapRow items={r.items} rowCls="scroll-px-4 gap-3 px-4 py-[7px]" cardCls="aspect-[9/16] w-[42vw] max-w-[190px] rounded-2xl"
+          <SnapRow items={r.items} rowCls="scroll-px-4 gap-3 px-4 py-0" cardCls="aspect-[9/16] w-[42vw] max-w-[190px] rounded-2xl"
             render={(t) => (
               <Link to={generateUrl(t)} aria-label={t.name} className="block size-full">
                 <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <span className="absolute inset-x-2 bottom-2.5 truncate text-center text-[11px] text-white/90">{t.name}</span>
+                <span className="absolute inset-x-2 bottom-2.5 truncate text-center text-[11px] text-white/95">{t.name}</span>
               </Link>
             )} />
         </section>

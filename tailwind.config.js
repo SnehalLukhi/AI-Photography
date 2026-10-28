@@ -2,6 +2,8 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
+      // Picsart-style softness: the classic 6px corners become generous rounded ones everywhere (cards, panels, inputs) without touching each page
+      borderRadius: { DEFAULT: '10px', md: '16px', lg: '20px', xl: '24px', '2xl': '28px', '3xl': '36px' },
       fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], display: ['Outfit', 'Inter', 'sans-serif'], serif: ['Outfit', 'Inter', 'sans-serif'], mono: ['Inter', 'system-ui', 'sans-serif'] },
       colors: { page: '#0A0809', panel: '#1D181B', ink: '#0A0809', slate: '#141011', graphite: '#1D181B', line: '#2C2529', bone: '#FAFAFA', citron: '#B653F6', ice: '#B653F6', mint: '#B653F6', coral: '#D98282', accent: '#B653F6', pink: '#B653F6', footer: '#0A0809' },
       keyframes: {

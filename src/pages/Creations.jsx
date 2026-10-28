@@ -34,24 +34,24 @@ function Compare({ item, onClose, onDelete }) {
     try { await onDelete() } catch (e) { setError(e.message || 'Could not delete this creation. Please try again.'); setBusy('') } // on success the popup closes
   }
   return (
-    <div className="welcome-backdrop fixed inset-0 z-[200] grid place-items-center overflow-y-auto bg-[#0A0809]/80 px-4 py-8" onClick={onClose}>
-      <div className={`welcome-card w-full ${original ? 'max-w-3xl' : 'max-w-xs'} rounded-md border border-[#2C2529] bg-[#141011] p-5 text-center`} onClick={(e) => e.stopPropagation()}>
-        <p className="mb-4 font-serif text-[28px] leading-none">{item.name}</p>
+    <div className="welcome-backdrop fixed inset-0 z-[200] grid place-items-center overflow-y-auto bg-[#08080D]/50 px-4 py-8 backdrop-blur-[2px]" onClick={onClose}>
+      <div className={`welcome-card w-full ${original ? 'max-w-3xl' : 'max-w-xs'} rounded-3xl bg-[#12101B] p-6 text-center shadow-[0_18px_40px_rgba(0,0,0,0.14)]`} onClick={(e) => e.stopPropagation()}>
+        <p className="mb-4 text-[24px] font-bold leading-tight text-[#FFFFFF]">{item.name}</p>
         <div className={original ? 'grid grid-cols-2 gap-3' : 'mx-auto max-w-[200px]'}>{/* no saved original (other browser / device): just the AI image */}
           {[...(original ? [['Original', original]] : []), ['AI generated', item.image]].map(([label, src]) => (
             <figure key={label}>
-              <div className="aspect-[9/16] overflow-hidden rounded-md border border-[#2C2529] bg-[#0A0809]">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#B4B0C0]">Not available</div>}</div>
-              <figcaption className="mt-2 font-plexmono text-[11px] uppercase tracking-[0.08em] text-[#B4B0C0]">{label}</figcaption>
+              <div className="aspect-[9/16] overflow-hidden rounded-2xl bg-[#12101B]">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#A1A1AA]">Not available</div>}</div>
+              <figcaption className="mt-2 font-plexmono text-[11px] uppercase tracking-[0.08em] text-[#A1A1AA]">{label}</figcaption>
             </figure>
           ))}
         </div>
-        {error && <p role="alert" className="mt-3 text-sm text-[#D98282]">{error}</p>}
+        {error && <p role="alert" className="mt-3 text-sm text-[#D14343]">{error}</p>}
         <div className="mt-4 flex flex-wrap justify-center gap-3">
           {item.image && item.generationId && <button type="button" disabled={!!busy} onClick={() => save('result')} className="btn-grad disabled:opacity-60">{busy === 'result' ? 'Downloading…' : 'Download'}</button>}
           {item.generationId && <button type="button" className="btn-dark disabled:opacity-60" disabled={!!busy} onClick={del}>{busy === 'delete' ? 'Deleting…' : 'Delete'}</button>}
           <button className="btn-dark" onClick={onClose}>Close</button>
         </div>
-        {original && <button type="button" disabled={!!busy} onClick={() => save('original')} className="mt-3 cursor-pointer text-xs text-[#B4B0C0] underline hover:text-[#FAFAFA] disabled:opacity-60">{busy === 'original' ? 'Downloading…' : 'Download original photo'}</button>}
+        {original && <button type="button" disabled={!!busy} onClick={() => save('original')} className="mt-3 cursor-pointer text-xs text-[#A1A1AA] underline hover:text-[#FFFFFF] disabled:opacity-60">{busy === 'original' ? 'Downloading…' : 'Download original photo'}</button>}
       </div>
     </div>
   )
@@ -59,7 +59,7 @@ function Compare({ item, onClose, onDelete }) {
 
 /** A card that stands in for a creation that is still being loaded: the Pictrify "P" on a dark tile, breathing gently (the same loading look as the template tiles). */
 const Skeleton = () => (
-  <div aria-hidden="true" className="relative grid aspect-[9/16] place-items-center overflow-hidden rounded-md border border-[#2C2529] bg-[#141011]">
+  <div aria-hidden="true" className="relative grid aspect-[9/16] place-items-center overflow-hidden rounded-2xl bg-[#1A1626]">
     <img src="/images/features/logo-mark.svg" alt="" draggable="false" className="pimage-pulse w-[40%] max-w-[130px]" />
   </div>
 )
@@ -103,40 +103,41 @@ export default function Creations() {
     setCreations((cur) => cur.filter((x) => x.id !== c.id)); setOpen(null)
   }
   return (
-    <main className="mx-auto w-full max-w-none grow px-5 pb-8 pt-8 text-[#FAFAFA] sm:px-8 sm:pt-10 lg:px-10">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="gradient-text w-fit text-[48px] leading-none sm:text-[64px]">My Creations</h1>
-          <p className="text-[15px] text-[#B4B0C0]">{signedIn && list.length ? `${list.length}${nextToken ? '+' : ''} ${list.length === 1 ? 'creation' : 'creations'}. Tap one to compare, download or delete.` : 'Everything you create, saved in one place.'}</p>
+    <main className="mx-auto w-full max-w-none grow px-5 pb-8 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-10 lg:px-10">
+      <div className="flex flex-wrap items-end justify-between gap-4 rounded-3xl bg-[#12101B] px-6 py-8 sm:px-8">
+        <div className="flex flex-col gap-3">
+          <p className="eyebrow">Your library</p>
+          <h1 className="text-[40px] font-bold leading-[1.05] tracking-tight sm:text-[56px]">My <span className="grad-text">Creations</span></h1>
+          <p className="text-[16px] text-[#A1A1AA]">{signedIn && list.length ? `${list.length}${nextToken ? '+' : ''} ${list.length === 1 ? 'creation' : 'creations'}. Tap one to compare, download or delete.` : 'Everything you create, saved in one place.'}</p>
         </div>
-        {signedIn && <Link to="/explore" className="btn-grad !px-5 !py-2.5 !text-[14px]">New creation</Link>}
+        {signedIn && <Link to="/explore" className="btn-grad !px-6 !py-3 !text-[14px]">New creation</Link>}
       </div>
 
-      {loadError && <p role="alert" className="mt-6 text-sm text-[#D98282]">{loadError}</p>}
+      {loadError && <p role="alert" className="mt-6 text-sm text-[#D14343]">{loadError}</p>}
       {!authReady ? null : !signedIn ? (
-        <div className="mt-10 rounded-md border border-[#2C2529] bg-[#141011] px-6 py-16 text-center sm:py-20">
-          <h2 className="font-serif text-[34px] leading-tight">Sign in to see your creations</h2>
-          <p className="mx-auto mt-3 max-w-md text-[15px] text-[#B4B0C0]">Your creations are stored on your account, so they are here on every device.</p>
+        <div className="mt-10 rounded-3xl bg-[#12101B] px-6 py-16 text-center sm:py-20">
+          <h2 className="text-[30px] font-bold leading-tight text-[#FFFFFF]">Sign in to see your creations</h2>
+          <p className="mx-auto mt-3 max-w-md text-[15px] text-[#A1A1AA]">Your creations are stored on your account, so they are here on every device.</p>
           <button type="button" onClick={openLogin} className="btn-grad mt-7 !px-6 !py-3 !text-[15px]">Sign in</button>
         </div>
       ) : (
         <>
           {list.length === 0 && !listLoading ? (
-            <div className="mt-10 rounded-md border border-[#2C2529] bg-[#141011] px-6 py-16 text-center sm:py-20">
-              <h2 className="font-serif text-[34px] leading-tight">Nothing here yet</h2>
-              <p className="mt-3 text-[15px] text-[#B4B0C0]">Create something and it will show up here.</p>
+            <div className="mt-10 rounded-3xl bg-[#12101B] px-6 py-16 text-center sm:py-20">
+              <h2 className="text-[30px] font-bold leading-tight text-[#FFFFFF]">Nothing here yet</h2>
+              <p className="mt-3 text-[15px] text-[#A1A1AA]">Create something and it will show up here.</p>
               <Link to="/explore" className="btn-grad mt-7 !px-6 !py-3 !text-[15px]">Browse looks</Link>
             </div>
           ) : (
-            <div className="mt-8 grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:gap-4 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+            <div className="mt-10 grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:gap-6 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
               {list.map((c) => (
-                <div key={c.id} onClick={() => setOpen(c)} className="group relative aspect-[9/16] animate-fade-in cursor-pointer overflow-hidden rounded-md border border-[#2C2529] bg-[#141011] transition-colors hover:border-[#B4B0C0]">
+                <div key={c.id} onClick={() => setOpen(c)} className="group relative aspect-[9/16] animate-fade-in cursor-pointer overflow-hidden rounded-2xl bg-[#12101B] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
                   {/* every generated picture fills the whole 9:16 card (cropped evenly, never stretched): results from the AI Photography API are almost 9:16, Cartoon results keep the photo's own shape */}
                   <PImage src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0809]/85 via-transparent to-transparent" />
-                  <div className="absolute inset-x-2 bottom-2 flex items-end justify-between gap-1 text-xs">
-                    <span className="min-w-0"><span className="block truncate text-[13px] font-semibold">{c.name}</span><span className="font-plexmono text-[10px] text-[#B4B0C0]">{c.date}</span></span>
-                    <button aria-label="Download" onClick={(e) => { e.stopPropagation(); if (c.generationId) downloadGeneration(c.generationId).catch(() => {}) }} className="grid size-8 shrink-0 cursor-pointer place-items-center rounded border border-[#2C2529] bg-[#0A0809]/80 text-[#FAFAFA] opacity-0 transition hover:border-[#FAFAFA] group-hover:opacity-100 max-md:opacity-100"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14" /></svg></button>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#08080D]/75 via-transparent to-transparent" />
+                  <div className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-1 text-xs text-white">
+                    <span className="min-w-0"><span className="block truncate text-[13px] font-semibold">{c.name}</span><span className="font-plexmono text-[10px] text-white/75">{c.date}</span></span>
+                    <button aria-label="Download" onClick={(e) => { e.stopPropagation(); if (c.generationId) downloadGeneration(c.generationId).catch(() => {}) }} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full bg-[#12101B]/95 text-[#FFFFFF] opacity-0 shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition hover:bg-[#1A1626] group-hover:opacity-100 max-md:opacity-100"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14" /></svg></button>
                   </div>
                 </div>
               ))}

@@ -24,8 +24,11 @@ const readPackCache = () => { try { return JSON.parse(localStorage.getItem(PACK_
 let early = typeof location !== 'undefined' && location.pathname.startsWith('/coins') ? getCoinPacks().catch(() => null) : null
 const loadPacks = () => { const p = early || getCoinPacks(); early = null; return p.then((d) => d || getCoinPacks()) } // the early request failed: try once more
 
-const Skel = ({ className = '' }) => <div aria-hidden="true" className={`animate-pulse rounded-md border border-[#2C2529] bg-[#141011] ${className}`} />
+const Skel = ({ className = '' }) => <div aria-hidden="true" className={`animate-pulse rounded-md border border-[#272033] bg-[#12101B] ${className}`} />
 
+const Tick = ({ dark }) => <span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${dark ? 'bg-[#12101B]/15 text-white' : 'bg-[#1B1530] text-[#8B5CF6]'}`}>✓</span>
+
+const TINTS = ['#1B1530', '#271425', '#101D2C', '#102419', '#2A1C10']
 
 export default function Wallet({ tab = 'plans' }) {
   const nav = useNavigate()
@@ -77,152 +80,167 @@ export default function Wallet({ tab = 'plans' }) {
     history: ['Payments and coins', 'Transaction ', 'History', 'Track subscriptions, coin purchases and refunds.'],
   }[tab]
   const sub = tab === 'packs'
-    ? <>Buy a coin pack once - no subscription. Coins never expire{signedIn ? <>, and you have <strong className="text-white">{coins.toLocaleString()}</strong> now.</> : '.'}</>
+    ? <>Buy a coin pack once - no subscription. Coins never expire{signedIn ? <>, and you have <strong className="text-[#FFFFFF]">{coins.toLocaleString()}</strong> now.</> : '.'}</>
     : HEAD[3]
-  const card = 'relative flex flex-col rounded-[24px] border bg-[#141011] p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8'
-  const badge = <span className="absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white sm:text-[11px]">Most Popular</span>
-  const btn = (popular) => `group relative mt-8 flex h-[52px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl text-[15px] font-semibold text-white transition-shadow duration-300 disabled:cursor-wait disabled:opacity-70 ${popular ? 'bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)] shadow-[0_0_28px_rgba(252,72,231,0.3)] hover:shadow-[0_0_36px_rgba(252,72,231,0.45)]' : 'border border-white/15 bg-[#1D181B]'}`
-  const hover = (popular) => !popular && <span className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+  const card = (popular) => `relative flex flex-col rounded-[32px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${popular ? 'border-[#FFFFFF] bg-[#0D0B14] ring-1 ring-[#8B5CF6]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#272033] bg-[#12101B]'}`
+  const badge = <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(252,72,231,0.35)]">Most Popular</span>
+  const btn = (popular) => `${popular ? 'btn-grad' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`
+  const ink = (popular) => (popular ? 'text-white' : 'text-[#FFFFFF]')
+  const muted = (popular) => (popular ? 'text-white/65' : 'text-[#A1A1AA]')
+  const offTag = (popular, pct) => <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${popular ? 'bg-[#C026D3] text-white' : 'bg-[#271425] text-[#C21FA5]'}`}>{pct}% OFF</span>
+  const coinTile = (popular, tint, alt, text) => (
+    <div className={`mt-5 flex items-center gap-3 rounded-2xl px-3 py-2.5 ${popular ? 'bg-[#12101B]/10' : ''}`} style={popular ? undefined : { background: tint }}>
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#12101B]"><img src="/images/features/coin.svg" alt={alt} width="44" height="44" className="size-7 object-contain" /></span>
+      <p className={`text-[15px] font-semibold ${ink(popular)}`}>{text}</p>
+    </div>
+  )
   return (
-    <div className="mx-auto w-full max-w-none px-4 pb-8 max-md:pb-32 pt-6 text-[#FAFAFA] sm:px-6 sm:pt-8 md:px-8 lg:px-10">
-      <header className={`max-w-3xl ${tab === 'plans' ? 'max-md:hidden' : ''}`}>
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#FC48E7]" /><span>{HEAD[0]}</span></div>
-        <h1 className="mt-6 text-[32px] font-bold leading-[1.05] tracking-tight sm:text-[44px] lg:text-[48px]"><span className="text-white">{HEAD[1]}</span><span className="gradient-text">{HEAD[2]}</span></h1>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed text-[#B4B0C0] sm:mt-4">{sub}</p>
+    <div className="mx-auto w-full max-w-[1280px] px-4 pb-12 pt-6 text-[#FFFFFF] max-md:pb-32 sm:px-6 sm:pt-10 md:px-8 lg:px-10">
+      <header className={`mx-auto max-w-3xl text-center ${tab === 'plans' ? 'max-md:hidden' : ''}`}>
+        <span className="pill-tag"><SparkIcon className="size-3.5 text-[#8B5CF6]" /><span>{HEAD[0]}</span></span>
+        <h1 className="mt-5 font-display text-[36px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[52px] lg:text-[60px]">{HEAD[1]}<span className="grad-text">{HEAD[2]}</span></h1>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#A1A1AA] sm:text-lg">{sub}</p>
       </header>
 
-      {note && <p role="status" className="mt-6 rounded-xl border border-[#D98282]/40 bg-[#241518] px-4 py-3 text-center text-sm text-[#F2A0A0]">{note}</p>}
+      <nav aria-label="Wallet sections" className="mt-7 flex justify-center max-md:hidden sm:mt-9">
+        <div className="inline-flex gap-1 rounded-full bg-[#12101B] p-1.5">
+          {[['plans', '/pricing', 'Plans'], ['packs', '/coins', 'Coin packs'], ['history', '/transactions', 'Transactions']].map(([k, to, label]) => (
+            <Link key={k} to={to} aria-current={tab === k ? 'page' : undefined} className={`rounded-full px-6 py-2.5 text-[15px] font-semibold transition-colors ${tab === k ? 'bg-white text-[#08080D]' : 'text-[#FFFFFF] hover:bg-[#1A1626]'}`}>{label}</Link>
+          ))}
+        </div>
+      </nav>
+
+      {note && <p role="status" className="mx-auto mt-6 max-w-2xl rounded-2xl border border-[#F3B6C8] bg-[#FFF0F4] px-4 py-3 text-center text-sm text-[#B4234F]">{note}</p>}
 
       {tab === 'plans' && (
         <>
-        {/* ---------- phone: pick a plan from radio rows, then Continue (like the reference) ---------- */}
+        {/* ---------- phone: pick a plan from radio rows, then Continue ---------- */}
         <section aria-label="Choose your plan" className="md:hidden">
           <div className="relative flex items-center justify-center pb-3 pt-1">
-            <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#141011] text-white"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
-            <h1 className="text-[18px] font-semibold text-white">Choose Your Plan</h1>
+            <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#12101B] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+            <h1 className="font-display text-[20px] font-bold text-[#FFFFFF]">Choose Your Plan</h1>
           </div>
-          <p className="mb-4 text-center text-[13px] text-[#B4B0C0]">Unlock premium templates, faster generation and more creative freedom.</p>
+          <nav aria-label="Wallet sections" className="mb-4 flex justify-center gap-2">
+            {[['plans', '/pricing', 'Plans'], ['packs', '/coins', 'Coin packs'], ['history', '/transactions', 'History']].map(([k, to, label]) => (
+              <Link key={k} to={to} aria-current={tab === k ? 'page' : undefined} className={`chip ${tab === k ? 'chip-on' : ''}`}>{label}</Link>
+            ))}
+          </nav>
+          <p className="mb-5 text-center text-[14px] text-[#A1A1AA]">Unlock premium templates, faster generation and more creative freedom.</p>
           <div className="space-y-3" role="radiogroup" aria-label="Subscription plans">
-            {!plans && [0, 1, 2].map((i) => <Skel key={i} className="h-[76px] !rounded-[20px]" />)}
+            {!plans && [0, 1, 2].map((i) => <Skel key={i} className="h-[76px] !rounded-[24px]" />)}
             {plans?.map((p) => {
               const on = p.id === selId
               return (
                 <div key={p.id} role="radio" aria-checked={on} tabIndex={0} onClick={() => setSel(p.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(p.id)}
-                  className={`relative cursor-pointer overflow-hidden rounded-[20px] border bg-[#141011] p-4 transition-colors ${on ? 'border-[#705CFF]/70 bg-[#171218]' : 'border-white/[0.08]'}`}>
-                  {p.popular && <span className="absolute right-0 top-0 rounded-bl-xl bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">Most Popular</span>}
+                  className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#12101B]' : 'border-[#272033] bg-[#12101B]'}`}>
+                  {p.popular && <span className="badge absolute right-0 top-0 !rounded-none !rounded-bl-2xl !px-3 !py-1 !text-[10px] uppercase tracking-wide">Most Popular</span>}
                   <div className="flex items-center gap-3">
-                    <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FC48E7]' : 'border-white/30'}`}>{on && <span className="size-2.5 rounded-full bg-[#FC48E7]" />}</span>
+                    <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#3A2F52]'}`}>{on && <span className="size-2.5 rounded-full bg-[#0D0B14] ring-1 ring-[#8B5CF6]/30" />}</span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[15px] font-semibold text-white">{p.name}</p>
-                      <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#B4B0C0]"><img src="/images/features/coin.svg" alt="" width="16" height="16" className="size-4 object-contain" />{p.coinsText} Coins{p.per?.includes('year') ? ' / year' : ''}</p>
+                      <p className="text-[16px] font-bold text-[#FFFFFF]">{p.name}</p>
+                      <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#A1A1AA]"><img src="/images/features/coin.svg" alt="" width="16" height="16" className="size-4 object-contain" />{p.coinsText} Coins{p.per?.includes('year') ? ' / year' : ''}</p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-[20px] font-bold leading-none text-white">{p.priceText} <span className="text-[11px] font-normal text-[#B4B0C0]">{p.per}</span></p>
-                      {p.originalPrice && <p className="mt-1 text-[11px] text-[#B4B0C0]"><span className="line-through">{p.originalPrice}</span> <span className="font-bold text-[#FC48E7]">{p.discount}% OFF</span></p>}
+                      <p className="font-display text-[22px] font-bold leading-none text-[#FFFFFF]">{p.priceText} <span className="font-sans text-[11px] font-normal text-[#A1A1AA]">{p.per}</span></p>
+                      {p.originalPrice && <p className="mt-1 text-[11px] text-[#A1A1AA]"><span className="line-through">{p.originalPrice}</span> <span className="font-bold text-[#C21FA5]">{p.discount}% OFF</span></p>}
                     </div>
                   </div>
                   {on && p.details?.length > 0 && (
-                    <dl className="mt-3.5 space-y-2 border-t border-white/[0.08] pt-3 text-[12px] text-[#B4B0C0]">
-                      {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="text-[#FC48E7]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold text-white">{value}</dd></div>)}
+                    <dl className="mt-3.5 space-y-2 border-t border-[#272033] pt-3 text-[12px] text-[#A1A1AA]">
+                      {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="text-[#8B5CF6]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold text-[#FFFFFF]">{value}</dd></div>)}
                     </dl>
                   )}
                 </div>
               )
             })}
           </div>
-          <button type="button" disabled={!chosen?.priceText || busy === selId} onClick={() => chosen && buy(chosen.id)} className="btn-grad mt-5 !h-[54px] !w-full !text-[16px] !font-bold shadow-[0_8px_28px_rgba(252,72,231,0.3)] active:scale-[0.98] disabled:cursor-wait">{busy === selId ? 'Please wait…' : chosen?.priceText ? `Continue · ${chosen.priceText}` : 'Continue'}</button>
-          <p className="mt-3 text-center text-[11px] text-[#B4B0C0]">Auto-renewable subscription. Cancel anytime.</p>
+          <button type="button" disabled={!chosen?.priceText || busy === selId} onClick={() => chosen && buy(chosen.id)} className="btn-primary mt-5 !h-[54px] !w-full !text-[16px] !font-bold disabled:cursor-wait">{busy === selId ? 'Please wait…' : chosen?.priceText ? `Continue · ${chosen.priceText}` : 'Continue'}</button>
+          <p className="mt-3 text-center text-[11px] text-[#A1A1AA]">Auto-renewable subscription. Cancel anytime.</p>
         </section>
-        <section aria-label="Plans" className="mt-8 hidden sm:mt-10 md:block lg:mt-12">
-          <div className="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:grid-cols-3 lg:gap-6">
-            {!plans && [0, 1, 2].map((i) => <Skel key={i} className="h-[420px] !rounded-[24px]" />)}
-            {plans?.map((p) => (
-              <article key={p.id} className={`${card} ${p.popular ? 'border-[#705CFF]/60' : 'border-white/[0.08]'}`}>
+        <section aria-label="Plans" className="mt-10 hidden md:block lg:mt-14">
+          <div className="grid grid-cols-1 gap-5 pt-3 sm:grid-cols-2 sm:pt-4 lg:grid-cols-3 lg:gap-6">
+            {!plans && [0, 1, 2].map((i) => <Skel key={i} className="h-[420px] !rounded-[32px]" />)}
+            {plans?.map((p, idx) => (
+              <article key={p.id} className={card(p.popular)}>
                 {p.popular && badge}
-                <h3 className={`${p.popular ? 'pr-24 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
+                <h3 className={`font-display ${p.popular ? 'pr-24 ' : ''}text-[22px] font-bold leading-tight sm:text-[26px] ${ink(p.popular)}`}>{p.name}</h3>
                 <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                  <p className="text-[34px] font-bold leading-none text-white sm:text-[40px]">{p.priceText}</p>
-                  {p.originalPrice && <span className="text-[15px] text-[#B4B0C0] line-through">{p.originalPrice}</span>}
-                  <span className="text-[13px] text-[#B4B0C0] sm:text-[14px]">{p.per}</span>
-                  {p.discount > 0 && <span className="rounded-md bg-[#FC48E7]/15 px-2 py-0.5 text-[11px] font-bold text-[#FC48E7]">{p.discount}% OFF</span>}
+                  <p className={`font-display text-[40px] font-extrabold leading-none sm:text-[48px] ${ink(p.popular)}`}>{p.priceText}</p>
+                  {p.originalPrice && <span className={`text-[15px] line-through ${muted(p.popular)}`}>{p.originalPrice}</span>}
+                  <span className={`text-[13px] sm:text-[14px] ${muted(p.popular)}`}>{p.per}</span>
+                  {p.discount > 0 && offTag(p.popular, p.discount)}
                 </div>
-                <div className="mt-4 flex items-center gap-2.5">
-                  <img src="/images/features/coin.svg" alt="Coins" width="44" height="44" className="size-9 shrink-0 object-contain" />
-                  <p className="text-[14px] font-semibold text-white">{p.coinsText} Coins</p>
-                </div>
-                <dl className="mt-7 flex flex-1 flex-col gap-3.5 text-[13px] text-[#B4B0C0] sm:mt-8 sm:gap-4 sm:text-[14px]">
+                {coinTile(p.popular, TINTS[idx % TINTS.length], 'Coins', `${p.coinsText} Coins`)}
+                <dl className={`mt-7 flex flex-1 flex-col gap-3.5 text-[13px] sm:mt-8 sm:gap-4 sm:text-[14px] ${muted(p.popular)}`}>
                   {[p.photos > 0 && ['Photos you can create', p.photos], p.each && ['Cost per photo', p.each]].filter(Boolean).map(([label, value]) => (
-                    <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="mt-px text-[#FC48E7]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold leading-snug text-white">{value}</dd></div>
+                    <div key={label} className="flex items-start gap-2.5"><Tick dark={p.popular} /><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className={`shrink-0 text-right font-semibold leading-snug ${ink(p.popular)}`}>{value}</dd></div>
                   ))}
                 </dl>
                 <button type="button" disabled={busy === p.id || !p.priceText} onClick={() => buy(p.id)} className={btn(p.popular)}>
-                  {hover(p.popular)}<span className="relative z-10">{busy === p.id ? 'Please wait…' : `Choose ${p.name}`}</span>
+                  {busy === p.id ? 'Please wait…' : `Choose ${p.name}`}
                 </button>
               </article>
             ))}
           </div>
-          <p className="mt-6 text-center text-[12px] text-[#B4B0C0]">Auto-renewable subscription. Cancel anytime. Prices are shown in your currency and paid securely through Razorpay.</p>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-[#B4B0C0]"><span>Just need a few more coins?</span><Link to="/coins" className="btn-dark !px-5 !py-2.5 !text-[14px]">Buy a coin pack<span aria-hidden="true">→</span></Link></div>
+          <p className="mt-8 text-center text-[12px] text-[#A1A1AA]">Auto-renewable subscription. Cancel anytime. Prices are shown in your currency and paid securely through Razorpay.</p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-[#A1A1AA]"><span>Just need a few more coins?</span><Link to="/coins" className="btn-dark !px-5 !py-2.5 !text-[14px]">Buy a coin pack<span aria-hidden="true">→</span></Link></div>
         </section>
         </>
       )}
 
       {tab === 'packs' && (
-        <section aria-label="Coin packs" className="mt-8 sm:mt-10 lg:mt-12">
-          {packsFailed && <p role="alert" className="rounded-xl border border-[#D98282]/40 bg-[#241518] px-4 py-3 text-sm text-[#F2A0A0]">Could not load the coin packs. Please check your connection and refresh.</p>}
-          <div className="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-5">
-            {!packData && !packsFailed && [0, 1, 2, 3, 4].map((k) => <Skel key={k} className="h-[300px] !rounded-[24px]" />)}
-            {packs.map((p) => {
+        <section aria-label="Coin packs" className="mt-10 lg:mt-14">
+          {packsFailed && <p role="alert" className="rounded-2xl border border-[#F3B6C8] bg-[#FFF0F4] px-4 py-3 text-sm text-[#B4234F]">Could not load the coin packs. Please check your connection and refresh.</p>}
+          <div className="grid grid-cols-1 gap-5 pt-3 sm:grid-cols-2 sm:pt-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-5">
+            {!packData && !packsFailed && [0, 1, 2, 3, 4].map((k) => <Skel key={k} className="h-[300px] !rounded-[32px]" />)}
+            {packs.map((p, idx) => {
               const list = typeof p.price === 'object' ? p.price.USD : p.price // regular price; with an offer the discounted price is what is charged
               const per = packData.costPerGeneration ? Math.floor(p.coins / packData.costPerGeneration) : null
               return (
-                <article key={p.id} className={`${card} ${p.popular ? 'border-[#705CFF]/60' : 'border-white/[0.08]'}`}>
+                <article key={p.id} className={card(p.popular)}>
                   {p.popular && badge}
-                  <h3 className={`${p.popular ? 'pr-20 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
+                  <h3 className={`font-display ${p.popular ? 'pr-20 ' : ''}text-[20px] font-bold leading-tight sm:text-[24px] ${ink(p.popular)}`}>{p.name}</h3>
                   <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                    <p className="text-[34px] font-bold leading-none text-white sm:text-[40px]">{formatPrice(p.offer ? p.offer.price : list, p.currency)}</p>
-                    {p.offer && <><span className="text-[15px] text-[#B4B0C0] line-through">{formatPrice(list, p.currency)}</span><span className="rounded-md bg-[#FC48E7]/15 px-2 py-0.5 text-[11px] font-bold text-[#FC48E7]">{p.offer.discountPercent}% OFF</span></>}
+                    <p className={`font-display text-[36px] font-extrabold leading-none sm:text-[42px] ${ink(p.popular)}`}>{formatPrice(p.offer ? p.offer.price : list, p.currency)}</p>
+                    {p.offer && <><span className={`text-[15px] line-through ${muted(p.popular)}`}>{formatPrice(list, p.currency)}</span>{offTag(p.popular, p.offer.discountPercent)}</>}
                   </div>
-                  <div className="mt-4 flex items-center gap-2.5">
-                    <img src="/images/features/coin.svg" alt="" width="44" height="44" className="size-9 shrink-0 object-contain" />
-                    <p className="text-[14px] font-semibold text-white">{p.coins.toLocaleString('en-US')} Coins</p>
-                  </div>
-                  {per != null && <p className="mt-7 flex-1 text-[13px] text-[#B4B0C0] sm:text-[14px]"><span aria-hidden="true" className="mr-2 text-[#FC48E7]">✓</span>About <strong className="text-white">{per}</strong> {per === 1 ? 'photo' : 'photos'}</p>}
+                  {coinTile(p.popular, TINTS[idx % TINTS.length], '', `${p.coins.toLocaleString('en-US')} Coins`)}
+                  {per != null && <p className={`mt-7 flex flex-1 items-start gap-2.5 text-[13px] sm:text-[14px] ${muted(p.popular)}`}><Tick dark={p.popular} /><span>About <strong className={ink(p.popular)}>{per}</strong> {per === 1 ? 'photo' : 'photos'}</span></p>}
                   <button type="button" disabled={busy === p.id} onClick={() => buy(p.id)} className={btn(p.popular)}>
-                    {hover(p.popular)}<span className="relative z-10">{busy === p.id ? 'Please wait…' : `Buy ${p.name}`}</span>
+                    {busy === p.id ? 'Please wait…' : `Buy ${p.name}`}
                   </button>
                 </article>
               )
             })}
           </div>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm text-[#B4B0C0]"><span>Prefer a subscription?</span><Link to="/pricing" className="btn-dark !px-5 !py-2.5 !text-[14px]">See the plans<span aria-hidden="true">→</span></Link></div>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-sm text-[#A1A1AA]"><span>Prefer a subscription?</span><Link to="/pricing" className="btn-dark !px-5 !py-2.5 !text-[14px]">See the plans<span aria-hidden="true">→</span></Link></div>
         </section>
       )}
 
       {tab === 'history' && (
-        <section aria-label="History" className="mt-8 sm:mt-10 lg:mt-12">
+        <section aria-label="History" className="mx-auto mt-10 max-w-4xl lg:mt-14">
           {!signedIn ? (
-            <div className="rounded-[24px] border border-white/[0.08] bg-[#141011] px-6 py-14 text-center"><p className="text-[20px] font-semibold">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-grad mt-5 !px-6 !py-2.5 !text-[14px]">Sign in</button></div>
+            <div className="rounded-[32px] bg-[#12101B] px-6 py-14 text-center"><p className="font-display text-[22px] font-bold">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-primary mt-5 !px-6 !py-2.5 !text-[14px]">Sign in</button></div>
           ) : history === null ? (
             <div className="flex flex-col gap-3">{[0, 1, 2].map((k) => <Skel key={k} className="h-16 !rounded-2xl" />)}</div>
           ) : history.length ? (
-            <div className="overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#141011] text-[14px]">
-              <div className="hidden grid-cols-[170px_1fr_150px_110px] border-b border-white/[0.08] px-6 py-3.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#B4B0C0] sm:grid"><span>Date</span><span>Item</span><span className="text-right">Paid</span><span className="text-right">Coins</span></div>
+            <div className="overflow-hidden rounded-[32px] border border-[#272033] bg-[#12101B] text-[14px]">
+              <div className="hidden grid-cols-[170px_1fr_150px_110px] bg-[#12101B] px-6 py-3.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#A1A1AA] sm:grid"><span>Date</span><span>Item</span><span className="text-right">Paid</span><span className="text-right">Coins</span></div>
               {history.map((p) => (
-                <div key={p.paymentId} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 border-b border-white/[0.06] px-5 py-4 last:border-b-0 sm:grid-cols-[170px_1fr_150px_110px] sm:px-6">
-                  <span className="order-2 text-[13px] text-[#B4B0C0] sm:order-none sm:text-[14px]">{formatDate(p.paidAt, true)}</span>
-                  <span className="order-1 min-w-0 sm:order-none"><span className="block font-semibold">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}</span><span className="block truncate text-[12px] text-[#B4B0C0]">Payment ID {p.paymentId}</span></span>
-                  <span className="order-3 text-right font-semibold sm:order-none">{formatMoney(p.amount, p.currency)}{p.offerPercent > 0 && <span className="ml-2 text-[11px] font-semibold text-[#FC48E7]">{p.offerPercent}% off</span>}</span>
-                  <span className="order-4 flex items-center justify-end gap-1.5 font-semibold text-[#B653F6] sm:order-none"><img src="/images/features/coin.svg" alt="" className="size-4 object-contain" />+{p.coins.toLocaleString('en-US')}</span>
+                <div key={p.paymentId} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 border-b border-[#272033] px-5 py-4 last:border-b-0 sm:grid-cols-[170px_1fr_150px_110px] sm:px-6">
+                  <span className="order-2 text-[13px] text-[#A1A1AA] sm:order-none sm:text-[14px]">{formatDate(p.paidAt, true)}</span>
+                  <span className="order-1 min-w-0 sm:order-none"><span className="flex flex-wrap items-center gap-2 font-semibold text-[#FFFFFF]">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}<span className="rounded-full bg-[#102419] px-2 py-0.5 text-[11px] font-semibold text-[#1B7A44]">Paid</span></span><span className="block truncate text-[12px] text-[#A1A1AA]">Payment ID {p.paymentId}</span></span>
+                  <span className="order-3 text-right font-semibold text-[#FFFFFF] sm:order-none">{formatMoney(p.amount, p.currency)}{p.offerPercent > 0 && <span className="ml-2 text-[11px] font-semibold text-[#C21FA5]">{p.offerPercent}% off</span>}</span>
+                  <span className="order-4 flex items-center justify-end gap-1.5 font-semibold text-[#8B5CF6] sm:order-none"><img src="/images/features/coin.svg" alt="" className="size-4 object-contain" />+{p.coins.toLocaleString('en-US')}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="rounded-[24px] border border-white/[0.08] bg-[#141011] px-6 py-14 text-center">
-              <span className="mx-auto grid size-16 place-items-center rounded-full bg-white/[0.06]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
-              <p className="mt-5 text-[18px] font-bold">No transactions yet</p>
-              <p className="mt-2 text-[14px] text-[#B4B0C0]">Subscriptions and coin purchases will show up here.</p>
-              <Link to="/coins" className="btn-grad mt-6 !px-6 !py-2.5 !text-[14px]">Get coins</Link>
+            <div className="rounded-[32px] bg-[#12101B] px-6 py-14 text-center">
+              <span className="mx-auto grid size-16 place-items-center rounded-full bg-[#262310]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
+              <p className="mt-5 font-display text-[22px] font-bold text-[#FFFFFF]">No transactions yet</p>
+              <p className="mt-2 text-[14px] text-[#A1A1AA]">Subscriptions and coin purchases will show up here.</p>
+              <Link to="/coins" className="btn-primary mt-6 !px-6 !py-2.5 !text-[14px]">Get coins</Link>
             </div>
           )}
         </section>
