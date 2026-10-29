@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 const CROWN = '/images/features/crown.svg'
-const GOLD = 'linear-gradient(90deg, #7C3AED 0%, #C026D3 100%)'
+const GOLD = '#FF3DF2'
 
 const Lock = ({ className = '' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V8a5 5 0 0110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H6a1 1 0 01-1-1v-9a1 1 0 011-1zm2 0h6V8a3 3 0 00-6 0z" /></svg>
@@ -52,7 +52,7 @@ export default function LastManPopup({ onClose, onUnlock }) {
         <ul className="relative mt-5 space-y-2.5 text-left">
           {features.map(([label, d]) => (
             <li key={label} className="flex items-center gap-3 rounded-2xl bg-[#12101B] px-3.5 py-3">
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#1B1530] text-[#8B5CF6]"><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#1B1530] text-[#FF3DF2]"><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
               <span className="text-[14px] font-medium text-[#FFFFFF]">{label}</span>
             </li>
           ))}

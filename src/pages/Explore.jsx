@@ -55,7 +55,7 @@ function Preview({ list, index, onClose, onStep, onUse }) {
             <h2 className="mt-2 text-[30px] font-bold leading-[1.05] text-white">{t.name}</h2>
           </div>
           <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-3 top-3 grid size-10 cursor-pointer place-items-center rounded-full bg-[#12101B]/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-sm transition-transform hover:bg-[#1A1626] active:scale-90">
-            <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#C026D3] text-[#C026D3]' : 'fill-none text-[#FFFFFF]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+            <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#FFFFFF]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
           </button>
         </div>
         <dl className="grid grid-cols-3 rounded-2xl bg-[#12101B]">
@@ -100,7 +100,12 @@ export default function Explore() {
     const seen = new Set()
     return [...exploreEverything, ...chips.flatMap((c) => (c.id === 'trending' ? [] : categoryItems(c.id)))].filter((t) => !seen.has(t.id) && seen.add(t.id))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  const results = q ? everything.filter((t) => `${t.name} ${t.category}`.toLowerCase().includes(q.toLowerCase())) : null
+  // search: every word of the keyword must appear in the look's name, its collection name or the collection id (so "corporate headshot" finds Corporate in LinkedIn Headshot, "diwali" finds the whole Diwali collection);
+  // a few words also match their usual collection name ("cartoon" -> Toon World)
+  const SYNONYMS = { cartoon: ['toon'], toon: ['cartoon'], linkedin: ['headshot'], headshot: ['linkedin'] }
+  const words = q.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean)
+  const matches = (t) => { const hay = `${t.name} ${t.category} ${t.categoryId}`.toLowerCase(); return words.every((w) => hay.includes(w) || (SYNONYMS[w] || []).some((x) => hay.includes(x))) }
+  const results = words.length ? everything.filter(matches) : null
   const list = results || (chip.id === 'trending' ? trendingGrid : categoryItems(chip.id))
 
   // Top Carousel: every card takes the shape of its own picture (as in the admin) and shows it whole; the real width / height is read once per picture
@@ -178,7 +183,7 @@ export default function Explore() {
                 <span className="absolute inset-x-2 bottom-2.5 truncate text-center text-[12px] font-medium text-white">{t.name}</span>
               </Link>
               <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-2 top-2 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-[#12101B]/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-sm">
-                <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#C026D3] text-[#C026D3]' : 'fill-none text-[#FFFFFF]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+                <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#FFFFFF]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
               </button>
             </div>
           )
@@ -192,12 +197,12 @@ export default function Explore() {
         <h1 className="w-fit text-[48px] font-bold leading-[1.05] tracking-tight sm:text-[60px]">{q ? <>Search <span className="grad-text">results</span></> : <>Explore <span className="grad-text">Looks</span></>}</h1>
         <p className="text-[16px] text-[#A1A1AA]">
           {q
-            ? <>{list.length} {list.length === 1 ? 'look' : 'looks'} for “{q}”. <Link to="/explore" className="font-semibold text-[#8B5CF6] underline underline-offset-4">Clear search</Link></>
+            ? <>{list.length} {list.length === 1 ? 'look' : 'looks'} for “{q}”. <Link to="/explore" className="font-semibold text-[#FF3DF2] underline underline-offset-4">Clear search</Link></>
             : <>{list.length} {list.length === 1 ? 'look' : 'looks'} in {chip.name}. Pick one to see it large.</>}
         </p>
       </div>
 
-      <form onSubmit={submitSearch} role="search" className="mb-5 flex h-14 w-full max-w-[620px] items-center gap-3 rounded-full border border-[#272033] bg-[#12101B] px-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)] focus-within:border-[#8B5CF6]">
+      <form onSubmit={submitSearch} role="search" className="mb-5 flex h-14 w-full max-w-[620px] items-center gap-3 rounded-full border border-[#272033] bg-[#12101B] px-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)] focus-within:border-[#FF3DF2]">
         <svg className="size-[18px] shrink-0 text-[#A1A1AA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
         <input ref={searchBox} value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Search looks" placeholder="Search looks, styles, keywords..." className="min-w-0 flex-1 bg-transparent text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#A1A1AA]" />
       </form>

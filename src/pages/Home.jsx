@@ -39,27 +39,29 @@ function GuestHome() {
       <div className="hidden w-full text-[#FFFFFF] md:block">
 
         {/* 1. Hero: centred headline, the creation bar, quick category chips, a collage of trending looks */}
-        <section aria-label="Start" className="relative isolate overflow-hidden bg-[#08080D] px-4 pb-12 pt-12 sm:px-6 lg:px-8 lg:pt-16">
+        <section aria-label="Start" className="relative isolate overflow-hidden bg-[#08080D] bg-[url('/images/bg.png')] bg-cover bg-center px-4 pb-14 pt-20 sm:px-6 lg:px-8 lg:pt-28">
+          {/* dark overlay: keeps the text readable on the photo and fades into the page colour at the bottom */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#08080D]/55 via-[#08080D]/60 to-[#08080D]" aria-hidden="true" />
           <div className="mx-auto flex max-w-[1100px] flex-col items-center text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#272033] bg-[#12101B] px-4 py-1.5 text-[13px] font-semibold text-[#C4B5FD]"><SparkIcon className="size-3.5 text-[#8B5CF6]" />AI photo and video creation</span>
-            <h1 className="mt-6 text-[52px] lg:text-[76px]">Create stunning <span className="grad-text">photos</span><br />and <span className="grad-text">videos</span> with AI</h1>
-            <p className="mt-6 max-w-[560px] text-[18px] leading-relaxed text-[#A1A1AA]">Pick a template, add your photo and get a professional result in moments. Video creation is on its way.</p>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#0D0B14]/60 px-4 py-1.5 text-[13px] font-semibold backdrop-blur-md text-[#FF3DF2]"><SparkIcon className="size-3.5 text-[#FF3DF2]" />AI photo and video creation</span>
+            <h1 className="mt-6 text-[52px] drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)] lg:text-[76px]">Create stunning <span className="grad-text">photos</span><br />and <span className="grad-text">videos</span> with AI</h1>
+            <p className="mt-6 max-w-[560px] text-[18px] leading-relaxed text-[#D4D4D8]">Pick a template, add your photo and get a professional result in moments. Video creation is on its way.</p>
 
-            <form onSubmit={start} className="mt-9 flex w-full max-w-[760px] items-center gap-2 rounded-full border border-[#272033] bg-[#12101B] p-2 shadow-[0_20px_50px_rgba(0,0,0,0.10)]">
-              <div className="flex shrink-0 rounded-full bg-[#12101B] p-1" role="tablist" aria-label="What to create">
+            <form onSubmit={start} className="shine-ring mt-9 flex w-full max-w-[760px] items-center gap-1.5 rounded-full border border-white/[0.14] bg-[#0D0B14]/60 p-1.5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-white/25 sm:gap-2 sm:p-2">
+              <div className="flex shrink-0 rounded-full border border-white/[0.08] bg-black/30 p-1" role="tablist" aria-label="What to create">
                 {[['photo', 'Photo'], ['video', 'Video']].map(([k, label]) => (
-                  <button key={k} type="button" role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={`cursor-pointer rounded-full px-5 py-2 text-[14px] font-semibold transition-colors ${mode === k ? 'bg-white text-[#08080D]' : 'text-[#A1A1AA] hover:text-[#FFFFFF]'}`}>{label}</button>
+                  <button key={k} type="button" role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={`cursor-pointer rounded-full px-4 py-2 text-[14px] font-semibold transition-all duration-200 sm:px-5 ${mode === k ? 'bg-[#FF3DF2] text-[#08080D] shadow-[0_6px_18px_-6px_rgba(255,61,242,0.7)]' : 'text-[#B4B4BC] hover:bg-white/[0.07] hover:text-white'}`}>{label}</button>
                 ))}
               </div>
               {mode === 'photo'
-                ? <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search templates" placeholder="Search a look, e.g. corporate headshot, cartoon, diwali" className="min-w-0 flex-1 bg-transparent px-3 text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#71717A]" />
+                ? <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search templates" placeholder="Search a look, e.g. corporate headshot, cartoon, diwali" className="min-w-0 flex-1 bg-transparent px-2 text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#8B8B96] sm:px-3" />
                 : <span className="min-w-0 flex-1 truncate px-3 text-left text-[15px] text-[#A1A1AA]">Create videos from text, images or templates.</span>}
-              <button type="submit" className="btn-primary shrink-0 !px-7 !py-3">{mode === 'video' ? 'Learn more' : 'Start creating'}<span className="arrow" aria-hidden="true">→</span></button>
+              <button type="submit" className="btn-accent group shrink-0 !px-5 !py-3 sm:!px-7">{mode === 'video' ? 'Learn more' : 'Start creating'}<span className="arrow transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span></button>
             </form>
 
             {collections.length > 0 && (
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                {collections.slice(0, 6).map((c) => <Link key={c.id} to={tabLink(c)} className="chip">{c.category || c.name}</Link>)}
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
+                {collections.slice(0, 6).map((c) => <Link key={c.id} to={tabLink(c)} className="chip-glass">{c.category || c.name}</Link>)}
               </div>
             )}
           </div>
@@ -73,16 +75,17 @@ function GuestHome() {
           {/* 3. Photo and Video */}
           <section aria-label="Create">
             <div className="grid gap-5 md:grid-cols-2">
-              <Link to="/explore" className="group relative isolate flex min-h-[280px] flex-col justify-end overflow-hidden rounded-[36px] bg-[#1B1530] p-9 transition-transform duration-300 hover:-translate-y-1">
-                <span className="badge mb-4 w-fit">Available now</span>
-                <h3 className="font-display text-[34px] font-bold leading-tight">Create photos</h3>
-                <p className="mt-2 max-w-sm text-[16px] text-[#C4C4CC]">Pick a template, add one photo and get a styled result in moments.</p>
-                <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[14px] font-semibold text-[#08080D]">Browse templates<span className="arrow transition-transform group-hover:translate-x-1" aria-hidden="true">→</span></span>
+              <Link to="/explore" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#272033] bg-[#12101B] p-7 transition-[transform,border-color,background-color] duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-[#161322] sm:p-8">
+                <span className="grid size-12 place-items-center rounded-2xl bg-[#FF3DF2]/10 text-[#FF3DF2] ring-1 ring-[#FF3DF2]/25 transition-colors group-hover:bg-[#FF3DF2]/15"><svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M17 8.5h.01" /></svg></span>
+                <h3 className="mt-6 font-display text-[30px] font-bold leading-tight">Create photos</h3>
+                <p className="mb-6 mt-2 max-w-md text-[16px] leading-relaxed text-[#B4B4BC]">Pick a template, add one photo and get a styled result in moments.</p>
+                <span className="btn-accent mt-auto w-fit !px-5 !py-2.5 !text-[14px]">Browse templates<span className="arrow transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">→</span></span>
               </Link>
-              <Link to="/video" className="group relative isolate flex min-h-[280px] flex-col justify-end overflow-hidden rounded-[36px] bg-[#271425] p-9 transition-transform duration-300 hover:-translate-y-1">
-                <h3 className="font-display text-[34px] font-bold leading-tight">Create videos</h3>
-                <p className="mt-2 max-w-sm text-[16px] text-[#C4C4CC]">Bring your photos to life with short clips.</p>
-                <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-[#12101B] px-5 py-2.5 text-[14px] font-semibold text-[#FFFFFF]">Open video studio<span className="arrow transition-transform group-hover:translate-x-1" aria-hidden="true">→</span></span>
+              <Link to="/video" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#272033] bg-[#12101B] p-7 transition-[transform,border-color,background-color] duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-[#161322] sm:p-8">
+                <span className="grid size-12 place-items-center rounded-2xl bg-[#FF3DF2]/10 text-[#FF3DF2] ring-1 ring-[#FF3DF2]/25 transition-colors group-hover:bg-[#FF3DF2]/15"><svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM17 10l5-3v10l-5-3z" /></svg></span>
+                <h3 className="mt-6 font-display text-[30px] font-bold leading-tight">Create videos</h3>
+                <p className="mb-6 mt-2 max-w-md text-[16px] leading-relaxed text-[#B4B4BC]">Bring your photos to life with short clips.</p>
+                <span className="chip-glass mt-auto w-fit gap-2 !px-5 !py-2.5 !text-[14px]">Open video studio<span className="arrow transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">→</span></span>
               </Link>
             </div>
           </section>
@@ -134,9 +137,9 @@ function GuestHome() {
           </section>
 
           {/* 8. Closing call to action */}
-          <section aria-label="Start creating" className="relative isolate overflow-hidden rounded-[40px] bg-[#0D0B14] ring-1 ring-[#8B5CF6]/30 px-6 py-16 text-center sm:px-12">
-            <div className="pointer-events-none absolute -left-20 -top-24 -z-10 size-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(112,92,255,0.55),transparent)]" aria-hidden="true" />
-            <div className="pointer-events-none absolute -bottom-28 -right-16 -z-10 size-[460px] rounded-full bg-[radial-gradient(closest-side,rgba(252,72,231,0.4),transparent)]" aria-hidden="true" />
+          <section aria-label="Start creating" className="relative isolate overflow-hidden rounded-[40px] bg-[#0D0B14] ring-1 ring-[#FF3DF2]/30 px-6 py-16 text-center sm:px-12">
+            <div className="pointer-events-none absolute -left-20 -top-24 -z-10 size-[420px] rounded-full bg-[#FF3DF2]/25 blur-[80px]" aria-hidden="true" />
+            <div className="pointer-events-none absolute -bottom-28 -right-16 -z-10 size-[460px] rounded-full bg-[#FF3DF2]/20 blur-[80px]" aria-hidden="true" />
             <h2 className="mx-auto max-w-2xl text-[34px] !text-white sm:text-[48px]">Ready to create something worth sharing?</h2>
             <p className="mx-auto mt-4 max-w-lg text-[17px] text-white/70">Choose a look, add your photo and watch it come together.</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

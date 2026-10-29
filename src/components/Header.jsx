@@ -6,7 +6,7 @@ import { useStudio } from '../context/StudioContext.jsx'
 import PlansSheet from './PlansSheet.jsx'
 import LastManPopup, { LastManButton } from './LastMan.jsx'
 
-export const SparkIcon = ({ className = 'size-3.5 text-[#8B5CF6]' }) => (
+export const SparkIcon = ({ className = 'size-3.5 text-[#FF3DF2]' }) => (
   <svg className={`${className} shrink-0`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7z" /></svg>
 )
 const Chevron = ({ open }) => (
@@ -19,7 +19,7 @@ const PhoneIcon = () => (
 /** Wordmark: a small ivory diamond mark and the spaced name. */
 export const Logo = ({ size = 'md' }) => (
   <Link to="/" aria-label="Pictrify home" className="inline-flex shrink-0 items-center gap-2.5 text-[#FFFFFF]">
-    <span className={`grid place-items-center rounded-[10px] bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] text-white ${size === 'sm' ? 'size-8' : 'size-9'}`}>
+    <span className={`grid place-items-center rounded-[10px] bg-[#FF3DF2] text-white ${size === 'sm' ? 'size-8' : 'size-9'}`}>
       <svg className={size === 'sm' ? 'size-4' : 'size-[18px]'} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.6 6.9L22 12l-7.4 3.1L12 22l-2.6-6.9L2 12l7.4-3.1z" /></svg>
     </span>
     <span className={`whitespace-nowrap font-display font-semibold tracking-tight ${size === 'sm' ? 'text-[19px]' : 'text-[22px]'}`}>Pictrify</span>
@@ -46,7 +46,7 @@ const NAV = [
 ]
 const ACCOUNT_LINKS = [['/profile', 'Account'], ['/transactions', 'Transactions'], ['/help', 'Help'], ['/feedback', 'Share Your Feedback'], ['/privacy-policy', 'Privacy Policy'], ['/terms-conditions', 'Terms & Conditions']]
 const EASE = 'cubic-bezier(0.4, 0, 0.2, 1)'
-const GRAD = 'bg-[linear-gradient(90deg,#7C3AED_0%,#C026D3_100%)]'
+const GRAD = 'bg-[#FF3DF2]'
 function useScrolled(threshold = 20) {
   const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > threshold)
   useEffect(() => {
@@ -137,12 +137,12 @@ export function ProfileMenu({ compact = false }) {
   return (
     <>
       <button ref={btn} type="button" onClick={toggle} aria-label="Open account menu" aria-haspopup="menu" aria-expanded={open}
-        className={`grid ${compact ? 'size-8 text-[13px]' : 'size-10 text-[14px]'} shrink-0 cursor-pointer place-items-center rounded-full border border-[#272033] bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] font-semibold text-white transition-colors hover:border-[#A1A1AA]`}>{initial}</button>
+        className={`grid ${compact ? 'size-8 text-[13px]' : 'size-10 text-[14px]'} shrink-0 cursor-pointer place-items-center rounded-full border border-[#272033] bg-[#FF3DF2] font-semibold text-white transition-colors hover:border-[#A1A1AA]`}>{initial}</button>
       {shown && createPortal(
         <div ref={panel} role="menu" aria-label="Account" data-closing={!open} style={{ top: pos.top, right: pos.right }}
           className="profile-menu fixed z-[400] w-[320px] max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-[#272033] bg-[#0D0B14]/95 p-2 shadow-[0_24px_60px_rgba(0,0,0,0.16)] backdrop-blur-2xl">
-          <Link to="/profile" role="menuitem" onClick={() => close()} className="relative flex items-center gap-3 overflow-hidden rounded-xl border border-[#272033] bg-[linear-gradient(135deg,rgba(112,92,255,0.18),rgba(252,72,231,0.12))] p-3 transition-colors hover:border-[#7C3AED]/60">
-            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] text-[18px] font-semibold text-white">{initial}</span>
+          <Link to="/profile" role="menuitem" onClick={() => close()} className="relative flex items-center gap-3 overflow-hidden rounded-xl border border-[#272033] bg-[rgba(255,61,242,0.15)] p-3 transition-colors hover:border-[#A1A1AA]">
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-[#FF3DF2] text-[18px] font-semibold text-white">{initial}</span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[15px] font-semibold text-[#FFFFFF]">{name}</span>
               <span className="block truncate text-xs text-[#A1A1AA]" title={userEmail}>{userEmail}</span>
@@ -153,7 +153,7 @@ export function ProfileMenu({ compact = false }) {
           <div className="mt-2 flex flex-col gap-0.5">
             {PROFILE_ITEMS.map(([to, label, d]) => (
               <Link key={to} to={to} role="menuitem" onClick={() => close()} className={item}>
-                <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[#12101B] text-[#A1A1AA] transition-colors group-hover:bg-[linear-gradient(135deg,rgba(112,92,255,0.3),rgba(252,72,231,0.25))] group-hover:text-white"><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
+                <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[#12101B] text-[#A1A1AA] transition-colors group-hover:bg-[rgba(255,61,242,0.28)] group-hover:text-white"><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
                 <span className="flex-1">{label}</span>
               </Link>
             ))}
@@ -176,17 +176,17 @@ export function TopNav() {
   const scrolled = useScrolled()
   useEffect(() => { setMenu(false) }, [pathname])
   const link = (on) => `rounded-full px-4 py-2 text-[15px] font-semibold leading-normal whitespace-nowrap transition-colors ${on ? 'bg-white text-[#08080D]' : 'text-[#FFFFFF] hover:bg-[#12101B]'}`
-  const coinPill = (cls = '') => <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-[#272033] bg-[#12101B] pl-2.5 pr-3.5 text-[13px] font-medium text-[#FFFFFF] transition-colors hover:border-[#7C3AED] ${cls}`}><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}<span className="text-[#8B5CF6]">+</span></Link>
+  const coinPill = (cls = '') => <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-[#272033] bg-[#12101B] pl-2.5 pr-3.5 text-[13px] font-medium text-[#FFFFFF] transition-colors hover:border-[#A1A1AA] ${cls}`}><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}<span className="text-[#FF3DF2]">+</span></Link>
   const claim = (small) => <button type="button" onClick={openLogin} className={`btn-grad shrink-0 ${small ? '!h-9 !gap-1.5 !px-3.5 !py-0 !text-[12px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}><SparkIcon className="size-3.5 text-white" /><span className="whitespace-nowrap">Claim 100 Coins</span></button>
   return (
     <>
       {!signedIn && (
-        <div className="hidden items-center justify-center gap-3 bg-[linear-gradient(90deg,#7C3AED_0%,#C026D3_100%)] px-4 py-2 text-[13px] font-medium text-white md:flex">
+        <div className="hidden items-center justify-center gap-3 bg-[#FF3DF2] px-4 py-2 text-[13px] font-medium text-white md:flex">
           <span>New to Pictrify? Sign up and get 100 free coins to create your first photos.</span>
           <button type="button" onClick={openLogin} className="cursor-pointer rounded-full bg-[#12101B] px-3 py-0.5 text-[12px] font-semibold text-[#FFFFFF] transition-opacity hover:opacity-90">Claim now</button>
         </div>
       )}
-      <header className="sticky top-0 z-50 hidden border-b border-[#272033] bg-[#0D0B14]/90 backdrop-blur-xl md:block" style={{ boxShadow: scrolled ? '0 10px 30px rgba(0,0,0,0.16)' : 'none', transition: `box-shadow 300ms ${EASE}` }}>
+      <header className="shine-line sticky top-0 z-50 hidden border-b border-[#272033] bg-[#0D0B14]/90 backdrop-blur-xl md:block" style={{ boxShadow: scrolled ? '0 10px 30px rgba(0,0,0,0.16)' : 'none', transition: `box-shadow 300ms ${EASE}` }}>
         <nav aria-label="Main" className="mx-auto w-full max-w-[96rem] px-4 sm:px-6 lg:px-8">
           <div className="grid h-[68px] grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-4">
             <Logo />
@@ -254,7 +254,7 @@ function MobileHeader({ generating }) {
   const [lastMan, setLastMan] = useState(null)
   return (
     <>
-      <header className={`sticky top-0 z-50 flex h-[60px] items-center justify-between border-b border-[#272033] bg-[#0D0B14]/95 px-4 backdrop-blur md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
+      <header className={`shine-line sticky top-0 z-50 flex h-[60px] items-center justify-between border-b border-[#272033] bg-[#0D0B14]/95 px-4 backdrop-blur md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
         <Logo size="sm" />
         <div className="flex items-center gap-2">
           <LastManButton onClick={() => setLastMan('plans')} />

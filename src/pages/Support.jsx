@@ -19,7 +19,7 @@ const Hero = ({ eyebrow, title, sub, center = false }) => (
     </div>
   </header>
 )
-const field = 'w-full rounded-2xl border border-[#272033] bg-[#12101B] px-4 text-[15px] text-[#FFFFFF] outline-none transition placeholder:text-[#9A94AB] focus:border-[#8B5CF6] focus:ring-4 focus:ring-[#8B5CF6]/15'
+const field = 'w-full rounded-2xl border border-[#272033] bg-[#12101B] px-4 text-[15px] text-[#FFFFFF] outline-none transition placeholder:text-[#9A94AB] focus:border-[#FF3DF2] focus:ring-4 focus:ring-[#FF3DF2]/15'
 const TILES = ['bg-[#1B1530]', 'bg-[#271425]', 'bg-[#101D2C]', 'bg-[#102419]', 'bg-[#2A1C10]', 'bg-[#262310]']
 const submitBtn = 'btn-primary !w-full !rounded-full !py-3.5 !text-[15px] disabled:cursor-not-allowed disabled:opacity-50'
 
@@ -87,7 +87,7 @@ export function Help() {
                 <span className="min-w-0 flex-1"><span className="block text-[17px] font-bold text-[#FFFFFF]">{t}</span><span className="mt-0.5 block text-[14px] text-[#A1A1AA]">{d}</span></span>
                 <svg className={`size-8 shrink-0 rounded-full bg-[#1A1626] p-2 text-[#A1A1AA] transition-transform ${open === i ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
               </button>
-              {open === i && <ul className="space-y-2.5 px-5 pb-6 text-[14px] leading-relaxed text-[#A1A1AA] sm:px-6">{body.map((line) => <li key={line} className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-[#8B5CF6]" />{line}</li>)}</ul>}
+              {open === i && <ul className="space-y-2.5 px-5 pb-6 text-[14px] leading-relaxed text-[#A1A1AA] sm:px-6">{body.map((line) => <li key={line} className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-[#FF3DF2]" />{line}</li>)}</ul>}
             </div>
           ))}
         </div>
@@ -131,7 +131,7 @@ export function Contact() {
             <div className="space-y-2">
               <Label>Attachment (optional)</Label>
               <div onClick={() => input.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); pick(e.dataTransfer.files?.[0]) }}
-                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#12101B] px-4 py-8 text-center transition hover:border-[#8B5CF6] hover:bg-[#1B1530]/40">
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#12101B] px-4 py-8 text-center transition hover:border-[#A1A1AA] hover:bg-[#1B1530]/40">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-[#08080D]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload image</span>
                 <span className="text-[14px]">{file ? file.name : 'Click or drag an image here (max 5 MB)'}</span>
                 <span className="text-[12px] text-[#A1A1AA]">JPG, JPEG, PNG and WEBP supported</span>
@@ -219,7 +219,7 @@ function MobileMe() {
   return (
     <div className="mx-auto w-full max-w-[560px] px-4 pb-32 pt-4 md:hidden">
       {signedIn && <p className="mb-3 truncate px-1 text-[13px] text-[#A1A1AA]">{userEmail}</p>}
-      <div className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] p-6 shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+      <div className="relative overflow-hidden rounded-[28px] bg-[#FF3DF2] p-6 shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
         <div className="absolute right-6 top-6 text-white"><svg className="size-11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6.5" /><path d="M8.2 14.2V21.5l3.8-2.4 3.8 2.4V14.2" /><path d="M12 5.6l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3z" fill="currentColor" stroke="none" /></svg></div>
         <h2 className="w-fit text-[28px] font-extrabold text-white">Premium</h2>
         <p className="mt-2 text-[14px] text-white/90">Unlock ultimate creative power.</p>
@@ -282,7 +282,7 @@ export function Profile() {
             <div className="pointer-events-none absolute -right-16 -top-20 size-[260px] rounded-full bg-[#271425]" aria-hidden="true" />
             <div className="pointer-events-none absolute -bottom-20 left-1/3 size-[180px] rounded-full bg-[#101D2C]" aria-hidden="true" />
             <div className="relative flex flex-wrap items-center gap-5 p-6 sm:gap-6 sm:p-9">
-              <span className="grid size-20 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] text-[34px] font-semibold text-white sm:size-24 sm:text-[40px]">{(name[0] || 'P').toUpperCase()}</span>
+              <span className="grid size-20 shrink-0 place-items-center rounded-full bg-[#FF3DF2] text-[34px] font-semibold text-white sm:size-24 sm:text-[40px]">{(name[0] || 'P').toUpperCase()}</span>
               <div className="min-w-0 flex-1">
                 <p className="badge">Account</p>
                 <h1 className="mt-3 w-fit max-w-full truncate text-[32px] font-extrabold leading-[1.1] tracking-tight sm:text-[44px]">{name}</h1>
@@ -357,7 +357,7 @@ export function Feedback() {
             <div className="flex gap-3 py-4" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} type="button" aria-label={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setStars(n)} onMouseEnter={() => setHover(n)} className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                  <svg className={`size-10 transition-colors ${n <= (hover || stars) ? 'fill-[#8B5CF6] text-[#8B5CF6]' : 'fill-none text-[#3A2F52]'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
+                  <svg className={`size-10 transition-colors ${n <= (hover || stars) ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#3A2F52]'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
                 </button>
               ))}
             </div>
@@ -379,7 +379,7 @@ const legal = {
 const legalBlock = (b, i) => {
   if (typeof b === 'string') return <p key={i} className="mb-4 leading-[1.75] text-[#A1A1AA]">{b}</p>
   if (b.ul) return <ul key={i} className="mb-4 list-disc space-y-2 pl-6 leading-relaxed text-[#A1A1AA] marker:text-[#A1A1AA]">{b.ul.map((x, j) => <li key={j}>{typeof x === 'string' ? x : <><strong className="font-semibold text-[#FFFFFF]">{x.b}</strong>{x.t}</>}</li>)}</ul>
-  return <p key={i} className="mb-4 leading-[1.75] text-[#A1A1AA]"><strong className="font-semibold text-[#FFFFFF]">{b.kv[0]}</strong> {b.kv[2] ? <a href={b.kv[2]} target="_blank" rel="noopener noreferrer" className="text-[#8B5CF6] underline underline-offset-2">{b.kv[1]}</a> : b.kv[1]}</p>
+  return <p key={i} className="mb-4 leading-[1.75] text-[#A1A1AA]"><strong className="font-semibold text-[#FFFFFF]">{b.kv[0]}</strong> {b.kv[2] ? <a href={b.kv[2]} target="_blank" rel="noopener noreferrer" className="text-[#FF3DF2] underline underline-offset-2">{b.kv[1]}</a> : b.kv[1]}</p>
 }
 export function Legal({ kind }) {
   const [title, sections, date] = legal[kind]

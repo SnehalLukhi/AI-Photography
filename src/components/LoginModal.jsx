@@ -97,7 +97,7 @@ export default function LoginModal() {
             <div className="mt-6 grid grid-cols-3 divide-x divide-[#272033] rounded-2xl bg-[#12101B] py-4">
               {['Browse all templates', 'Create Trending Images', 'Save your creation history'].map((text) => (
                 <div key={text} className="flex flex-col items-center gap-2 px-2">
-                  <svg className="size-5 text-[#8B5CF6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
+                  <svg className="size-5 text-[#FF3DF2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
                   <p className="text-[11px] font-medium leading-tight text-[#FFFFFF]">{text}</p>
                 </div>
               ))}
@@ -112,7 +112,7 @@ export default function LoginModal() {
             {error && <p role="alert" className="mt-4 text-sm text-[#C0392B]">{error}</p>}
 
             <p className="mt-7 text-xs leading-relaxed text-[#A1A1AA]">
-              By continuing, you agree to our <Link to="/privacy-policy" className="text-[#8B5CF6] underline underline-offset-2">Privacy Policy</Link> and <Link to="/terms-conditions" className="text-[#8B5CF6] underline underline-offset-2">Terms of Service</Link>.
+              By continuing, you agree to our <Link to="/privacy-policy" className="text-[#FF3DF2] underline underline-offset-2">Privacy Policy</Link> and <Link to="/terms-conditions" className="text-[#FF3DF2] underline underline-offset-2">Terms of Service</Link>.
             </p>
           </div>
         </div>

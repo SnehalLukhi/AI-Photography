@@ -43,15 +43,15 @@ function PhotoTile({ kind, photo, onPick, onClear, error }) {
       <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
       <div className="relative aspect-[9/16] w-full sm:max-w-[240px] lg:h-[clamp(260px,calc(100dvh-340px),640px)] lg:w-auto lg:max-w-none">
         {photo ? (
-          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-[#272033] bg-[#12101B] shadow-[0_24px_60px_-28px_rgba(139,92,246,0.45)]">
+          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-[#272033] bg-[#12101B] shadow-[0_24px_60px_-28px_rgba(255,61,242,0.45)]">
             <img src={photo.url} alt={`Your ${what}`} className="size-full object-cover" />
             <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-9 cursor-pointer place-items-center rounded-full bg-[#08080D]/80 text-white backdrop-blur transition-colors hover:bg-[#1A1626]"><Svg d="M6 6l12 12M18 6L6 18" /></button>
           </div>
         ) : (
           <div role="button" tabIndex={0} onClick={() => input.current.click()} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && input.current.click()}
             onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={(e) => { e.preventDefault(); setDrag(false); choose(e.dataTransfer.files[0]) }}
-            className={`absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-3 text-center transition-colors ${drag ? 'border-[#8B5CF6] bg-[#1B1530]' : 'border-[#3A2F52] bg-[#12101B] hover:border-[#8B5CF6] hover:bg-[#1B1530]'}`}>
-            <span className="grid size-12 place-items-center rounded-full bg-[#1A1626] text-[#A78BFA] max-sm:size-10"><Svg d="M12 16V5M7 10l5-5 5 5M4 19h16" className="size-6" /></span>
+            className={`absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-3 text-center transition-colors ${drag ? 'border-white/60 bg-[#0D0B14]/70' : 'border-white/25 bg-[#0D0B14]/55 hover:border-white/45 hover:bg-[#0D0B14]/70'} backdrop-blur-sm`}>
+            <span className="grid size-12 place-items-center rounded-full bg-[#1A1626] text-[#FF3DF2] max-sm:size-10"><Svg d="M12 16V5M7 10l5-5 5 5M4 19h16" className="size-6" /></span>
             <span className="text-[15px] font-semibold max-sm:text-[13px]">{kind === 'Photo' ? 'Add your photo' : `Add ${kind}`}</span>
             <span className="text-[12px] text-[#A1A1AA] max-sm:hidden">Drop it here or click to browse</span>
             <span className="text-[10px] uppercase tracking-[0.12em] text-[#71717A] max-sm:hidden">JPG · PNG · HEIC</span>
@@ -62,7 +62,7 @@ function PhotoTile({ kind, photo, onPick, onClear, error }) {
       <figcaption className="flex items-center gap-2 text-[14px] max-sm:flex-col max-sm:gap-0.5 max-sm:text-center">
         <span className="font-semibold text-white">{photo ? `Your ${what}` : kind === 'Photo' ? 'Your photo' : kind}</span>
         <span aria-hidden="true" className="text-[#52525B] max-sm:hidden">·</span>
-        <button type="button" onClick={() => input.current.click()} className="cursor-pointer font-medium text-[#A78BFA] transition-colors hover:text-white">{photo ? 'Replace' : 'Browse'}</button>
+        <button type="button" onClick={() => input.current.click()} className="cursor-pointer font-medium text-[#FF3DF2] transition-colors hover:text-white">{photo ? 'Replace' : 'Browse'}</button>
       </figcaption>
     </figure>
   )
@@ -72,7 +72,7 @@ function PhotoTile({ kind, photo, onPick, onClear, error }) {
 function Compare({ before, after, alt }) {
   const [pos, setPos] = useState(50)
   return (
-    <div className="relative mx-auto aspect-[3/3.7] w-full max-w-[640px] touch-none select-none overflow-hidden rounded-3xl border border-[#272033] bg-[#12101B] shadow-[0_30px_70px_-30px_rgba(139,92,246,0.4)]">
+    <div className="relative mx-auto aspect-[3/3.7] w-full max-w-[640px] touch-none select-none overflow-hidden rounded-3xl border border-[#272033] bg-[#12101B] shadow-[0_30px_70px_-30px_rgba(255,61,242,0.4)]">
       <img src={after} alt={alt} className="absolute inset-0 size-full object-cover" draggable="false" />
       {before && <img src={before} alt="Your original photo" className="absolute inset-0 size-full object-cover" draggable="false" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} />}
       {before && (
@@ -160,6 +160,13 @@ function Generator({ asset }) {
   }
   const again = () => { setPhotos(slots.map(() => null)); setErrors(slots.map(() => '')); setPhase('idle') }
   const collectionLink = /^hairstyle-/.test(asset.categoryId) ? `/explore?category=${asset.categoryId}` : `/explore?category=${asset.categoryId}`
+  const strip = useRef(null)
+  useEffect(() => { // bring the selected look into view in the thumbnail strip (it can be far down the list)
+    const nav = strip.current; const el = nav?.querySelector('[aria-current="true"]')
+    if (!nav || !el) return
+    nav.scrollTop = el.offsetTop - nav.clientHeight / 2 + el.offsetHeight / 2
+    nav.scrollLeft = el.offsetLeft - nav.clientWidth / 2 + el.offsetWidth / 2
+  }, [asset.id])
   const looks = siblingsOf(asset).filter((t) => t.image).slice(0, 40) // the other looks of this collection (strip on the left; picking one opens that look's page)
 
   // ---------- result ----------
@@ -174,7 +181,7 @@ function Generator({ asset }) {
             {before && <p className="mx-auto text-[13px] text-[#A1A1AA]">Drag the handle to compare.</p>}
           </section>
           <aside aria-label="Your result" className="flex flex-col gap-6 lg:pt-2">
-            <div role="status" className="flex items-center gap-2.5 rounded-full border border-[#3A2F52] bg-[#1B1530] px-4 py-3 text-[14px] font-medium"><Svg d="M5 12l5 5 9-10" className="size-[18px] text-[#8B5CF6]" />{real ? 'Saved to My Creations' : 'Demo preview · nothing was saved or charged'}</div>
+            <div role="status" className="flex items-center gap-2.5 rounded-full border border-[#3A2F52] bg-[#1B1530] px-4 py-3 text-[14px] font-medium"><Svg d="M5 12l5 5 9-10" className="size-[18px] text-[#FF3DF2]" />{real ? 'Saved to My Creations' : 'Demo preview · nothing was saved or charged'}</div>
             <div className="flex flex-col gap-2.5">
               <h1 className="text-[52px] leading-[0.98] sm:text-[60px]">Here it <span className="grad-text">is.</span></h1>
               <p className="text-[16px] leading-relaxed text-[#A1A1AA]">Your photo in the {asset.name} look.</p>
@@ -190,7 +197,7 @@ function Generator({ asset }) {
               {real && <div className="flex justify-between border-b border-[#272033] px-4 py-3"><dt className="text-[#A1A1AA]">Coins used</dt><dd className="font-plexmono">{cost}</dd></div>}
               {real && <div className="flex justify-between px-4 py-3"><dt className="text-[#A1A1AA]">Left in wallet</dt><dd className="font-plexmono">{coins.toLocaleString()} coins</dd></div>}
             </dl>
-            <Link to="/creations" className="text-[14px] font-medium text-[#8B5CF6] underline underline-offset-4">Open in My Creations</Link>
+            <Link to="/creations" className="text-[14px] font-medium text-[#FF3DF2] underline underline-offset-4">Open in My Creations</Link>
           </aside>
         </div>
       </div>
@@ -201,24 +208,27 @@ function Generator({ asset }) {
   const blocked = signedIn && real && coins < cost
   return (
     <div className="relative isolate flex min-h-[calc(100dvh-60px)] flex-col overflow-hidden text-[#FFFFFF] md:min-h-[calc(100dvh-68px)]">
+      {/* the selected template as the page background: strongly blurred, dimmed and darkened, so it is barely recognisable. A different template = a different page key, so it follows the selection by itself */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#08080D]" aria-hidden="true">
-        <div className="absolute -left-[10%] top-[8%] h-[55%] w-[40%] rounded-full bg-[#2B2A6B]/45 blur-[110px]" />
-        <div className="absolute -right-[8%] top-[4%] h-[50%] w-[38%] rounded-full bg-[#7C3AED]/30 blur-[120px]" />
-        <div className="absolute bottom-[-12%] left-[28%] h-[45%] w-[45%] rounded-full bg-[#C026D3]/20 blur-[130px]" />
-        <div className="absolute bottom-[10%] right-[8%] h-[35%] w-[28%] rounded-full bg-[#3F3A55]/40 blur-[110px]" />
-        <div className="absolute left-[2%] bottom-[2%] h-[32%] w-[26%] rounded-full bg-[#1F3D4A]/35 blur-[110px]" />
+        <img key={asset.image} src={asset.image} alt="" draggable="false" className="absolute -inset-10 size-[calc(100%+5rem)] max-w-none animate-fade-in object-cover opacity-60 blur-[60px]" />
+        <div className="absolute inset-0 bg-[#08080D]/55" />
       </div>
 
       <button type="button" aria-label="Close" onClick={() => nav(-1)} className="absolute right-3 top-3 z-20 grid size-10 cursor-pointer place-items-center rounded-lg bg-[#1A1626]/80 text-[#C4C4CC] backdrop-blur transition-colors hover:bg-[#272033] hover:text-white sm:right-5 sm:top-5"><Svg d="M6 6l12 12M18 6L6 18" className="size-[18px]" /></button>
 
       <div className="flex flex-1 flex-col lg:flex-row">
-        <nav aria-label={`More ${asset.category} looks`} className="no-scrollbar flex shrink-0 gap-2 overflow-x-auto px-4 pb-3 pt-2 max-lg:order-last lg:max-h-[calc(100dvh-68px)] lg:w-[88px] lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden lg:px-3 lg:py-4">
-          {looks.map((t) => (
-            <Link key={t.id} to={generateUrl(t)} replace aria-label={t.name} aria-current={t.id === asset.id ? 'true' : undefined} title={t.name}
-              className={`relative block h-[68px] w-[52px] shrink-0 overflow-hidden rounded-lg border-2 transition-all lg:h-[72px] lg:w-full ${t.id === asset.id ? 'border-[#8B5CF6] shadow-[0_0_0_2px_rgba(139,92,246,0.25)]' : 'border-transparent opacity-80 hover:opacity-100'}`}>
-              <PImage src={t.image} alt="" loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
-            </Link>
-          ))}
+        <nav ref={strip} aria-label={`More ${asset.category} looks`} className="no-scrollbar flex shrink-0 gap-2 overflow-x-auto px-4 pb-3 pt-2 max-lg:order-last lg:max-h-[calc(100dvh-68px)] lg:w-[88px] lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden lg:px-3 lg:py-4">
+          {looks.map((t) => {
+            const on = t.id === asset.id
+            return (
+              <Link key={t.id} to={generateUrl(t)} replace aria-label={t.name} aria-current={on ? 'true' : undefined} title={t.name}
+                className={`relative block h-[68px] w-[52px] shrink-0 transition-[transform,opacity] duration-300 ease-out lg:h-[72px] lg:w-full ${on ? 'z-10 scale-[1.14]' : 'opacity-80 hover:opacity-100'}`}>
+                <span className={`thumb-frame absolute inset-0 overflow-hidden rounded-lg border-2 transition-[border-color,box-shadow] duration-300 ease-out ${on ? 'thumb-on border-white/70' : 'border-transparent'}`}>
+                  <PImage src={t.image} alt="" loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
+                </span>
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="flex min-w-0 flex-1 flex-col items-center px-3 pb-3 pt-14 sm:px-8 sm:pb-4 lg:pb-6 lg:pt-6">
@@ -231,7 +241,7 @@ function Generator({ asset }) {
                 <figcaption className="flex max-w-full items-center gap-2 text-[14px] max-sm:flex-col max-sm:gap-0.5 max-sm:text-center">
                   <span className="font-semibold text-white sm:truncate">{asset.name}</span>
                   <span aria-hidden="true" className="text-[#52525B] max-sm:hidden">·</span>
-                  <Link to={collectionLink} replace className="shrink-0 font-medium text-[#A78BFA] transition-colors hover:text-white">Change look</Link>
+                  <Link to={collectionLink} replace className="shrink-0 font-medium text-[#FF3DF2] transition-colors hover:text-white">Change look</Link>
                 </figcaption>
               </figure>
               <Svg d="M5 12h14M13 6l6 6-6 6" className="size-6 shrink-0 self-center text-[#A1A1AA] max-sm:hidden lg:size-8" />
@@ -240,7 +250,7 @@ function Generator({ asset }) {
               </div>
             </div>
 
-            <button type="button" disabled={!ready} onClick={next} className="btn-grad w-full max-w-[360px] !gap-3 !py-3.5 !text-[16px] shadow-[0_12px_32px_-12px_rgba(252,72,231,0.6)] disabled:!bg-[#1D1830] disabled:!bg-none disabled:text-[#8B8B96] disabled:opacity-100 disabled:shadow-none">
+            <button type="button" disabled={!ready} onClick={next} className="btn-grad w-full max-w-[360px] !gap-3 !py-3.5 !text-[16px] shadow-[0_12px_32px_-12px_rgba(255,61,242,0.6)] disabled:!bg-[#1D1830] disabled:!bg-none disabled:text-[#8B8B96] disabled:opacity-100 disabled:shadow-none">
               {signedIn ? 'Generate' : 'Continue to generate'}
               {real && <span className="inline-flex items-center gap-1.5 rounded-full bg-black/25 py-0.5 pl-1.5 pr-2.5 text-[13px] font-semibold"><img src="/images/features/coin.svg" alt="" className="size-4 object-contain" />{cost}</span>}
             </button>
@@ -252,7 +262,7 @@ function Generator({ asset }) {
         <div role="status" className="fixed inset-0 z-[300] grid place-items-center bg-[#12101B]/90 p-6 backdrop-blur-md">
           <div className="flex w-full max-w-sm flex-col items-center gap-5 text-center">
             <p className="font-display text-[40px] font-bold leading-none text-[#FFFFFF]">Creating your look</p>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#1A1626]"><div className="h-full w-1/3 animate-shimmer rounded-full bg-[linear-gradient(90deg,#7C3AED_0%,#C026D3_100%)]" /></div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#1A1626]"><div className="h-full w-1/3 animate-shimmer rounded-full bg-[#FF3DF2]" /></div>
             <p className="text-[14px] text-[#A1A1AA]">Keep this tab open. {real ? 'It can take up to a minute.' : ''}</p>
             {real && <p className="text-[13px] text-[#A1A1AA]">{cost} coins are returned if this fails.</p>}
           </div>

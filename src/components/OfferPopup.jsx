@@ -71,14 +71,14 @@ export default function OfferPopup({ onClose: finish }) {
       <StarBurst />
       <div role="dialog" aria-modal="true" aria-labelledby="offer-title" onClick={(e) => e.stopPropagation()}
         className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[32px] bg-[#12101B] px-5 pb-7 pt-7 text-center shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:px-7">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(112,92,255,0.10),transparent_55%),radial-gradient(circle_at_100%_100%,rgba(252,72,231,0.10),transparent_55%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[rgba(255,61,242,0.06)]" />
         <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full bg-[#12101B] text-lg leading-none text-[#A1A1AA] transition hover:bg-[#1A1626] hover:text-[#FFFFFF]">×</button>
 
         <span className="welcome-rise welcome-rise-1 relative inline-block rounded-full bg-[#1B1530] px-4 py-1 text-[11px] font-extrabold uppercase tracking-wider"><span className="grad-alt-text">Special Offer</span></span>
         <h2 id="offer-title" className="welcome-rise welcome-rise-1 relative mt-4 text-[26px] font-display font-extrabold leading-tight text-[#FFFFFF] sm:text-[32px]">Wait! Create <span className="grad-alt-text">More</span> for Less</h2>
         <p className="welcome-rise welcome-rise-2 relative mt-2 text-sm text-[#A1A1AA]">Limited-time premium trial reserved for you.</p>
 
-        <div className="welcome-rise welcome-rise-2 relative mt-6 flex items-center gap-5 rounded-[24px] border-2 border-dashed border-[#8B5CF6] bg-[#12101B] px-5 py-5 text-left">
+        <div className="welcome-rise welcome-rise-2 relative mt-6 flex items-center gap-5 rounded-[24px] border-2 border-dashed border-[#FF3DF2] bg-[#12101B] px-5 py-5 text-left">
           <div className="shrink-0 text-center">
             <p className="text-[34px] font-extrabold leading-none sm:text-[40px] grad-alt-text">{offer.discountPercent}%</p>
             <p className="mt-1 text-xs font-extrabold tracking-wide grad-alt-text">OFF</p>
@@ -94,18 +94,18 @@ export default function OfferPopup({ onClose: finish }) {
         </div>
 
         <div className="welcome-rise welcome-rise-3 relative mt-5 flex items-center justify-center gap-2 text-sm font-semibold text-[#FFFFFF]" role="timer" aria-label="Offer expires in">
-          <svg className="size-4 text-[#C026D3]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+          <svg className="size-4 text-[#FF3DF2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
           <span className="text-[13px]">Offer expires in:</span>
           {clock.map((n, i) => (
             <span key={i} className="flex items-center gap-2">
               {i > 0 && <span className="text-[#A1A1AA]">:</span>}
-              <span className="grid h-7 min-w-[34px] place-items-center rounded-lg bg-[#0D0B14] ring-1 ring-[#8B5CF6]/30 px-1.5 text-[13px] tabular-nums text-white">{pad(n)}</span>
+              <span className="grid h-7 min-w-[34px] place-items-center rounded-lg bg-[#0D0B14] ring-1 ring-[#FF3DF2]/30 px-1.5 text-[13px] tabular-nums text-white">{pad(n)}</span>
             </span>
           ))}
         </div>
 
         <button type="button" onClick={claim} disabled={busy}
-          className="welcome-rise welcome-rise-3 relative mt-5 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-full bg-[linear-gradient(90deg,#7C3AED_0%,#C026D3_100%)] text-base font-bold text-white transition-shadow hover:shadow-[0_12px_32px_rgba(252,72,231,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C026D3] disabled:cursor-wait disabled:opacity-70">
+          className="welcome-rise welcome-rise-3 relative mt-5 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-full bg-[#FF3DF2] text-base font-bold text-white transition-shadow hover:shadow-[0_12px_32px_rgba(255,61,242,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 disabled:cursor-wait disabled:opacity-70">
           {busy ? 'Please wait…' : `Claim ${name} Offer`}
         </button>
         {note && <p role="status" className="relative mt-3 rounded-2xl bg-[#12101B] px-4 py-2.5 text-sm text-[#FFFFFF]">{note}</p>}

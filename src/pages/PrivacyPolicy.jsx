@@ -78,7 +78,7 @@ const sections = [
 
 const Block = ({ b }) => (b.p
   ? <p className="mb-4 text-[16px] leading-[1.75] text-[#A1A1AA]">{b.p}</p>
-  : <ul className="mb-5 list-disc space-y-1.5 pl-6 text-[16px] leading-[1.7] text-[#A1A1AA] marker:text-[#8B5CF6]">{b.ul.map((i) => <li key={i}>{i}</li>)}</ul>)
+  : <ul className="mb-5 list-disc space-y-1.5 pl-6 text-[16px] leading-[1.7] text-[#A1A1AA] marker:text-[#FF3DF2]">{b.ul.map((i) => <li key={i}>{i}</li>)}</ul>)
 
 export default function PrivacyPolicy() {
   const nav = useNavigate()

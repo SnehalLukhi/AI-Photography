@@ -61,14 +61,14 @@ export function CategoryTiles({ collections, limit = Infinity, exclude = [] }) {
       {list.map((c) => {
         const a = categoryItems(c.id)[0]
         return (
-          <Link key={c.id} to={tabLink(c)} aria-label={c.category || c.name} className="group flex flex-col rounded-[24px] border border-[#272033] bg-[#12101B] p-2.5 outline-none transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-[#8B5CF6]/60 focus-visible:ring-2 focus-visible:ring-[#8B5CF6]">
+          <Link key={c.id} to={tabLink(c)} aria-label={c.category || c.name} className="group flex flex-col rounded-[24px] border border-[#272033] bg-[#12101B] p-2.5 outline-none transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-[#A1A1AA] focus-visible:ring-2 focus-visible:ring-white/70">
             <span className="block min-h-[2.6em] px-1.5 pt-1 font-display text-[17px] font-bold leading-tight text-white">{c.category || c.name}</span>
             <span className="relative mt-1.5 block overflow-hidden rounded-[16px] bg-[#0D0B14]" style={{ aspectRatio: (a && shapes[a.image]) || '9 / 16' }}>
               {a && <PImage src={a.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]" draggable="false" />}
             </span>
             <span className="mt-2.5 flex items-center justify-between rounded-full bg-[#1A1626] py-1 pl-3.5 pr-1 text-[13px] font-semibold text-white transition-colors group-hover:bg-white group-hover:text-[#08080D]">
               Explore
-              <span className="grid size-6 place-items-center rounded-full bg-[linear-gradient(135deg,#7C3AED,#C026D3)] text-white"><svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+              <span className="grid size-6 place-items-center rounded-full bg-[#FF3DF2] text-white"><svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
             </span>
           </Link>
         )
@@ -137,6 +137,31 @@ export function CategoryRows({ collections, onSelect }) {
  */
 // Cartoon-related templates (by name, id or category) go to the very end of the carousel; everyone else keeps the admin's order. Display order only: the list itself is not changed.
 const isCartoon = (t) => /cartoon|toon/i.test(`${t.name} ${t.assetId || ''} ${t.categoryId || ''} ${t.category || ''}`)
+/** A look's name on a carousel card: small text that is never cut with "...". A name that fits stays still; a longer one scrolls slowly to the left and comes back in from the right. */
+function CardName({ name }) {
+  const box = useRef(null)
+  const measure = useRef(null)
+  const [scroll, setScroll] = useState(false)
+  useEffect(() => {
+    const el = box.current; const m = measure.current
+    if (!el || !m) return undefined
+    const check = () => setScroll(m.offsetWidth > el.clientWidth + 1)
+    check()
+    const ro = new ResizeObserver(check); ro.observe(el)
+    return () => ro.disconnect()
+  }, [name])
+  return (
+    <span ref={box} className="name-ticker relative block overflow-hidden whitespace-nowrap text-[14px] font-bold leading-snug text-white">
+      <span ref={measure} aria-hidden="true" className="invisible absolute left-0 top-0 whitespace-nowrap">{name}</span>
+      {scroll ? (
+        <span className="name-marquee inline-flex w-max" style={{ animationDuration: `${Math.max(6, name.length * 0.4)}s` }}>
+          <span className="pr-10">{name}</span><span className="name-dup pr-10" aria-hidden="true">{name}</span>
+        </span>
+      ) : <span>{name}</span>}
+    </span>
+  )
+}
+
 export function FeaturedCarousel({ items: list, className = '' }) {
   if (!list.length) return null
   const items = [...list.filter((t) => !isCartoon(t)), ...list.filter(isCartoon)]
@@ -151,8 +176,7 @@ export function FeaturedCarousel({ items: list, className = '' }) {
                 <img src={t.image} alt="" loading="lazy" draggable="false" className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
                 <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/85 via-transparent to-transparent" />
                 <span className="absolute inset-x-5 bottom-4">
-                  <span className="block truncate text-[18px] font-bold text-white">{t.name}</span>
-                  <span className="block truncate text-[13px] text-white/80">Photo template · Try it now</span>
+                  <CardName name={t.name} />
                 </span>
               </Link>
             ))}

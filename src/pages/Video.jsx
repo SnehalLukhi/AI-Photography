@@ -42,17 +42,17 @@ function FrameUpload({ label, hint, file, onFile }) {
   return (
     <div className="min-w-0">
       <span className="mb-2 block text-[14px] font-semibold">{label}</span>
-      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#0D0B14] text-center transition-colors focus-within:border-[#8B5CF6] hover:border-[#8B5CF6]">
+      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#0D0B14] text-center transition-colors focus-within:border-[#FF3DF2] hover:border-[#A1A1AA]">
         <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => { onFile(e.target.files?.[0] || null); e.target.value = '' }} />
         {url ? <img src={url} alt={`${label} preview`} className="absolute inset-0 size-full object-cover" /> : (
           <span className="px-4 py-6">
-            <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#1A1626] text-[#A78BFA] transition-colors group-hover:bg-[#241B3A]"><Icon d={UPLOAD} /></span>
+            <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#1A1626] text-[#FF3DF2] transition-colors group-hover:bg-[#241B3A]"><Icon d={UPLOAD} /></span>
             <span className="mt-3 block text-[14px] font-semibold">Click to upload</span>
             <span className="mt-1 block text-[12px] text-[#A1A1AA]">{hint}</span>
           </span>
         )}
       </label>
-      {file && <button type="button" onClick={() => onFile(null)} className="mt-2 text-[13px] font-semibold text-[#A78BFA] hover:text-white">Remove</button>}
+      {file && <button type="button" onClick={() => onFile(null)} className="mt-2 text-[13px] font-semibold text-[#FF3DF2] hover:text-white">Remove</button>}
     </div>
   )
 }
@@ -74,7 +74,7 @@ export default function Video() {
   return (
     <div className="w-full text-[#FFFFFF]">
       <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#0D0B14_0%,#08080D_100%)] px-4 pb-12 pt-12 text-center sm:px-6 lg:pt-16">
-        <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[380px] w-[820px] max-w-full -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(252,72,231,0.16),transparent)]" aria-hidden="true" />
+        <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[380px] w-[820px] max-w-full -translate-x-1/2 rounded-full bg-[#FF3DF2]/10 blur-[90px]" aria-hidden="true" />
         <h1 className="mx-auto max-w-3xl text-[40px] sm:text-[58px] lg:text-[68px]">Create <span className="grad-text">videos</span> as easily as photos</h1>
         <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[18px]">Turn a prompt, a photo or a template into a short video.</p>
       </section>
@@ -89,7 +89,7 @@ export default function Video() {
             <div role="tablist" aria-label="Video mode" className="grid grid-cols-2 gap-1.5 rounded-[22px] bg-[#0D0B14] p-1.5 sm:grid-cols-4">
               {MODES.map((m) => (
                 <button key={m.id} type="button" role="tab" aria-selected={mode === m.id} onClick={() => setMode(m.id)}
-                  className={`cursor-pointer rounded-full px-3 py-2.5 text-[13px] font-semibold transition-colors sm:text-[14px] ${mode === m.id ? 'bg-[linear-gradient(90deg,#7C3AED_0%,#C026D3_100%)] text-white shadow-[0_8px_22px_-10px_rgba(139,92,246,0.8)]' : 'text-[#A1A1AA] hover:bg-[#1A1626] hover:text-white'}`}>
+                  className={`cursor-pointer rounded-full px-3 py-2.5 text-[13px] font-semibold transition-colors sm:text-[14px] ${mode === m.id ? 'bg-[#FF3DF2] text-white shadow-[0_8px_22px_-10px_rgba(255,61,242,0.8)]' : 'text-[#A1A1AA] hover:bg-[#1A1626] hover:text-white'}`}>
                   <span className="sm:hidden">{m.short}</span><span className="hidden sm:inline">{m.label}</span>
                 </button>
               ))}
@@ -112,7 +112,7 @@ export default function Video() {
                   {VIDEO_TEMPLATES.length ? (
                     <div className="grid grid-cols-3 gap-3">
                       {VIDEO_TEMPLATES.map((t) => (
-                        <button key={t.id} type="button" onClick={() => setTpl(t.id)} aria-pressed={tpl === t.id} className={`tile group relative aspect-[3/4] overflow-hidden !rounded-[18px] border-2 ${tpl === t.id ? 'border-[#8B5CF6]' : 'border-transparent'}`}>
+                        <button key={t.id} type="button" onClick={() => setTpl(t.id)} aria-pressed={tpl === t.id} className={`tile group relative aspect-[3/4] overflow-hidden !rounded-[18px] border-2 ${tpl === t.id ? 'border-[#FF3DF2]' : 'border-transparent'}`}>
                           <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
                           <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/80 via-transparent to-transparent" />
                           <span className="absolute inset-x-2 bottom-2 truncate text-[12px] font-semibold text-white">{t.name}</span>
@@ -122,7 +122,7 @@ export default function Video() {
                   ) : (
                     <div className="grid min-h-[168px] place-items-center rounded-2xl border border-dashed border-[#3A2F52] bg-[#0D0B14] px-5 py-8 text-center">
                       <div>
-                        <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#1A1626] text-[#A78BFA]"><Icon d="M4 5h16v14H4zM9 9l6 3-6 3z" /></span>
+                        <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#1A1626] text-[#FF3DF2]"><Icon d="M4 5h16v14H4zM9 9l6 3-6 3z" /></span>
                         <p className="mt-3 text-[14px] font-semibold">No video templates yet</p>
                         <p className="mt-1 text-[12px] text-[#A1A1AA]">Templates added in the admin panel will appear here, each with its own style and reference image.</p>
                       </div>

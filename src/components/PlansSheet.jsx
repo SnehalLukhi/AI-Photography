@@ -92,13 +92,13 @@ export default function PlansSheet({ onClose }) {
           </button>
           <div className="relative z-10 mt-6 flex items-center justify-center gap-2">
             <span className="font-display text-[30px] font-extrabold text-[#FFFFFF]">Pictrify</span>
-            <span className="rounded-full px-3 py-0.5 text-[13px] font-bold text-white" style={{ background: 'linear-gradient(90deg, #7C3AED, #C026D3)' }}>PRO</span>
+            <span className="rounded-full px-3 py-0.5 text-[13px] font-bold text-white" style={{ background: '#FF3DF2' }}>PRO</span>
           </div>
           <p className="relative z-10 mt-1 text-[14px] text-[#A1A1AA]">Unlock ultimate creative power</p>
           <div className="relative z-10 mt-4 grid grid-cols-3 gap-2">
             {perks.map(([label, d]) => (
               <div key={label} className="flex flex-col items-center gap-1.5">
-                <span className="grid size-11 place-items-center rounded-full bg-[#12101B] text-[#8B5CF6] shadow-[0_6px_16px_rgba(0,0,0,0.10)]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
+                <span className="grid size-11 place-items-center rounded-full bg-[#12101B] text-[#FF3DF2] shadow-[0_6px_16px_rgba(0,0,0,0.10)]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
                 <span className="text-[12px] font-medium leading-tight text-[#FFFFFF]">{label}</span>
               </div>
             ))}
@@ -111,13 +111,13 @@ export default function PlansSheet({ onClose }) {
               <button key={p.id} type="button" onClick={() => setSel(p.id)} aria-pressed={on}
                 className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-[22px] border-2 px-4 py-2.5 text-left transition-colors ${on ? 'border-[#FFFFFF] bg-[#12101B]' : 'border-[#272033] bg-[#12101B]'}`}>
                 <span className="min-w-0">
-                  <span className="flex items-center gap-2 text-[15px] font-semibold text-[#FFFFFF]">{p.name}{p.popular && <span className="rounded bg-[linear-gradient(90deg,#7C3AED_0%,#C026D3_100%)] px-2 py-px text-[9px] font-bold uppercase text-white">Popular</span>}</span>
+                  <span className="flex items-center gap-2 text-[15px] font-semibold text-[#FFFFFF]">{p.name}{p.popular && <span className="rounded bg-[#FF3DF2] px-2 py-px text-[9px] font-bold uppercase text-white">Popular</span>}</span>
                   <span className="mt-0.5 block font-display text-[22px] font-bold leading-tight text-[#FFFFFF]">{p.price || <span aria-hidden="true" className="invisible">₹000</span>} <span className="text-[12px] font-normal text-[#A1A1AA]">{p.per}</span></span>
                   <span className="mt-0.5 block text-[12px] leading-tight text-[#A1A1AA]">Premium templates</span>
                 </span>
                 <span className="flex shrink-0 items-center gap-2 rounded-2xl bg-[#262310] px-3 py-1.5">
                   <img src={brandImages.coin} alt="" width="32" height="32" className="size-8 object-contain" />
-                  <span className="text-[13px] font-bold leading-tight text-[#FFFFFF]">{p.coins.replace(' Coins', '').replace(' / year', '')}<span className="block text-[11px] font-semibold text-[#8B5CF6]">Coins</span></span>
+                  <span className="text-[13px] font-bold leading-tight text-[#FFFFFF]">{p.coins.replace(' Coins', '').replace(' / year', '')}<span className="block text-[11px] font-semibold text-[#FF3DF2]">Coins</span></span>
                 </span>
               </button>
             )
@@ -125,7 +125,7 @@ export default function PlansSheet({ onClose }) {
           {note && <p role="status" className="rounded-2xl bg-[#12101B] px-4 py-3 text-center text-sm text-[#FFFFFF]">{note}</p>}
         </div>
         <div className="relative z-10 shrink-0 px-4 pt-2 text-center" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}>
-          <button type="button" disabled={busy || !sel} onClick={cont} className="flex h-14 w-full cursor-pointer items-center justify-center rounded-full text-[17px] font-bold text-white shadow-[0_12px_28px_rgba(252,72,231,0.28)] disabled:opacity-60" style={{ background: 'linear-gradient(90deg, #7C3AED 0%, #C026D3 100%)' }}>{busy ? 'Please wait…' : 'Continue'}</button>
+          <button type="button" disabled={busy || !sel} onClick={cont} className="flex h-14 w-full cursor-pointer items-center justify-center rounded-full text-[17px] font-bold text-white shadow-[0_12px_28px_rgba(255,61,242,0.28)] disabled:opacity-60" style={{ background: '#FF3DF2' }}>{busy ? 'Please wait…' : 'Continue'}</button>
           <p className="mt-3 text-[11px] text-[#A1A1AA]">Auto-renewable subscription. Cancel anytime.</p>
           <Link to="/privacy-policy" onClick={onClose} className="mt-1 inline-block text-[12px] font-semibold text-[#FFFFFF] underline">Privacy Policy</Link>
         </div>

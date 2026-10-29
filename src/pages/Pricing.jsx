@@ -78,19 +78,19 @@ export default function Pricing() {
               className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#12101B]' : 'border-[#272033] bg-[#12101B]'}`}>
               {p.popular && <span className="badge absolute right-0 top-0 !rounded-none !rounded-bl-2xl !px-3 !py-1 !text-[10px] uppercase tracking-wide">Most Popular</span>}
               <div className="flex items-center gap-3">
-                <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#3A2F52]'}`}>{on && <span className="size-2.5 rounded-full bg-[#0D0B14] ring-1 ring-[#8B5CF6]/30" />}</span>
+                <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#3A2F52]'}`}>{on && <span className="size-2.5 rounded-full bg-[#0D0B14] ring-1 ring-[#FF3DF2]/30" />}</span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[16px] font-bold text-[#FFFFFF]">{p.name}</p>
                   <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#A1A1AA]"><img src={brandImages.coin} alt="" width="16" height="16" className="size-4 object-contain" />{p.coins}</p>
                 </div>
                 <div className="shrink-0 text-right">
                   <p className="font-display text-[22px] font-bold leading-none text-[#FFFFFF]">{p.price || pending} <span className="font-sans text-[11px] font-normal text-[#A1A1AA]">{p.per}</span></p>
-                  {p.originalPrice && <p className="mt-1 text-[11px] text-[#A1A1AA]"><span className="line-through">{p.originalPrice}</span> <span className="font-bold text-[#C21FA5]">{p.discount}% OFF</span></p>}
+                  {p.originalPrice && <p className="mt-1 text-[11px] text-[#A1A1AA]"><span className="line-through">{p.originalPrice}</span> <span className="font-bold text-[#FF3DF2]">{p.discount}% OFF</span></p>}
                 </div>
               </div>
               {on && p.details?.length > 0 && (
                 <dl className="mt-3.5 space-y-2 border-t border-[#272033] pt-3 text-[12px] text-[#A1A1AA]">
-                  {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="text-[#8B5CF6]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold text-[#FFFFFF]">{value}</dd></div>)}
+                  {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="text-[#FF3DF2]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold text-[#FFFFFF]">{value}</dd></div>)}
                 </dl>
               )}
             </div>
@@ -107,7 +107,7 @@ export default function Pricing() {
     {mobile}
     <div className="mx-auto w-full max-w-[1280px] max-sm:hidden px-4 pb-24 pt-6 text-[#FFFFFF] sm:px-6 sm:pb-20 sm:pt-10 md:px-8 lg:px-12">
       <header className="mx-auto max-w-3xl text-center">
-        <span className="pill-tag"><SparkIcon className="size-3.5 text-[#8B5CF6]" /><span>Flexible plans</span></span>
+        <span className="pill-tag"><SparkIcon className="size-3.5 text-[#FF3DF2]" /><span>Flexible plans</span></span>
         <h1 className="mt-5 font-display text-[36px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[52px] lg:text-[60px]">Choose <span className="grad-text">Your Plan</span></h1>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#A1A1AA] sm:text-lg">Unlock premium templates, faster generation and more creative freedom.</p>
       </header>
@@ -117,21 +117,21 @@ export default function Pricing() {
         <div className="grid grid-cols-1 gap-5 pt-3 sm:grid-cols-2 sm:pt-4 lg:grid-cols-3 lg:gap-6">
           {loading && [0, 1, 2].map((i) => <SkeletonCard key={i} />)}
           {!loading && plans.map((p, idx) => (
-            <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-[#FFFFFF] bg-[#0D0B14] ring-1 ring-[#8B5CF6]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#272033] bg-[#12101B]'}`}>
-              {p.popular && <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(252,72,231,0.35)]">Most Popular</span>}
+            <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-[#FFFFFF] bg-[#0D0B14] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#272033] bg-[#12101B]'}`}>
+              {p.popular && <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(255,61,242,0.35)]">Most Popular</span>}
               <h3 className={`font-display ${p.popular ? 'pr-24 ' : ''}text-[22px] font-bold leading-tight sm:text-[26px] ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.name}</h3>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                 <p className={`font-display text-[40px] font-extrabold leading-none sm:text-[48px] ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.price || pending}</p>
                 {p.originalPrice && <span className={`text-[15px] line-through ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}>{p.originalPrice}</span>}
                 <span className={`text-[13px] sm:text-[14px] ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}>{p.per}</span>
-                {p.discount > 0 && <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${p.popular ? 'bg-[#C026D3] text-white' : 'bg-[#271425] text-[#C21FA5]'}`}>{p.discount}% OFF</span>}
+                {p.discount > 0 && <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${p.popular ? 'bg-[#FF3DF2] text-white' : 'bg-[#271425] text-[#FF3DF2]'}`}>{p.discount}% OFF</span>}
               </div>
               <div className={`mt-5 flex items-center gap-3 rounded-2xl px-3 py-2.5 ${p.popular ? 'bg-[#12101B]/10' : ''}`} style={p.popular ? undefined : { background: TINTS[idx % TINTS.length] }}>
                 <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#12101B]"><img src={brandImages.coin} alt="Coins" width="44" height="44" className="size-7 object-contain" /></span>
                 <p className={`text-[15px] font-semibold ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.coins}</p>
               </div>
               <dl className={`mt-7 flex flex-1 flex-col gap-3.5 text-[13px] sm:mt-8 sm:gap-4 sm:text-[14px] ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}>
-                {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2.5"><span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${p.popular ? 'bg-[#12101B]/15 text-white' : 'bg-[#1B1530] text-[#8B5CF6]'}`}>✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className={`shrink-0 text-right font-semibold leading-snug ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{value}</dd></div>)}
+                {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2.5"><span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${p.popular ? 'bg-[#12101B]/15 text-white' : 'bg-[#1B1530] text-[#FF3DF2]'}`}>✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className={`shrink-0 text-right font-semibold leading-snug ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{value}</dd></div>)}
               </dl>
               <button type="button" disabled={busy === p.id} onClick={() => choose(p)}
                 className={`${p.popular ? 'btn-grad' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`}>

@@ -61,7 +61,7 @@ export default function Coins() {
       {failed && <p role="alert" className="mb-3 rounded-2xl border border-[#F3B6C8] bg-[#FFF0F4] px-4 py-3 text-sm text-[#B4234F]">Could not load the coin packs. Please check your connection and refresh.</p>}
       {loading && <><Skel className="h-[132px]" /><div className="mt-5 grid grid-cols-2 gap-3">{[0, 1, 2, 3].map((k) => <Skel key={k} className="h-[230px]" />)}</div></>}
       {featured && (
-        <div className="relative overflow-hidden rounded-[28px] bg-[#0D0B14] ring-1 ring-[#8B5CF6]/30 p-4 pt-5 text-center">
+        <div className="relative overflow-hidden rounded-[28px] bg-[#0D0B14] ring-1 ring-[#FF3DF2]/30 p-4 pt-5 text-center">
           <img src={brandImages.coin} alt="" width="56" height="56" className="absolute -left-1 -top-1 size-14 -rotate-12 object-contain" />
           <p className="font-display text-[22px] font-bold text-white">{featured.coins.toLocaleString('en-US')} Coins <span className="badge ml-1 align-middle !text-[10px]">BEST VALUE</span></p>
           <p className="mt-0.5 text-[12px] text-white/65">About {Math.floor(featured.coins / data.costPerGeneration)} photos · {featured.name}</p>
@@ -83,7 +83,7 @@ export default function Coins() {
         ))}
       </div>
       {note && <p role="status" className="mt-4 rounded-2xl border border-[#272033] bg-[#12101B] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
-      <p className="mt-6 text-center text-[13px] font-semibold text-[#FFFFFF]"><span className="mr-1.5 text-[#8B5CF6]">✓</span>Safe &amp; Secure Payment</p>
+      <p className="mt-6 text-center text-[13px] font-semibold text-[#FFFFFF]"><span className="mr-1.5 text-[#FF3DF2]">✓</span>Safe &amp; Secure Payment</p>
       <p className="mx-auto mt-2 max-w-[300px] text-center text-[11px] leading-snug text-[#A1A1AA]">Payment is secure and processed instantly. This is a one-time purchase with no subscriptions or automatic renewals.</p>
       <p className="mt-4 text-center text-[13px] text-[#A1A1AA]">Prefer a subscription? <Link to="/pricing" className="font-semibold text-[#FFFFFF] underline">See the plans</Link></p>
     </div>
@@ -94,7 +94,7 @@ export default function Coins() {
     {mobile}
     <div className="mx-auto w-full max-w-[1280px] px-4 max-sm:hidden pb-28 pt-4 text-[#FFFFFF] sm:px-6 sm:pb-20 sm:pt-10 md:px-8 lg:px-12">
       <header className="mx-auto max-w-3xl text-center">
-        <span className="pill-tag"><SparkIcon className="size-3.5 text-[#8B5CF6]" /><span>Top up anytime</span></span>
+        <span className="pill-tag"><SparkIcon className="size-3.5 text-[#FF3DF2]" /><span>Top up anytime</span></span>
         <h1 className="mt-5 font-display text-[36px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[52px] lg:text-[60px]">Get More <span className="grad-text">Coins</span></h1>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#A1A1AA] sm:text-lg">Buy a coin pack once - no subscription. Coins never expire{signedIn ? <>, and you have <strong className="text-[#FFFFFF]">{coins.toLocaleString()}</strong> now.</> : '.'}</p>
       </header>
@@ -108,18 +108,18 @@ export default function Coins() {
             const photos = Math.floor(p.coins / data.costPerGeneration)
             const list = typeof p.price === 'object' ? p.price.USD : p.price // regular price; with an offer the discounted price is what is charged
             return (
-              <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 ${p.popular ? 'border-[#FFFFFF] bg-[#0D0B14] ring-1 ring-[#8B5CF6]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#272033] bg-[#12101B]'}`}>
-                {p.popular && <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(252,72,231,0.35)]">Most Popular</span>}
+              <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 ${p.popular ? 'border-[#FFFFFF] bg-[#0D0B14] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#272033] bg-[#12101B]'}`}>
+                {p.popular && <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(255,61,242,0.35)]">Most Popular</span>}
                 <h3 className={`font-display ${p.popular ? 'pr-20 ' : ''}text-[20px] font-bold leading-tight sm:text-[24px] ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.name}</h3>
                 <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                   <p className={`font-display text-[36px] font-extrabold leading-none sm:text-[42px] ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{usd(p.offer ? p.offer.price : list, p.currency)}</p>
-                  {p.offer && <><span className={`text-[15px] line-through ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}>{usd(list, p.currency)}</span><span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${p.popular ? 'bg-[#C026D3] text-white' : 'bg-[#271425] text-[#C21FA5]'}`}>{p.offer.discountPercent}% OFF</span></>}
+                  {p.offer && <><span className={`text-[15px] line-through ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}>{usd(list, p.currency)}</span><span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${p.popular ? 'bg-[#FF3DF2] text-white' : 'bg-[#271425] text-[#FF3DF2]'}`}>{p.offer.discountPercent}% OFF</span></>}
                 </div>
                 <div className={`mt-5 flex items-center gap-3 rounded-2xl px-3 py-2.5 ${p.popular ? 'bg-[#12101B]/10' : ''}`} style={p.popular ? undefined : { background: TINTS[idx % TINTS.length] }}>
                   <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#12101B]"><img src={brandImages.coin} alt="" width="44" height="44" className="size-7 object-contain" /></span>
                   <p className={`text-[15px] font-semibold ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.coins.toLocaleString('en-US')} Coins</p>
                 </div>
-                <p className={`mt-7 flex flex-1 items-start gap-2.5 text-[13px] sm:text-[14px] ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}><span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${p.popular ? 'bg-[#12101B]/15 text-white' : 'bg-[#1B1530] text-[#8B5CF6]'}`}>✓</span><span>About <strong className={p.popular ? 'text-white' : 'text-[#FFFFFF]'}>{photos}</strong> {photos === 1 ? 'photo' : 'photos'}</span></p>
+                <p className={`mt-7 flex flex-1 items-start gap-2.5 text-[13px] sm:text-[14px] ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}><span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${p.popular ? 'bg-[#12101B]/15 text-white' : 'bg-[#1B1530] text-[#FF3DF2]'}`}>✓</span><span>About <strong className={p.popular ? 'text-white' : 'text-[#FFFFFF]'}>{photos}</strong> {photos === 1 ? 'photo' : 'photos'}</span></p>
                 <button type="button" disabled={busy === p.id} onClick={() => buy(p)}
                   className={`${p.popular ? 'btn-grad' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`}>
                   {busy === p.id ? 'Please wait…' : `Buy ${p.name}`}

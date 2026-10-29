@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-const COLORS = ['#C026D3', '#7C3AED', '#FFC933', '#8B5CF6', '#C026D3', '#4FB6FF', '#FF8A3D']
+const COLORS = ['#FF3DF2', '#FF3DF2', '#FFC933', '#FF3DF2', '#FF3DF2', '#4FB6FF', '#FF8A3D']
 const COUNT = 110
 const DURATION = 2800
 

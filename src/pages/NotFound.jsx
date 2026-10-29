@@ -10,7 +10,7 @@ export default function NotFound() {
         <span className="pointer-events-none absolute right-[16%] top-12 size-5 rounded-full bg-[#102419]" aria-hidden="true" />
         <p className="relative flex items-center gap-1 text-[110px] font-extrabold leading-none tracking-tight sm:text-[190px]">
           <span>4</span>
-          <span className="grid size-[88px] -rotate-6 place-items-center rounded-full bg-[linear-gradient(135deg,#705CFF_0%,#FC48E7_100%)] text-[44px] text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:size-[150px] sm:text-[76px]" aria-hidden="true">?</span>
+          <span className="grid size-[88px] -rotate-6 place-items-center rounded-full bg-[#FF3DF2] text-[44px] text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:size-[150px] sm:text-[76px]" aria-hidden="true">?</span>
           <span>4</span>
         </p>
         <h1 className="relative mt-6 text-[30px] font-extrabold leading-tight tracking-tight sm:text-[46px]">Oops, this page wandered off</h1>

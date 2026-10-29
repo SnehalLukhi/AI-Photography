@@ -30,7 +30,7 @@ function Rail({ items, onSelect, h = 'h-[220px] lg:h-[260px]', label }) {
   return (
     <div className="no-scrollbar -mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0" aria-label={label}>
       {items.map((t) => (
-        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#272033] bg-[#12101B] text-left outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6]`}>
+        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#272033] bg-[#12101B] text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70`}>
           <img src={t.image} alt="" loading="lazy" draggable="false" className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
           <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#08080D]/90 to-transparent px-3.5 pb-2.5 pt-9"><span className="block truncate text-[13px] font-semibold text-white">{t.name}</span></span>
         </button>
@@ -76,7 +76,7 @@ export default function MemberHome() {
           {/* featured carousel */}
           <section aria-label="Featured">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
-              <div><p className="text-[14px] font-semibold text-[#C4B5FD]">Welcome back</p><h1 className="text-[28px] sm:text-[36px]">Hi {first}, what will you create today?</h1></div>
+              <div><p className="text-[14px] font-semibold text-[#FF3DF2]">Welcome back</p><h1 className="text-[28px] sm:text-[36px]">Hi {first}, what will you create today?</h1></div>
               <SeeAll to="/explore?category=trending" />
             </div>
             <FeaturedCarousel items={feat} className="max-md:hidden" />
@@ -88,7 +88,7 @@ export default function MemberHome() {
             <Head title="Tools & shortcuts" />
             <div className="no-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:overflow-visible lg:px-0">
               {TOOLS.map(([label, to, d]) => (
-                <Link key={label} to={to} className="chip !gap-2.5 !rounded-2xl !px-4 !py-2.5 lg:min-w-0 lg:flex-1 lg:justify-center"><span className="grid size-7 place-items-center rounded-full bg-[linear-gradient(135deg,#7C3AED,#C026D3)] text-white"><Icon d={d} className="size-4" /></span>{label}</Link>
+                <Link key={label} to={to} className="chip !gap-2.5 !rounded-2xl !px-4 !py-2.5 lg:min-w-0 lg:flex-1 lg:justify-center"><span className="grid size-7 place-items-center rounded-full bg-[#FF3DF2] text-white"><Icon d={d} className="size-4" /></span>{label}</Link>
               ))}
             </div>
           </section>
