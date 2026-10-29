@@ -89,6 +89,16 @@ const apiCards = (tab) => {
 // their usual order. To add a category: append it to `exploreTabs`; it is not listed here, so it takes position 2 automatically.
 const ORIGINAL_TAB_IDS = ['80s-and-90s', '80s-90s', 'cartoon', 'linkedin-headshot', 'old-money', 'top-carousel', 'beard', 'hairstyle-baby', 'hairstyle-man', 'hairstyle-woman']
 export const isOriginalTab = (t) => ORIGINAL_TAB_IDS.includes(t.id)
+// Category order = the order arranged in the Admin Panel (its "Order" number, smaller first; ties by id - the same rule the database query uses). Trending is not a category: every list puts it
+// at position 1 itself, so the admin's numbers only order the other categories (from position 2). Tabs the catalogue does not know (bundled folders only) come after, in the usual order.
+const adminRank = new Map((apiCatalogue?.categories || []).filter((c) => c.id !== 'trending-only' && c.id !== 'trending')
+  .sort((a, b) => (a.sort_order - b.sort_order) || String(a.id).localeCompare(String(b.id))).map((c, i) => [c.id, i]))
+export const hasAdminOrder = adminRank.size > 0
+export const sortTabs = (tabs) => {
+  const known = tabs.filter((t) => adminRank.has(t.id)).sort((a, b) => adminRank.get(a.id) - adminRank.get(b.id))
+  const rest = tabs.filter((t) => !adminRank.has(t.id))
+  return [...known, ...rest.filter((t) => !isOriginalTab(t)).reverse(), ...rest.filter(isOriginalTab)]
+}
 /** The "Hairstyle" sidebar entry: a parent whose subs are the hairstyle-* tabs above ({ id: URL ?sub=, tabId: key for categoryItems }). */
 const parentTab = (id, name) => ({ id, name, subs: exploreTabs.filter((t) => t.parent === id).map((t) => ({ id: t.id.replace(`${id}-`, ''), name: t.name, tabId: t.id })) })
 export const hairstyleTab = parentTab('hairstyle', 'Hairstyle')

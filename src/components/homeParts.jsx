@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PImage from './PImage.jsx'
 import TemplateCard from './TemplateCard.jsx'
-import { exploreTabs, isOriginalTab, categoryItems, templatesByIds, generateUrl } from '../data/templates.js'
+import { exploreTabs, sortTabs, categoryItems, templatesByIds, generateUrl } from '../data/templates.js'
 import { useTrending } from '../lib/useTrending.js'
 
 // Pieces shared by the logged-out home (pages/Home.jsx) and the logged-in home (components/MemberHome.jsx).
@@ -14,10 +14,10 @@ const TRENDING_12 = [['80s-and-90s', 'Good Vibes'], ['cartoon', '3D Toon'], ['li
 export const PASTELS = ['#1B1530', '#271425', '#101D2C', '#102419', '#2A1C10', '#262310']
 export const tabLink = (tab) => (tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}` : `/explore?category=${tab.id}`)
 
-/** Collections: the newest categories first, then the original ones in their usual order. */
+/** Collections, in the admin's category order (categories the admin has not placed come after). */
 export function getCollections() {
   const withItems = exploreTabs.filter((t) => categoryItems(t.id).length)
-  return [...withItems.filter((t) => !isOriginalTab(t)).reverse(), ...withItems.filter(isOriginalTab)]
+  return sortTabs(withItems)
 }
 
 /** The admin's Trending list (newest first); until some are set, the built-in picks. `custom` is the admin's own list only. */

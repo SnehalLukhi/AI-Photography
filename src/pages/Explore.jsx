@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import TemplateCard from '../components/TemplateCard.jsx'
 import PImage from '../components/PImage.jsx'
-import { exploreTabs, isOriginalTab, hairstyleTab, exploreEverything, categoryItems, generateUrl, templatesByIds } from '../data/templates.js'
+import { exploreTabs, sortTabs, hairstyleTab, exploreEverything, categoryItems, generateUrl, templatesByIds } from '../data/templates.js'
 import { useTrending } from '../lib/useTrending.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { getPlans } from '../lib/aiPhotography.js'
@@ -87,7 +87,7 @@ export default function Explore() {
   const rawCategory = params.get('category')
   const active = rawCategory === 'hairstyle' ? (hairstyleChips.find((c) => c.subId === params.get('sub')) || hairstyleChips[0])?.id ?? rawCategory : rawCategory
   const tabsWithItems = exploreTabs.filter((t) => !t.parent && categoryItems(t.id).length)
-  const chips = [{ id: 'trending', name: 'Trending' }, ...tabsWithItems.filter((t) => !isOriginalTab(t)).reverse(), ...tabsWithItems.filter(isOriginalTab), ...hairstyleChips] // a collection appears once it has looks
+  const chips = [{ id: 'trending', name: 'Trending' }, ...sortTabs([...tabsWithItems, ...hairstyleChips])] // Trending is always first; the rest follow the admin's order. A collection appears once it has looks
   const chip = chips.find((c) => c.id === active) || chips[0]
   const only = params.get('only') === '1' && !params.get('q') // arrived through a category's "See all": show just that category, no other collection chips
   const shownChips = only ? [chip] : chips

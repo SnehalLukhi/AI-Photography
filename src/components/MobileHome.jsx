@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { exploreTabs, categoryItems, generateUrl } from '../data/templates.js'
+import { exploreTabs, sortTabs, hasAdminOrder, categoryItems, generateUrl } from '../data/templates.js'
 import PImage from './PImage.jsx'
 import { useStudio } from '../context/StudioContext.jsx'
 import { SeeAll } from './homeParts.jsx'
@@ -142,12 +142,12 @@ const CATEGORY_INFO = {
 export default function MobileHome({ trending = [] }) {
   const { openLogin } = useStudio()
   const top = categoryItems('top-carousel')
-  const rows = exploreTabs.filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
+  const rows = (hasAdminOrder ? sortTabs(exploreTabs) : exploreTabs).filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
     id: tab.id, title: tab.category || tab.name, info: CATEGORY_INFO[tab.id], items: categoryItems(tab.id),
     to: tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}&from=home` : `/explore?category=${tab.id}&from=home`, // from=home: Explore shows a phone-only back-to-Home bar for this one category
   })).filter((r) => r.items.length)
   const FIRST = ['diwali', 'halloween', 'christmas'] // festival collections come right after Trending, then every other category in its usual order
-  rows.sort((x, y) => { const f = (r) => { const i = FIRST.indexOf(r.id); return i < 0 ? FIRST.length : i }; return f(x) - f(y) }) // stable: the rest keep their order
+  if (!hasAdminOrder) rows.sort((x, y) => { const f = (r) => { const i = FIRST.indexOf(r.id); return i < 0 ? FIRST.length : i }; return f(x) - f(y) }) // stable: the rest keep their order
   if (trending.length) rows.unshift({ id: 'trending', title: 'Trending Templates', info: 'Chosen by the Pictrify team, newest first.', items: trending.slice(0, 20), to: '/explore?category=trending&from=home' }) // first section on the phone home
   return (
     <div className="pb-2 text-[#FFFFFF] md:hidden">
