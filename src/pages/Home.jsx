@@ -90,7 +90,7 @@ function GuestHome() {
           {/* 4. Trending templates (the admin's Trending list) */}
           <section id="trending-templates-section" aria-label="Trending">
             <Head title="Trending templates" sub="Discover popular AI styles, viral portraits, and creative templates from all categories." to="/explore?category=trending" />
-            <div className="grid grid-cols-2 gap-4 min-[480px]:grid-cols-3 md:gap-5 xl:grid-cols-6">
+            <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 md:gap-3 xl:grid-cols-6">
               {trendShown.map((t) => <TemplateCard key={t.id} t={t} fit="cover" onSelect={pick} />)}
             </div>
             {trendPages > 1 && (

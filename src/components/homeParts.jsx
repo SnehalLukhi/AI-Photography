@@ -111,7 +111,7 @@ function CategoryRow({ c, onSelect }) {
         )}
       </div>
       {/* 5 cards fill the row on a wide screen (4 / 3 / 2 and a peek of the next one on smaller ones); the rest scroll sideways. Each card keeps its picture's own shape. */}
-      <div ref={row} className={`no-scrollbar -mx-4 flex snap-x items-start overflow-x-auto scroll-smooth px-4 pb-1 ${wide ? '[--cols:1.3] min-[560px]:[--cols:2.2] md:[--cols:3] lg:[--cols:3]' : '[--cols:2.4] min-[560px]:[--cols:3.4] md:[--cols:4] lg:[--cols:5]'} [--gap:12px] sm:-mx-6 sm:px-6 md:[--gap:16px] lg:mx-0 lg:px-0`} style={{ gap: 'var(--gap)' }}>
+      <div ref={row} className={`no-scrollbar -mx-4 flex snap-x items-start overflow-x-auto scroll-smooth px-4 pb-1 ${wide ? '[--cols:1.3] min-[560px]:[--cols:2.2] md:[--cols:3] lg:[--cols:3]' : '[--cols:2.4] min-[560px]:[--cols:3.4] md:[--cols:4] lg:[--cols:5]'} [--gap:8px] sm:-mx-6 sm:px-6 md:[--gap:10px] lg:mx-0 lg:px-0`} style={{ gap: 'var(--gap)' }}>
         {items.map((t) => {
           const r = shapes[t.image] || 9 / 16 // until the picture has loaded: the usual tall card
           return (
@@ -145,9 +145,9 @@ export function FeaturedCarousel({ items: list, className = '' }) {
     <div className={`-mx-4 overflow-hidden sm:-mx-6 lg:-mx-8 motion-reduce:overflow-x-auto ${className}`} aria-label="Featured looks">
       <div className="flex w-max animate-marquee-slow hover:[animation-play-state:paused] motion-reduce:animate-none" style={{ animationDuration: `${Math.max(40, half.length * 4.5)}s` }}>
         {[0, 1].map((copy) => (
-          <div key={copy} aria-hidden={copy ? true : undefined} className="flex shrink-0 gap-4 pr-4">
+          <div key={copy} aria-hidden={copy ? true : undefined} className="flex shrink-0 gap-2 pr-2">
             {half.map((t, k) => (
-              <Link key={`${t.id}-${k}`} to={generateUrl(t)} tabIndex={copy ? -1 : undefined} aria-label={t.name} className="group relative block h-[300px] shrink-0 overflow-hidden rounded-[24px] border border-[#272033] bg-[#0D0B14] lg:h-[380px]">
+              <Link key={`${t.id}-${k}`} to={generateUrl(t)} tabIndex={copy ? -1 : undefined} aria-label={t.name} className="group relative block h-[300px] shrink-0 overflow-hidden rounded-[6px] border border-[#272033] bg-[#0D0B14] lg:h-[380px]">
                 <img src={t.image} alt="" loading="lazy" draggable="false" className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
                 <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/85 via-transparent to-transparent" />
                 <span className="absolute inset-x-5 bottom-4">

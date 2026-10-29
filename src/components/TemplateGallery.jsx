@@ -16,7 +16,7 @@ export default function TemplateGallery({ selected, onSelect, initial = 'all', c
           </button>
         ))}
       </div>
-      <div className={`grid gap-x-4 gap-y-6 sm:gap-x-5 ${cols}`}>
+      <div className={`grid gap-x-2.5 gap-y-4 sm:gap-x-3 ${cols}`}>
         {list.map((t) => <TemplateCard key={t.id} t={t} selected={selected?.id === t.id} onSelect={onSelect} />)}
       </div>
     </div>

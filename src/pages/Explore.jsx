@@ -167,12 +167,12 @@ export default function Explore() {
           <div className="section-head mt-8 !mb-0 px-5"><h2 className="section-title">{mobileTitle}</h2><span className="text-[13px] text-[#A1A1AA]">{list.length} {list.length === 1 ? 'look' : 'looks'}</span></div>
         </>
       )}
-      <div className="mt-5 grid grid-cols-2 gap-3.5 px-5">
+      <div className="mt-5 grid grid-cols-2 gap-2 px-5">
         {list.map((t) => {
           const liked = favorites.has(t.id)
           return (
             <div key={t.id} className="relative">
-              <Link to={generateUrl(t)} aria-label={t.name} className="relative block aspect-[9/16] overflow-hidden rounded-2xl bg-[#12101B] shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
+              <Link to={generateUrl(t)} aria-label={t.name} className="relative block aspect-[9/16] overflow-hidden rounded-[6px] bg-[#12101B] shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
                 <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
                 <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/60 via-transparent to-transparent" />
                 <span className="absolute inset-x-2 bottom-2.5 truncate text-center text-[12px] font-medium text-white">{t.name}</span>
@@ -207,7 +207,7 @@ export default function Explore() {
       </div>
 
       {list.length ? (
-        <div className={`grid gap-x-5 gap-y-9 sm:gap-x-6 ${isTop ? 'grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 items-start' : 'grid-cols-2 min-[480px]:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'}`}>
+        <div className={`grid gap-x-3 gap-y-5 ${isTop ? 'grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 items-start' : 'grid-cols-2 min-[480px]:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'}`}>
           {list.map(card)}
         </div>
       ) : (

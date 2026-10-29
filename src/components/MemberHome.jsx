@@ -28,9 +28,9 @@ const TOOLS = [
 /** A horizontally scrolling row of image cards (each shown whole, at its own shape). */
 function Rail({ items, onSelect, h = 'h-[220px] lg:h-[260px]', label }) {
   return (
-    <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0" aria-label={label}>
+    <div className="no-scrollbar -mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0" aria-label={label}>
       {items.map((t) => (
-        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} shrink-0 cursor-pointer snap-start overflow-hidden rounded-[20px] border border-[#272033] bg-[#12101B] text-left outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6]`}>
+        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#272033] bg-[#12101B] text-left outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6]`}>
           <img src={t.image} alt="" loading="lazy" draggable="false" className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
           <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#08080D]/90 to-transparent px-3.5 pb-2.5 pt-9"><span className="block truncate text-[13px] font-semibold text-white">{t.name}</span></span>
         </button>
@@ -108,7 +108,7 @@ export default function MemberHome() {
           {trendingPicks.length > 0 && (
             <section aria-label="Trending" className="mt-9 max-md:hidden">
               <Head title="Trending templates" sub="Popular looks picked by the Pictrify team." to="/explore?category=trending" />
-              <div className="grid grid-cols-2 gap-4 min-[480px]:grid-cols-3 md:gap-5 xl:grid-cols-6">
+              <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 md:gap-3 xl:grid-cols-6">
                 {trendingPicks.slice(0, 12).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
               </div>
             </section>
@@ -133,7 +133,7 @@ export default function MemberHome() {
           {favs.length > 0 && (
             <section aria-label="Favourites" className="mt-9 max-md:hidden">
               <Head title="Your favourites" sub="Looks you saved with the heart." />
-              <div className="grid grid-cols-2 gap-4 min-[480px]:grid-cols-3 md:gap-5 xl:grid-cols-6">
+              <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 md:gap-3 xl:grid-cols-6">
                 {favs.slice(0, 6).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
               </div>
             </section>

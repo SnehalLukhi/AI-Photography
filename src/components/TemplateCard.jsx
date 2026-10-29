@@ -26,8 +26,8 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
   const img = `absolute inset-0 h-full w-full ${fit === 'cover' ? 'object-cover' : 'object-contain'}`
   return (
     <article tabIndex={0} aria-label={t.name} onClick={() => onSelect?.(t)} onKeyDown={(e) => e.key === 'Enter' && onSelect?.(t)}
-      className={`group flex w-full animate-fade-in cursor-pointer flex-col gap-3 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] ${className}`}>
-      <div style={{ aspectRatio: ratio }} className={`relative w-full overflow-hidden rounded-xl bg-[#12101B] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_rgba(0,0,0,0.14)] ${selected ? 'outline outline-2 outline-offset-2 outline-[#8B5CF6]' : ''}`}>
+      className={`group flex w-full animate-fade-in cursor-pointer flex-col gap-3 rounded-[8px] outline-none focus-visible:ring-2 focus-visible:ring-[#8B5CF6] ${className}`}>
+      <div style={{ aspectRatio: ratio }} className={`relative w-full overflow-hidden rounded-[6px] bg-[#12101B] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_rgba(0,0,0,0.14)] ${selected ? 'outline outline-2 outline-offset-2 outline-[#8B5CF6]' : ''}`}>
         <PImage src={t.image} alt={t.name} loading="lazy" draggable="false" className={`${img} transition-transform duration-500 group-hover:scale-[1.04]`} style={{ objectPosition: objectPos }} />
         {fav && <Fav on={liked} toggle={() => (signedIn ? toggleFavorite(t.id) : openLogin())} />}
         {/* the name: top-left inside the image, revealed on hover / keyboard focus (always shown on touch screens, which have no hover); no category name */}

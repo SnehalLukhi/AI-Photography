@@ -170,7 +170,7 @@ export default function MobileHome({ trending = [] }) {
             <div className="min-w-0"><h2 className="text-base font-normal tracking-wide text-[#FFFFFF]">{r.title}</h2>{r.info && <p className="mt-0.5 line-clamp-2 text-[12px] leading-snug text-[#A1A1AA]">{r.info}</p>}</div>
             <SeeAll to={r.to} />
           </div>
-          <SnapRow items={r.items} rowCls="scroll-px-4 gap-3 px-4 py-0" cardCls="aspect-[9/16] w-[42vw] max-w-[190px] rounded-2xl"
+          <SnapRow items={r.items} rowCls="scroll-px-4 gap-2 px-4 py-0" cardCls="aspect-[9/16] w-[42vw] max-w-[190px] rounded-[6px]"
             render={(t) => (
               <Link to={generateUrl(t)} aria-label={t.name} className="block size-full">
                 <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
