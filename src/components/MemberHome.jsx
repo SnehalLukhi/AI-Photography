@@ -30,8 +30,8 @@ function Rail({ items, onSelect, h = 'h-[220px] lg:h-[260px]', label }) {
   return (
     <div className="no-scrollbar -mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0" aria-label={label}>
       {items.map((t) => (
-        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#272033] bg-[#12101B] text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70`}>
-          <img src={t.image} alt="" loading="lazy" draggable="false" className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
+        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} aspect-[9/16] shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#272033] bg-[#12101B] text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70`}>
+          <img src={t.image} alt="" loading="lazy" draggable="false" className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
           <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#08080D]/90 to-transparent px-3.5 pb-2.5 pt-9"><span className="block truncate text-[13px] font-semibold text-white">{t.name}</span></span>
         </button>
       ))}
@@ -86,9 +86,12 @@ export default function MemberHome() {
           {/* quick tools */}
           <section aria-label="Tools" className="mt-8 max-md:hidden">
             <Head title="Tools & shortcuts" />
-            <div className="no-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:overflow-visible lg:px-0">
-              {TOOLS.map(([label, to, d]) => (
-                <Link key={label} to={to} className="chip !gap-2.5 !rounded-2xl !px-4 !py-2.5 lg:min-w-0 lg:flex-1 lg:justify-center"><span className="grid size-7 place-items-center rounded-full bg-[#FF3DF2] text-white"><Icon d={d} className="size-4" /></span>{label}</Link>
+            <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-1 pt-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:gap-2 lg:overflow-visible lg:px-0">
+              {TOOLS.map(([label, to, d, beta]) => (
+                <Link key={label} to={to} className="tool-btn lg:min-w-0 lg:flex-1">
+                  {beta && <span className="tool-btn__beta">Beta</span>}
+                  <span className="tool-btn__icon"><Icon d={d} className="size-6" /></span>{label}
+                </Link>
               ))}
             </div>
           </section>

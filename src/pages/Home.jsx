@@ -48,7 +48,7 @@ function GuestHome() {
             <h1 className="mt-6 text-[52px] drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)] lg:text-[76px]">Create stunning <span className="grad-text">photos</span><br />and <span className="grad-text">videos</span> with AI</h1>
             <p className="mt-6 max-w-[560px] text-[18px] leading-relaxed text-[#D4D4D8]">Pick a template, add your photo and get a professional result in moments. Video creation is on its way.</p>
 
-            <form onSubmit={start} className="shine-ring mt-9 flex w-full max-w-[760px] items-center gap-1.5 rounded-full border border-white/[0.14] bg-[#0D0B14]/60 p-1.5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-white/25 sm:gap-2 sm:p-2">
+            <form onSubmit={start} className="shine-ring mt-9 flex w-full max-w-[760px] items-center gap-1.5 rounded-full border border-white/[0.14] bg-[#0D0B14]/60 p-1.5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl transition-[border-color,box-shadow] duration-300 sm:gap-2 sm:p-2">
               <div className="flex shrink-0 rounded-full border border-white/[0.08] bg-black/30 p-1" role="tablist" aria-label="What to create">
                 {[['photo', 'Photo'], ['video', 'Video']].map(([k, label]) => (
                   <button key={k} type="button" role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={`cursor-pointer rounded-full px-4 py-2 text-[14px] font-semibold transition-all duration-200 sm:px-5 ${mode === k ? 'bg-[#FF3DF2] text-[#08080D] shadow-[0_6px_18px_-6px_rgba(255,61,242,0.7)]' : 'text-[#B4B4BC] hover:bg-white/[0.07] hover:text-white'}`}>{label}</button>
@@ -76,13 +76,13 @@ function GuestHome() {
           {/* 3. Photo and Video */}
           <section aria-label="Create">
             <div className="grid gap-5 md:grid-cols-2">
-              <Link to="/explore" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#272033] bg-[#12101B] p-7 transition-[transform,border-color,background-color] duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-[#161322] sm:p-8">
+              <Link to="/explore" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#272033] bg-[#12101B] p-7 transition-[transform,border-color,background-color] duration-300 hover:-translate-y-1 hover:bg-[#161322] sm:p-8">
                 <span className="grid size-12 place-items-center rounded-2xl bg-[#FF3DF2]/10 text-[#FF3DF2] ring-1 ring-[#FF3DF2]/25 transition-colors group-hover:bg-[#FF3DF2]/15"><svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M17 8.5h.01" /></svg></span>
                 <h3 className="mt-6 font-display text-[30px] font-bold leading-tight">Create photos</h3>
                 <p className="mb-6 mt-2 max-w-md text-[16px] leading-relaxed text-[#B4B4BC]">Pick a template, add one photo and get a styled result in moments.</p>
-                <span className="btn-accent mt-auto w-fit !px-5 !py-2.5 !text-[14px]">Browse templates<span className="arrow transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">→</span></span>
+                <span className="btn-accent mt-auto w-fit !rounded-[14px] !px-5 !py-2.5 !text-[14px]">Browse templates<span className="arrow transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">→</span></span>
               </Link>
-              <Link to="/video" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#272033] bg-[#12101B] p-7 transition-[transform,border-color,background-color] duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-[#161322] sm:p-8">
+              <Link to="/video" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#272033] bg-[#12101B] p-7 transition-[transform,border-color,background-color] duration-300 hover:-translate-y-1 hover:bg-[#161322] sm:p-8">
                 <span className="grid size-12 place-items-center rounded-2xl bg-[#FF3DF2]/10 text-[#FF3DF2] ring-1 ring-[#FF3DF2]/25 transition-colors group-hover:bg-[#FF3DF2]/15"><svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM17 10l5-3v10l-5-3z" /></svg></span>
                 <h3 className="mt-6 font-display text-[30px] font-bold leading-tight">Create videos</h3>
                 <p className="mb-6 mt-2 max-w-md text-[16px] leading-relaxed text-[#B4B4BC]">Bring your photos to life with short clips.</p>
@@ -99,11 +99,11 @@ function GuestHome() {
             </div>
             {trendPages > 1 && (
               <nav aria-label="Trending templates pages" className="mt-8 flex items-center justify-center gap-4">
-                <button type="button" aria-label="Previous templates" disabled={trendNow === 0} onClick={() => setTrendPage(trendNow - 1)} className="grid size-11 cursor-pointer place-items-center rounded-full border border-[#3A2F52] bg-[#12101B] text-[#FFFFFF] transition-colors hover:border-[#FFFFFF] disabled:cursor-not-allowed disabled:opacity-30 sm:size-12">
+                <button type="button" aria-label="Previous templates" disabled={trendNow === 0} onClick={() => setTrendPage(trendNow - 1)} className="grid size-11 cursor-pointer place-items-center rounded-full border border-[#3A2F52] bg-[#12101B] text-[#FFFFFF] transition-colors disabled:cursor-not-allowed disabled:opacity-30 sm:size-12">
                   <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
                 </button>
                 <span className="min-w-[3.5rem] text-center text-sm tabular-nums text-[#A1A1AA]">{trendNow + 1} / {trendPages}</span>
-                <button type="button" aria-label="Next templates" disabled={trendNow >= trendPages - 1} onClick={() => setTrendPage(trendNow + 1)} className="grid size-11 cursor-pointer place-items-center rounded-full border border-[#3A2F52] bg-[#12101B] text-[#FFFFFF] transition-colors hover:border-[#FFFFFF] disabled:cursor-not-allowed disabled:opacity-30 sm:size-12">
+                <button type="button" aria-label="Next templates" disabled={trendNow >= trendPages - 1} onClick={() => setTrendPage(trendNow + 1)} className="grid size-11 cursor-pointer place-items-center rounded-full border border-[#3A2F52] bg-[#12101B] text-[#FFFFFF] transition-colors disabled:cursor-not-allowed disabled:opacity-30 sm:size-12">
                   <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
                 </button>
               </nav>

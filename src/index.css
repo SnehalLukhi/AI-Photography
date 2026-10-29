@@ -25,11 +25,11 @@ body {
 
 @layer components {
   /* primary action: white pill with dark text */
-  .btn-primary { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-[15px] font-semibold text-[#08080D] transition-[background,transform] duration-150 hover:bg-[#E4E4E7] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-[14px] bg-white px-6 py-3 text-[15px] font-semibold text-[#08080D] transition-[background,transform] duration-150 hover:bg-[#E4E4E7] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50; }
   /* brand action: the solid #FF3DF2 pill, with a soft glow */
-  .btn-grad { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full bg-[#FF3DF2] px-6 py-3 text-[15px] font-semibold text-white shadow-[0_8px_26px_-8px_rgba(255,61,242,0.6)] transition-[filter,transform] duration-150 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none; }
+  .btn-grad { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-[14px] bg-[#FF3DF2] px-6 py-3 text-[15px] font-semibold text-white shadow-[0_8px_26px_-8px_rgba(255,61,242,0.6)] transition-[filter,transform] duration-150 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none; }
   /* secondary action: dark pill with a purple-tinted outline */
-  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-[#272033] bg-[#12101B] px-6 py-3 text-[15px] font-semibold text-white transition-colors duration-150 hover:border-[#A1A1AA] disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-[14px] border border-transparent bg-[#272629] bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.015)_55%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_10px_24px_-12px_rgba(0,0,0,0.85)] px-6 py-3 text-[15px] font-semibold text-white transition-[border-color,background-color,transform,box-shadow] duration-150 hover:-translate-y-px hover:bg-[#302F32] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50; }
   .grad-text { color: #FF3DF2; }
   .grad-bg { background-color: #FF3DF2; color: #fff !important; font-weight: 600; }
   .grad-bg:hover { filter: brightness(1.08); }
@@ -48,8 +48,8 @@ body {
   .section-head { @apply mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2; }
   .section-title { @apply text-[28px] font-bold leading-tight tracking-tight text-white sm:text-[36px]; font-family: 'Outfit', 'Inter', system-ui, sans-serif; }
   .see-all { @apply inline-flex items-center gap-1 text-[14px] font-semibold text-[#FF3DF2] underline underline-offset-4 decoration-[#FF3DF2]/40 transition-colors hover:text-white hover:decoration-white; }
-  .chip { @apply inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-full border border-[#272033] bg-[#12101B] px-4 py-2 text-[14px] font-semibold text-white transition-colors hover:border-[#A1A1AA]; }
-  .chip-on { @apply border-white bg-white text-[#08080D] hover:bg-white; }
+  .chip { @apply inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-[14px] border border-transparent bg-[#272629] bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.015)_55%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_10px_24px_-12px_rgba(0,0,0,0.85)] px-4 py-2 text-[14px] font-semibold text-white transition-[border-color,background-color,transform,box-shadow] hover:-translate-y-px hover:bg-[#302F32]; }
+  .chip-on { @apply border-white bg-white bg-none text-[#08080D] hover:bg-white; }
   .badge { @apply inline-flex items-center rounded-full bg-[#FF3DF2] px-2.5 py-0.5 text-[11px] font-semibold text-white; }
   .tile { @apply relative block overflow-hidden rounded-xl bg-[#12101B] transition-shadow hover:shadow-[0_18px_44px_rgba(255,61,242,0.22)]; }
   .input { @apply w-full rounded-xl border border-[#272033] bg-[#12101B] px-4 py-3 text-[15px] text-white placeholder:text-[#71717A] outline-none transition-colors focus:border-[#FF3DF2]; }
@@ -178,15 +178,15 @@ body {
 @media (prefers-reduced-motion: reduce) { .shine-line::after, .btn-grad::after, .shine-ring::after, .btn-accent::after { animation: none; } .btn-grad::after, .shine-ring::after, .btn-accent::after { display: none; } }
 
 /* Hero controls: a solid accent button and frosted-glass pills (used over the hero photo). Solid #FF3DF2, no gradients. */
-.btn-accent { display: inline-flex; cursor: pointer; align-items: center; justify-content: center; gap: .5rem; border-radius: 9999px; background-color: #FF3DF2; color: #08080D; font-size: 15px; font-weight: 600; padding: .75rem 1.5rem;
+.btn-accent { display: inline-flex; cursor: pointer; align-items: center; justify-content: center; gap: .5rem; border-radius: 14px; background-color: #FF3DF2; color: #08080D; font-size: 15px; font-weight: 600; padding: .75rem 1.5rem;
   box-shadow: 0 10px 28px -10px rgba(255,61,242,0.65), inset 0 1px 0 rgba(255,255,255,0.35); transition: transform .2s ease, box-shadow .2s ease, filter .2s ease; }
 .btn-accent:hover { transform: translateY(-1px); filter: brightness(1.07); box-shadow: 0 14px 34px -10px rgba(255,61,242,0.8), inset 0 1px 0 rgba(255,255,255,0.4); }
 .btn-accent:active { transform: translateY(0) scale(0.98); }
 .btn-accent:focus-visible, .chip-glass:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
-.chip-glass { display: inline-flex; cursor: pointer; align-items: center; justify-content: center; white-space: nowrap; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.14); background-color: rgba(13,11,20,0.55);
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); padding: .5rem 1.05rem; font-size: 14px; font-weight: 600; color: #fff;
+.chip-glass { display: inline-flex; cursor: pointer; align-items: center; justify-content: center; white-space: nowrap; border-radius: 14px; border: 1px solid transparent; background-color: rgba(39,38,41,0.88); background-image: linear-gradient(165deg, rgba(255,255,255,0.09), rgba(255,255,255,0.015) 55%);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); padding: .5rem 1.05rem; font-size: 14px; font-weight: 600; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 10px 24px -12px rgba(0,0,0,0.85);
   transition: border-color .2s ease, background-color .2s ease, transform .2s ease, box-shadow .2s ease; }
-.chip-glass:hover { border-color: rgba(255,255,255,0.4); background-color: rgba(255,255,255,0.08); transform: translateY(-1px); box-shadow: 0 10px 26px -14px rgba(0,0,0,0.6); }
+.chip-glass:hover { background-color: rgba(48,47,50,0.92); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 14px 28px -12px rgba(0,0,0,0.9); }
 .chip-glass:active { transform: translateY(0) scale(0.98); }
 
 /* Carousel card names: a long name scrolls to the left and re-enters from the right (the text is repeated, so the loop is seamless). */
@@ -200,3 +200,13 @@ body {
 .thumb-on { animation: thumb-glow .45s ease-out both; }
 .thumb-frame.thumb-on > * { animation: thumb-grow .45s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .thumb-on, .thumb-frame.thumb-on > * { animation: none; } }
+
+/* Tool / action buttons: a dark charcoal circle with a light icon, the label underneath, an optional white "Beta" pill above. Neutral (no colored border) on hover / focus. */
+.tool-btn { position: relative; display: flex; width: 124px; flex-shrink: 0; flex-direction: column; align-items: center; gap: .65rem; cursor: pointer; text-align: center; outline: none; color: #fff; font-size: 14px; font-weight: 500; line-height: 1.2; }
+.tool-btn__icon { display: grid; place-items: center; width: min(100%, 148px); height: 64px; border-radius: 22px; background-color: #272629; background-image: linear-gradient(165deg, rgba(255,255,255,0.09), rgba(255,255,255,0.015) 55%); border: 1px solid transparent; color: #E8E8EA;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 10px 24px -12px rgba(0,0,0,0.85); transition: border-color .2s ease, background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.tool-btn:hover .tool-btn__icon { background-color: #302F32; box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 14px 28px -12px rgba(0,0,0,0.9); color: #fff; transform: translateY(-2px); }
+.tool-btn:active .tool-btn__icon { transform: translateY(0) scale(.96); }
+.tool-btn:focus-visible .tool-btn__icon, .tool-btn[aria-current="page"] .tool-btn__icon { color: #fff; }
+.tool-btn__beta { position: absolute; top: -10px; left: 50%; z-index: 1; transform: translateX(-50%); border-radius: 9999px; background: #fff; color: #08080D; padding: 1px 9px; font-size: 12px; font-weight: 600; line-height: 1.5; }
+@media (max-width: 640px) { .tool-btn { width: 104px; font-size: 13px; } .tool-btn__icon { height: 58px; border-radius: 20px; } }

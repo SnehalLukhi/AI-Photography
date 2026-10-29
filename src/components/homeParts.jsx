@@ -61,7 +61,7 @@ export function CategoryTiles({ collections, limit = Infinity, exclude = [] }) {
       {list.map((c) => {
         const a = categoryItems(c.id)[0]
         return (
-          <Link key={c.id} to={tabLink(c)} aria-label={c.category || c.name} className="group flex flex-col rounded-[24px] border border-[#272033] bg-[#12101B] p-2.5 outline-none transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-[#A1A1AA] focus-visible:ring-2 focus-visible:ring-white/70">
+          <Link key={c.id} to={tabLink(c)} aria-label={c.category || c.name} className="group flex flex-col rounded-[24px] border border-[#272033] bg-[#12101B] p-2.5 outline-none transition-[transform,border-color] duration-300 hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-white/70">
             <span className="block min-h-[2.6em] px-1.5 pt-1 font-display text-[17px] font-bold leading-tight text-white">{c.category || c.name}</span>
             <span className="relative mt-1.5 block overflow-hidden rounded-[16px] bg-[#0D0B14]" style={{ aspectRatio: (a && shapes[a.image]) || '9 / 16' }}>
               {a && <PImage src={a.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]" draggable="false" />}
@@ -78,30 +78,17 @@ export function CategoryTiles({ collections, limit = Infinity, exclude = [] }) {
 }
 
 const Arrow = ({ dir, onClick }) => (
-  <button type="button" aria-label={dir < 0 ? 'Scroll left' : 'Scroll right'} onClick={onClick} className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-[#3A2F52] bg-[#12101B] text-[#FFFFFF] transition-colors hover:border-[#FFFFFF] max-md:hidden">
+  <button type="button" aria-label={dir < 0 ? 'Scroll left' : 'Scroll right'} onClick={onClick} className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-[#3A2F52] bg-[#12101B] text-[#FFFFFF] transition-colors max-md:hidden">
     <svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={dir < 0 ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6'} /></svg>
   </button>
 )
 
-/** One category: heading, a "See all" link and ALL its templates in a single horizontal row (scroll / swipe, arrows on desktop). Wide pictures get a wide card and are shown whole. */
+/** One category: heading, a "See all" link and ALL its templates in a single horizontal row (scroll / swipe, arrows on desktop). Every card is 9:16. */
 function CategoryRow({ c, onSelect }) {
   const row = useRef(null)
   const items = categoryItems(c.id)
   const scroll = (d) => row.current?.scrollBy({ left: d * Math.max(240, row.current.clientWidth * 0.8), behavior: 'smooth' })
-  // every card takes the real shape of its own picture (as in the admin): width / height are read once per picture, never one forced ratio
-  const [shapes, setShapes] = useState({})
-  const key = items.map((t) => t.image).join('|')
-  // a row of mostly WIDE pictures (horizontal templates) shows 3 across instead of 5, so each picture stays a decent size; decided from the real picture shapes, not from a category name
-  const known = items.filter((t) => shapes[t.image])
-  const wide = known.length > 0 && known.filter((t) => shapes[t.image] > 1).length > known.length / 2
-  const visible = wide ? 3 : 5
-  useEffect(() => {
-    items.forEach((t) => {
-      const im = new Image()
-      im.onload = () => im.naturalWidth && im.naturalHeight && setShapes((m) => (m[t.image] ? m : { ...m, [t.image]: im.naturalWidth / im.naturalHeight }))
-      im.src = t.image
-    })
-  }, [key]) // eslint-disable-line react-hooks/exhaustive-deps
+  const visible = 5 // every card is the same 9:16 shape (the picture fills it), so every category shows 5 across
   return (
     <section aria-label={c.category || c.name}>
       <div className="section-head">
@@ -110,16 +97,13 @@ function CategoryRow({ c, onSelect }) {
           <div className="flex items-center gap-3"><SeeAll to={`${tabLink(c)}&only=1`} /><Arrow dir={-1} onClick={() => scroll(-1)} /><Arrow dir={1} onClick={() => scroll(1)} /></div>
         )}
       </div>
-      {/* 5 cards fill the row on a wide screen (4 / 3 / 2 and a peek of the next one on smaller ones); the rest scroll sideways. Each card keeps its picture's own shape. */}
-      <div ref={row} className={`no-scrollbar -mx-4 flex snap-x items-start overflow-x-auto scroll-smooth px-4 pb-1 ${wide ? '[--cols:1.3] min-[560px]:[--cols:2.2] md:[--cols:3] lg:[--cols:3]' : '[--cols:2.4] min-[560px]:[--cols:3.4] md:[--cols:4] lg:[--cols:5]'} [--gap:8px] sm:-mx-6 sm:px-6 md:[--gap:10px] lg:mx-0 lg:px-0`} style={{ gap: 'var(--gap)' }}>
-        {items.map((t) => {
-          const r = shapes[t.image] || 9 / 16 // until the picture has loaded: the usual tall card
-          return (
-            <div key={t.id} className="shrink-0 snap-start" style={{ width: 'calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols))' }}>
-              <TemplateCard t={t} fit="contain" ratio={String(r)} onSelect={onSelect} />
-            </div>
-          )
-        })}
+      {/* 5 cards fill the row on a wide screen (4 / 3 / 2 and a peek of the next one on smaller ones); the rest scroll sideways. Every card is 9:16. */}
+      <div ref={row} className={`no-scrollbar -mx-4 flex snap-x items-start overflow-x-auto scroll-smooth px-4 pb-1 [--cols:2.4] min-[560px]:[--cols:3.4] md:[--cols:4] lg:[--cols:5] [--gap:8px] sm:-mx-6 sm:px-6 md:[--gap:10px] lg:mx-0 lg:px-0`} style={{ gap: 'var(--gap)' }}>
+        {items.map((t) => (
+          <div key={t.id} className="shrink-0 snap-start" style={{ width: 'calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols))' }}>
+            <TemplateCard t={t} fit="cover" ratio="9 / 16" onSelect={onSelect} />
+          </div>
+        ))}
       </div>
     </section>
   )
@@ -172,8 +156,8 @@ export function FeaturedCarousel({ items: list, className = '' }) {
         {[0, 1].map((copy) => (
           <div key={copy} aria-hidden={copy ? true : undefined} className="flex shrink-0 gap-2 pr-2">
             {half.map((t, k) => (
-              <Link key={`${t.id}-${k}`} to={generateUrl(t)} tabIndex={copy ? -1 : undefined} aria-label={t.name} className="group relative block h-[300px] shrink-0 overflow-hidden rounded-[6px] border border-[#272033] bg-[#0D0B14] lg:h-[380px]">
-                <img src={t.image} alt="" loading="lazy" draggable="false" className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]" />
+              <Link key={`${t.id}-${k}`} to={generateUrl(t)} tabIndex={copy ? -1 : undefined} aria-label={t.name} className="group relative block aspect-[9/16] h-[300px] shrink-0 overflow-hidden rounded-[6px] border border-[#272033] bg-[#0D0B14] lg:h-[380px]">
+                <img src={t.image} alt="" loading="lazy" draggable="false" className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
                 <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/85 via-transparent to-transparent" />
                 <span className="absolute inset-x-5 bottom-4">
                   <CardName name={t.name} />

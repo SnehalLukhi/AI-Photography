@@ -97,7 +97,7 @@ export default function PremiumPopup({ onClose: finish }) {
               const on = p.id === selected
               return (
                 <button key={p.id} type="button" role="radio" aria-checked={on} onClick={() => setSelected(p.id)}
-                  className={`relative flex min-w-0 cursor-pointer flex-col rounded-[26px] border-2 p-4 text-left transition-all duration-200 sm:p-5 ${on ? 'border-[#FFFFFF] bg-[#12101B]' : 'border-[#272033] bg-[#12101B] hover:border-[#3A2F52]'}`}>
+                  className={`relative flex min-w-0 cursor-pointer flex-col rounded-[26px] border-2 p-4 text-left transition-all duration-200 sm:p-5 ${on ? 'border-[#FFFFFF] bg-[#12101B]' : 'border-[#272033] bg-[#12101B]'}`}>
                   <span className="flex items-center justify-between gap-3">
                     <span className="min-w-0">
                       {p.popular && <span className="badge mb-1.5 !text-[10px]">Popular</span>}

@@ -21,7 +21,7 @@ const Hero = ({ eyebrow, title, sub, center = false }) => (
 )
 const field = 'w-full rounded-2xl border border-[#272033] bg-[#12101B] px-4 text-[15px] text-[#FFFFFF] outline-none transition placeholder:text-[#9A94AB] focus:border-[#FF3DF2] focus:ring-4 focus:ring-[#FF3DF2]/15'
 const TILES = ['bg-[#1B1530]', 'bg-[#271425]', 'bg-[#101D2C]', 'bg-[#102419]', 'bg-[#2A1C10]', 'bg-[#262310]']
-const submitBtn = 'btn-primary !w-full !rounded-full !py-3.5 !text-[15px] disabled:cursor-not-allowed disabled:opacity-50'
+const submitBtn = 'btn-primary !w-full !rounded-[14px] !py-3.5 !text-[15px] disabled:cursor-not-allowed disabled:opacity-50'
 
 const topics = [
   ['Getting Started', 'Learn the basic workflow.', [
@@ -82,7 +82,7 @@ export function Help() {
         </div>
         <div className="mt-8 space-y-3">
           {topics.map(([t, d, body], i) => (
-            <div key={t} className={`overflow-hidden rounded-2xl border bg-[#12101B] transition-colors ${open === i ? 'border-[#FFFFFF] shadow-[0_18px_40px_rgba(0,0,0,0.08)]' : 'border-[#272033] hover:border-[#3A2F52]'}`}>
+            <div key={t} className={`overflow-hidden rounded-2xl border bg-[#12101B] transition-colors ${open === i ? 'border-[#FFFFFF] shadow-[0_18px_40px_rgba(0,0,0,0.08)]' : 'border-[#272033]'}`}>
               <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full cursor-pointer items-center gap-4 px-5 py-5 text-left sm:px-6">
                 <span className="min-w-0 flex-1"><span className="block text-[17px] font-bold text-[#FFFFFF]">{t}</span><span className="mt-0.5 block text-[14px] text-[#A1A1AA]">{d}</span></span>
                 <svg className={`size-8 shrink-0 rounded-full bg-[#1A1626] p-2 text-[#A1A1AA] transition-transform ${open === i ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
@@ -91,7 +91,7 @@ export function Help() {
             </div>
           ))}
         </div>
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-[#271425] p-6 sm:p-8"><p className="text-[22px] font-extrabold text-[#FFFFFF]">Still stuck?</p><Link to="/contact-support" className="btn-primary !rounded-full !px-6 !py-3 !text-[14px]">Contact support<span aria-hidden="true">→</span></Link></div>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-[#271425] p-6 sm:p-8"><p className="text-[22px] font-extrabold text-[#FFFFFF]">Still stuck?</p><Link to="/contact-support" className="btn-primary !rounded-[14px] !px-6 !py-3 !text-[14px]">Contact support<span aria-hidden="true">→</span></Link></div>
       </div>
     </div>
   )
@@ -122,7 +122,7 @@ export function Contact() {
       <Hero center eyebrow="Support request" title="Contact support" sub="Tell us what happened and our team will review it." />
       <Card w="max-w-[760px]">
         {sent ? (
-          <div className="py-10 text-center"><p className="mb-5 text-[28px] font-bold">Request noted</p><button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-dark !rounded-full !px-5 !py-2.5 !text-[14px]">Write another</button></div>
+          <div className="py-10 text-center"><p className="mb-5 text-[28px] font-bold">Request noted</p><button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-dark !rounded-[14px] !px-5 !py-2.5 !text-[14px]">Write another</button></div>
         ) : (
           <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); if (valid) setSent(true) }}>
             <label className="block space-y-2"><Label>Title</Label><input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter title" className={`${field} h-12`} /></label>
@@ -131,7 +131,7 @@ export function Contact() {
             <div className="space-y-2">
               <Label>Attachment (optional)</Label>
               <div onClick={() => input.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); pick(e.dataTransfer.files?.[0]) }}
-                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#12101B] px-4 py-8 text-center transition hover:border-[#A1A1AA] hover:bg-[#1B1530]/40">
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#12101B] px-4 py-8 text-center transition hover:bg-[#1B1530]/40">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-[#08080D]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload image</span>
                 <span className="text-[14px]">{file ? file.name : 'Click or drag an image here (max 5 MB)'}</span>
                 <span className="text-[12px] text-[#A1A1AA]">JPG, JPEG, PNG and WEBP supported</span>
@@ -273,7 +273,7 @@ export function Profile() {
           <div className="relative">
             <h1 className="mx-auto w-fit text-[40px] font-extrabold leading-[1.05] tracking-tight sm:text-[56px]">Your account</h1>
             <p className="mx-auto mt-4 max-w-sm text-[15px] text-[#A1A1AA]">Sign in to see your coins, plan and creations in one place.</p>
-            <button type="button" onClick={openLogin} className="btn-primary mt-8 !rounded-full !px-8 !py-3 !text-[15px]">Sign in</button>
+            <button type="button" onClick={openLogin} className="btn-primary mt-8 !rounded-[14px] !px-8 !py-3 !text-[15px]">Sign in</button>
           </div>
         </div>
       ) : (
@@ -289,8 +289,8 @@ export function Profile() {
                 <p className="mt-1 truncate text-[14px] text-[#A1A1AA] sm:text-[15px]" title={userEmail}>{userEmail}</p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <Link to="/creations" className="btn-primary !rounded-full !px-5 !py-2.5 !text-[14px]">My Creations</Link>
-                <button type="button" onClick={signOut} className="btn-dark !rounded-full !px-5 !py-2.5 !text-[14px] !text-[#D14343]">Log out</button>
+                <Link to="/creations" className="btn-primary !rounded-[14px] !px-5 !py-2.5 !text-[14px]">My Creations</Link>
+                <button type="button" onClick={signOut} className="btn-dark !rounded-[14px] !px-5 !py-2.5 !text-[14px] !text-[#D14343]">Log out</button>
               </div>
             </div>
           </section>
@@ -317,7 +317,7 @@ export function Profile() {
                   <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#12101B]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
                   <div className="flex flex-col"><span className="text-[13px] text-[#A1A1AA]">Coin balance</span><span className="flex items-baseline gap-2"><span className="grad-text text-[44px] font-extrabold leading-none tabular-nums">{coins.toLocaleString('en-US')}</span><span className="text-[14px] text-[#A1A1AA]">coins</span></span></div>
                 </div>
-                <Link to="/coins" className="btn-primary relative mt-6 !w-full !rounded-full !py-3 !text-[14px]">Get more coins</Link>
+                <Link to="/coins" className="btn-primary relative mt-6 !w-full !rounded-[14px] !py-3 !text-[14px]">Get more coins</Link>
               </section>
 
               <section aria-label="Plan" className="rounded-3xl bg-[#101D2C] p-6 sm:p-8">
@@ -329,7 +329,7 @@ export function Profile() {
                     ))}
                   </ul>
                 )}
-                <Link to="/transactions" className="btn-dark mt-5 !w-full !rounded-full !py-2.5 !text-[14px]">View all transactions<span aria-hidden="true">→</span></Link>
+                <Link to="/transactions" className="btn-dark mt-5 !w-full !rounded-[14px] !py-2.5 !text-[14px]">View all transactions<span aria-hidden="true">→</span></Link>
               </section>
             </div>
           </div>
@@ -350,7 +350,7 @@ export function Feedback() {
       <Hero center eyebrow="Product feedback" title="Feedback" sub="Tell us about your experience and how we can make Pictrify better." />
       <Card w="max-w-[640px]">
         {sent ? (
-          <div className="py-10 text-center"><p className="mb-5 text-[28px] font-bold">Thanks for your feedback</p><button className="btn-dark !rounded-full !px-5 !py-2.5 !text-[14px]" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
+          <div className="py-10 text-center"><p className="mb-5 text-[28px] font-bold">Thanks for your feedback</p><button className="btn-dark !rounded-[14px] !px-5 !py-2.5 !text-[14px]" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
         ) : (
           <form onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
             <Label>How was it?</Label>

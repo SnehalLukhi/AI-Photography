@@ -43,7 +43,7 @@ function FrameUpload({ label, hint, file, onFile }) {
   return (
     <div className="min-w-0">
       <span className="mb-2 block text-[14px] font-semibold">{label}</span>
-      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#0D0B14] text-center transition-colors focus-within:border-[#FF3DF2] hover:border-[#A1A1AA]">
+      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#0D0B14] text-center transition-colors focus-within:border-[#FF3DF2]">
         <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => { onFile(e.target.files?.[0] || null); e.target.value = '' }} />
         {url ? <img src={url} alt={`${label} preview`} className="absolute inset-0 size-full object-cover" /> : (
           <span className="px-4 py-6">

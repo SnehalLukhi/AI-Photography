@@ -20,7 +20,7 @@ export default function PhotoUpload({ photo, onChange }) {
         onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
         onDragLeave={() => setDrag(false)}
         onDrop={(e) => { e.preventDefault(); setDrag(false); handle(e.dataTransfer.files[0]) }}
-        className={`grid min-h-[240px] place-items-center overflow-hidden rounded-3xl border-2 border-dashed p-4 text-center transition ${photo ? '' : 'cursor-pointer'} ${drag ? 'border-[#FF3DF2] bg-[#271425]' : 'border-[#3A2F52] bg-[#12101B] hover:border-[#A1A1AA] hover:bg-[#1B1530]/50'}`}
+        className={`grid min-h-[240px] place-items-center overflow-hidden rounded-3xl border-2 border-dashed p-4 text-center transition ${photo ? '' : 'cursor-pointer'} ${drag ? 'border-[#FF3DF2] bg-[#271425]' : 'border-[#3A2F52] bg-[#12101B] hover:bg-[#1B1530]/50'}`}
       >
         {photo ? (
           <img src={photo.url} alt="Your upload" className="max-h-[380px] w-full rounded-2xl object-contain" />
@@ -35,8 +35,8 @@ export default function PhotoUpload({ photo, onChange }) {
       <input ref={input} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={(e) => { handle(e.target.files[0]); e.target.value = '' }} />
       {photo && (
         <div className="mt-3 flex gap-2">
-          <button className="btn-dark !rounded-full !px-4 !py-2 text-sm" onClick={() => input.current.click()}>Change photo</button>
-          <button className="btn-dark !rounded-full !px-4 !py-2 text-sm" onClick={() => onChange(null)}>Remove</button>
+          <button className="btn-dark !rounded-[14px] !px-4 !py-2 text-sm" onClick={() => input.current.click()}>Change photo</button>
+          <button className="btn-dark !rounded-[14px] !px-4 !py-2 text-sm" onClick={() => onChange(null)}>Remove</button>
         </div>
       )}
       {error && <p className="mt-2 text-sm text-[#C0392B]">{error}</p>}

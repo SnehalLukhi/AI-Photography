@@ -70,7 +70,7 @@ function GetApp() {
   const [open, setOpen] = useState(false)
   return (
     <div className="relative shrink-0" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button type="button" onClick={() => setOpen(!open)} className="flex h-10 cursor-pointer items-center gap-1.5 rounded-full border border-[#272033] bg-[#12101B] px-3.5 text-[13px] font-medium text-[#FFFFFF] transition-colors hover:border-[#A1A1AA]">
+      <button type="button" onClick={() => setOpen(!open)} className="flex h-10 cursor-pointer items-center gap-1.5 rounded-full border border-[#272033] bg-[#12101B] px-3.5 text-[13px] font-medium text-[#FFFFFF] transition-colors">
         <PhoneIcon /><span>Get app</span><Chevron open={open} />
       </button>
       <div className={`absolute right-0 top-full z-50 w-[200px] pt-2 transition-all duration-200 ${open ? 'visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-1 opacity-0'}`}>
@@ -137,11 +137,11 @@ export function ProfileMenu({ compact = false }) {
   return (
     <>
       <button ref={btn} type="button" onClick={toggle} aria-label="Open account menu" aria-haspopup="menu" aria-expanded={open}
-        className={`grid ${compact ? 'size-8 text-[13px]' : 'size-10 text-[14px]'} shrink-0 cursor-pointer place-items-center rounded-full border border-[#272033] bg-[#FF3DF2] font-semibold text-white transition-colors hover:border-[#A1A1AA]`}>{initial}</button>
+        className={`grid ${compact ? 'size-8 text-[13px]' : 'size-10 text-[14px]'} shrink-0 cursor-pointer place-items-center rounded-full border border-[#272033] bg-[#FF3DF2] font-semibold text-white transition-colors`}>{initial}</button>
       {shown && createPortal(
         <div ref={panel} role="menu" aria-label="Account" data-closing={!open} style={{ top: pos.top, right: pos.right }}
           className="profile-menu fixed z-[400] w-[320px] max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-[#272033] bg-[#0D0B14]/95 p-2 shadow-[0_24px_60px_rgba(0,0,0,0.16)] backdrop-blur-2xl">
-          <Link to="/profile" role="menuitem" onClick={() => close()} className="relative flex items-center gap-3 overflow-hidden rounded-xl border border-[#272033] bg-[rgba(255,61,242,0.15)] p-3 transition-colors hover:border-[#A1A1AA]">
+          <Link to="/profile" role="menuitem" onClick={() => close()} className="relative flex items-center gap-3 overflow-hidden rounded-xl border border-[#272033] bg-[rgba(255,61,242,0.15)] p-3 transition-colors">
             <span className="grid size-12 shrink-0 place-items-center rounded-full bg-[#FF3DF2] text-[18px] font-semibold text-white">{initial}</span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[15px] font-semibold text-[#FFFFFF]">{name}</span>
@@ -176,7 +176,7 @@ export function TopNav() {
   const scrolled = useScrolled()
   useEffect(() => { setMenu(false) }, [pathname])
   const link = (on) => `rounded-full px-4 py-2 text-[15px] font-semibold leading-normal whitespace-nowrap transition-colors ${on ? 'bg-white text-[#08080D]' : 'text-[#FFFFFF] hover:bg-[#12101B]'}`
-  const coinPill = (cls = '') => <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-[#272033] bg-[#12101B] pl-2.5 pr-3.5 text-[13px] font-medium text-[#FFFFFF] transition-colors hover:border-[#A1A1AA] ${cls}`}><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}<span className="text-[#FF3DF2]">+</span></Link>
+  const coinPill = (cls = '') => <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-[#272033] bg-[#12101B] pl-2.5 pr-3.5 text-[13px] font-medium text-[#FFFFFF] transition-colors ${cls}`}><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}<span className="text-[#FF3DF2]">+</span></Link>
   const claim = (small) => <button type="button" onClick={openLogin} className={`btn-grad shrink-0 ${small ? '!h-9 !gap-1.5 !px-3.5 !py-0 !text-[12px]' : '!h-10 !gap-2 !px-5 !py-0 !text-[13px]'}`}><SparkIcon className="size-3.5 text-white" /><span className="whitespace-nowrap">Claim 100 Coins</span></button>
   return (
     <>
@@ -196,7 +196,7 @@ export function TopNav() {
               </div>
             </div>
             <div className="hidden shrink-0 items-center justify-end gap-2 lg:flex xl:gap-3">
-              <Link to="/explore?focus=search" aria-label="Search templates" className="grid size-10 place-items-center rounded-full border border-[#272033] bg-[#12101B] text-[#A1A1AA] transition-colors hover:border-[#A1A1AA] hover:text-[#FFFFFF]"><Icon name="Explore" className="size-[18px]" /></Link>
+              <Link to="/explore?focus=search" aria-label="Search templates" className="grid size-10 place-items-center rounded-full border border-[#272033] bg-[#12101B] text-[#A1A1AA] transition-colors hover:text-[#FFFFFF]"><Icon name="Explore" className="size-[18px]" /></Link>
               {signedIn ? <>{coinPill()}<ProfileMenu /></> : <button type="button" onClick={openLogin} className="chip !h-10 !px-5">Log in</button>}
               {!signedIn && claim(false)}
               <GetApp />

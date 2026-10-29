@@ -16,8 +16,8 @@ export default function NotFound() {
         <h1 className="relative mt-6 text-[30px] font-extrabold leading-tight tracking-tight sm:text-[46px]">Oops, this page wandered off</h1>
         <p className="relative mt-4 max-w-md text-[16px] leading-relaxed text-[#A1A1AA]">The page may have moved, or the link may be incorrect.</p>
         <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/" className="btn-primary !rounded-full !px-7 !py-3 !text-[15px]">Back to home</Link>
-          <Link to="/explore" className="btn-dark !rounded-full !px-7 !py-3 !text-[15px]">Browse looks</Link>
+          <Link to="/" className="btn-primary !rounded-[14px] !px-7 !py-3 !text-[15px]">Back to home</Link>
+          <Link to="/explore" className="btn-dark !rounded-[14px] !px-7 !py-3 !text-[15px]">Browse looks</Link>
         </div>
       </div>
     </div>
