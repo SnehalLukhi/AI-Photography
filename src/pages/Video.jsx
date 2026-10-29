@@ -137,7 +137,7 @@ export default function Video() {
                 <textarea rows={4} maxLength={500} value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder={PROMPT_PLACEHOLDER[mode]} className="input resize-none !bg-[#0D0B14]" />
               </label>
 
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className={`grid gap-5 sm:grid-cols-2 ${mode === 'template' ? 'hidden' : ''}`}>
                 <div>
                   <span className="mb-2 block text-[14px] font-semibold">Aspect ratio</span>
                   <div className="flex flex-wrap gap-2">{RATIOS.map((r) => <button key={r} type="button" onClick={() => setRatio(r)} aria-pressed={ratio === r} className={`chip ${ratio === r ? 'chip-on' : ''}`}>{r}</button>)}</div>
@@ -158,7 +158,7 @@ export default function Video() {
                 <div className="px-4 text-center">
                   <span className="mx-auto grid size-14 place-items-center rounded-full bg-white text-[#08080D]"><svg className="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
                   <p className="mt-3 text-[14px] font-semibold">Your video will appear here</p>
-                  <p className="mt-1 text-[12px] text-[#A1A1AA]">{cur.label} · {ratio} · {len}</p>
+                  <p className="mt-1 text-[12px] text-[#A1A1AA]">{mode === 'template' ? cur.label : `${cur.label} · ${ratio} · ${len}`}</p>
                 </div>
               </div>
             </div>

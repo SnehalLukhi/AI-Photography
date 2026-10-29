@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from './Header.jsx'
 import TemplateCard from './TemplateCard.jsx'
+import { TopCarousel } from './MobileHome.jsx'
 import { Head, SeeAll, FeaturedCarousel, CategoryRows, getCollections, useTrendingPicks } from './homeParts.jsx'
 import { templatesByIds, generateUrl, categoryItems } from '../data/templates.js'
 import { listGenerations } from '../lib/aiPhotography.js'
@@ -65,6 +66,7 @@ export default function MemberHome() {
   const presetItems = activePreset ? categoryItems(activePreset.id) : []
 
   // featured carousel: the admin's Trending list as large cards, snapping one after another
+  const top = categoryItems('top-carousel') // phones: the top carousel (the same one the public phone home shows)
   const feat = custom // ONLY the templates marked Trending in the admin (no built-in fallback, no cap); nothing is shown until some are marked
 
   return (
@@ -77,11 +79,12 @@ export default function MemberHome() {
               <div><p className="text-[14px] font-semibold text-[#C4B5FD]">Welcome back</p><h1 className="text-[28px] sm:text-[36px]">Hi {first}, what will you create today?</h1></div>
               <SeeAll to="/explore?category=trending" />
             </div>
-            <FeaturedCarousel items={feat} />
+            <FeaturedCarousel items={feat} className="max-md:hidden" />
+            {top.length > 0 && <div className="-mx-4 md:hidden"><TopCarousel items={top} /></div>} {/* phones: the same top carousel as the public home (one card at a time, Try It, dots) */}
           </section>
 
           {/* quick tools */}
-          <section aria-label="Tools" className="mt-8">
+          <section aria-label="Tools" className="mt-8 max-md:hidden">
             <Head title="Tools & shortcuts" />
             <div className="no-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:overflow-visible lg:px-0">
               {TOOLS.map(([label, to, d]) => (
@@ -92,7 +95,7 @@ export default function MemberHome() {
 
           {/* ready-made presets */}
           {collections.length > 0 && (
-            <section aria-label="Ready-made presets" className="mt-9">
+            <section aria-label="Ready-made presets" className="mt-9 max-md:hidden">
               <Head title="Ready-made presets" sub="Pick a style, then pick a look." />
               <div role="tablist" aria-label="Preset categories" className="no-scrollbar -mx-4 mb-4 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
                 {presets.map((c) => <button key={c.id} type="button" role="tab" aria-selected={activePreset?.id === c.id} onClick={() => setPreset(c.id)} className={`chip shrink-0 ${activePreset?.id === c.id ? 'chip-on' : ''}`}>{c.category || c.name}</button>)}
@@ -103,7 +106,7 @@ export default function MemberHome() {
 
           {/* trending */}
           {trendingPicks.length > 0 && (
-            <section aria-label="Trending" className="mt-9">
+            <section aria-label="Trending" className="mt-9 max-md:hidden">
               <Head title="Trending templates" sub="Popular looks picked by the Pictrify team." to="/explore?category=trending" />
               <div className="grid grid-cols-2 gap-4 min-[480px]:grid-cols-3 md:gap-5 xl:grid-cols-6">
                 {trendingPicks.slice(0, 12).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
@@ -128,7 +131,7 @@ export default function MemberHome() {
 
           {/* favourites */}
           {favs.length > 0 && (
-            <section aria-label="Favourites" className="mt-9">
+            <section aria-label="Favourites" className="mt-9 max-md:hidden">
               <Head title="Your favourites" sub="Looks you saved with the heart." />
               <div className="grid grid-cols-2 gap-4 min-[480px]:grid-cols-3 md:gap-5 xl:grid-cols-6">
                 {favs.slice(0, 6).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
@@ -138,7 +141,7 @@ export default function MemberHome() {
 
           {/* every photo style as its own row */}
           {collections.length > 0 && (
-            <section aria-label="Photo styles" className="mt-9">
+            <section aria-label="Photo styles" className="mt-9 max-md:hidden">
               <div className="flex flex-col gap-8"><CategoryRows collections={collections} onSelect={pick} /></div>
             </section>
           )}

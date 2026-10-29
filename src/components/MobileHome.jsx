@@ -22,7 +22,7 @@ function SnapRow({ items, cardCls, rowCls, render }) {
  *  can be swiped by hand (pauses while touched and for a few seconds after); the dots follow the real card. */
 const SLIDE_MS = 3000
 const SLIDE_ANIM_MS = 700 // one slide takes 0.7 s
-function TopCarousel({ items }) {
+export function TopCarousel({ items }) {
   const row = useRef(null)
   const pausedUntil = useRef(0)
   const gliding = useRef(false)
