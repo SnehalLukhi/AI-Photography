@@ -10,15 +10,23 @@
  * `template` (the Hairstyle cards carry no colour); the backend turns the id into the API's `hair_style`. The JSON prompts are not used by that API.
  */
 // Where the backend is. Local development: http://localhost:5001. Deployed (Vercel services, backend under /api on the same domain): '' = same origin.
-// A production build ignores a localhost VITE_API_BASE_URL (copied from the local .env by mistake): it could never work for visitors.
+// The address is decided by WHERE THE PAGE IS SERVED, not only by the build mode, so a public site can never end up calling a development address:
+//  - on a public host (e.g. *.vercel.app) a localhost VITE_API_BASE_URL is ignored, and so is any http:// address when the page is https (the browser blocks it as "Mixed Content");
+//  - the localhost default and the LAN rewrite below apply only on this PC or on a private network address (http://192.168.x.x:5173 and the like).
 const CONFIGURED_API = import.meta.env.VITE_API_BASE_URL
 const LOOPBACK = /^(localhost|127\.0\.0\.1|\[::1\])$/
-const baseUrl = (CONFIGURED_API && !(import.meta.env.PROD && /(^|\/\/)(localhost|127\.0\.0\.1)(:|\/|$)/.test(CONFIGURED_API))) ? CONFIGURED_API : (import.meta.env.DEV ? 'http://localhost:5001' : '')
-// Dev only: "localhost" means the visitor's own device. When the app is opened from another device through this PC's LAN address (e.g. http://192.168.x.x:5173), a loopback API
+const PRIVATE_HOST = /^(10(\.\d{1,3}){3}|192\.168(\.\d{1,3}){2}|172\.(1[6-9]|2\d|3[01])(\.\d{1,3}){2}|[^.]+\.local)$/
+const pageHost = typeof window !== 'undefined' ? window.location.hostname : ''
+const onHttps = typeof window !== 'undefined' && window.location.protocol === 'https:'
+const privatePage = LOOPBACK.test(pageHost) || PRIVATE_HOST.test(pageHost) // this PC or a device on the same network
+const loopbackUrl = (u) => /(^|\/\/)(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(u)
+const unusable = (u) => (loopbackUrl(u) && !privatePage) || (/^http:\/\//i.test(u) && onHttps)
+const baseUrl = (CONFIGURED_API && !unusable(CONFIGURED_API)) ? CONFIGURED_API : (import.meta.env.DEV && privatePage ? 'http://localhost:5001' : '')
+// "localhost" means the visitor's own device. When the app is opened from another device through this PC's LAN address (e.g. http://192.168.x.x:5173), a loopback API
 // address is pointed at the same host the page came from, so the backend (same machine, same port) is reached without editing any env file.
 const forLan = (u) => {
-  if (!import.meta.env.DEV || !u || typeof window === 'undefined' || LOOPBACK.test(window.location.hostname)) return u
-  try { const url = new URL(u); if (LOOPBACK.test(url.hostname)) { url.hostname = window.location.hostname; return url.origin + url.pathname } } catch { /* not an absolute URL: leave it */ }
+  if (!u || !PRIVATE_HOST.test(pageHost)) return u
+  try { const url = new URL(u); if (LOOPBACK.test(url.hostname)) { url.hostname = pageHost; return url.origin + url.pathname } } catch { /* not an absolute URL: leave it */ }
   return u
 }
 export const API_BASE = forLan(baseUrl).replace(/\/+$/, '')
