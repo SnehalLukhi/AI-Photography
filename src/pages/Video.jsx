@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import PImage from '../components/PImage.jsx'
 
 // Video creation sits beside Photo creation. The backend has no video-generation integration yet (no endpoint, no provider key), so NOTHING on this page starts a job:
@@ -59,7 +60,8 @@ function FrameUpload({ label, hint, file, onFile }) {
 
 export default function Video() {
   const [mode, setMode] = useState('text')
-  const [prompt, setPrompt] = useState('')
+  const [params] = useSearchParams()
+  const [prompt, setPrompt] = useState(() => (params.get('prompt') || '').slice(0, 500)) // an idea typed in the home page's Video search bar arrives here
   const [image, setImage] = useState(null)
   const [first, setFirst] = useState(null)
   const [last, setLast] = useState(null)

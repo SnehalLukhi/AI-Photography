@@ -28,7 +28,8 @@ function GuestHome() {
   // Creation bar: Photo searches the templates (an existing /explore?q= route), Video opens the video page
   const [mode, setMode] = useState('photo')
   const [q, setQ] = useState('')
-  const start = (e) => { e.preventDefault(); if (mode === 'video') { nav('/video'); return } const v = q.trim(); nav(v ? `/explore?q=${encodeURIComponent(v)}` : '/explore') }
+  const [vq, setVq] = useState('') // Video mode: the idea typed in the bar is carried to the Video page
+  const start = (e) => { e.preventDefault(); if (mode === 'video') { const t = vq.trim(); nav(t ? `/video?prompt=${encodeURIComponent(t)}` : '/video'); return } const v = q.trim(); nav(v ? `/explore?q=${encodeURIComponent(v)}` : '/explore') }
 
   const [cost, setCost] = useState(null) // coins per image, from the backend
   useEffect(() => { getPlans().then((r) => setCost(r.costPerGeneration)).catch(() => {}) }, [])
@@ -55,8 +56,8 @@ function GuestHome() {
               </div>
               {mode === 'photo'
                 ? <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search templates" placeholder="Search a look, e.g. corporate headshot, cartoon, diwali" className="min-w-0 flex-1 bg-transparent px-2 text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#8B8B96] sm:px-3" />
-                : <span className="min-w-0 flex-1 truncate px-3 text-left text-[15px] text-[#A1A1AA]">Create videos from text, images or templates.</span>}
-              <button type="submit" className="btn-accent group shrink-0 !px-5 !py-3 sm:!px-7">{mode === 'video' ? 'Learn more' : 'Start creating'}<span className="arrow transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span></button>
+                : <input value={vq} onChange={(e) => setVq(e.target.value)} maxLength={500} aria-label="Describe the video" placeholder="Describe a video, e.g. a slow drone shot over a misty lake" className="min-w-0 flex-1 bg-transparent px-2 text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#8B8B96] sm:px-3" />}
+              <button type="submit" className="btn-accent group shrink-0 !px-5 !py-3 sm:!px-7">{mode === 'video' ? 'Create video' : 'Start creating'}<span className="arrow transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span></button>
             </form>
 
             {collections.length > 0 && (

@@ -122,7 +122,14 @@ export default function Explore() {
 
   const searchBox = useRef(null)
   const [draft, setDraft] = useState(q)
-  useEffect(() => { setDraft(q) }, [q])
+  useEffect(() => { setDraft((d) => (d.trim() === q ? d : q)) }, [q]) // follows the address (a chip click clears the search) without eating a space the visitor is typing
+  // live search: the results update while typing (no Enter needed) and cover every collection, whichever one is open
+  useEffect(() => {
+    const v = draft.trim()
+    if (v === q) return undefined
+    const t = setTimeout(() => setParams(v ? { q: v } : {}, { replace: true }), 250)
+    return () => clearTimeout(t)
+  }, [draft]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (params.get('focus') === 'search') searchBox.current?.focus() }, [params])
   const submitSearch = (e) => { e.preventDefault(); const v = draft.trim(); setParams(v ? { q: v } : {}) }
 

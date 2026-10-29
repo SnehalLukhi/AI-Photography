@@ -197,7 +197,7 @@ export function TopNav() {
             </div>
             <div className="hidden shrink-0 items-center justify-end gap-2 lg:flex xl:gap-3">
               <Link to="/explore?focus=search" aria-label="Search templates" className="grid size-10 place-items-center rounded-full border border-[#272033] bg-[#12101B] text-[#A1A1AA] transition-colors hover:border-[#A1A1AA] hover:text-[#FFFFFF]"><Icon name="Explore" className="size-[18px]" /></Link>
-              {signedIn ? <><Link to="/explore" className="btn-primary !h-10 !gap-1.5 !px-5 !py-0 !text-[14px]"><span aria-hidden="true">+</span>Create</Link>{coinPill()}<ProfileMenu /></> : <button type="button" onClick={openLogin} className="chip !h-10 !px-5">Log in</button>}
+              {signedIn ? <>{coinPill()}<ProfileMenu /></> : <button type="button" onClick={openLogin} className="chip !h-10 !px-5">Log in</button>}
               {!signedIn && claim(false)}
               <GetApp />
             </div>

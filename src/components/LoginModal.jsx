@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useStudio, WELCOME_COINS } from '../context/StudioContext.jsx'
-import { categoryItems, exploreEverything } from '../data/templates.js'
+import { exploreEverything } from '../data/templates.js'
+import { useTrendingPicks } from './homeParts.jsx'
 import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '../lib/aiPhotography.js'
 
 /**
@@ -10,17 +11,18 @@ import { loginWithGoogle, prepareGoogle, loginWithApple, prepareApple } from '..
  * The backend (POST /api/auth/google | apple) checks the token and returns our own login token; `signIn()` from StudioContext keeps it and closes the popup, so the user
  * stays on the page they were on. Closes with the X, the Escape key, or a click outside.
  */
-// Side-panel photos: Cartoon, LinkedIn Headshot, Beard, Old Money and 80's & 90's templates in a repeating sequence (one from each, then the next one from each, ...), spread over 4 columns.
-// A category that has no templates (or is named differently in the catalogue, e.g. '80s-90s') is skipped; with none of them the first templates of the site are used, so the panel is never empty.
-const PANEL_SOURCES = ['cartoon', 'linkedin-headshot', 'beard', 'old-money', '80s-and-90s', '80s-90s'].map((id) => categoryItems(id)).filter((l) => l.length)
-const PANEL_IMAGES = Array.from({ length: 5 }, (_, k) => (PANEL_SOURCES.length ? PANEL_SOURCES : [exploreEverything]).map((l) => l[k]?.image)).flat().filter(Boolean)
-const COLUMNS = [ // [animation, seconds] - alternating directions, like the reference
-  ['login-marquee-down', 90], ['login-marquee-up', 90], ['login-marquee-down', 90], ['login-marquee-up', 90], // slow, calm pace (about the reference's real speed)
-].map(([anim, secs], i) => {
-  const n = PANEL_IMAGES.length
-  const list = Array.from({ length: n }, (_, k) => PANEL_IMAGES[(k + i * 2) % n]) // each column starts at a different photo
-  return { anim, secs, list: [...list, ...list] }
-})
+// Side-panel photos: ONLY the Trending templates (the admin's Trending list; the built-in trending picks until some are set), spread over 4 slowly scrolling columns.
+// The list is repeated when it is short, so the panel is never empty or sparse; with no trending templates at all the first templates of the site are used.
+const COLUMN_ANIMS = [['login-marquee-down', 90], ['login-marquee-up', 90], ['login-marquee-down', 90], ['login-marquee-up', 90]] // [animation, seconds] - alternating directions, slow and calm
+const buildColumns = (images) => {
+  const base = images.length ? images : exploreEverything.slice(0, 12).map((t) => t.image)
+  const pool = Array.from({ length: Math.max(base.length, 8) }, (_, k) => base[k % base.length]) // at least 8, so every column has enough different photos
+  const n = pool.length
+  return COLUMN_ANIMS.map(([anim, secs], i) => {
+    const list = Array.from({ length: n }, (_, k) => pool[(k + i * 2) % n]) // each column starts at a different photo
+    return { anim, secs, list: [...list, ...list] }
+  })
+}
 const AppleLogo = () => (
   <svg className="size-5" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
     <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
@@ -40,6 +42,9 @@ export default function LoginModal() {
   const nav = useNavigate()
   const { signIn, closeLogin } = useStudio()
   const [error, setError] = useState('')
+  const { trendingPicks } = useTrendingPicks()
+  const imageKey = trendingPicks.map((t) => t.image).join('|')
+  const COLUMNS = useMemo(() => buildColumns(imageKey ? imageKey.split('|').filter(Boolean) : []), [imageKey])
   const [busy, setBusy] = useState('') // '' | 'google' | 'apple': which sign-in is running (the other button is only disabled)
   useEffect(() => { prepareGoogle(); prepareApple() }, []) // loads the sign-in scripts now, so the click can open the Google / Apple window immediately
   useEffect(() => {
