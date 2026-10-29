@@ -64,8 +64,8 @@ export default function PlansSheet({ onClose }) {
   const up = () => { if (!drag.current) return; const far = dy > 100; drag.current = null; if (far) close(); setDy(0) }
   return (
     <div className="fixed inset-0 z-[300] md:hidden" role="dialog" aria-modal="true" aria-label="Pictrify Pro plans">
-      <div onClick={close} className={`absolute inset-0 bg-[#08080D]/45 backdrop-blur-[2px] transition-opacity duration-300 ${shown ? 'opacity-100' : 'opacity-0'}`} />
-      <div className="absolute inset-x-0 bottom-0 mx-auto flex h-dvh max-h-dvh w-full max-w-[560px] flex-col overflow-hidden border-x border-[#272033] bg-[#12101B]"
+      <div onClick={close} className={`absolute inset-0 bg-[#000000]/45 backdrop-blur-[2px] transition-opacity duration-300 ${shown ? 'opacity-100' : 'opacity-0'}`} />
+      <div className="absolute inset-x-0 bottom-0 mx-auto flex h-dvh max-h-dvh w-full max-w-[560px] flex-col overflow-hidden border-x border-[#3A3A3E] bg-[#1C1C1E]"
         style={{ transform: shown ? `translateY(${dy}px)` : 'translateY(100%)', transition: drag.current ? 'none' : 'transform 320ms cubic-bezier(0.22, 1, 0.36, 1)' }}>
         <style>{`
           @keyframes pc-up { from { transform: translateY(0) } to { transform: translateY(-50%) } }
@@ -83,11 +83,11 @@ export default function PlansSheet({ onClose }) {
               </div>
             ))}
           </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0D0B14]/0 via-[#0D0B14]/60 to-[#0D0B14]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#101011]/0 via-[#101011]/60 to-[#101011]" />
         </div>
         <div className="relative z-10 flex min-h-[290px] flex-1 touch-none flex-col justify-end overflow-hidden px-5 pb-4 pt-3 text-center" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
-          <div className="absolute left-1/2 top-3 z-10 h-1 w-10 -translate-x-1/2 rounded-full bg-[#3A2F52]" />
-          <button type="button" aria-label="Close" onClick={close} onPointerDown={(e) => e.stopPropagation()} className="absolute right-4 top-3 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-[#12101B] text-[#FFFFFF]">
+          <div className="absolute left-1/2 top-3 z-10 h-1 w-10 -translate-x-1/2 rounded-full bg-[#4A4A4F]" />
+          <button type="button" aria-label="Close" onClick={close} onPointerDown={(e) => e.stopPropagation()} className="absolute right-4 top-3 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]">
             <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
           <div className="relative z-10 mt-6 flex items-center justify-center gap-2">
@@ -98,7 +98,7 @@ export default function PlansSheet({ onClose }) {
           <div className="relative z-10 mt-4 grid grid-cols-3 gap-2">
             {perks.map(([label, d]) => (
               <div key={label} className="flex flex-col items-center gap-1.5">
-                <span className="grid size-11 place-items-center rounded-full bg-[#12101B] text-[#FF3DF2] shadow-[0_6px_16px_rgba(0,0,0,0.10)]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
+                <span className="grid size-11 place-items-center rounded-full bg-[#1C1C1E] text-[#FF3DF2] shadow-[0_6px_16px_rgba(0,0,0,0.10)]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
                 <span className="text-[12px] font-medium leading-tight text-[#FFFFFF]">{label}</span>
               </div>
             ))}
@@ -109,7 +109,7 @@ export default function PlansSheet({ onClose }) {
             const on = sel === p.id
             return (
               <button key={p.id} type="button" onClick={() => setSel(p.id)} aria-pressed={on}
-                className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-[22px] border-2 px-4 py-2.5 text-left transition-colors ${on ? 'border-[#FFFFFF] bg-[#12101B]' : 'border-[#272033] bg-[#12101B]'}`}>
+                className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-[22px] border-2 px-4 py-2.5 text-left transition-colors ${on ? 'border-[#FFFFFF] bg-[#272629]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
                 <span className="min-w-0">
                   <span className="flex items-center gap-2 text-[15px] font-semibold text-[#FFFFFF]">{p.name}{p.popular && <span className="rounded bg-[#FF3DF2] px-2 py-px text-[9px] font-bold uppercase text-white">Popular</span>}</span>
                   <span className="mt-0.5 block font-display text-[22px] font-bold leading-tight text-[#FFFFFF]">{p.price || <span aria-hidden="true" className="invisible">₹000</span>} <span className="text-[12px] font-normal text-[#A1A1AA]">{p.per}</span></span>
@@ -122,7 +122,7 @@ export default function PlansSheet({ onClose }) {
               </button>
             )
           })}
-          {note && <p role="status" className="rounded-2xl bg-[#12101B] px-4 py-3 text-center text-sm text-[#FFFFFF]">{note}</p>}
+          {note && <p role="status" className="rounded-2xl bg-[#272629] px-4 py-3 text-center text-sm text-[#FFFFFF]">{note}</p>}
         </div>
         <div className="relative z-10 shrink-0 px-4 pt-2 text-center" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}>
           <button type="button" disabled={busy || !sel} onClick={cont} className="flex h-14 w-full cursor-pointer items-center justify-center rounded-full text-[17px] font-bold text-white shadow-[0_12px_28px_rgba(255,61,242,0.28)] disabled:opacity-60" style={{ background: '#FF3DF2' }}>{busy ? 'Please wait…' : 'Continue'}</button>

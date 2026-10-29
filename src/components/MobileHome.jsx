@@ -9,7 +9,7 @@ function SnapRow({ items, cardCls, rowCls, render }) {
   return (
     <div className={`no-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth ${rowCls}`} style={{ WebkitOverflowScrolling: 'touch' }}>
       {items.map((t) => (
-        <div key={t.id} className={`relative shrink-0 snap-start overflow-hidden border border-[#272033] bg-[#12101B] ${cardCls}`}>
+        <div key={t.id} className={`relative shrink-0 snap-start overflow-hidden border border-[#3A3A3E] bg-[#272629] ${cardCls}`}>
           {render(t)}
         </div>
       ))}
@@ -99,13 +99,13 @@ export function TopCarousel({ items }) {
         const copy = loop && (k === 0 || k === n + 1)
         return (
           <div key={copy ? `${t.id}-copy${k}` : t.id} className="w-full shrink-0 snap-start px-4" aria-hidden={copy ? 'true' : undefined}>
-            <div className="relative max-h-[78vh] w-full overflow-hidden rounded-[24px] border border-[#272033] bg-[#12101B] shadow-xl" style={{ aspectRatio: shapes[t.image] || '16 / 10' }}>
+            <div className="relative max-h-[78vh] w-full overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#272629] shadow-xl" style={{ aspectRatio: shapes[t.image] || '16 / 10' }}>
               <Link to={generateUrl(t)} aria-label={t.name} tabIndex={copy ? -1 : undefined} className="block size-full">
                 <PImage src={t.image} alt={t.name} className="absolute inset-0 size-full object-contain" draggable="false" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <span className="absolute inset-x-3.5 bottom-3 flex items-center justify-between gap-2">
                   <span className="truncate text-[16px] font-semibold text-white">{t.name}</span>
-                  <span className="shrink-0 rounded-full bg-white px-3.5 py-1 text-[12px] font-semibold text-[#08080D]">Try It</span>
+                  <span className="shrink-0 rounded-full bg-white px-3.5 py-1 text-[12px] font-semibold text-[#000000]">Try It</span>
                 </span>
               </Link>
             </div>
@@ -151,8 +151,8 @@ export default function MobileHome({ trending = [] }) {
   if (trending.length) rows.unshift({ id: 'trending', title: 'Trending Templates', info: 'Chosen by the Pictrify team, newest first.', items: trending.slice(0, 20), to: '/explore?category=trending&from=home' }) // first section on the phone home
   return (
     <div className="pb-2 text-[#FFFFFF] md:hidden">
-      <section aria-label="Welcome" className="relative isolate mx-4 mt-3 overflow-hidden rounded-[28px] bg-[#08080D] bg-[url('/images/bg.png')] bg-cover bg-center p-5 pt-14">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[#08080D]/60" aria-hidden="true" />
+      <section aria-label="Welcome" className="relative isolate mx-4 mt-3 overflow-hidden rounded-[28px] bg-[#000000] bg-[url('/images/bg.png')] bg-cover bg-center p-5 pt-14">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[#000000]/60" aria-hidden="true" />
         <h1 className="text-[28px] leading-[1.08]">Create stunning <span className="grad-text">photos</span> with AI</h1>
         <p className="mt-2 text-[14px] leading-relaxed text-[#D4D4D8]">Pick a template, add your photo and get a professional result.</p>
         <div className="mt-4 flex flex-wrap gap-2">

@@ -30,9 +30,9 @@ function Rail({ items, onSelect, h = 'h-[220px] lg:h-[260px]', label }) {
   return (
     <div className="no-scrollbar -mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0" aria-label={label}>
       {items.map((t) => (
-        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} aspect-[9/16] shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#272033] bg-[#12101B] text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70`}>
-          <img src={t.image} alt="" loading="lazy" draggable="false" className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#08080D]/90 to-transparent px-3.5 pb-2.5 pt-9"><span className="block truncate text-[13px] font-semibold text-white">{t.name}</span></span>
+        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} aspect-[9/16] shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#3A3A3E] bg-[#272629] text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70`}>
+          <img src={t.image} alt="" loading="lazy" draggable="false" className="size-full object-cover" />
+          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#000000]/90 to-transparent px-3.5 pb-2.5 pt-9"><span className="block truncate text-[13px] font-semibold text-white">{t.name}</span></span>
         </button>
       ))}
     </div>
@@ -90,7 +90,7 @@ export default function MemberHome() {
               {TOOLS.map(([label, to, d, beta]) => (
                 <Link key={label} to={to} className="tool-btn lg:min-w-0 lg:flex-1">
                   {beta && <span className="tool-btn__beta">Beta</span>}
-                  <span className="tool-btn__icon"><Icon d={d} className="size-6" /></span>{label}
+                  <span className="tool-btn__icon"><Icon d={d} className="size-8" /></span>{label}
                 </Link>
               ))}
             </div>
@@ -121,11 +121,11 @@ export default function MemberHome() {
           <section aria-label="Recent creations" className="mt-9 max-md:hidden">
             <Head title="Your recent creations" to={recent?.length ? '/creations' : undefined} />
             {recent === null ? (
-              <div className="flex gap-3">{[0, 1, 2, 3].map((i) => <div key={i} className="h-[220px] w-[160px] animate-pulse rounded-[20px] bg-[#12101B]" aria-hidden="true" />)}</div>
+              <div className="flex gap-3">{[0, 1, 2, 3].map((i) => <div key={i} className="h-[220px] w-[160px] animate-pulse rounded-[20px] bg-[#272629]" aria-hidden="true" />)}</div>
             ) : recent.length ? (
               <Rail items={recent} onSelect={() => nav('/creations')} label="Recent creations" />
             ) : (
-              <div className="flex flex-col items-start gap-3 rounded-[24px] bg-[#12101B] p-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col items-start gap-3 rounded-[24px] bg-[#272629] p-6 sm:flex-row sm:items-center sm:justify-between">
                 <div><h3 className="text-[19px]">Nothing here yet</h3><p className="mt-1 text-[14px] text-[#A1A1AA]">Your first creation will show up here.</p></div>
                 <Link to="/explore" className="btn-primary !px-6 !py-2.5">Pick a look<span className="arrow" aria-hidden="true">→</span></Link>
               </div>

@@ -5,9 +5,9 @@ import PImage from '../components/PImage.jsx'
 // Video creation sits beside Photo creation. The backend has no video-generation integration yet (no endpoint, no provider key), so NOTHING on this page starts a job:
 // the studio below has working controls (mode tabs, uploads shown locally, prompt, settings) but Generate stays off, and people are sent to the photo flow, which works today.
 const IDEAS = [
-  ['Photo to video', 'Bring a styled photo to life with gentle motion.', '#1B1530'],
+  ['Photo to video', 'Bring a styled photo to life with gentle motion.', '#2A2A2D'],
   ['Template videos', 'Pick a look, add a photo, get a short clip back.', '#271425'],
-  ['Dance and motion', 'Put yourself into trending moves and music-ready loops.', '#101D2C'],
+  ['Dance and motion', 'Put yourself into trending moves and music-ready loops.', '#2A2A2D'],
   ['Story clips', 'Vertical clips sized for Reels, Shorts and Stories.', '#102419'],
 ]
 const RATIOS = ['9:16', '16:9', '1:1']
@@ -43,11 +43,11 @@ function FrameUpload({ label, hint, file, onFile }) {
   return (
     <div className="min-w-0">
       <span className="mb-2 block text-[14px] font-semibold">{label}</span>
-      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#0D0B14] text-center transition-colors focus-within:border-[#FF3DF2]">
+      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#4A4A4F] bg-[#101011] text-center transition-colors focus-within:border-[#FF3DF2]">
         <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => { onFile(e.target.files?.[0] || null); e.target.value = '' }} />
         {url ? <img src={url} alt={`${label} preview`} className="absolute inset-0 size-full object-cover" /> : (
           <span className="px-4 py-6">
-            <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#1A1626] text-[#FF3DF2] transition-colors group-hover:bg-[#241B3A]"><Icon d={UPLOAD} /></span>
+            <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#2C2C2F] text-[#FF3DF2] transition-colors group-hover:bg-[#2F2F32]"><Icon d={UPLOAD} /></span>
             <span className="mt-3 block text-[14px] font-semibold">Click to upload</span>
             <span className="mt-1 block text-[12px] text-[#A1A1AA]">{hint}</span>
           </span>
@@ -75,23 +75,22 @@ export default function Video() {
   const ready = { text: !!prompt.trim(), image: !!image && !!prompt.trim(), frames: !!first && !!last && !!prompt.trim(), template: !!tpl && !!tplPhoto }[mode]
   return (
     <div className="w-full text-[#FFFFFF]">
-      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#0D0B14_0%,#08080D_100%)] px-4 pb-12 pt-12 text-center sm:px-6 lg:pt-16">
-        <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[380px] w-[820px] max-w-full -translate-x-1/2 rounded-full bg-[#FF3DF2]/10 blur-[90px]" aria-hidden="true" />
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#101011_0%,#000000_100%)] px-4 pb-12 pt-12 text-center sm:px-6 lg:pt-16">
         <h1 className="mx-auto max-w-3xl text-[40px] sm:text-[58px] lg:text-[68px]">Create <span className="grad-text">videos</span> as easily as photos</h1>
         <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[18px]">Turn a prompt, a photo or a template into a short video.</p>
       </section>
 
       <div className="mx-auto w-full max-w-[1200px] px-4 pb-24 sm:px-6 lg:px-8">
-        <section aria-label="Video studio" className="overflow-hidden rounded-[32px] border border-[#272033] bg-[#12101B] shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#272033] px-5 py-4 sm:px-8">
+        <section aria-label="Video studio" className="overflow-hidden rounded-[32px] border border-[#3A3A3E] bg-[#272629] shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#3A3A3E] px-5 py-4 sm:px-8">
             <h2 className="font-display text-[20px] font-bold">Video studio</h2>
           </div>
 
-          <div className="border-b border-[#272033] px-5 py-4 sm:px-8">
-            <div role="tablist" aria-label="Video mode" className="grid grid-cols-2 gap-1.5 rounded-[22px] bg-[#0D0B14] p-1.5 sm:grid-cols-4">
+          <div className="border-b border-[#3A3A3E] px-5 py-4 sm:px-8">
+            <div role="tablist" aria-label="Video mode" className="grid grid-cols-2 gap-1.5 rounded-[22px] bg-[#101011] p-1.5 sm:grid-cols-4">
               {MODES.map((m) => (
                 <button key={m.id} type="button" role="tab" aria-selected={mode === m.id} onClick={() => setMode(m.id)}
-                  className={`cursor-pointer rounded-full px-3 py-2.5 text-[13px] font-semibold transition-colors sm:text-[14px] ${mode === m.id ? 'bg-[#FF3DF2] text-white shadow-[0_8px_22px_-10px_rgba(255,61,242,0.8)]' : 'text-[#A1A1AA] hover:bg-[#1A1626] hover:text-white'}`}>
+                  className={`cursor-pointer rounded-full px-3 py-2.5 text-[13px] font-semibold transition-colors sm:text-[14px] ${mode === m.id ? 'bg-[#FF3DF2] text-white shadow-[0_8px_22px_-10px_rgba(255,61,242,0.8)]' : 'text-[#A1A1AA] hover:bg-[#2C2C2F] hover:text-white'}`}>
                   <span className="sm:hidden">{m.short}</span><span className="hidden sm:inline">{m.label}</span>
                 </button>
               ))}
@@ -116,15 +115,15 @@ export default function Video() {
                       {VIDEO_TEMPLATES.map((t) => (
                         <button key={t.id} type="button" onClick={() => setTpl(t.id)} aria-pressed={tpl === t.id} className={`tile group relative aspect-[3/4] overflow-hidden !rounded-[18px] border-2 ${tpl === t.id ? 'border-[#FF3DF2]' : 'border-transparent'}`}>
                           <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
-                          <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/80 via-transparent to-transparent" />
+                          <span className="absolute inset-0 bg-gradient-to-t from-[#000000]/80 via-transparent to-transparent" />
                           <span className="absolute inset-x-2 bottom-2 truncate text-[12px] font-semibold text-white">{t.name}</span>
                         </button>
                       ))}
                     </div>
                   ) : (
-                    <div className="grid min-h-[168px] place-items-center rounded-2xl border border-dashed border-[#3A2F52] bg-[#0D0B14] px-5 py-8 text-center">
+                    <div className="grid min-h-[168px] place-items-center rounded-2xl border border-dashed border-[#4A4A4F] bg-[#101011] px-5 py-8 text-center">
                       <div>
-                        <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#1A1626] text-[#FF3DF2]"><Icon d="M4 5h16v14H4zM9 9l6 3-6 3z" /></span>
+                        <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#2C2C2F] text-[#FF3DF2]"><Icon d="M4 5h16v14H4zM9 9l6 3-6 3z" /></span>
                         <p className="mt-3 text-[14px] font-semibold">No video templates yet</p>
                         <p className="mt-1 text-[12px] text-[#A1A1AA]">Templates added in the admin panel will appear here, each with its own style and reference image.</p>
                       </div>
@@ -136,7 +135,7 @@ export default function Video() {
 
               <label className="block">
                 <span className="mb-2 flex items-center justify-between text-[14px] font-semibold">{mode === 'template' ? 'Extra details (optional)' : 'Describe the video'}<span className="text-[12px] font-normal text-[#A1A1AA]">{prompt.length}/500</span></span>
-                <textarea rows={4} maxLength={500} value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder={PROMPT_PLACEHOLDER[mode]} className="input resize-none !bg-[#0D0B14]" />
+                <textarea rows={4} maxLength={500} value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder={PROMPT_PLACEHOLDER[mode]} className="input resize-none !bg-[#101011]" />
               </label>
 
               <div className={`grid gap-5 sm:grid-cols-2 ${mode === 'template' ? 'hidden' : ''}`}>
@@ -155,10 +154,10 @@ export default function Video() {
               </div>
             </div>
 
-            <div className="grid place-items-center border-t border-[#272033] bg-[linear-gradient(135deg,#1B1530_0%,#271425_100%)] p-6 sm:p-8 lg:border-l lg:border-t-0">
-              <div className={`grid w-full place-items-center rounded-[28px] border-4 border-[#1A1626] bg-[#12101B]/60 shadow-[0_24px_50px_rgba(0,0,0,0.3)] ${frame} ${ratio === '16:9' ? 'max-w-[420px]' : 'max-w-[300px]'}`}>
+            <div className="grid place-items-center border-t border-[#3A3A3E] bg-[linear-gradient(135deg,#2A2A2D_0%,#271425_100%)] p-6 sm:p-8 lg:border-l lg:border-t-0">
+              <div className={`grid w-full place-items-center rounded-[28px] border-4 border-[#2C2C2F] bg-[#1C1C1E]/60 shadow-[0_24px_50px_rgba(0,0,0,0.3)] ${frame} ${ratio === '16:9' ? 'max-w-[420px]' : 'max-w-[300px]'}`}>
                 <div className="px-4 text-center">
-                  <span className="mx-auto grid size-14 place-items-center rounded-full bg-white text-[#08080D]"><svg className="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
+                  <span className="mx-auto grid size-14 place-items-center rounded-full bg-white text-[#000000]"><svg className="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
                   <p className="mt-3 text-[14px] font-semibold">Your video will appear here</p>
                   <p className="mt-1 text-[12px] text-[#A1A1AA]">{mode === 'template' ? cur.label : `${cur.label} · ${ratio} · ${len}`}</p>
                 </div>
@@ -172,9 +171,9 @@ export default function Video() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {IDEAS.map(([t, d, bg]) => (
               <div key={t} className="rounded-[28px] p-7" style={{ background: bg }}>
-                <span className="grid size-11 place-items-center rounded-full bg-white text-[#08080D]"><svg className="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
+                <span className="grid size-11 place-items-center rounded-full bg-white text-[#000000]"><svg className="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
                 <h3 className="mt-5 text-[20px]">{t}</h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-[#C4C4CC]">{d}</p>
+                <p className="mt-2 text-[14px] leading-relaxed text-[#C4C4C8]">{d}</p>
               </div>
             ))}
           </div>

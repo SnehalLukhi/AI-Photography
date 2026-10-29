@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 export default function NotFound() {
   return (
     <div className="mx-auto w-full max-w-[1100px] px-5 pb-20 pt-10 sm:px-8 sm:pt-16 lg:px-10">
-      <div className="relative flex flex-col items-center overflow-hidden rounded-3xl bg-[#1B1530] px-6 py-16 text-center text-[#FFFFFF] sm:py-24">
+      <div className="relative flex flex-col items-center overflow-hidden rounded-3xl bg-[#2A2A2D] px-6 py-16 text-center text-[#FFFFFF] sm:py-24">
         <span className="pointer-events-none absolute -left-10 top-10 size-40 rounded-full bg-[#271425]" aria-hidden="true" />
-        <span className="pointer-events-none absolute -right-12 bottom-6 size-52 rounded-full bg-[#101D2C]" aria-hidden="true" />
+        <span className="pointer-events-none absolute -right-12 bottom-6 size-52 rounded-full bg-[#2A2A2D]" aria-hidden="true" />
         <span className="pointer-events-none absolute left-[14%] bottom-12 size-8 rounded-full bg-[#262310]" aria-hidden="true" />
         <span className="pointer-events-none absolute right-[16%] top-12 size-5 rounded-full bg-[#102419]" aria-hidden="true" />
         <p className="relative flex items-center gap-1 text-[110px] font-extrabold leading-none tracking-tight sm:text-[190px]">

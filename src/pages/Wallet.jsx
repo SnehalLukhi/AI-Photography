@@ -24,11 +24,11 @@ const readPackCache = () => { try { return JSON.parse(localStorage.getItem(PACK_
 let early = typeof location !== 'undefined' && location.pathname.startsWith('/coins') ? getCoinPacks().catch(() => null) : null
 const loadPacks = () => { const p = early || getCoinPacks(); early = null; return p.then((d) => d || getCoinPacks()) } // the early request failed: try once more
 
-const Skel = ({ className = '' }) => <div aria-hidden="true" className={`animate-pulse rounded-md border border-[#272033] bg-[#12101B] ${className}`} />
+const Skel = ({ className = '' }) => <div aria-hidden="true" className={`animate-pulse rounded-md border border-[#3A3A3E] bg-[#272629] ${className}`} />
 
-const Tick = ({ dark }) => <span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${dark ? 'bg-[#12101B]/15 text-white' : 'bg-[#1B1530] text-[#FF3DF2]'}`}>✓</span>
+const Tick = ({ dark }) => <span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${dark ? 'bg-[#1C1C1E]/15 text-white' : 'bg-[#2A2A2D] text-[#FF3DF2]'}`}>✓</span>
 
-const TINTS = ['#1B1530', '#271425', '#101D2C', '#102419', '#2A1C10']
+const TINTS = ['#2A2A2D', '#271425', '#2A2A2D', '#102419', '#2A1C10']
 
 export default function Wallet({ tab = 'plans' }) {
   const nav = useNavigate()
@@ -82,15 +82,15 @@ export default function Wallet({ tab = 'plans' }) {
   const sub = tab === 'packs'
     ? <>Buy a coin pack once - no subscription. Coins never expire{signedIn ? <>, and you have <strong className="text-[#FFFFFF]">{coins.toLocaleString()}</strong> now.</> : '.'}</>
     : HEAD[3]
-  const card = (popular) => `relative flex flex-col rounded-[32px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${popular ? 'border-[#FFFFFF] bg-[#0D0B14] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#272033] bg-[#12101B]'}`
+  const card = (popular) => `relative flex flex-col rounded-[32px] border p-6 transition-transform duration-200 sm:p-8 lg:p-6 xl:p-8 ${popular ? 'border-[#FFFFFF] bg-[#101011] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#3A3A3E] bg-[#272629]'}`
   const badge = <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(255,61,242,0.35)]">Most Popular</span>
   const btn = (popular) => `${popular ? 'btn-grad' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`
   const ink = (popular) => (popular ? 'text-white' : 'text-[#FFFFFF]')
   const muted = (popular) => (popular ? 'text-white/65' : 'text-[#A1A1AA]')
   const offTag = (popular, pct) => <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${popular ? 'bg-[#FF3DF2] text-white' : 'bg-[#271425] text-[#FF3DF2]'}`}>{pct}% OFF</span>
   const coinTile = (popular, tint, alt, text) => (
-    <div className={`mt-5 flex items-center gap-3 rounded-2xl px-3 py-2.5 ${popular ? 'bg-[#12101B]/10' : ''}`} style={popular ? undefined : { background: tint }}>
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#12101B]"><img src="/images/features/coin.svg" alt={alt} width="44" height="44" className="size-7 object-contain" /></span>
+    <div className={`mt-5 flex items-center gap-3 rounded-2xl px-3 py-2.5 ${popular ? 'bg-[#1C1C1E]/10' : ''}`} style={popular ? undefined : { background: tint }}>
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#1C1C1E]"><img src="/images/features/coin.svg" alt={alt} width="44" height="44" className="size-7 object-contain" /></span>
       <p className={`text-[15px] font-semibold ${ink(popular)}`}>{text}</p>
     </div>
   )
@@ -103,9 +103,9 @@ export default function Wallet({ tab = 'plans' }) {
       </header>
 
       <nav aria-label="Wallet sections" className="mt-7 flex justify-center max-md:hidden sm:mt-9">
-        <div className="inline-flex gap-1 rounded-full bg-[#12101B] p-1.5">
+        <div className="inline-flex gap-1 rounded-full bg-[#1C1C1E] p-1.5">
           {[['plans', '/pricing', 'Plans'], ['packs', '/coins', 'Coin packs'], ['history', '/transactions', 'Transactions']].map(([k, to, label]) => (
-            <Link key={k} to={to} aria-current={tab === k ? 'page' : undefined} className={`rounded-full px-6 py-2.5 text-[15px] font-semibold transition-colors ${tab === k ? 'bg-white text-[#08080D]' : 'text-[#FFFFFF] hover:bg-[#1A1626]'}`}>{label}</Link>
+            <Link key={k} to={to} aria-current={tab === k ? 'page' : undefined} className={`rounded-full px-6 py-2.5 text-[15px] font-semibold transition-colors ${tab === k ? 'bg-white text-[#000000]' : 'text-[#FFFFFF] hover:bg-[#2C2C2F]'}`}>{label}</Link>
           ))}
         </div>
       </nav>
@@ -117,7 +117,7 @@ export default function Wallet({ tab = 'plans' }) {
         {/* ---------- phone: pick a plan from radio rows, then Continue ---------- */}
         <section aria-label="Choose your plan" className="md:hidden">
           <div className="relative flex items-center justify-center pb-3 pt-1">
-            <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#12101B] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+            <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
             <h1 className="font-display text-[20px] font-bold text-[#FFFFFF]">Choose Your Plan</h1>
           </div>
           <nav aria-label="Wallet sections" className="mb-4 flex justify-center gap-2">
@@ -132,10 +132,10 @@ export default function Wallet({ tab = 'plans' }) {
               const on = p.id === selId
               return (
                 <div key={p.id} role="radio" aria-checked={on} tabIndex={0} onClick={() => setSel(p.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(p.id)}
-                  className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#12101B]' : 'border-[#272033] bg-[#12101B]'}`}>
+                  className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#272629]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
                   {p.popular && <span className="badge absolute right-0 top-0 !rounded-none !rounded-bl-2xl !px-3 !py-1 !text-[10px] uppercase tracking-wide">Most Popular</span>}
                   <div className="flex items-center gap-3">
-                    <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#3A2F52]'}`}>{on && <span className="size-2.5 rounded-full bg-[#0D0B14] ring-1 ring-[#FF3DF2]/30" />}</span>
+                    <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#4A4A4F]'}`}>{on && <span className="size-2.5 rounded-full bg-[#101011] ring-1 ring-[#FF3DF2]/30" />}</span>
                     <div className="min-w-0 flex-1">
                       <p className="text-[16px] font-bold text-[#FFFFFF]">{p.name}</p>
                       <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#A1A1AA]"><img src="/images/features/coin.svg" alt="" width="16" height="16" className="size-4 object-contain" />{p.coinsText} Coins{p.per?.includes('year') ? ' / year' : ''}</p>
@@ -146,7 +146,7 @@ export default function Wallet({ tab = 'plans' }) {
                     </div>
                   </div>
                   {on && p.details?.length > 0 && (
-                    <dl className="mt-3.5 space-y-2 border-t border-[#272033] pt-3 text-[12px] text-[#A1A1AA]">
+                    <dl className="mt-3.5 space-y-2 border-t border-[#3A3A3E] pt-3 text-[12px] text-[#A1A1AA]">
                       {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="text-[#FF3DF2]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold text-[#FFFFFF]">{value}</dd></div>)}
                     </dl>
                   )}
@@ -220,14 +220,14 @@ export default function Wallet({ tab = 'plans' }) {
       {tab === 'history' && (
         <section aria-label="History" className="mx-auto mt-10 max-w-4xl lg:mt-14">
           {!signedIn ? (
-            <div className="rounded-[32px] bg-[#12101B] px-6 py-14 text-center"><p className="font-display text-[22px] font-bold">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-primary mt-5 !px-6 !py-2.5 !text-[14px]">Sign in</button></div>
+            <div className="rounded-[32px] bg-[#272629] px-6 py-14 text-center"><p className="font-display text-[22px] font-bold">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-primary mt-5 !px-6 !py-2.5 !text-[14px]">Sign in</button></div>
           ) : history === null ? (
             <div className="flex flex-col gap-3">{[0, 1, 2].map((k) => <Skel key={k} className="h-16 !rounded-2xl" />)}</div>
           ) : history.length ? (
-            <div className="overflow-hidden rounded-[32px] border border-[#272033] bg-[#12101B] text-[14px]">
-              <div className="hidden grid-cols-[170px_1fr_150px_110px] bg-[#12101B] px-6 py-3.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#A1A1AA] sm:grid"><span>Date</span><span>Item</span><span className="text-right">Paid</span><span className="text-right">Coins</span></div>
+            <div className="overflow-hidden rounded-[32px] border border-[#3A3A3E] bg-[#272629] text-[14px]">
+              <div className="hidden grid-cols-[170px_1fr_150px_110px] bg-[#1C1C1E] px-6 py-3.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#A1A1AA] sm:grid"><span>Date</span><span>Item</span><span className="text-right">Paid</span><span className="text-right">Coins</span></div>
               {history.map((p) => (
-                <div key={p.paymentId} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 border-b border-[#272033] px-5 py-4 last:border-b-0 sm:grid-cols-[170px_1fr_150px_110px] sm:px-6">
+                <div key={p.paymentId} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 border-b border-[#3A3A3E] px-5 py-4 last:border-b-0 sm:grid-cols-[170px_1fr_150px_110px] sm:px-6">
                   <span className="order-2 text-[13px] text-[#A1A1AA] sm:order-none sm:text-[14px]">{formatDate(p.paidAt, true)}</span>
                   <span className="order-1 min-w-0 sm:order-none"><span className="flex flex-wrap items-center gap-2 font-semibold text-[#FFFFFF]">{p.name} {p.kind === 'plan' ? 'plan' : 'coin pack'}<span className="rounded-full bg-[#102419] px-2 py-0.5 text-[11px] font-semibold text-[#1B7A44]">Paid</span></span><span className="block truncate text-[12px] text-[#A1A1AA]">Payment ID {p.paymentId}</span></span>
                   <span className="order-3 text-right font-semibold text-[#FFFFFF] sm:order-none">{formatMoney(p.amount, p.currency)}{p.offerPercent > 0 && <span className="ml-2 text-[11px] font-semibold text-[#FF3DF2]">{p.offerPercent}% off</span>}</span>
@@ -236,7 +236,7 @@ export default function Wallet({ tab = 'plans' }) {
               ))}
             </div>
           ) : (
-            <div className="rounded-[32px] bg-[#12101B] px-6 py-14 text-center">
+            <div className="rounded-[32px] bg-[#272629] px-6 py-14 text-center">
               <span className="mx-auto grid size-16 place-items-center rounded-full bg-[#262310]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
               <p className="mt-5 font-display text-[22px] font-bold text-[#FFFFFF]">No transactions yet</p>
               <p className="mt-2 text-[14px] text-[#A1A1AA]">Subscriptions and coin purchases will show up here.</p>

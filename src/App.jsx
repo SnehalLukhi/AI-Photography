@@ -25,7 +25,7 @@ export default function App() {
   const generating = pathname === '/generate' // the Create workspace: collapsed rail, no footer, no phone chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
-    <div className="min-h-screen w-full overflow-x-clip bg-[#08080D] text-white selection:bg-[#FF3DF2]/40">
+    <div className="min-h-screen w-full overflow-x-clip bg-[#000000] text-white selection:bg-[#FF3DF2]/40">
       <Header generating={generating} />
       <div className={`flex min-w-0 flex-col ${generating ? 'min-h-[calc(100dvh-60px)] md:min-h-[calc(100dvh-68px)]' : 'min-h-screen'}`}> {/* the Create workspace fills exactly the space under the header: no empty strip, no extra scroll */}
         <main className="flex-1">

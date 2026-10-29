@@ -54,10 +54,10 @@ export default function PremiumPopup({ onClose: finish }) {
   }
 
   return (
-    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-end justify-center bg-[#08080D]/45 p-0 sm:items-center sm:p-4`} onClick={() => onClose()}>
+    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-end justify-center bg-[#000000]/45 p-0 sm:items-center sm:p-4`} onClick={() => onClose()}>
       <div role="dialog" aria-modal="true" aria-label="Pictrify Premium" onClick={(e) => e.stopPropagation()}
-        className="welcome-card relative flex max-h-[96dvh] w-full max-w-[980px] flex-col overflow-y-auto overflow-x-hidden rounded-t-[32px] bg-[#12101B] shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:max-h-[94dvh] sm:rounded-[36px]">
-        <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-3 top-3 z-20 grid size-9 cursor-pointer place-items-center rounded-full bg-[#12101B] text-lg leading-none text-[#FFFFFF] transition hover:bg-[#1A1626] sm:right-4 sm:top-4">×</button>
+        className="welcome-card relative flex max-h-[96dvh] w-full max-w-[980px] flex-col overflow-y-auto overflow-x-hidden rounded-t-[32px] bg-[#272629] shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:max-h-[94dvh] sm:rounded-[36px]">
+        <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-3 top-3 z-20 grid size-9 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-lg leading-none text-[#FFFFFF] transition hover:bg-[#2C2C2F] sm:right-4 sm:top-4">×</button>
 
         <div className="relative grid gap-5 px-4 pb-4 pt-6 sm:px-10 sm:pt-12 lg:grid-cols-[1.2fr_0.8fr] lg:gap-8">
           <div className="min-w-0 sm:pt-2">
@@ -69,10 +69,10 @@ export default function PremiumPopup({ onClose: finish }) {
             <p className="welcome-rise welcome-rise-3 mt-3 max-w-lg text-sm leading-relaxed text-[#A1A1AA] sm:text-base">Supercharge your creativity with premium tools, ultra HD quality, and unlimited inspiration.</p>
             <div className="welcome-rise welcome-rise-3 mt-5 grid grid-cols-4 gap-2 sm:mt-7 sm:gap-3">
               {PERKS.map((f) => (
-                <div key={f.label} className="flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[22px] bg-[#12101B] px-1 py-3 sm:h-[92px]" title="Coming soon - not available yet">
+                <div key={f.label} className="flex min-w-0 flex-col items-center justify-center gap-1.5 rounded-[22px] bg-[#272629] px-1 py-3 sm:h-[92px]" title="Coming soon - not available yet">
                   <span className="text-[#FF3DF2] opacity-60">{f.icon}</span>
                   <p className="text-center text-[11px] font-semibold leading-tight text-[#FFFFFF]">{f.label}</p>
-                  <span className="rounded-full bg-[#1B1530] px-2 py-px text-[9px] font-medium uppercase tracking-wide text-[#A1A1AA]">Coming soon</span>
+                  <span className="rounded-full bg-[#2A2A2D] px-2 py-px text-[9px] font-medium uppercase tracking-wide text-[#A1A1AA]">Coming soon</span>
                 </div>
               ))}
             </div>
@@ -87,7 +87,7 @@ export default function PremiumPopup({ onClose: finish }) {
                 </div>
               ))}
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B14] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#101011] via-transparent to-transparent" />
           </div>
         </div>
 
@@ -97,20 +97,20 @@ export default function PremiumPopup({ onClose: finish }) {
               const on = p.id === selected
               return (
                 <button key={p.id} type="button" role="radio" aria-checked={on} onClick={() => setSelected(p.id)}
-                  className={`relative flex min-w-0 cursor-pointer flex-col rounded-[26px] border-2 p-4 text-left transition-all duration-200 sm:p-5 ${on ? 'border-[#FFFFFF] bg-[#12101B]' : 'border-[#272033] bg-[#12101B]'}`}>
+                  className={`relative flex min-w-0 cursor-pointer flex-col rounded-[26px] border-2 p-4 text-left transition-all duration-200 sm:p-5 ${on ? 'border-[#FFFFFF] bg-[#272629]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
                   <span className="flex items-center justify-between gap-3">
                     <span className="min-w-0">
                       {p.popular && <span className="badge mb-1.5 !text-[10px]">Popular</span>}
                       <span className="block font-display text-[19px] font-bold leading-tight text-[#FFFFFF]">{p.name.replace(/ Premium$/, '')}</span>
                       <span className="mt-2 flex items-baseline gap-1.5"><span className="font-display text-[26px] font-extrabold leading-none text-[#FFFFFF]">{p.price || pending}</span>{p.was && <span className="text-[13px] text-[#A1A1AA] line-through">{p.was}</span>}<span className="text-[13px] text-[#A1A1AA]">{p.per.replace(/^\/\s*/, '/')}</span></span>
                     </span>
-                    <span className="flex h-[88px] w-[88px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-[20px] bg-[#1B1530]">
+                    <span className="flex h-[88px] w-[88px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-[20px] bg-[#2A2A2D]">
                       <img src={brandImages.coin} alt="" width="28" height="28" className="size-7 object-contain" />
                       <span className="text-[14px] font-bold leading-none text-[#FFFFFF]">{p.coins.toLocaleString('en-US')}</span>
                       <span className="text-[11px] font-semibold leading-none text-[#FF3DF2]">Coins</span>
                     </span>
                   </span>
-                  <span className="mt-4 block border-t border-[#272033] pt-3 text-[12px] text-[#A1A1AA]">Premium templates</span>
+                  <span className="mt-4 block border-t border-[#3A3A3E] pt-3 text-[12px] text-[#A1A1AA]">Premium templates</span>
                 </button>
               )
             })}
@@ -120,7 +120,7 @@ export default function PremiumPopup({ onClose: finish }) {
             className={`${BRAND_GRADIENT} mx-auto mt-5 flex h-[46px] w-full max-w-[460px] cursor-pointer items-center justify-center gap-2 rounded-full text-base font-bold text-white transition-shadow hover:shadow-[0_12px_32px_rgba(255,61,242,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 disabled:cursor-wait disabled:opacity-70`}>
             <SparkIcon className="size-4 text-white" />{busy ? 'Please wait…' : 'Continue'}
           </button>
-          {note && <p role="status" className="mx-auto mt-3 max-w-[460px] rounded-2xl bg-[#12101B] px-4 py-2.5 text-center text-sm text-[#FFFFFF]">{note}</p>}
+          {note && <p role="status" className="mx-auto mt-3 max-w-[460px] rounded-2xl bg-[#272629] px-4 py-2.5 text-center text-sm text-[#FFFFFF]">{note}</p>}
           <p className="mt-4 text-center text-[11px] text-[#A1A1AA] sm:text-xs">Auto-renewable Subscription. Cancel anytime.</p>
           <p className="mt-3 text-center"><Link to="/privacy-policy" onClick={() => finish(true)} className="text-xs font-semibold text-[#A1A1AA] hover:text-[#FFFFFF]">Privacy Policy</Link></p>
         </div>

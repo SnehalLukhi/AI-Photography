@@ -91,7 +91,7 @@ export default function PrivacyPolicy() {
         <p className="mb-2 mt-5 text-[15px] text-[#A1A1AA]"><strong className="font-semibold text-[#FFFFFF]">Effective Date:</strong> 21 October 2026</p>
         {sections.map(([h, subs, blocks]) => (
           <section key={h}>
-            <h2 className="mb-3 mt-12 border-t border-[#272033] pt-8 text-[24px] font-extrabold leading-tight">{h}</h2>
+            <h2 className="mb-3 mt-12 border-t border-[#3A3A3E] pt-8 text-[24px] font-extrabold leading-tight">{h}</h2>
             {blocks && blocks.map((b, i) => <Block key={i} b={b} />)}
             {subs && subs.map(([sh, sb]) => (
               <div key={sh}>

@@ -20,13 +20,13 @@ export default function PhotoUpload({ photo, onChange }) {
         onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
         onDragLeave={() => setDrag(false)}
         onDrop={(e) => { e.preventDefault(); setDrag(false); handle(e.dataTransfer.files[0]) }}
-        className={`grid min-h-[240px] place-items-center overflow-hidden rounded-3xl border-2 border-dashed p-4 text-center transition ${photo ? '' : 'cursor-pointer'} ${drag ? 'border-[#FF3DF2] bg-[#271425]' : 'border-[#3A2F52] bg-[#12101B] hover:bg-[#1B1530]/50'}`}
+        className={`grid min-h-[240px] place-items-center overflow-hidden rounded-3xl border-2 border-dashed p-4 text-center transition ${photo ? '' : 'cursor-pointer'} ${drag ? 'border-[#FF3DF2] bg-[#271425]' : 'border-[#4A4A4F] bg-[#272629] hover:bg-[#2A2A2D]/50'}`}
       >
         {photo ? (
           <img src={photo.url} alt="Your upload" className="max-h-[380px] w-full rounded-2xl object-contain" />
         ) : (
           <div>
-            <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full bg-white text-2xl text-[#08080D]">⇪</div>
+            <div className="mx-auto mb-3 grid size-14 place-items-center rounded-full bg-white text-2xl text-[#000000]">⇪</div>
             <p className="font-semibold text-[#FFFFFF]">Tap to upload or drag a photo</p>
             <p className="mt-1 text-sm text-[#A1A1AA]">JPG, PNG up to 20MB</p>
           </div>

@@ -42,25 +42,25 @@ function Preview({ list, index, onClose, onStep, onUse }) {
   const liked = favorites.has(t.id)
   return (
     <div className="fixed inset-0 z-[200]" role="dialog" aria-modal="true" aria-label={`${t.name} preview`}>
-      <div onClick={onClose} className="absolute inset-0 bg-[#08080D]/50 backdrop-blur-[2px]" />
-      <aside className="absolute inset-x-0 bottom-0 flex max-h-[92dvh] flex-col gap-5 overflow-y-auto overscroll-contain rounded-t-3xl bg-[#12101B] p-5 shadow-[0_-18px_40px_rgba(0,0,0,0.14)] md:inset-y-0 md:left-auto md:right-0 md:max-h-none md:w-[440px] md:rounded-l-3xl md:rounded-tr-none md:p-7">
+      <div onClick={onClose} className="absolute inset-0 bg-[#000000]/50 backdrop-blur-[2px]" />
+      <aside className="absolute inset-x-0 bottom-0 flex max-h-[92dvh] flex-col gap-5 overflow-y-auto overscroll-contain rounded-t-3xl bg-[#1C1C1E] p-5 shadow-[0_-18px_40px_rgba(0,0,0,0.14)] md:inset-y-0 md:left-auto md:right-0 md:max-h-none md:w-[440px] md:rounded-l-3xl md:rounded-tr-none md:p-7">
         <div className="flex items-center justify-between">
           <span className="font-plexmono text-[11px] uppercase tracking-[0.1em] text-[#A1A1AA]">Look {index + 1} of {list.length}</span>
-          <button type="button" aria-label="Close preview" onClick={onClose} className="grid size-9 cursor-pointer place-items-center rounded-full bg-[#12101B] text-[#FFFFFF] transition hover:bg-[#1A1626]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
+          <button type="button" aria-label="Close preview" onClick={onClose} className="grid size-9 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF] transition hover:bg-[#2C2C2F]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
         </div>
-        <div className="relative mx-auto aspect-[9/16] w-full overflow-hidden rounded-2xl bg-[#12101B]" style={{ maxWidth: 'max(200px, calc((100dvh - 330px) * 0.5625))' }}>
+        <div className="relative mx-auto aspect-[9/16] w-full overflow-hidden rounded-2xl bg-[#272629]" style={{ maxWidth: 'max(200px, calc((100dvh - 330px) * 0.5625))' }}>
           <PImage src={t.image} alt={t.name} className="absolute inset-0 h-full w-full object-cover" draggable="false" />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#08080D]/85 via-[#08080D]/40 to-transparent px-4 pb-4 pt-20">
-            <span className="inline-block rounded-full bg-[#12101B]/90 px-2.5 py-1 font-plexmono text-[10px] uppercase tracking-[0.1em] text-[#FFFFFF]">{t.category}</span>
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#000000]/85 via-[#000000]/40 to-transparent px-4 pb-4 pt-20">
+            <span className="inline-block rounded-full bg-[#1C1C1E]/90 px-2.5 py-1 font-plexmono text-[10px] uppercase tracking-[0.1em] text-[#FFFFFF]">{t.category}</span>
             <h2 className="mt-2 text-[30px] font-bold leading-[1.05] text-white">{t.name}</h2>
           </div>
-          <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-3 top-3 grid size-10 cursor-pointer place-items-center rounded-full bg-[#12101B]/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-sm transition-transform hover:bg-[#1A1626] active:scale-90">
+          <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-3 top-3 grid size-10 cursor-pointer place-items-center rounded-full bg-[#1C1C1E]/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-sm transition-transform hover:bg-[#2C2C2F] active:scale-90">
             <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#FFFFFF]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
           </button>
         </div>
-        <dl className="grid grid-cols-3 rounded-2xl bg-[#12101B]">
+        <dl className="grid grid-cols-3 rounded-2xl bg-[#272629]">
           {[['Cost', cost ? `${cost} coins` : '...'], ['Shape', '9:16'], ['Needs', t.slots?.length > 1 ? `${t.slots.length} photos` : '1 photo']].map(([k, v], i) => (
-            <div key={k} className={`px-3.5 py-3 ${i < 2 ? 'border-r border-[#272033]' : ''}`}><dt className="font-plexmono text-[10px] uppercase tracking-[0.08em] text-[#A1A1AA]">{k}</dt><dd className="mt-1 text-[15px] font-semibold text-[#FFFFFF]">{v}</dd></div>
+            <div key={k} className={`px-3.5 py-3 ${i < 2 ? 'border-r border-[#3A3A3E]' : ''}`}><dt className="font-plexmono text-[10px] uppercase tracking-[0.08em] text-[#A1A1AA]">{k}</dt><dd className="mt-1 text-[15px] font-semibold text-[#FFFFFF]">{v}</dd></div>
           ))}
         </dl>
         <div className="flex flex-col gap-2.5">
@@ -154,7 +154,7 @@ export default function Explore() {
     <div className="pb-32 text-[#FFFFFF] md:hidden">
       {fromHome ? (
         <div className="flex items-center gap-3 px-4 pb-3 pt-3">
-          <Link to="/" aria-label="Back to Home" className="grid size-9 shrink-0 place-items-center rounded-full bg-[#12101B] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></Link>
+          <Link to="/" aria-label="Back to Home" className="grid size-9 shrink-0 place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></Link>
           <h1 className="truncate text-xl font-bold tracking-tight text-[#FFFFFF]">{chip.name}</h1>
         </div>
       ) : (
@@ -184,12 +184,12 @@ export default function Explore() {
           const liked = favorites.has(t.id)
           return (
             <div key={t.id} className="relative">
-              <Link to={generateUrl(t)} aria-label={t.name} className="relative block aspect-[9/16] overflow-hidden rounded-[6px] bg-[#12101B] shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
+              <Link to={generateUrl(t)} aria-label={t.name} className="relative block aspect-[9/16] overflow-hidden rounded-[6px] bg-[#272629] shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
                 <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
-                <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/60 via-transparent to-transparent" />
+                <span className="absolute inset-0 bg-gradient-to-t from-[#000000]/60 via-transparent to-transparent" />
                 <span className="absolute inset-x-2 bottom-2.5 truncate text-center text-[12px] font-medium text-white">{t.name}</span>
               </Link>
-              <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-2 top-2 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-[#12101B]/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-sm">
+              <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-2 top-2 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-[#1C1C1E]/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-sm">
                 <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#FFFFFF]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
               </button>
             </div>
@@ -199,7 +199,7 @@ export default function Explore() {
     </div>
 
     <div className="mx-auto hidden w-full max-w-none px-5 pb-8 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-10 md:block lg:px-10">
-      <div className="mb-7 flex flex-col gap-3 rounded-3xl bg-[#12101B] px-8 py-9">
+      <div className="mb-7 flex flex-col gap-3 rounded-3xl bg-[#272629] px-8 py-9">
         <p className="eyebrow">{q ? 'Search results' : 'Discover AI styles'}</p>
         <h1 className="w-fit text-[48px] font-bold leading-[1.05] tracking-tight sm:text-[60px]">{q ? <>Search <span className="grad-text">results</span></> : <>Explore <span className="grad-text">Looks</span></>}</h1>
         <p className="text-[16px] text-[#A1A1AA]">
@@ -209,7 +209,7 @@ export default function Explore() {
         </p>
       </div>
 
-      <form onSubmit={submitSearch} role="search" className="mb-5 flex h-14 w-full max-w-[620px] items-center gap-3 rounded-full border border-[#272033] bg-[#12101B] px-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)] focus-within:border-[#FF3DF2]">
+      <form onSubmit={submitSearch} role="search" className="mb-5 flex h-14 w-full max-w-[620px] items-center gap-3 rounded-full border border-[#3A3A3E] bg-[#1C1C1E] px-6 shadow-[0_8px_24px_rgba(0,0,0,0.06)] focus-within:border-[#FF3DF2]">
         <svg className="size-[18px] shrink-0 text-[#A1A1AA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
         <input ref={searchBox} value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Search looks" placeholder="Search looks, styles, keywords..." className="min-w-0 flex-1 bg-transparent text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#A1A1AA]" />
       </form>
@@ -223,7 +223,7 @@ export default function Explore() {
           {list.map(card)}
         </div>
       ) : (
-        <div className="rounded-3xl bg-[#12101B] px-6 py-16 text-center">
+        <div className="rounded-3xl bg-[#272629] px-6 py-16 text-center">
           <p className="text-[28px] font-bold text-[#FFFFFF]">{q ? 'No looks match that search' : 'No looks here yet'}</p>
           <p className="mt-2 text-[14px] text-[#A1A1AA]">{q ? 'Try another word, or browse a collection.' : 'Check back soon, or try another collection.'}</p>
           {q && <Link to="/explore" className="btn-dark mt-5 !px-5 !py-2.5 !text-[14px]">Browse all looks</Link>}

@@ -43,15 +43,15 @@ function PhotoTile({ kind, photo, onPick, onClear, error }) {
       <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
       <div className="relative aspect-[9/16] w-full sm:max-w-[240px] lg:h-[clamp(260px,calc(100dvh-340px),640px)] lg:w-auto lg:max-w-none">
         {photo ? (
-          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-[#272033] bg-[#12101B] shadow-[0_24px_60px_-28px_rgba(255,61,242,0.45)]">
+          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-[#3A3A3E] bg-[#272629] shadow-[0_24px_60px_-28px_rgba(255,61,242,0.45)]">
             <img src={photo.url} alt={`Your ${what}`} className="size-full object-cover" />
-            <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-9 cursor-pointer place-items-center rounded-full bg-[#08080D]/80 text-white backdrop-blur transition-colors hover:bg-[#1A1626]"><Svg d="M6 6l12 12M18 6L6 18" /></button>
+            <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-9 cursor-pointer place-items-center rounded-full bg-[#000000]/80 text-white backdrop-blur transition-colors hover:bg-[#2C2C2F]"><Svg d="M6 6l12 12M18 6L6 18" /></button>
           </div>
         ) : (
           <div role="button" tabIndex={0} onClick={() => input.current.click()} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && input.current.click()}
             onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={(e) => { e.preventDefault(); setDrag(false); choose(e.dataTransfer.files[0]) }}
-            className={`absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-3 text-center transition-colors ${drag ? 'border-white/60 bg-[#0D0B14]/70' : 'border-white/25 bg-[#0D0B14]/55 hover:bg-[#0D0B14]/70'} backdrop-blur-sm`}>
-            <span className="grid size-12 place-items-center rounded-full bg-[#1A1626] text-[#FF3DF2] max-sm:size-10"><Svg d="M12 16V5M7 10l5-5 5 5M4 19h16" className="size-6" /></span>
+            className={`absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-3 text-center transition-colors ${drag ? 'border-white/60 bg-[#101011]/70' : 'border-white/25 bg-[#101011]/55 hover:bg-[#101011]/70'} backdrop-blur-sm`}>
+            <span className="grid size-12 place-items-center rounded-full bg-[#2C2C2F] text-[#FF3DF2] max-sm:size-10"><Svg d="M12 16V5M7 10l5-5 5 5M4 19h16" className="size-6" /></span>
             <span className="text-[15px] font-semibold max-sm:text-[13px]">{kind === 'Photo' ? 'Add your photo' : `Add ${kind}`}</span>
             <span className="text-[12px] text-[#A1A1AA] max-sm:hidden">Drop it here or click to browse</span>
             <span className="text-[10px] uppercase tracking-[0.12em] text-[#71717A] max-sm:hidden">JPG · PNG · HEIC</span>
@@ -72,15 +72,15 @@ function PhotoTile({ kind, photo, onPick, onClear, error }) {
 function Compare({ before, after, alt }) {
   const [pos, setPos] = useState(50)
   return (
-    <div className="relative mx-auto aspect-[3/3.7] w-full max-w-[640px] touch-none select-none overflow-hidden rounded-3xl border border-[#272033] bg-[#12101B] shadow-[0_30px_70px_-30px_rgba(255,61,242,0.4)]">
+    <div className="relative mx-auto aspect-[3/3.7] w-full max-w-[640px] touch-none select-none overflow-hidden rounded-3xl border border-[#3A3A3E] bg-[#272629] shadow-[0_30px_70px_-30px_rgba(255,61,242,0.4)]">
       <img src={after} alt={alt} className="absolute inset-0 size-full object-cover" draggable="false" />
       {before && <img src={before} alt="Your original photo" className="absolute inset-0 size-full object-cover" draggable="false" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} />}
       {before && (
         <>
-          <div className="pointer-events-none absolute inset-y-0 w-0.5 -translate-x-1/2 bg-[#12101B]" style={{ left: `${pos}%` }} />
-          <div className="pointer-events-none absolute top-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#12101B] text-[#FFFFFF] shadow-lg" style={{ left: `${pos}%` }}><Svg d="M9 7l-5 5 5 5M15 7l5 5-5 5" className="size-[22px]" /></div>
-          <span className="absolute left-3.5 top-3.5 rounded-full bg-[#08080D]/80 px-2.5 py-1.5 font-plexmono text-[11px] tracking-[0.1em] text-white">ORIGINAL</span>
-          <span className="absolute right-3.5 top-3.5 rounded-full bg-[#08080D]/80 px-2.5 py-1.5 font-plexmono text-[11px] tracking-[0.1em] text-white">RESULT</span>
+          <div className="pointer-events-none absolute inset-y-0 w-0.5 -translate-x-1/2 bg-[#1C1C1E]" style={{ left: `${pos}%` }} />
+          <div className="pointer-events-none absolute top-1/2 grid size-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF] shadow-lg" style={{ left: `${pos}%` }}><Svg d="M9 7l-5 5 5 5M15 7l5 5-5 5" className="size-[22px]" /></div>
+          <span className="absolute left-3.5 top-3.5 rounded-full bg-[#000000]/80 px-2.5 py-1.5 font-plexmono text-[11px] tracking-[0.1em] text-white">ORIGINAL</span>
+          <span className="absolute right-3.5 top-3.5 rounded-full bg-[#000000]/80 px-2.5 py-1.5 font-plexmono text-[11px] tracking-[0.1em] text-white">RESULT</span>
           <input type="range" min="0" max="100" value={pos} onChange={(e) => setPos(Number(e.target.value))} aria-label="Compare your original with the result" className="absolute inset-0 size-full cursor-ew-resize opacity-0" />
         </>
       )}
@@ -176,12 +176,12 @@ function Generator({ asset }) {
     return (
       <div className="mx-auto w-full max-w-none px-5 pb-10 pt-6 text-[#FFFFFF] sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-14">
-          <section aria-label="Before and after" className="flex flex-col gap-3 rounded-3xl bg-[#12101B] p-4 sm:p-8">
+          <section aria-label="Before and after" className="flex flex-col gap-3 rounded-3xl bg-[#272629] p-4 sm:p-8">
             <Compare before={before} after={after} alt={`${asset.name} result`} />
             {before && <p className="mx-auto text-[13px] text-[#A1A1AA]">Drag the handle to compare.</p>}
           </section>
           <aside aria-label="Your result" className="flex flex-col gap-6 lg:pt-2">
-            <div role="status" className="flex items-center gap-2.5 rounded-full border border-[#3A2F52] bg-[#1B1530] px-4 py-3 text-[14px] font-medium"><Svg d="M5 12l5 5 9-10" className="size-[18px] text-[#FF3DF2]" />{real ? 'Saved to My Creations' : 'Demo preview · nothing was saved or charged'}</div>
+            <div role="status" className="flex items-center gap-2.5 rounded-full border border-[#4A4A4F] bg-[#2A2A2D] px-4 py-3 text-[14px] font-medium"><Svg d="M5 12l5 5 9-10" className="size-[18px] text-[#FF3DF2]" />{real ? 'Saved to My Creations' : 'Demo preview · nothing was saved or charged'}</div>
             <div className="flex flex-col gap-2.5">
               <h1 className="text-[52px] leading-[0.98] sm:text-[60px]">Here it <span className="grad-text">is.</span></h1>
               <p className="text-[16px] leading-relaxed text-[#A1A1AA]">Your photo in the {asset.name} look.</p>
@@ -192,9 +192,9 @@ function Generator({ asset }) {
               <button type="button" onClick={again} className="btn-dark !py-3">Make another with this look</button>
               <Link to="/explore" className="btn-dark !py-3">Try a different look</Link>
             </div>
-            <dl className="overflow-hidden rounded-2xl border border-[#272033] bg-[#12101B] text-[14px]">
-              <div className="flex justify-between border-b border-[#272033] px-4 py-3"><dt className="text-[#A1A1AA]">Look</dt><dd>{asset.name}</dd></div>
-              {real && <div className="flex justify-between border-b border-[#272033] px-4 py-3"><dt className="text-[#A1A1AA]">Coins used</dt><dd className="font-plexmono">{cost}</dd></div>}
+            <dl className="overflow-hidden rounded-2xl border border-[#3A3A3E] bg-[#272629] text-[14px]">
+              <div className="flex justify-between border-b border-[#3A3A3E] px-4 py-3"><dt className="text-[#A1A1AA]">Look</dt><dd>{asset.name}</dd></div>
+              {real && <div className="flex justify-between border-b border-[#3A3A3E] px-4 py-3"><dt className="text-[#A1A1AA]">Coins used</dt><dd className="font-plexmono">{cost}</dd></div>}
               {real && <div className="flex justify-between px-4 py-3"><dt className="text-[#A1A1AA]">Left in wallet</dt><dd className="font-plexmono">{coins.toLocaleString()} coins</dd></div>}
             </dl>
             <Link to="/creations" className="text-[14px] font-medium text-[#FF3DF2] underline underline-offset-4">Open in My Creations</Link>
@@ -209,12 +209,12 @@ function Generator({ asset }) {
   return (
     <div className="relative isolate flex min-h-[calc(100dvh-60px)] flex-col overflow-hidden text-[#FFFFFF] md:min-h-[calc(100dvh-68px)]">
       {/* the selected template as the page background: strongly blurred, dimmed and darkened, so it is barely recognisable. A different template = a different page key, so it follows the selection by itself */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#08080D]" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#000000]" aria-hidden="true">
         <img key={asset.image} src={asset.image} alt="" draggable="false" className="absolute -inset-40 size-[calc(100%+20rem)] max-w-none animate-fade-in object-cover opacity-60 blur-[160px]" />
-        <div className="absolute inset-0 bg-[#08080D]/55" />
+        <div className="absolute inset-0 bg-[#000000]/55" />
       </div>
 
-      <button type="button" aria-label="Close" onClick={() => nav(-1)} className="absolute right-3 top-3 z-20 grid size-10 cursor-pointer place-items-center rounded-lg bg-[#1A1626]/80 text-[#C4C4CC] backdrop-blur transition-colors hover:bg-[#272033] hover:text-white sm:right-5 sm:top-5"><Svg d="M6 6l12 12M18 6L6 18" className="size-[18px]" /></button>
+      <button type="button" aria-label="Close" onClick={() => nav(-1)} className="absolute right-3 top-3 z-20 grid size-10 cursor-pointer place-items-center rounded-lg bg-[#2C2C2F]/80 text-[#C4C4C8] backdrop-blur transition-colors hover:bg-[#3A3A3E] hover:text-white sm:right-5 sm:top-5"><Svg d="M6 6l12 12M18 6L6 18" className="size-[18px]" /></button>
 
       <div className="flex flex-1 flex-col lg:flex-row">
         <nav ref={strip} aria-label={`More ${asset.category} looks`} className="no-scrollbar flex shrink-0 gap-2 overflow-x-auto px-4 pb-3 pt-2 max-lg:order-last lg:max-h-[calc(100dvh-68px)] lg:w-[88px] lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden lg:px-3 lg:py-4">
@@ -235,7 +235,7 @@ function Generator({ asset }) {
           <div className="flex w-full flex-1 flex-col items-center justify-center gap-4 sm:gap-6">
             <div className="flex w-full items-start justify-center gap-2 sm:gap-4 lg:items-center lg:gap-6">
               <figure className="flex min-w-0 flex-1 flex-col items-center gap-2.5 lg:flex-none">
-                <div className="relative aspect-[9/16] w-full sm:max-w-[240px] overflow-hidden rounded-2xl bg-[#12101B] lg:h-[clamp(260px,calc(100dvh-340px),640px)] lg:w-auto lg:max-w-none">
+                <div className="relative aspect-[9/16] w-full sm:max-w-[240px] overflow-hidden rounded-2xl bg-[#272629] lg:h-[clamp(260px,calc(100dvh-340px),640px)] lg:w-auto lg:max-w-none">
                   <PImage src={asset.image} alt={`The look: ${asset.name}`} className="absolute inset-0 size-full object-cover" draggable="false" />
                 </div>
                 <figcaption className="flex max-w-full items-center gap-2 text-[14px] max-sm:flex-col max-sm:gap-0.5 max-sm:text-center">
@@ -250,7 +250,7 @@ function Generator({ asset }) {
               </div>
             </div>
 
-            <button type="button" disabled={!ready} onClick={next} className="btn-grad w-full max-w-[360px] !gap-3 !py-3.5 !text-[16px] shadow-[0_12px_32px_-12px_rgba(255,61,242,0.6)] disabled:!bg-[#1D1830] disabled:!bg-none disabled:text-[#8B8B96] disabled:opacity-100 disabled:shadow-none">
+            <button type="button" disabled={!ready} onClick={next} className="btn-grad w-full max-w-[360px] !gap-3 !py-3.5 !text-[16px] shadow-[0_12px_32px_-12px_rgba(255,61,242,0.6)] disabled:!bg-[#2A2A2D] disabled:!bg-none disabled:text-[#8E8E93] disabled:opacity-100 disabled:shadow-none">
               {signedIn ? 'Generate' : 'Continue to generate'}
               {real && <span className="inline-flex items-center gap-1.5 rounded-full bg-black/25 py-0.5 pl-1.5 pr-2.5 text-[13px] font-semibold"><img src="/images/features/coin.svg" alt="" className="size-4 object-contain" />{cost}</span>}
             </button>
@@ -259,18 +259,18 @@ function Generator({ asset }) {
       </div>
 
       {phase === 'loading' && (
-        <div role="status" className="fixed inset-0 z-[300] grid place-items-center bg-[#12101B]/90 p-6 backdrop-blur-md">
+        <div role="status" className="fixed inset-0 z-[300] grid place-items-center bg-[#1C1C1E]/90 p-6 backdrop-blur-md">
           <div className="flex w-full max-w-sm flex-col items-center gap-5 text-center">
             <p className="font-display text-[40px] font-bold leading-none text-[#FFFFFF]">Creating your look</p>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#1A1626]"><div className="h-full w-1/3 animate-shimmer rounded-full bg-[#FF3DF2]" /></div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#2C2C2F]"><div className="h-full w-1/3 animate-shimmer rounded-full bg-[#FF3DF2]" /></div>
             <p className="text-[14px] text-[#A1A1AA]">Keep this tab open. {real ? 'It can take up to a minute.' : ''}</p>
             {real && <p className="text-[13px] text-[#A1A1AA]">{cost} coins are returned if this fails.</p>}
           </div>
         </div>
       )}
       {phase === 'error' && (
-        <div className="fixed inset-0 z-[300] grid place-items-center overflow-y-auto bg-[#08080D]/40 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
-          <div role="alert" className="flex w-full max-w-sm flex-col gap-4 rounded-3xl border border-[#272033] bg-[#12101B] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[300] grid place-items-center overflow-y-auto bg-[#000000]/40 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
+          <div role="alert" className="flex w-full max-w-sm flex-col gap-4 rounded-3xl border border-[#3A3A3E] bg-[#272629] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="rounded-2xl border border-[#E5484D]/40 bg-[#2A1216] px-4 py-3.5"><p className="text-[17px] font-semibold">Generation failed</p><p className="mt-1.5 text-[14px] leading-relaxed text-[#A1A1AA]">{apiError || 'Something went wrong. Please try again.'}</p></div>
             <div className="flex flex-col gap-2.5">
               {needCoins && <button type="button" className="btn-grad" onClick={() => nav(coins < 150 ? '/pricing' : '/coins')}>Get coins</button>}

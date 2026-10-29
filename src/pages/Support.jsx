@@ -9,18 +9,15 @@ import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
 const Hero = ({ eyebrow, title, sub, center = false }) => (
   <header className="mx-auto w-full max-w-[1100px] px-5 pt-8 sm:px-8 sm:pt-12 lg:px-10">
-    <div className={`relative overflow-hidden rounded-3xl bg-[#1B1530] px-6 py-12 sm:px-12 sm:py-16 ${center ? 'flex flex-col items-center text-center' : ''}`}>
-      <span className="pointer-events-none absolute -right-10 -top-10 size-44 rounded-full bg-[#271425]" aria-hidden="true" />
-      <span className="pointer-events-none absolute -bottom-12 right-1/4 size-32 rounded-full bg-[#101D2C]" aria-hidden="true" />
-      <span className="pointer-events-none absolute bottom-8 left-[8%] size-6 rounded-full bg-[#262310]" aria-hidden="true" />
+    <div className={`relative overflow-hidden rounded-3xl bg-[#272629] px-6 py-12 sm:px-12 sm:py-16 ${center ? 'flex flex-col items-center text-center' : ''}`}>
       <p className="badge relative">{eyebrow}</p>
       <h1 className="relative mt-4 w-fit text-[40px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[60px]">{title}</h1>
       <p className="relative mt-4 max-w-2xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[18px]">{sub}</p>
     </div>
   </header>
 )
-const field = 'w-full rounded-2xl border border-[#272033] bg-[#12101B] px-4 text-[15px] text-[#FFFFFF] outline-none transition placeholder:text-[#9A94AB] focus:border-[#FF3DF2] focus:ring-4 focus:ring-[#FF3DF2]/15'
-const TILES = ['bg-[#1B1530]', 'bg-[#271425]', 'bg-[#101D2C]', 'bg-[#102419]', 'bg-[#2A1C10]', 'bg-[#262310]']
+const field = 'w-full rounded-2xl border border-[#3A3A3E] bg-[#272629] px-4 text-[15px] text-[#FFFFFF] outline-none transition placeholder:text-[#A1A1AA] focus:border-[#FF3DF2] focus:ring-4 focus:ring-[#FF3DF2]/15'
+const TILES = ['bg-[#272629]']
 const submitBtn = 'btn-primary !w-full !rounded-[14px] !py-3.5 !text-[15px] disabled:cursor-not-allowed disabled:opacity-50'
 
 const topics = [
@@ -77,27 +74,27 @@ export function Help() {
       <div className="mx-auto mt-8 w-full max-w-[1100px] px-5 sm:px-8 lg:px-10">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {topics.map(([t], i) => (
-            <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer rounded-2xl p-5 text-left text-[15px] font-bold text-[#FFFFFF] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.14)] ${TILES[i % TILES.length]} ${open === i ? 'ring-2 ring-[#FFFFFF]' : ''}`}>{t}</button>
+            <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer rounded-2xl p-5 text-left text-[15px] font-bold text-[#FFFFFF] ${TILES[i % TILES.length]} ${open === i ? 'ring-2 ring-[#FFFFFF]' : ''}`}>{t}</button>
           ))}
         </div>
         <div className="mt-8 space-y-3">
           {topics.map(([t, d, body], i) => (
-            <div key={t} className={`overflow-hidden rounded-2xl border bg-[#12101B] transition-colors ${open === i ? 'border-[#FFFFFF] shadow-[0_18px_40px_rgba(0,0,0,0.08)]' : 'border-[#272033]'}`}>
+            <div key={t} className={`overflow-hidden rounded-2xl border bg-[#272629] transition-colors ${open === i ? 'border-[#FFFFFF] shadow-[0_18px_40px_rgba(0,0,0,0.08)]' : 'border-[#3A3A3E]'}`}>
               <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full cursor-pointer items-center gap-4 px-5 py-5 text-left sm:px-6">
                 <span className="min-w-0 flex-1"><span className="block text-[17px] font-bold text-[#FFFFFF]">{t}</span><span className="mt-0.5 block text-[14px] text-[#A1A1AA]">{d}</span></span>
-                <svg className={`size-8 shrink-0 rounded-full bg-[#1A1626] p-2 text-[#A1A1AA] transition-transform ${open === i ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                <svg className={`size-8 shrink-0 rounded-full bg-[#2C2C2F] p-2 text-[#A1A1AA] transition-transform ${open === i ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
               </button>
               {open === i && <ul className="space-y-2.5 px-5 pb-6 text-[14px] leading-relaxed text-[#A1A1AA] sm:px-6">{body.map((line) => <li key={line} className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-[#FF3DF2]" />{line}</li>)}</ul>}
             </div>
           ))}
         </div>
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-[#271425] p-6 sm:p-8"><p className="text-[22px] font-extrabold text-[#FFFFFF]">Still stuck?</p><Link to="/contact-support" className="btn-primary !rounded-[14px] !px-6 !py-3 !text-[14px]">Contact support<span aria-hidden="true">→</span></Link></div>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-[#272629] p-6 sm:p-8"><p className="text-[22px] font-extrabold text-[#FFFFFF]">Still stuck?</p><Link to="/contact-support" className="btn-accent !px-6 !py-3 !text-[14px]">Contact support<span aria-hidden="true">→</span></Link></div>
       </div>
     </div>
   )
 }
 
-const Card = ({ children, w = 'max-w-[760px]' }) => <div className={`mx-auto mt-8 w-[calc(100%-40px)] sm:w-[calc(100%-64px)] ${w} rounded-3xl border border-[#272033] bg-[#12101B] p-6 sm:p-10`}>{children}</div>
+const Card = ({ children, w = 'max-w-[760px]' }) => <div className={`mx-auto mt-8 w-[calc(100%-40px)] sm:w-[calc(100%-64px)] ${w} rounded-3xl border border-[#3A3A3E] bg-[#272629] p-6 sm:p-10`}>{children}</div>
 const Label = ({ children }) => <span className="text-[13px] font-semibold text-[#FFFFFF]">{children}</span>
 
 export function Contact() {
@@ -131,8 +128,8 @@ export function Contact() {
             <div className="space-y-2">
               <Label>Attachment (optional)</Label>
               <div onClick={() => input.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); pick(e.dataTransfer.files?.[0]) }}
-                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#3A2F52] bg-[#12101B] px-4 py-8 text-center transition hover:bg-[#1B1530]/40">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-[#08080D]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload image</span>
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#4A4A4F] bg-[#272629] px-4 py-8 text-center transition hover:bg-[#2A2A2D]/40">
+                <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-[#000000]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload image</span>
                 <span className="text-[14px]">{file ? file.name : 'Click or drag an image here (max 5 MB)'}</span>
                 <span className="text-[12px] text-[#A1A1AA]">JPG, JPEG, PNG and WEBP supported</span>
                 <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { pick(e.target.files?.[0]); e.target.value = '' }} />
@@ -215,7 +212,7 @@ function MobileMe() {
   const lastPlan = purchases?.find((p) => p.kind === 'plan')
   const [plansOpen, setPlansOpen] = useState(false)
   const [planOpen, setPlanOpen] = useState(false)
-  const row = 'flex h-[54px] w-full items-center gap-3.5 border-b border-[#272033] px-4 text-left text-[14px] text-[#FFFFFF] last:border-b-0'
+  const row = 'flex h-[54px] w-full items-center gap-3.5 border-b border-[#3A3A3E] px-4 text-left text-[14px] text-[#FFFFFF] last:border-b-0'
   return (
     <div className="mx-auto w-full max-w-[560px] px-4 pb-32 pt-4 md:hidden">
       {signedIn && <p className="mb-3 truncate px-1 text-[13px] text-[#A1A1AA]">{userEmail}</p>}
@@ -224,26 +221,26 @@ function MobileMe() {
         <h2 className="w-fit text-[28px] font-extrabold text-white">Premium</h2>
         <p className="mt-2 text-[14px] text-white/90">Unlock ultimate creative power.</p>
         <ul className="mt-4 space-y-2.5 text-[14px] text-white">
-          {['1000+ Templates', 'HD Quality Outputs'].map((t) => <li key={t} className="flex items-center gap-2.5"><span className="size-1.5 rounded-full bg-[#12101B]" />{t}</li>)}
+          {['1000+ Templates', 'HD Quality Outputs'].map((t) => <li key={t} className="flex items-center gap-2.5"><span className="size-1.5 rounded-full bg-[#1C1C1E]" />{t}</li>)}
         </ul>
         <button type="button" onClick={() => setPlansOpen(true)} className="btn-primary mt-6 !h-14 !w-full !text-[16px]">Upgrade to Pro</button>
       </div>
-      <div className="mt-4 overflow-hidden rounded-[24px] border border-[#272033] bg-[#12101B]">
+      <div className="mt-4 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#272629]">
         <button type="button" onClick={() => setPlanOpen((o) => !o)} aria-expanded={planOpen} aria-controls="plan-purchases" className="flex h-[54px] w-full cursor-pointer items-center gap-3.5 px-4 text-left text-[14px] font-semibold text-[#FFFFFF]">
           {I('M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z')}<span className="flex-1">Plan &amp; purchases</span>
           <svg className={`size-4 shrink-0 text-[#A1A1AA] transition-transform duration-300 ${planOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
         </button>
         <div id="plan-purchases" className={`grid transition-[grid-template-rows] duration-300 ease-out ${planOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`} aria-hidden={!planOpen}>
           <div className="min-h-0 overflow-hidden">
-            <div className="space-y-2 border-t border-[#272033] p-3.5">
-              <CurrentPlan className="rounded-2xl bg-[#12101B] px-3.5 py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} tabIndex={planOpen ? 0 : -1} />
-              <div className="rounded-2xl bg-[#12101B] px-3.5 py-2.5"><p className="eyebrow">Coin balance</p><p className="mt-2 text-[15px] font-bold text-[#FFFFFF]">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" tabIndex={planOpen ? 0 : -1} className="mt-1 inline-block text-xs font-semibold text-[#A1A1AA] underline">Get more coins</Link></div>
+            <div className="space-y-2 border-t border-[#3A3A3E] p-3.5">
+              <CurrentPlan className="rounded-2xl bg-[#272629] px-3.5 py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} tabIndex={planOpen ? 0 : -1} />
+              <div className="rounded-2xl bg-[#272629] px-3.5 py-2.5"><p className="eyebrow">Coin balance</p><p className="mt-2 text-[15px] font-bold text-[#FFFFFF]">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" tabIndex={planOpen ? 0 : -1} className="mt-1 inline-block text-xs font-semibold text-[#A1A1AA] underline">Get more coins</Link></div>
               <Link to="/transactions" tabIndex={planOpen ? 0 : -1} className="inline-block pt-1 text-[13px] font-semibold text-[#A1A1AA] underline">View all transactions</Link>
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-4 overflow-hidden rounded-[24px] border border-[#272033] bg-[#12101B]">
+      <div className="mt-4 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#272629]">
         {meItems.map(([label, to, d]) => <Link key={label} to={to} className={row}>{I(d)}<span className="flex-1">{label}</span><Chev /></Link>)}
       </div>
       {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
@@ -260,16 +257,14 @@ export function Profile() {
   const name = displayName(userEmail || '')
   const [first, ...rest] = name.split(' ')
   const last = rest.join(' ')
-  const box = 'h-12 w-full min-w-0 truncate rounded-2xl border border-[#272033] bg-[#12101B] px-4 text-[14px] outline-none'
+  const box = 'h-12 w-full min-w-0 truncate rounded-2xl border border-[#3A3A3E] bg-[#1C1C1E] px-4 text-[14px] outline-none'
   const lbl = 'mb-1.5 block text-[13px] font-semibold text-[#FFFFFF]'
   return (
     <>
     {!settings && <MobileMe />}
     <div className={`mx-auto w-full max-w-[1100px] px-5 pb-32 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-12 md:pb-12 lg:px-10 ${settings ? '' : 'max-md:hidden'}`}>
       {!signedIn ? (
-        <div className="relative overflow-hidden rounded-3xl bg-[#1B1530] px-6 py-16 text-center sm:py-24">
-          <div className="pointer-events-none absolute -left-10 -top-10 size-40 rounded-full bg-[#271425]" aria-hidden="true" />
-          <div className="pointer-events-none absolute -bottom-12 -right-8 size-48 rounded-full bg-[#101D2C]" aria-hidden="true" />
+        <div className="relative overflow-hidden rounded-3xl bg-[#272629] px-6 py-16 text-center sm:py-24">
           <div className="relative">
             <h1 className="mx-auto w-fit text-[40px] font-extrabold leading-[1.05] tracking-tight sm:text-[56px]">Your account</h1>
             <p className="mx-auto mt-4 max-w-sm text-[15px] text-[#A1A1AA]">Sign in to see your coins, plan and creations in one place.</p>
@@ -278,9 +273,7 @@ export function Profile() {
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          <section aria-label="Profile" className="relative overflow-hidden rounded-3xl bg-[#1B1530]">
-            <div className="pointer-events-none absolute -right-16 -top-20 size-[260px] rounded-full bg-[#271425]" aria-hidden="true" />
-            <div className="pointer-events-none absolute -bottom-20 left-1/3 size-[180px] rounded-full bg-[#101D2C]" aria-hidden="true" />
+          <section aria-label="Profile" className="relative overflow-hidden rounded-3xl bg-[#272629]">
             <div className="relative flex flex-wrap items-center gap-5 p-6 sm:gap-6 sm:p-9">
               <span className="grid size-20 shrink-0 place-items-center rounded-full bg-[#FF3DF2] text-[34px] font-semibold text-white sm:size-24 sm:text-[40px]">{(name[0] || 'P').toUpperCase()}</span>
               <div className="min-w-0 flex-1">
@@ -289,14 +282,14 @@ export function Profile() {
                 <p className="mt-1 truncate text-[14px] text-[#A1A1AA] sm:text-[15px]" title={userEmail}>{userEmail}</p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <Link to="/creations" className="btn-primary !rounded-[14px] !px-5 !py-2.5 !text-[14px]">My Creations</Link>
+                <Link to="/creations" className="btn-accent !px-5 !py-2.5 !text-[14px]">My Creations</Link>
                 <button type="button" onClick={signOut} className="btn-dark !rounded-[14px] !px-5 !py-2.5 !text-[14px] !text-[#D14343]">Log out</button>
               </div>
             </div>
           </section>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
-            <section aria-label="Personal details" className="self-start rounded-3xl bg-[#12101B] p-6 sm:p-8">
+            <section aria-label="Personal details" className="self-start rounded-3xl bg-[#272629] p-6 sm:p-8">
               <h2 className="mb-6 text-[22px] font-extrabold">Personal details</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div><label htmlFor="pf-first" className={lbl}>First name</label><input id="pf-first" readOnly value={first || ''} placeholder="Not set" className={box} /></div>
@@ -311,16 +304,15 @@ export function Profile() {
             </section>
 
             <div className="flex flex-col gap-6">
-              <section aria-label="Coins" className="relative overflow-hidden rounded-3xl bg-[#262310] p-6 sm:p-8">
-                <div className="pointer-events-none absolute -right-12 -top-12 size-[160px] rounded-full bg-[#2A1C10]" aria-hidden="true" />
+              <section aria-label="Coins" className="relative overflow-hidden rounded-3xl bg-[#272629] p-6 sm:p-8">
                 <div className="relative flex items-center gap-4">
-                  <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#12101B]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
+                  <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#1C1C1E]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
                   <div className="flex flex-col"><span className="text-[13px] text-[#A1A1AA]">Coin balance</span><span className="flex items-baseline gap-2"><span className="grad-text text-[44px] font-extrabold leading-none tabular-nums">{coins.toLocaleString('en-US')}</span><span className="text-[14px] text-[#A1A1AA]">coins</span></span></div>
                 </div>
-                <Link to="/coins" className="btn-primary relative mt-6 !w-full !rounded-[14px] !py-3 !text-[14px]">Get more coins</Link>
+                <Link to="/coins" className="btn-accent relative mt-6 !w-full !py-3 !text-[14px]">Get more coins</Link>
               </section>
 
-              <section aria-label="Plan" className="rounded-3xl bg-[#101D2C] p-6 sm:p-8">
+              <section aria-label="Plan" className="rounded-3xl bg-[#272629] p-6 sm:p-8">
                 <CurrentPlan className="" purchases={purchases} lastPlan={lastPlan} plan={plan} />
                 {purchases?.length > 0 && (
                   <ul className="mt-5 divide-y divide-[#FFFFFF]/10 border-t border-[#FFFFFF]/10">
@@ -357,7 +349,7 @@ export function Feedback() {
             <div className="flex gap-3 py-4" onMouseLeave={() => setHover(0)}>
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} type="button" aria-label={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setStars(n)} onMouseEnter={() => setHover(n)} className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                  <svg className={`size-10 transition-colors ${n <= (hover || stars) ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#3A2F52]'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
+                  <svg className={`size-10 transition-colors ${n <= (hover || stars) ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#4A4A4F]'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
                 </button>
               ))}
             </div>
@@ -392,7 +384,7 @@ export function Legal({ kind }) {
         <h1 className="mb-6 mt-4 w-fit text-[38px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[56px]">{title}</h1>
         <p className="mb-4 leading-relaxed"><strong className="font-semibold text-[#FFFFFF]">Effective Date:</strong> {date || 'Placeholder'}</p>
         {sections.map(([h, blocks]) => (
-          <div key={h}><h2 className="mb-3 mt-12 border-t border-[#272033] pt-8 text-[24px] font-extrabold leading-tight text-[#FFFFFF]">{h}</h2>{blocks.map(legalBlock)}</div>
+          <div key={h}><h2 className="mb-3 mt-12 border-t border-[#3A3A3E] pt-8 text-[24px] font-extrabold leading-tight text-[#FFFFFF]">{h}</h2>{blocks.map(legalBlock)}</div>
         ))}
       </div>
     </div>

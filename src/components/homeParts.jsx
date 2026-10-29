@@ -11,7 +11,7 @@ import { useTrending } from '../lib/useTrending.js'
 const TRENDING_12 = [['80s-and-90s', 'Good Vibes'], ['cartoon', '3D Toon'], ['linkedin-headshot', 'Executive'], ['old-money', 'Retro Car'], ['beard', 'Bandholz'], ['hairstyle-woman', 'BoxBraids'],
   ['old-money', 'Vintage Sari'], ['cartoon', 'Neon Cyber'], ['80s-and-90s', 'Vintage Golden'], ['hairstyle-woman', 'Airy Short Curls'], ['linkedin-headshot', 'Corporate'], ['hairstyle-baby', 'Baby DoubleBun']]
 
-export const PASTELS = ['#1B1530', '#271425', '#101D2C', '#102419', '#2A1C10', '#262310']
+export const PASTELS = ['#2A2A2D', '#271425', '#2A2A2D', '#102419', '#2A1C10', '#262310']
 export const tabLink = (tab) => (tab.parent ? `/explore?category=${tab.parent}&sub=${tab.id.replace(`${tab.parent}-`, '')}` : `/explore?category=${tab.id}`)
 
 /** Collections, in the admin's category order (categories the admin has not placed come after). */
@@ -61,12 +61,12 @@ export function CategoryTiles({ collections, limit = Infinity, exclude = [] }) {
       {list.map((c) => {
         const a = categoryItems(c.id)[0]
         return (
-          <Link key={c.id} to={tabLink(c)} aria-label={c.category || c.name} className="group flex flex-col rounded-[24px] border border-[#272033] bg-[#12101B] p-2.5 outline-none transition-[transform,border-color] duration-300 hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-white/70">
+          <Link key={c.id} to={tabLink(c)} aria-label={c.category || c.name} className="group flex flex-col rounded-[24px] border border-[#3A3A3E] bg-[#272629] p-2.5 outline-none transition-[transform,border-color] duration-300 focus-visible:ring-2 focus-visible:ring-white/70">
             <span className="block min-h-[2.6em] px-1.5 pt-1 font-display text-[17px] font-bold leading-tight text-white">{c.category || c.name}</span>
-            <span className="relative mt-1.5 block overflow-hidden rounded-[16px] bg-[#0D0B14]" style={{ aspectRatio: (a && shapes[a.image]) || '9 / 16' }}>
-              {a && <PImage src={a.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]" draggable="false" />}
+            <span className="relative mt-1.5 block overflow-hidden rounded-[16px] bg-[#101011]" style={{ aspectRatio: (a && shapes[a.image]) || '9 / 16' }}>
+              {a && <PImage src={a.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-contain" draggable="false" />}
             </span>
-            <span className="mt-2.5 flex items-center justify-between rounded-full bg-[#1A1626] py-1 pl-3.5 pr-1 text-[13px] font-semibold text-white transition-colors group-hover:bg-white group-hover:text-[#08080D]">
+            <span className="mt-2.5 flex items-center justify-between rounded-full bg-[#2C2C2F] py-1 pl-3.5 pr-1 text-[13px] font-semibold text-white transition-colors group-hover:bg-white group-hover:text-[#000000]">
               Explore
               <span className="grid size-6 place-items-center rounded-full bg-[#FF3DF2] text-white"><svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
             </span>
@@ -78,7 +78,7 @@ export function CategoryTiles({ collections, limit = Infinity, exclude = [] }) {
 }
 
 const Arrow = ({ dir, onClick }) => (
-  <button type="button" aria-label={dir < 0 ? 'Scroll left' : 'Scroll right'} onClick={onClick} className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-[#3A2F52] bg-[#12101B] text-[#FFFFFF] transition-colors max-md:hidden">
+  <button type="button" aria-label={dir < 0 ? 'Scroll left' : 'Scroll right'} onClick={onClick} className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full border border-[#4A4A4F] bg-[#1C1C1E] text-[#FFFFFF] transition-colors max-md:hidden">
     <svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={dir < 0 ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6'} /></svg>
   </button>
 )
@@ -88,7 +88,21 @@ function CategoryRow({ c, onSelect }) {
   const row = useRef(null)
   const items = categoryItems(c.id)
   const scroll = (d) => row.current?.scrollBy({ left: d * Math.max(240, row.current.clientWidth * 0.8), behavior: 'smooth' })
-  const visible = 5 // every card is the same 9:16 shape (the picture fills it), so every category shows 5 across
+  // every category uses the same 9:16 card (the picture fills it) - except the Top Carousel, whose pictures are shown WHOLE at their own shape (horizontal ones stay horizontal, 3 across)
+  const natural = c.id === 'top-carousel'
+  const [shapes, setShapes] = useState({})
+  const key = items.map((t) => t.image).join('|')
+  useEffect(() => {
+    if (!natural) return
+    items.forEach((t) => {
+      const im = new Image()
+      im.onload = () => im.naturalWidth && im.naturalHeight && setShapes((m) => (m[t.image] ? m : { ...m, [t.image]: im.naturalWidth / im.naturalHeight }))
+      im.src = t.image
+    })
+  }, [key, natural]) // eslint-disable-line react-hooks/exhaustive-deps
+  const known = natural ? items.filter((t) => shapes[t.image]) : []
+  const wide = known.length > 0 && known.filter((t) => shapes[t.image] > 1).length > known.length / 2
+  const visible = wide ? 3 : 5
   return (
     <section aria-label={c.category || c.name}>
       <div className="section-head">
@@ -98,10 +112,10 @@ function CategoryRow({ c, onSelect }) {
         )}
       </div>
       {/* 5 cards fill the row on a wide screen (4 / 3 / 2 and a peek of the next one on smaller ones); the rest scroll sideways. Every card is 9:16. */}
-      <div ref={row} className={`no-scrollbar -mx-4 flex snap-x items-start overflow-x-auto scroll-smooth px-4 pb-1 [--cols:2.4] min-[560px]:[--cols:3.4] md:[--cols:4] lg:[--cols:5] [--gap:8px] sm:-mx-6 sm:px-6 md:[--gap:10px] lg:mx-0 lg:px-0`} style={{ gap: 'var(--gap)' }}>
+      <div ref={row} className={`no-scrollbar -mx-4 flex snap-x items-start overflow-x-auto scroll-smooth px-4 pb-1 ${wide ? '[--cols:1.3] min-[560px]:[--cols:2.2] md:[--cols:3] lg:[--cols:3]' : '[--cols:2.4] min-[560px]:[--cols:3.4] md:[--cols:4] lg:[--cols:5]'} [--gap:8px] sm:-mx-6 sm:px-6 md:[--gap:10px] lg:mx-0 lg:px-0`} style={{ gap: 'var(--gap)' }}>
         {items.map((t) => (
           <div key={t.id} className="shrink-0 snap-start" style={{ width: 'calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols))' }}>
-            <TemplateCard t={t} fit="cover" ratio="9 / 16" onSelect={onSelect} />
+            {natural ? <TemplateCard t={t} fit="contain" ratio={String(shapes[t.image] || 9 / 16)} onSelect={onSelect} /> : <TemplateCard t={t} fit="cover" ratio="9 / 16" onSelect={onSelect} />}
           </div>
         ))}
       </div>
@@ -156,9 +170,9 @@ export function FeaturedCarousel({ items: list, className = '' }) {
         {[0, 1].map((copy) => (
           <div key={copy} aria-hidden={copy ? true : undefined} className="flex shrink-0 gap-2 pr-2">
             {half.map((t, k) => (
-              <Link key={`${t.id}-${k}`} to={generateUrl(t)} tabIndex={copy ? -1 : undefined} aria-label={t.name} className="group relative block aspect-[9/16] h-[300px] shrink-0 overflow-hidden rounded-[6px] border border-[#272033] bg-[#0D0B14] lg:h-[380px]">
-                <img src={t.image} alt="" loading="lazy" draggable="false" className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-                <span className="absolute inset-0 bg-gradient-to-t from-[#08080D]/85 via-transparent to-transparent" />
+              <Link key={`${t.id}-${k}`} to={generateUrl(t)} tabIndex={copy ? -1 : undefined} aria-label={t.name} className="group relative block aspect-[9/16] h-[300px] shrink-0 overflow-hidden rounded-[6px] border border-[#3A3A3E] bg-[#101011] lg:h-[380px]">
+                <img src={t.image} alt="" loading="lazy" draggable="false" className="size-full object-cover" />
+                <span className="absolute inset-0 bg-gradient-to-t from-[#000000]/85 via-transparent to-transparent" />
                 <span className="absolute inset-x-5 bottom-4">
                   <CardName name={t.name} />
                 </span>
