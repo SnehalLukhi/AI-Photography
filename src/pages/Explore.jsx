@@ -140,7 +140,7 @@ export default function Explore() {
   const step = (d) => setOpen((i) => (list.length ? (i + d + list.length) % list.length : -1))
 
   const card = (t, i) => (
-    <TemplateCard key={t.id} t={t} fav selected={open === i} action="Quick preview" onSelect={() => setOpen(i)}
+    <TemplateCard key={t.id} t={t} fav selected={open === i} onSelect={() => setOpen(i)}
       ratio={isTop ? shapes[t.image] || '9 / 16' : '9 / 16'} fit={isTop ? 'contain' : 'cover'} />
   )
 
@@ -179,8 +179,8 @@ export default function Explore() {
           <div className="section-head mt-8 !mb-0 px-5"><h2 className="section-title">{mobileTitle}</h2><span className="text-[13px] text-[#A1A1AA]">{list.length} {list.length === 1 ? 'look' : 'looks'}</span></div>
         </>
       )}
-      <div className="mt-5 grid grid-cols-2 gap-2 px-5">
-        {list.map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={(look) => nav(generateUrl(look))} />)}
+      <div className={`mt-5 grid gap-2 px-5 ${isTop ? 'grid-cols-1 items-start' : 'grid-cols-2'}`}>
+        {list.map((t) => <TemplateCard key={t.id} t={t} fav ratio={isTop ? shapes[t.image] || '9 / 16' : '9 / 16'} fit={isTop ? 'contain' : 'cover'} onSelect={(look) => nav(generateUrl(look))} />)}
       </div>
     </div>
 

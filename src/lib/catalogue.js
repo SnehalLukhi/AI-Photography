@@ -52,11 +52,20 @@ const reloadWhenLate = (fresh) => fresh.then((got) => {
   window.location.reload()
 })
 
+// Category order = the admin's "Order" numbers. A cached copy can hold an older order, so when the live answer arrives after the first screen has already used the cache and its
+// order (or its set of categories) differs, reload once under the same safety rules as above.
+const orderKey = (d) => (d?.categories || []).map((c) => `${c.id}:${c.sort_order}`).join('|')
+const reloadWhenOrderChanged = (fresh, cached) => fresh.then((got) => {
+  if (got?.stored && orderKey(got.data) !== orderKey(cached)) reloadWhenLate(Promise.resolve(got))
+})
+
 export async function loadCatalogue(timeoutMs = 4000) {
   const cached = readCache()
   if (cached) { // known templates: wait only briefly for a fresh copy (so templates just added / changed in the admin show up at once), else use the cached one
-    const got = await Promise.race([fetchFresh(), wait(1500)])
+    const fresh = fetchFresh()
+    const got = await Promise.race([fresh, wait(1500)])
     catalogue = got?.data || cached
+    if (!got) reloadWhenOrderChanged(fresh, cached) // the live answer was slower than the wait: if the admin changed the category order meanwhile, show it (once)
     return catalogue
   }
   const fresh = fetchFresh() // first visit: nothing to show yet, so this request is the only wait (up to timeoutMs)

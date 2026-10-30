@@ -60,8 +60,7 @@ export default function MemberHome() {
 
   // ready-made presets: category pills; the gallery shows the chosen collection's templates
   const [preset, setPreset] = useState(null)
-  const toonLast = (c) => /toon|cartoon/i.test(`${c.id} ${c.name}`) // cartoon-style categories (Toon World) go to the end of the pills; the others keep their order
-  const presets = [...collections.filter((c) => !toonLast(c)), ...collections.filter(toonLast)]
+  const presets = collections // already in the admin's category order (Trending first)
   const activePreset = presets.find((c) => c.id === preset) || presets[0]
   const presetItems = activePreset ? categoryItems(activePreset.id) : []
 
