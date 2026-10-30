@@ -40,11 +40,13 @@ function GuestHome() {
 
         {/* 1. Hero: centred headline, the creation bar, info cards (free coins, cost, plans), a collage of trending looks */}
         <section aria-label="Start" className="relative isolate overflow-hidden bg-[#000000] bg-[url('/images/bg.png')] bg-cover bg-center px-4 pb-0 pt-20 sm:px-6 lg:px-8 lg:pt-28">
+          <span aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(0,0,0,0.78)_0%,rgba(0,0,0,0.6)_8%,rgba(0,0,0,0.4)_16%,rgba(0,0,0,0.2)_28%,rgba(0,0,0,0.07)_40%,rgba(0,0,0,0)_50%,rgba(0,0,0,0.07)_60%,rgba(0,0,0,0.2)_72%,rgba(0,0,0,0.4)_84%,rgba(0,0,0,0.6)_92%,rgba(0,0,0,0.78)_100%),linear-gradient(to_bottom,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.04)_14%,rgba(0,0,0,0)_24%,rgba(0,0,0,0.14)_38%,rgba(0,0,0,0.42)_52%,rgba(0,0,0,0.72)_64%,rgba(0,0,0,0.9)_76%,rgba(0,0,0,0.97)_88%,rgb(0,0,0)_100%)]" />
           <div className="mx-auto flex max-w-[1100px] flex-col items-center text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#101011]/60 px-4 py-1.5 text-[13px] font-semibold backdrop-blur-md text-[#FF3DF2]"><SparkIcon className="size-3.5 text-[#FF3DF2]" />AI photo and video creation</span>
             <h1 className="mt-6 text-[52px] drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)] lg:text-[76px]">Create stunning <span className="grad-text">photos</span><br />and <span className="grad-text">videos</span> with AI</h1>
             <p className="mt-6 max-w-[560px] text-[18px] leading-relaxed text-[#D4D4D8]">Pick a template, add your photo and get a professional result in moments. Video creation is on its way.</p>
 
+            <div className="relative flex w-full flex-col items-center">
             <form onSubmit={start} className="glow-border mt-9 flex w-full max-w-[760px] items-center gap-1.5 rounded-[22px] border border-white/[0.14] bg-[#101011]/60 p-1.5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl transition-[border-color,box-shadow] duration-300 sm:gap-2 sm:p-2">
               <GlowBorder />
               <div className="flex shrink-0 rounded-[16px] border border-white/[0.08] bg-black/30 p-1" role="tablist" aria-label="What to create">
@@ -59,6 +61,7 @@ function GuestHome() {
             </form>
 
             <HeroInfoCards />
+            </div>
           </div>
 
           {/* the hero's featured carousel: the admin's Trending list only (no fallback); endless right-to-left glide */}
