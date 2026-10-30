@@ -29,12 +29,12 @@ export function useTrendingPicks() {
 }
 
 /** The "See all" button: compact, one look everywhere, placed on the right of a section's heading row. */
-export const SeeAll = ({ to }) => <Link to={to} className="btn-dark shrink-0 !px-5 !py-2 !text-[14px]">See all</Link>
+export const SeeAll = ({ to }) => <Link to={to} className="btn-dark shrink-0 !px-4 !py-2 !text-[13px] md:!px-5 md:!text-[14px]">See all</Link>
 
 // Section heading: title (and optional subtitle) on the left, the "See all" button (when `to` is given) on the right of the same row.
 export const Head = ({ title, sub, to }) => (
-  <div className="section-head">
-    <div><h2 className="section-title">{title}</h2>{sub && <p className="mt-1.5 text-[15px] text-[#A1A1AA]">{sub}</p>}</div>
+  <div className="section-head max-md:!mb-3 max-md:flex-nowrap max-md:items-center max-md:gap-3">
+    <div className="max-md:min-w-0"><h2 className="section-title max-md:!text-[20px]">{title}</h2>{sub && <p className="mt-1.5 text-[15px] text-[#A1A1AA] max-md:mt-0.5 max-md:text-[13px] max-md:leading-snug">{sub}</p>}</div>
     {to && <SeeAll to={to} />}
   </div>
 )

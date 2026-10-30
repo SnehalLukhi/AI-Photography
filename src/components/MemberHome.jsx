@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from './Header.jsx'
 import TemplateCard from './TemplateCard.jsx'
-import { TopCarousel } from './MobileHome.jsx'
+import MobileHome, { TopCarousel } from './MobileHome.jsx'
 import { Head, FeaturedCarousel, CategoryRows, getCollections, useTrendingPicks } from './homeParts.jsx'
 import { templatesByIds, generateUrl, categoryItems } from '../data/templates.js'
 import { listGenerations } from '../lib/aiPhotography.js'
@@ -70,10 +70,11 @@ export default function MemberHome() {
 
   return (
     <>
-      <div className="w-full text-white">
-        <div className="w-full px-4 pb-2 pt-5 sm:px-6 md:pb-12 lg:px-8">
+      <MobileHome trending={trendingPicks} />
+      <div className="w-full text-white max-md:hidden">
+        <div className="w-full px-4 pb-2 pt-5 max-md:pt-0 sm:px-6 md:pb-12 lg:px-8">
           {/* featured carousel */}
-          <section aria-label="Featured">
+          <section aria-label="Featured" className="max-md:hidden">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
               <div><p className="text-[14px] font-semibold text-[#FF3DF2]">Welcome back</p><h1 className="text-[28px] sm:text-[36px]">Hi {first}, what will you create today?</h1></div>
             </div>
@@ -82,7 +83,7 @@ export default function MemberHome() {
           </section>
 
           {/* quick tools */}
-          <section aria-label="Tools" className="mt-8">
+          <section aria-label="Tools" className="mt-8 max-md:hidden">
             <Head title="Tools & shortcuts" />
             <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-1 pt-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:gap-2 lg:overflow-visible lg:px-0">
               {TOOLS.map(([label, to, d, beta]) => (
@@ -96,7 +97,7 @@ export default function MemberHome() {
 
           {/* ready-made presets */}
           {collections.length > 0 && (
-            <section aria-label="Ready-made presets" className="mt-9">
+            <section aria-label="Ready-made presets" className="mt-9 max-md:hidden">
               <Head title="Ready-made presets" sub="Pick a style, then pick a look." />
               <div role="tablist" aria-label="Preset categories" className="no-scrollbar -mx-4 mb-4 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
                 {presets.map((c) => <button key={c.id} type="button" role="tab" aria-selected={activePreset?.id === c.id} onClick={() => setPreset(c.id)} className={`chip shrink-0 ${activePreset?.id === c.id ? 'chip-on' : ''}`}>{c.category || c.name}</button>)}
@@ -107,7 +108,7 @@ export default function MemberHome() {
 
           {/* trending */}
           {trendingPicks.length > 0 && (
-            <section aria-label="Trending" className="mt-9">
+            <section aria-label="Trending" className="mt-9 max-md:mt-0">
               <Head title="Trending templates" sub="Popular looks picked by the Pictrify team." to="/explore?category=trending" />
               <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 md:gap-3 xl:grid-cols-6">
                 {trendingPicks.slice(0, 12).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}

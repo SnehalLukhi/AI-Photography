@@ -27,10 +27,10 @@ export default function WelcomePopup({ onClose: finish }) {
   }, [onClose])
 
   return (
-    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#000000]/45 p-4`} onClick={onClose}>
+    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#000000]/45 p-4 max-sm:items-end max-sm:p-0`} onClick={onClose}>
       <Confetti />
       <div role="dialog" aria-modal="true" aria-labelledby="welcome-title" onClick={(e) => e.stopPropagation()}
-        className="welcome-card relative w-full max-w-[400px] overflow-hidden rounded-[32px] bg-[#191919] px-7 pb-8 pt-9 text-center shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
+        className="welcome-card relative w-full max-w-[400px] overflow-hidden rounded-[32px] bg-[#191919] px-7 pb-8 pt-9 text-center max-sm:max-w-none max-sm:rounded-b-none max-sm:rounded-t-[30px] shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
         <button type="button" onClick={onClose} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-lg leading-none text-[#A1A1AA] transition hover:bg-[#2C2C2F] hover:text-[#FFFFFF]">×</button>
         <div className="welcome-coin relative mx-auto grid size-[72px] place-items-center rounded-full bg-[#262310]">
           <img src={brandImages.coin} alt="" width="48" height="48" className="size-12 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.18)]" />

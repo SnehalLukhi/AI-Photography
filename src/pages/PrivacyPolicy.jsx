@@ -84,10 +84,10 @@ export default function PrivacyPolicy() {
   const nav = useNavigate()
   return (
     <div className="px-5 pb-16 pt-8 sm:px-8 sm:pt-14 lg:px-10">
-      <button type="button" onClick={() => nav(-1)} className="mb-3 inline-flex cursor-pointer items-center gap-1.5 text-[13px] text-[#A1A1AA] hover:text-[#FFFFFF] md:hidden"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Back</button>
+      <button type="button" onClick={() => nav(-1)} className="mb-3 hidden cursor-pointer items-center gap-1.5 text-[13px] text-[#A1A1AA] hover:text-[#FFFFFF]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Back</button>
       <article className="mx-auto max-w-[720px]">
-        <p className="badge">Legal</p>
-        <h1 className="mt-4 w-fit text-[38px] font-extrabold leading-[1.05] tracking-tight sm:text-[56px]">Privacy Policy</h1>
+        <p className="badge max-md:hidden">Legal</p>
+        <h1 className="mt-4 max-md:hidden w-fit text-[38px] font-extrabold leading-[1.05] tracking-tight sm:text-[56px]">Privacy Policy</h1>
         <p className="mb-2 mt-5 text-[15px] text-[#A1A1AA]"><strong className="font-semibold text-[#FFFFFF]">Effective Date:</strong> 21 October 2026</p>
         {sections.map(([h, subs, blocks]) => (
           <section key={h}>

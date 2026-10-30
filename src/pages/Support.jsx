@@ -8,7 +8,7 @@ import { formatDate, formatMoney } from '../lib/format.js'
 import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
 const Hero = ({ eyebrow, title, sub, center = false }) => (
-  <header className="mx-auto w-full max-w-[1100px] px-5 pt-8 sm:px-8 sm:pt-12 lg:px-10">
+  <header className="mx-auto w-full max-w-[1100px] px-5 pt-8 max-md:hidden sm:px-8 sm:pt-12 lg:px-10">
     <div className={`relative overflow-hidden rounded-3xl bg-[#191919] px-6 py-12 sm:px-12 sm:py-16 ${center ? 'flex flex-col items-center text-center' : ''}`}>
       <p className="badge relative">{eyebrow}</p>
       <h1 className="relative mt-4 w-fit text-[40px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[60px]">{title}</h1>
@@ -88,11 +88,11 @@ export function Help() {
   return (
     <div className="pb-10">
       <header className="mx-auto w-full max-w-[1100px] px-5 pt-8 sm:px-8 sm:pt-12 lg:px-10">
-        <div className={`flex flex-col items-center rounded-[28px] px-6 py-12 text-center sm:px-12 sm:py-14 ${GLASS}`}>
-          <p className="badge">Support</p>
-          <h1 className="mt-4 text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[52px]">How can we help?</h1>
-          <p className="mt-3 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[17px]">Answers, how-tos and troubleshooting for Pictrify.</p>
-          <label className="mt-7 flex h-14 w-full max-w-[560px] items-center gap-3 rounded-2xl border-[1.5px] border-white/[0.22] bg-[#1C1C1E] px-5 transition-colors focus-within:border-white/50">
+        <div className={`flex flex-col items-center rounded-[28px] px-6 py-12 text-center sm:px-12 sm:py-14 max-md:!border-0 max-md:!bg-transparent max-md:!bg-none max-md:!p-0 max-md:!shadow-none ${GLASS}`}>
+          <p className="badge max-md:hidden">Support</p>
+          <h1 className="mt-4 max-md:hidden text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[52px]">How can we help?</h1>
+          <p className="mt-3 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] max-md:hidden sm:text-[17px]">Answers, how-tos and troubleshooting for Pictrify.</p>
+          <label className="mt-7 flex h-14 max-md:mt-1 max-md:!rounded-[18px] max-md:!border-0 max-md:!bg-[#191919] w-full max-w-[560px] items-center gap-3 rounded-2xl border-[1.5px] border-white/[0.22] bg-[#1C1C1E] px-5 transition-colors focus-within:border-white/50">
             <HelpIcon d="M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4-4" className="size-5 text-[#A1A1AA]" />
             <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search help" placeholder="Search help, e.g. coins, upload, refund" className="min-w-0 flex-1 bg-transparent text-[15px] text-white outline-none placeholder:text-[#8E8E93]" />
             {q && <button type="button" onClick={() => setQ('')} aria-label="Clear search" className="grid size-7 cursor-pointer place-items-center rounded-full bg-white/10 text-[#E8E8EA]"><svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>}
@@ -178,9 +178,9 @@ export function Contact() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
         {/* left: what this is and how to get the quickest review */}
         <aside className={`self-start rounded-[28px] p-7 sm:p-9 ${GLASS}`}>
-          <p className="badge">Support request</p>
-          <h1 className="mt-4 text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[44px]">Contact support</h1>
-          <p className="mt-3 text-[16px] leading-relaxed text-[#A1A1AA]">Tell us what happened and our team will review it.</p>
+          <p className="badge max-md:hidden">Support request</p>
+          <h1 className="mt-4 max-md:hidden text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[44px]">Contact support</h1>
+          <p className="mt-3 max-md:hidden text-[16px] leading-relaxed text-[#A1A1AA]">Tell us what happened and our team will review it.</p>
           <ul className="mt-7 space-y-4">
             {tips.map(([d, t]) => (
               <li key={t} className="flex items-start gap-3.5">
@@ -291,7 +291,8 @@ const Chev = () => <svg className="size-4 shrink-0 text-[#A1A1AA]" viewBox="0 0 
 
 /** Phone-only "Me" menu, like the reference: Premium card, a Plan & purchases dropdown and a short list of pages. */
 function MobileMe() {
-  const { signedIn, userEmail, coins } = useStudio()
+  const nav = useNavigate()
+  const { signedIn, userEmail, coins, signOut } = useStudio()
   const purchases = usePurchases()
   const plan = useSubscription()
   const lastPlan = purchases?.find((p) => p.kind === 'plan')
@@ -300,16 +301,17 @@ function MobileMe() {
   const row = 'flex h-[54px] w-full items-center gap-3.5 border-b border-[#3A3A3E] px-4 text-left text-[14px] text-[#FFFFFF] last:border-b-0'
   return (
     <div className="mx-auto w-full max-w-[560px] px-4 pb-32 pt-4 md:hidden">
-      {signedIn && <p className="mb-3 truncate px-1 text-[13px] text-[#A1A1AA]">{userEmail}</p>}
-      <div className="relative overflow-hidden rounded-[28px] bg-[#FF3DF2] p-6 shadow-[0_18px_40px_rgba(0,0,0,0.14)]">
-        <div className="absolute right-6 top-6 text-white"><svg className="size-11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6.5" /><path d="M8.2 14.2V21.5l3.8-2.4 3.8 2.4V14.2" /><path d="M12 5.6l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3z" fill="currentColor" stroke="none" /></svg></div>
-        <h2 className="w-fit text-[28px] font-extrabold text-white">Premium</h2>
-        <p className="mt-2 text-[14px] text-white/90">Unlock ultimate creative power.</p>
-        <ul className="mt-4 space-y-2.5 text-[14px] text-white">
-          {['1000+ Templates', 'HD Quality Outputs'].map((t) => <li key={t} className="flex items-center gap-2.5"><span className="size-1.5 rounded-full bg-[#1C1C1E]" />{t}</li>)}
-        </ul>
-        <button type="button" onClick={() => setPlansOpen(true)} className="btn-primary mt-6 !h-14 !w-full !text-[16px]">Upgrade to Pro</button>
+      {signedIn && (
+        <div className="flex items-center gap-4 px-1 pb-4">
+          <span className="grid size-16 shrink-0 place-items-center rounded-full bg-[#FF3DF2] text-[28px] font-semibold text-white">{(userEmail[0] || 'P').toUpperCase()}</span>
+          <div className="min-w-0"><p className="truncate text-[20px] font-bold text-white">{displayName(userEmail)}</p><p className="truncate text-[13px] text-[#A1A1AA]">{userEmail}</p></div>
+        </div>
+      )}
+      <div className="flex items-center justify-between gap-3 rounded-[24px] bg-[#FF3DF2] p-5 shadow-[0_16px_34px_-16px_rgba(255,61,242,0.7)]">
+        <div className="min-w-0"><p className="text-[13px] text-white/85">Total Coins</p><p className="text-[32px] font-extrabold leading-tight text-white">{signedIn ? coins.toLocaleString('en-US') : '-'}</p></div>
+        <Link to="/coins" className="shrink-0 rounded-[16px] bg-white px-5 py-3 text-[15px] font-semibold text-[#000000]">Add coins</Link>
       </div>
+      <button type="button" onClick={() => setPlansOpen(true)} className="btn-primary mt-3 !h-14 !w-full !text-[16px]">Upgrade to Pro</button>
       <div className="mt-4 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#191919]">
         <button type="button" onClick={() => setPlanOpen((o) => !o)} aria-expanded={planOpen} aria-controls="plan-purchases" className="flex h-[54px] w-full cursor-pointer items-center gap-3.5 px-4 text-left text-[14px] font-semibold text-[#FFFFFF]">
           {I('M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z')}<span className="flex-1">Plan &amp; purchases</span>
@@ -328,6 +330,7 @@ function MobileMe() {
       <div className="mt-4 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#191919]">
         {meItems.map(([label, to, d]) => <Link key={label} to={to} className={row}>{I(d)}<span className="flex-1">{label}</span><Chev /></Link>)}
       </div>
+      {signedIn && <button type="button" onClick={() => { signOut(); nav('/') }} className="mt-4 flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-[22px] bg-[#191919] text-[16px] font-semibold text-[#FF6B6B]">Log out</button>}
       {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
     </div>
   )
@@ -433,9 +436,9 @@ export function Feedback() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
         {/* left: what this is */}
         <aside className={`self-start rounded-[28px] p-7 sm:p-9 ${GLASS}`}>
-          <p className="badge">Product feedback</p>
-          <h1 className="mt-4 text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[44px]">Feedback</h1>
-          <p className="mt-3 text-[16px] leading-relaxed text-[#A1A1AA]">Tell us about your experience and how we can make Pictrify better.</p>
+          <p className="badge max-md:hidden">Product feedback</p>
+          <h1 className="mt-4 max-md:hidden text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[44px]">Feedback</h1>
+          <p className="mt-3 max-md:hidden text-[16px] leading-relaxed text-[#A1A1AA]">Tell us about your experience and how we can make Pictrify better.</p>
           <ul className="mt-7 space-y-4">
             {tips.map(([d, t]) => (
               <li key={t} className="flex items-start gap-3.5">
@@ -493,9 +496,9 @@ export function Legal({ kind }) {
   return (
     <div className="px-5 pb-16 pt-8 sm:px-8 sm:pt-14 lg:px-10">
       <div className="mx-auto max-w-[720px] break-words text-[16px] text-[#A1A1AA]">
-        <button type="button" onClick={() => nav(-1)} className="mb-3 inline-flex cursor-pointer items-center gap-1.5 text-[13px] hover:text-[#FFFFFF] md:hidden"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Back</button>
-        <p className="badge">Legal</p>
-        <h1 className="mb-6 mt-4 w-fit text-[38px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[56px]">{title}</h1>
+        <button type="button" onClick={() => nav(-1)} className="mb-3 hidden cursor-pointer items-center gap-1.5 text-[13px] hover:text-[#FFFFFF]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>Back</button>
+        <p className="badge max-md:hidden">Legal</p>
+        <h1 className="mb-6 mt-4 w-fit max-md:hidden text-[38px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[56px]">{title}</h1>
         <p className="mb-4 leading-relaxed"><strong className="font-semibold text-[#FFFFFF]">Effective Date:</strong> {date || 'Placeholder'}</p>
         {sections.map(([h, blocks]) => (
           <div key={h}><h2 className="mb-3 mt-12 border-t border-[#3A3A3E] pt-8 text-[24px] font-extrabold leading-tight text-[#FFFFFF]">{h}</h2>{blocks.map(legalBlock)}</div>

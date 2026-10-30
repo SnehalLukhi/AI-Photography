@@ -42,7 +42,7 @@ export default function TemplateCard({ t, selected, onSelect, fav = false, fit =
         <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_closest-side_at_center,rgba(0,0,0,0.03)_30%,rgba(0,0,0,0.5)_100%)] opacity-0 [transition:opacity_350ms_ease] group-hover:opacity-100 group-focus-visible:opacity-100 group-data-[peek=true]:opacity-100" aria-hidden="true" />
         {fav && <Fav on={liked} toggle={() => (signedIn ? toggleFavorite(t.id) : openLogin())} />}
         {/* the name: plain text at the top-left of the picture (no bar behind it) */}
-        <span className={`pointer-events-none absolute inset-x-0 top-0 z-10 pb-6 pl-3 pt-3.5 opacity-0 [transition:opacity_350ms_ease] group-hover:opacity-100 group-focus-visible:opacity-100 group-data-[peek=true]:opacity-100 ${fav ? 'pr-12' : 'pr-3'}`}>
+        <span className={`pointer-events-none absolute inset-x-0 top-0 z-10 max-md:hidden pb-6 pl-3 pt-3.5 opacity-0 [transition:opacity_350ms_ease] group-hover:opacity-100 group-focus-visible:opacity-100 group-data-[peek=true]:opacity-100 ${fav ? 'pr-12' : 'pr-3'}`}>
           <span className="block break-words text-[14px] font-semibold leading-snug text-white drop-shadow-[0_1px_5px_rgba(0,0,0,0.85)]">{t.name}</span>
         </span>
         {/* the action pill: centred (left/top 50% + translate -50%), slides down from above into the centre; hovering the pill itself turns it theme pink */}

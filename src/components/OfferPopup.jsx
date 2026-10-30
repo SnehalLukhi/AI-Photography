@@ -67,10 +67,10 @@ export default function OfferPopup({ onClose: finish }) {
   const name = offer.name.replace(/ Premium$/, '')
 
   return (
-    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#000000]/45 p-4`} onClick={() => onClose()}>
+    <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#000000]/45 p-4 max-sm:items-end max-sm:p-0`} onClick={() => onClose()}>
       <StarBurst />
       <div role="dialog" aria-modal="true" aria-labelledby="offer-title" onClick={(e) => e.stopPropagation()}
-        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[32px] bg-[#191919] px-5 pb-7 pt-7 text-center shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:px-7">
+        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[32px] bg-[#191919] px-5 pb-7 pt-7 text-center max-sm:max-w-none max-sm:rounded-b-none max-sm:rounded-t-[30px] shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:px-7">
         <div className="pointer-events-none absolute inset-0 bg-[rgba(255,61,242,0.06)]" />
         <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-lg leading-none text-[#A1A1AA] transition hover:bg-[#2C2C2F] hover:text-[#FFFFFF]">×</button>
 

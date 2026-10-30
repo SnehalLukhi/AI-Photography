@@ -227,50 +227,90 @@ export function TopNav() {
 
 // ---------- phone chrome: top bar + a floating three-tab pill (Home, Diy, Me), like the reference ----------
 const tabs = [
-  { to: '/', label: 'Home', match: (p) => p === '/', d: 'M5 7v12a2 2 0 002 2h10M9 3h10a2 2 0 012 2v10a2 2 0 01-2 2H9a2 2 0 01-2-2V5a2 2 0 012-2zM14 6.5l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
-  { to: '/video', label: 'AI Video', match: (p) => p === '/video', d: 'M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM17 10l5-3v10l-5-3z' },
-  { to: '/explore', label: 'Photo', match: (p) => p === '/explore' || p === '/generate', d: 'M3 9h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 9l2.5-5 3 1.5L6 10.5M9.5 5.5l3 1.5L10 10.5M16 5.5l3 1.5-2.5 3.5M16 13l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z' },
-  { to: '/profile', label: 'Me', match: (p) => ['/creations', '/pricing', '/coins', '/payment-success', '/help', '/contact-us', '/contact-support', '/feedback', '/transactions', '/profile', '/privacy-policy', '/terms-conditions'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
+  { to: '/', label: 'Home', match: (p) => p === '/', d: 'M3 11l9-8 9 8M5 9.5V20a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V9.5' },
+  { to: '/explore', label: 'Explore', match: (p) => p === '/explore' || p === '/generate', d: 'M12 3a9 9 0 100 18 9 9 0 000-18zM15.5 8.5l-2 5-5 2 2-5z' },
+  { to: '/creations', label: 'Creations', match: (p) => p === '/creations', d: 'M4 4h7v9H4zM13 4h7v5h-7zM13 11h7v9h-7zM4 15h7v5H4z' },
+  { to: '/profile', label: 'Profile', match: (p) => ['/profile', '/pricing', '/coins', '/transactions', '/payment-success', '/help', '/contact-support', '/contact-us', '/feedback', '/privacy-policy', '/terms-conditions'].includes(p), d: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5' },
 ]
 
 function MobileTabs({ pathname }) {
   const { signedIn, openLogin } = useStudio()
-  const idx = Math.max(0, tabs.findIndex((t) => t.match(pathname)))
+  const idx = tabs.findIndex((t) => t.match(pathname))
   return (
-    <nav aria-label="Main" className="fixed left-1/2 z-[99] flex h-[62px] w-[86%] min-w-[290px] max-w-[400px] -translate-x-1/2 select-none items-center justify-around rounded-full border border-[#3A3A3E] bg-[#1C1C1E]/95 p-[5px] shadow-[0_10px_35px_rgba(0,0,0,0.16)] backdrop-blur-xl md:hidden" style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
-      <div className="pointer-events-none absolute top-1/2 z-[1] h-[50px] -translate-y-1/2 rounded-full bg-[#1C1C1E] ring-1 ring-inset ring-[#3A3A3E] transition-all duration-300" style={{ width: 'calc((100% - 10px) / ' + tabs.length + ')', left: `calc(5px + ${idx} * (100% - 10px) / ${tabs.length})` }} />
+    <nav aria-label="Main" className="fixed inset-x-3 z-[99] flex h-[66px] select-none items-center gap-1 rounded-[28px] border border-white/10 bg-[#191919]/95 p-2 shadow-[0_10px_34px_rgba(0,0,0,0.55)] backdrop-blur-xl md:hidden" style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
       {tabs.map((t, i) => (
-        <Link key={t.label} to={t.to} aria-label={t.label} aria-current={i === idx ? 'page' : undefined} onClick={t.to === '/profile' && !signedIn ? (e) => { e.preventDefault(); openLogin() } : undefined} className="relative z-[2] flex h-full flex-1 flex-col items-center justify-center gap-[2px] outline-none">
-          <svg className={`size-6 transition-all duration-300 ${i === idx ? 'text-[#FFFFFF] opacity-100' : 'text-[#FFFFFF] opacity-60'}`} fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
-          <span className={`text-[11px] tracking-wide transition-all duration-300 ${i === idx ? 'font-semibold text-[#FFFFFF]' : 'font-semibold text-[#A1A1AA]'}`}>{t.label}</span>
+        <Link key={t.label} to={t.to} aria-label={t.label} aria-current={i === idx ? 'page' : undefined} onClick={t.to === '/profile' && !signedIn ? (e) => { e.preventDefault(); openLogin() } : undefined} className={`flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[20px] outline-none transition-colors duration-200 active:scale-95 ${i === idx ? 'bg-[#2C2C2F]' : ''}`}>
+          <svg className={`size-[22px] ${i === idx ? 'text-[#FF3DF2]' : 'text-[#A1A1AA]'}`} fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24"><path d={t.d} strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <span className={`truncate text-[11px] ${i === idx ? 'font-semibold text-[#FFFFFF]' : 'font-medium text-[#A1A1AA]'}`}>{t.label}</span>
         </Link>
       ))}
     </nav>
   )
 }
 
+// phone header titles: the main pages get a big title with an accent underline; the rest get a back button and a smaller title
+const MAIN_PAGES = ['/', '/explore', '/creations', '/profile'] // the bottom-bar pages get the logo header; every other page gets a back arrow and its title
+const SUB_TITLES = { '/video': 'AI Video', '/coins': 'Coins', '/pricing': 'Plans', '/transactions': 'Transactions', '/profile': 'Profile', '/help': 'Help & Contact', '/contact-support': 'Contact', '/contact-us': 'Contact', '/feedback': 'Feedback', '/privacy-policy': 'Privacy Policy', '/terms-conditions': 'Terms', '/payment-success': 'Payment' }
+const MORE_ICONS = { Profile: 'M12 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM5 21c0-4 3-6.5 7-6.5s7 2.5 7 6.5', Transactions: 'M4 7h16M4 12h16M4 17h10', 'Help & Contact': 'M9.5 9a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2M12 17.2v.1M12 21a9 9 0 100-18 9 9 0 000 18z', Feedback: 'M4 5h16v11H9l-5 4z', 'Privacy Policy': 'M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z', Terms: 'M7 3h8l4 4v14H7zM14 3v5h5', 'Premium plans': 'M3 8l4 4 5-7 5 7 4-4-2 11H5z', 'AI Video': 'M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM17 10l5-3v10l-5-3z' }
+const MORE_LINKS = [['Transactions', '/transactions'], ['Help & Contact', '/help'], ['Feedback', '/feedback'], ['Privacy Policy', '/privacy-policy'], ['Terms', '/terms-conditions']]
+
+/** The phone "More" bottom sheet: every secondary page, plus log in / log out. */
+function MoreSheet({ onClose, onPlans }) {
+  const nav = useNavigate()
+  const { signedIn, openLogin, signOut } = useStudio()
+  useEffect(() => {
+    const k = (e) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', k)
+    return () => window.removeEventListener('keydown', k)
+  }, [onClose])
+  const go = (to) => { onClose(); if (to === '/profile' && !signedIn) openLogin(); else nav(to) }
+  const row = (label, onClick) => (
+    <button key={label} type="button" onClick={onClick} className="flex w-full cursor-pointer items-center gap-4 border-b border-[#2C2C2F] py-3 text-left text-[16px] font-semibold text-white last:border-0">
+      <span className="grid size-10 shrink-0 place-items-center rounded-[14px] bg-[#2C2C2F] text-[#FF3DF2]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={MORE_ICONS[label]} /></svg></span>{label}
+    </button>
+  )
+  return createPortal(
+    <div className="fixed inset-0 z-[400] md:hidden" role="dialog" aria-modal="true" aria-label="More">
+      <div className="login-fade absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="login-rise absolute inset-x-0 bottom-0 max-h-[88dvh] overflow-y-auto rounded-t-[30px] bg-[#191919] px-5 pb-6 pt-3">
+        <div className="mx-auto h-1 w-10 rounded-full bg-[#3A3A3E]" />
+        <div className="mb-2 mt-3 flex items-center justify-between"><h2 className="text-[22px] font-bold text-white">More</h2><button type="button" aria-label="Close" onClick={onClose} className="grid size-10 cursor-pointer place-items-center rounded-[14px] bg-[#2C2C2F] text-white"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg></button></div>
+        {row('Premium plans', () => { onClose(); onPlans() })}
+        {MORE_LINKS.map(([label, to]) => row(label, () => go(to)))}
+        <button type="button" onClick={() => { onClose(); if (signedIn) { signOut(); nav('/') } else openLogin() }} className="btn-primary mt-5 w-full !rounded-full !py-4 !text-[16px]">{signedIn ? 'Log out' : 'Log in'}</button>
+      </div>
+    </div>, document.body)
+}
+
 function MobileHeader({ generating }) {
   const { signedIn, openLogin, coins } = useStudio()
+  const { pathname } = useLocation()
+  const nav = useNavigate()
   const [lastMan, setLastMan] = useState(null)
+  const [more, setMore] = useState(false)
+  const main = MAIN_PAGES.includes(pathname)
+  const title = SUB_TITLES[pathname] || ''
+  const back = () => (window.history.length > 1 ? nav(-1) : nav('/'))
+  const chip = signedIn
+    ? <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className="flex h-11 items-center gap-2 rounded-full bg-[#191919] pl-2 pr-4 text-[15px] font-semibold text-[#FFFFFF]"><img src="/images/features/coin.svg" alt="" className="size-6 object-contain" />{coins.toLocaleString()}</Link>
+    : <button type="button" onClick={openLogin} aria-label="Claim 100 coins" className="flex h-11 items-center gap-2 rounded-full bg-[#191919] pl-2 pr-4 text-[15px] font-semibold text-[#FFFFFF] active:scale-95"><img src="/images/features/coin.svg" alt="" className="size-6 object-contain" />100</button>
   return (
     <>
-      <header className={`shine-line sticky top-0 z-50 flex h-[60px] items-center justify-between border-b border-[#3A3A3E] bg-[#101011]/95 px-4 backdrop-blur md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
-        <Logo size="sm" />
-        <div className="flex items-center gap-2">
-          <LastManButton onClick={() => setLastMan('plans')} />
-          {signedIn ? (
-            <>
-              <Link to={walletTarget(coins)} aria-label={`${coins} coins - open wallet`} className="flex h-8 items-center gap-1.5 rounded-full border border-[#3A3A3E] bg-[#1C1C1E] pl-1.5 pr-3 text-[12px] font-medium text-[#FFFFFF]"><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}</Link>
-              <ProfileMenu compact />
-            </>
-          ) : (
-            <>
-              <button type="button" onClick={openLogin} aria-label="Claim 100 coins" className="grid size-8 place-items-center rounded-full border border-[#3A3A3E] bg-[#1C1C1E] transition-transform active:scale-95"><img src="/images/features/coin.svg" alt="" className="size-[22px] object-contain" /></button>
-              <button type="button" onClick={openLogin} aria-label="Log in" className={`grid size-8 place-items-center rounded-full ${GRAD} text-[#FFFFFF] transition-transform active:scale-95`}><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0116 0" /></svg></button>
-            </>
-          )}
+      <header className={`relative z-50 flex h-[68px] items-center justify-between gap-3 bg-[#000000]/90 px-4 backdrop-blur md:hidden ${generating ? 'max-sm:hidden' : ''}`}>
+        {main ? (
+          <div className="min-w-0"><Logo size="sm" /></div>
+        ) : (
+          <div className="flex min-w-0 items-center gap-3">
+            <button type="button" aria-label="Back" onClick={back} className="grid size-11 shrink-0 cursor-pointer place-items-center rounded-[14px] bg-[#191919] text-white active:scale-95"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+            <span className="truncate text-[20px] font-bold text-white">{title}</span>
+          </div>
+        )}
+        <div className="flex shrink-0 items-center gap-2.5">
+          {chip}
+          {main && <button type="button" aria-label="More" onClick={() => setMore(true)} className="grid size-11 cursor-pointer place-items-center rounded-[14px] bg-[#191919] text-white active:scale-95"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></button>}
         </div>
       </header>
+      {more && <MoreSheet onClose={() => setMore(false)} onPlans={() => setLastMan('plans')} />}
       {lastMan === 'popup' && <LastManPopup onClose={() => setLastMan(null)} onUnlock={() => setLastMan('plans')} />}
       {lastMan === 'plans' && <PlansSheet onClose={() => setLastMan(null)} />}
     </>

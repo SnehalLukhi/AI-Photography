@@ -99,7 +99,7 @@ export default function Wallet({ tab = 'plans' }) {
   )
   return (
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-12 pt-6 text-[#FFFFFF] max-md:pb-32 sm:px-6 sm:pt-10 md:px-8 lg:px-10">
-      <header className={`mx-auto max-w-3xl text-center ${tab === 'plans' || tab === 'packs' ? 'max-md:hidden' : ''}`}>
+      <header className={`mx-auto max-w-3xl text-center max-md:hidden`}>
         <span className="pill-tag"><SparkIcon className="size-3.5 text-[#FF3DF2]" /><span>{HEAD[0]}</span></span>
         <h1 className="mt-5 font-display text-[36px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[52px] lg:text-[60px]">{HEAD[1]}<span className="grad-text">{HEAD[2]}</span></h1>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#A1A1AA] sm:text-lg">{sub}</p>
@@ -119,7 +119,7 @@ export default function Wallet({ tab = 'plans' }) {
         <>
         {/* ---------- phone: pick a plan from radio rows, then Continue ---------- */}
         <section aria-label="Choose your plan" className="md:hidden">
-          <div className="relative flex items-center justify-center pb-3 pt-1">
+          <div className="relative hidden items-center justify-center pb-3 pt-1">
             <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
             <h1 className="font-display text-[20px] font-bold text-[#FFFFFF]">Choose Your Plan</h1>
           </div>
@@ -195,7 +195,7 @@ export default function Wallet({ tab = 'plans' }) {
         <>
         {/* ---------- phone: pick a coin pack from radio rows, then Continue (same design as the plans picker) ---------- */}
         <section aria-label="Choose your coins" className="md:hidden">
-          <div className="relative flex items-center justify-center pb-3 pt-1">
+          <div className="relative hidden items-center justify-center pb-3 pt-1">
             <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
             <h1 className="font-display text-[20px] font-bold text-[#FFFFFF]">Get More Coins</h1>
           </div>

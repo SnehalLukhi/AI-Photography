@@ -33,11 +33,30 @@ async function readRealPhoto(file, kind) {
 const Svg = ({ d, className = 'size-4' }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
 
 /** One photo slot: a tile the size of the look - drop / browse a file, then the chosen photo with Replace / Remove. Same validation as before (onPick). */
-function PhotoTile({ kind, photo, onPick, onClear, error }) {
+function PhotoTile({ kind, photo, onPick, onClear, error, compact = false }) {
   const input = useRef()
   const [drag, setDrag] = useState(false)
   const choose = (f) => f && onPick(f)
   const what = kind === 'Photo' ? 'photo' : kind
+  if (compact) { // phones: a label above a square tile (upload icon, or the chosen photo)
+    return (
+      <figure className="flex w-[46%] max-w-[190px] flex-col items-center gap-3">
+        <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
+        <figcaption className="text-[15px] font-medium text-[#A1A1AA]">{kind === 'Photo' ? 'Your photo' : kind}</figcaption>
+        <div className="relative aspect-square w-full">
+          {photo ? (
+            <div className="absolute inset-0 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#191919]">
+              <img src={photo.url} alt={`Your ${what}`} className="size-full object-cover" />
+              <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2 top-2 grid size-8 cursor-pointer place-items-center rounded-full bg-[#000000]/80 text-white"><Svg d="M6 6l12 12M18 6L6 18" /></button>
+            </div>
+          ) : (
+            <button type="button" onClick={() => input.current.click()} aria-label={kind === 'Photo' ? 'Add your photo' : `Add ${kind}`} className="absolute inset-0 grid cursor-pointer place-items-center rounded-[24px] border-[1.5px] border-[#3A3A3E] bg-[#191919] text-[#FF3DF2] transition-colors active:bg-[#222]"><Svg d="M12 16V5M7 10l5-5 5 5M4 19h16" className="size-9" /></button>
+          )}
+          {error && <p role="alert" className="absolute inset-x-1.5 bottom-1.5 z-10 rounded-lg border-l-[3px] border-[#E5484D] bg-[#2A1216] px-2 py-1.5 text-[11px] leading-snug text-[#FFD9DC]">{error}</p>}
+        </div>
+      </figure>
+    )
+  }
   return (
     <figure className="flex min-w-0 flex-1 flex-col items-center gap-2.5 lg:flex-none">
       <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
@@ -90,7 +109,7 @@ function Compare({ before, after, alt }) {
 
 function Generator({ asset }) {
   const nav = useNavigate()
-  const { signedIn, addCreation, signOut, coins, refreshUser, openLogin } = useStudio()
+  const { signedIn, addCreation, signOut, coins, refreshUser, openLogin, favorites, toggleFavorite } = useStudio()
   const [cost, setCost] = useState(150) // coins per generation (from the backend)
   useEffect(() => { getPlans().then((r) => setCost(r.costPerGeneration)).catch(() => {}) }, [])
   const slots = asset.slots
@@ -209,14 +228,14 @@ function Generator({ asset }) {
   return (
     <div className="relative isolate flex min-h-[calc(100dvh-60px)] flex-col overflow-hidden text-[#FFFFFF] md:min-h-[calc(100dvh-68px)]">
       {/* the selected template as the page background: strongly blurred, dimmed and darkened, so it is barely recognisable. A different template = a different page key, so it follows the selection by itself */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#000000]" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#000000] max-sm:hidden" aria-hidden="true">
         <img key={asset.image} src={asset.image} alt="" draggable="false" className="absolute -inset-40 size-[calc(100%+20rem)] max-w-none animate-fade-in object-cover opacity-60 blur-[160px]" />
         <div className="absolute inset-0 bg-[#000000]/55" />
       </div>
 
-      <button type="button" aria-label="Close" onClick={() => nav(-1)} className="absolute right-3 top-3 z-20 grid size-10 cursor-pointer place-items-center rounded-lg bg-[#2C2C2F]/80 text-[#C4C4C8] backdrop-blur transition-colors hover:bg-[#3A3A3E] hover:text-white sm:right-5 sm:top-5"><Svg d="M6 6l12 12M18 6L6 18" className="size-[18px]" /></button>
+      <button type="button" aria-label="Close" onClick={() => nav(-1)} className="absolute right-3 top-3 z-20 grid size-10 cursor-pointer place-items-center rounded-lg max-sm:hidden bg-[#2C2C2F]/80 text-[#C4C4C8] backdrop-blur transition-colors hover:bg-[#3A3A3E] hover:text-white sm:right-5 sm:top-5"><Svg d="M6 6l12 12M18 6L6 18" className="size-[18px]" /></button>
 
-      <div className="flex flex-1 flex-col lg:flex-row">
+      <div className="flex flex-1 flex-col max-sm:hidden lg:flex-row">
         <nav ref={strip} aria-label={`More ${asset.category} looks`} className="no-scrollbar flex shrink-0 gap-2 overflow-x-auto px-4 pb-3 pt-2 max-lg:order-last lg:max-h-[calc(100dvh-68px)] lg:w-[88px] lg:flex-col lg:overflow-y-auto lg:overflow-x-hidden lg:px-3 lg:py-4">
           {looks.map((t) => {
             const on = t.id === asset.id
@@ -250,11 +269,43 @@ function Generator({ asset }) {
               </div>
             </div>
 
-            <button type="button" disabled={!ready} onClick={next} className="btn-grad w-full max-w-[360px] !gap-3 !py-3.5 !text-[16px] shadow-[0_12px_32px_-12px_rgba(255,61,242,0.6)] disabled:!bg-[#2A2A2D] disabled:!bg-none disabled:text-[#8E8E93] disabled:opacity-100 disabled:shadow-none">
+            <button type="button" disabled={!ready} onClick={next} className="btn-grad w-full max-w-[360px] max-sm:sticky max-sm:bottom-4 max-sm:z-10 max-sm:!rounded-[20px] !gap-3 !py-3.5 !text-[16px] shadow-[0_12px_32px_-12px_rgba(255,61,242,0.6)] disabled:!bg-[#2A2A2D] disabled:!bg-none disabled:text-[#8E8E93] disabled:opacity-100 disabled:shadow-none">
               {signedIn ? 'Generate' : 'Continue to generate'}
               {real && <span className="inline-flex items-center gap-1.5 rounded-full bg-black/25 py-0.5 pl-1.5 pr-2.5 text-[13px] font-semibold"><img src="/images/features/coin.svg" alt="" className="size-4 object-contain" />{cost}</span>}
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* phones: a Photora-style page - back + title, one rounded card with the look, a square upload tile, and a fixed Generate bar */}
+      <div className="flex flex-1 flex-col pb-32 sm:hidden">
+        <div className="flex h-14 items-center gap-3 px-4">
+          <button type="button" aria-label="Back" onClick={() => nav(-1)} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-white active:bg-white/10"><Svg d="M15 5l-7 7 7 7" className="size-6" /></button>
+          <span className="flex-1" />
+          <Link to={collectionLink} replace className="shrink-0 rounded-full bg-[#191919] px-3.5 py-1.5 text-[13px] font-semibold text-[#FF3DF2]">Change look</Link>
+          {signedIn && <Link to={coins >= 150 ? '/coins' : '/pricing'} aria-label={`${coins} coins - open wallet`} className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[#191919] pl-1.5 pr-3 text-[13px] font-semibold text-white"><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}</Link>}
+        </div>
+        <section aria-label="The look" className="relative mx-4 mt-3 h-[50vh] min-h-[300px] overflow-hidden rounded-[30px] bg-[#191919] p-2.5">
+          <div className="relative size-full overflow-hidden rounded-[22px]">
+            <PImage src={asset.image} alt={`The look: ${asset.name}`} className="absolute inset-0 size-full object-cover" draggable="false" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+            <div className="absolute inset-x-4 bottom-4">
+              <h1 className="text-[22px] font-bold leading-tight text-white">{asset.name}</h1>
+              <p className="mt-1 text-[14px] text-white/75">{asset.category}{real ? `  ·  ${cost} coins` : ''}</p>
+            </div>
+          </div>
+        </section>
+        <div className="mt-6 flex items-start justify-center gap-4 px-4">
+          {slots.map((k, i) => <PhotoTile key={k} compact kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}
+        </div>
+        <div className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-3 bg-gradient-to-t from-[#000000] via-[#000000]/95 to-transparent px-4 pb-4 pt-8" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}>
+          <button type="button" aria-label={favorites.has(asset.id) ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={favorites.has(asset.id)} onClick={() => (signedIn ? toggleFavorite(asset.id) : openLogin())} className="grid size-14 shrink-0 cursor-pointer place-items-center rounded-full active:scale-90">
+            <svg viewBox="0 0 24 24" className={`size-7 ${favorites.has(asset.id) ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-white'}`} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+          </button>
+          <button type="button" disabled={!ready} onClick={next} className="btn-grad h-14 min-w-0 flex-1 whitespace-nowrap !gap-2.5 !rounded-full !py-0 !text-[17px] disabled:!bg-[#FF3DF2]/30 disabled:!bg-none disabled:text-white/60 disabled:opacity-100 disabled:shadow-none">
+            Generate
+            {real && <span className="inline-flex items-center gap-1.5 rounded-full bg-black/25 py-1 pl-1.5 pr-2.5 text-[14px] font-semibold"><img src="/images/features/coin.svg" alt="" className="size-[18px] object-contain" />{cost}</span>}
+          </button>
         </div>
       </div>
 

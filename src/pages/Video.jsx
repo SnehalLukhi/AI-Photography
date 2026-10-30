@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { VIDEO_TEMPLATES } from '../data/videoTemplates.js'
 import { useSearchParams } from 'react-router-dom'
 import PImage from '../components/PImage.jsx'
 
@@ -24,9 +25,6 @@ const PROMPT_PLACEHOLDER = {
   frames: 'Describe how the scene changes from the first frame to the last...',
   template: 'Optional: add details to the template, e.g. mood or camera movement...',
 }
-// Video templates will come from the Admin Panel (each with its own prompt and reference image) once the backend has a video-template endpoint. Until then the list is empty
-// and the Reference Templates tab shows its empty state. Shape the grid below expects: { id, name, image }.
-const VIDEO_TEMPLATES = []
 
 const Icon = ({ d, className = 'size-5' }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
 const UPLOAD = 'M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3'
@@ -75,8 +73,8 @@ export default function Video() {
   const ready = { text: !!prompt.trim(), image: !!image && !!prompt.trim(), frames: !!first && !!last && !!prompt.trim(), template: !!tpl && !!tplPhoto }[mode]
   return (
     <div className="w-full text-[#FFFFFF]">
-      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#101011_0%,#000000_100%)] px-4 pb-12 pt-12 text-center sm:px-6 lg:pt-16">
-        <h1 className="mx-auto max-w-3xl text-[40px] sm:text-[58px] lg:text-[68px]">Create <span className="grad-text">videos</span> as easily as photos</h1>
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#101011_0%,#000000_100%)] px-4 pb-12 pt-12 text-center max-md:pb-4 max-md:pt-2 sm:px-6 lg:pt-16">
+        <h1 className="mx-auto max-w-3xl max-md:hidden text-[40px] sm:text-[58px] lg:text-[68px]">Create <span className="grad-text">videos</span> as easily as photos</h1>
         <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[18px]">Turn a prompt, a photo or a template into a short video.</p>
       </section>
 

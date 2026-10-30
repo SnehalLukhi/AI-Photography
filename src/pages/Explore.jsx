@@ -6,6 +6,7 @@ import { exploreTabs, sortTabs, hairstyleTab, exploreEverything, categoryItems, 
 import { useTrending } from '../lib/useTrending.js'
 import { useStudio } from '../context/StudioContext.jsx'
 import { getPlans } from '../lib/aiPhotography.js'
+import Video from './Video.jsx'
 
 // "Hairstyle" is offered through its sub-categories (Man / Woman / Baby); only non-empty ones are listed.
 const subsWithItems = (parent) => { const subs = parent.subs.filter((s) => categoryItems(s.tabId).length); return subs.length ? [{ ...parent, subs }] : [] }
@@ -144,6 +145,7 @@ export default function Explore() {
       ratio={isTop ? shapes[t.image] || '9 / 16' : '9 / 16'} fit={isTop ? 'contain' : 'cover'} />
   )
 
+  const [kind, setKind] = useState(params.get('kind') === 'video' ? 'video' : 'image') // phones: Image templates | Video templates
   const fromHome = params.get('from') === 'home' // phones: opened from a Home category's "More"
   const { signedIn, favorites, toggleFavorite, openLogin } = useStudio()
   const mobileTitle = chip.id === 'trending' ? 'Trending Templates' : `${chip.name} Templates`
@@ -159,29 +161,37 @@ export default function Explore() {
         </div>
       ) : (
         <>
-          <header className="px-5 pt-7">
-            <p className="eyebrow">Discover AI styles</p>
-            <h1 className="mt-3 text-[40px] font-bold leading-[1.05] tracking-tight text-[#FFFFFF]">Explore <span className="grad-text">Templates</span></h1>
-            <p className="mt-3 text-[16px] leading-relaxed text-[#A1A1AA]">Find the perfect AI photo for start creating in seconds.</p>
-          </header>
-          <div className="mt-7">
-            <div role="tablist" aria-label="Collections" className="no-scrollbar flex gap-2 overflow-x-auto px-5">
-              {shownChips.map((c) => {
-                const on = chip.id === c.id
-                return (
-                  <button key={c.id} type="button" role="tab" aria-selected={on} onClick={() => setChip(c)} className={`chip h-10 shrink-0 outline-none ${on ? 'chip-on !font-semibold' : ''}`}>
-                    {c.name}
-                  </button>
-                )
-              })}
-            </div>
+          <form onSubmit={submitSearch} role="search" className="mx-4 mt-1 flex h-[52px] items-center gap-3 rounded-[18px] bg-[#191919] px-4 focus-within:ring-1 focus-within:ring-[#FF3DF2]/60">
+            <svg className="size-5 shrink-0 text-[#A1A1AA]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+            <input value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Search templates" placeholder="Search templates" className="min-w-0 flex-1 bg-transparent text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#8E8E93]" />
+          </form>
+          <div role="tablist" aria-label="Template type" className="mx-4 mt-4 grid grid-cols-2 gap-1 rounded-[18px] bg-[#191919] p-1">
+            {[['image', 'Images'], ['video', 'Videos']].map(([k, label]) => (
+              <button key={k} type="button" role="tab" aria-selected={kind === k} onClick={() => setKind(k)} className={`cursor-pointer rounded-[14px] py-2.5 text-[15px] font-semibold transition-colors ${kind === k ? 'bg-[#FFFFFF] text-[#000000]' : 'text-[#A1A1AA]'}`}>{label}</button>
+            ))}
           </div>
-          <div className="section-head mt-8 !mb-0 px-5"><h2 className="section-title">{mobileTitle}</h2><span className="text-[13px] text-[#A1A1AA]">{list.length} {list.length === 1 ? 'look' : 'looks'}</span></div>
+          {kind === 'image' && (
+          <div role="tablist" aria-label="Collections" className="no-scrollbar mt-5 flex gap-6 overflow-x-auto px-5">
+            {shownChips.map((c) => {
+              const on = !q && chip.id === c.id
+              return (
+                <button key={c.id} type="button" role="tab" aria-selected={on} onClick={() => setChip(c)} className={`relative shrink-0 cursor-pointer pb-2 text-[16px] outline-none transition-colors ${on ? 'font-bold text-white' : 'font-medium text-[#8E8E93]'}`}>
+                  {c.name}
+                  <span className={`absolute inset-x-0 bottom-0 mx-auto h-[3px] rounded-full bg-[#FF3DF2] transition-all duration-200 ${on ? 'w-6' : 'w-0'}`} />
+                </button>
+              )
+            })}
+          </div>
+          )}
         </>
       )}
-      <div className={`mt-5 grid gap-2 px-5 ${isTop ? 'grid-cols-1 items-start' : 'grid-cols-2'}`}>
+      {kind === 'video' && !fromHome ? (
+        <div className="mt-2"><Video /></div>
+      ) : (
+      <div className={`mt-4 grid gap-2.5 px-4 ${isTop ? 'grid-cols-1 items-start' : 'grid-cols-2'}`}>
         {list.map((t) => <TemplateCard key={t.id} t={t} fav ratio={isTop ? shapes[t.image] || '9 / 16' : '9 / 16'} fit={isTop ? 'contain' : 'cover'} onSelect={(look) => nav(generateUrl(look))} />)}
       </div>
+      )}
     </div>
 
     <div className="mx-auto hidden w-full max-w-none px-5 pb-8 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-10 md:block lg:px-10">

@@ -42,6 +42,7 @@ export default function LoginModal() {
   const nav = useNavigate()
   const { signIn, closeLogin } = useStudio()
   const [error, setError] = useState('')
+  const [mode, setMode] = useState('login') // phones: the Log in / Register tabs only change the wording - both use the same Google / Apple sign-in
   const { trendingPicks } = useTrendingPicks()
   const imageKey = trendingPicks.map((t) => t.image).join('|')
   const COLUMNS = useMemo(() => buildColumns(imageKey ? imageKey.split('|').filter(Boolean) : []), [imageKey])
@@ -64,9 +65,9 @@ export default function LoginModal() {
   const apple = social('apple', loginWithApple, 'Apple sign-in failed. Please try again.')
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-3 max-sm:items-end max-sm:p-0 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="login-title">
       <div className="login-fade absolute inset-0 bg-[#000000]/55 backdrop-blur-sm" onClick={closeLogin} />
-      <div className="login-rise relative flex max-h-[94dvh] min-h-[560px] w-full max-w-[1030px] overflow-hidden rounded-[32px] bg-[#191919] shadow-[0_30px_80px_rgba(0,0,0,0.35)] max-sm:min-h-0">
+      <div className="login-rise relative flex max-h-[94dvh] min-h-[560px] w-full max-w-[1030px] overflow-hidden rounded-[32px] bg-[#191919] shadow-[0_30px_80px_rgba(0,0,0,0.35)] max-sm:min-h-0 max-sm:rounded-b-none max-sm:rounded-t-[30px]">
         {/* left: the template photos (desktop only) */}
         <aside className="relative m-3.5 hidden w-[48%] shrink-0 overflow-hidden rounded-3xl bg-[#000000] ring-1 ring-white/15 lg:block" aria-hidden="true">
           <div className="absolute inset-[-18%] flex origin-center items-stretch justify-center gap-3 px-3" style={{ rotate: '16deg' }} aria-hidden="true">
@@ -103,14 +104,14 @@ export default function LoginModal() {
         </aside>
 
         {/* right: the form */}
-        <div className="relative flex min-w-0 flex-1 flex-col justify-center overflow-y-auto px-5 py-12 sm:px-10">
+        <div className="relative flex min-w-0 flex-1 flex-col justify-center overflow-y-auto px-5 py-12 max-sm:pb-8 max-sm:pt-9 sm:px-10">
           <button type="button" onClick={closeLogin} aria-label="Close" className="absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF] transition-colors hover:bg-[#2C2C2F]">
             <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" /></svg>
           </button>
           <div className="mx-auto w-full max-w-[400px] text-left">
-            <p className="badge">Sign in</p>
-            <h1 id="login-title" className="mt-4 text-[34px] font-extrabold leading-[1.05] tracking-tight sm:text-[44px]">Create your account</h1>
-            <p className="mt-3 text-[15px] leading-relaxed text-[#A1A1AA]"><span className="font-plexmono text-[#FFFFFF]">{WELCOME_COINS}</span> free coins are waiting for you. Sign up and make your first photo.</p>
+            <p className="badge max-sm:hidden">Sign in</p>
+            <h1 id="login-title" className="mt-4 text-[34px] font-extrabold leading-[1.05] tracking-tight max-sm:mt-0 max-sm:text-[28px] sm:text-[44px]"><span className="sm:hidden">{mode === 'login' ? 'Welcome back' : 'Create your account'}</span><span className="max-sm:hidden">Create your account</span></h1>
+            <p className="mt-3 text-[15px] leading-relaxed text-[#A1A1AA]"><span className="sm:hidden">{mode === 'login' ? 'Log in to see your creations.' : <><span className="font-plexmono text-[#FFFFFF]">{WELCOME_COINS}</span> free coins are waiting for you. Sign up and make your first photo.</>}</span><span className="max-sm:hidden"><span className="font-plexmono text-[#FFFFFF]">{WELCOME_COINS}</span> free coins are waiting for you. Sign up and make your first photo.</span></p>
 
             <div className="mt-6 grid grid-cols-3 divide-x divide-[#3A3A3E] rounded-2xl bg-[#191919] py-4">
               {['Browse all templates', 'Create Trending Images', 'Save your creation history'].map((text) => (

@@ -104,10 +104,10 @@ export default function Creations() {
   }
   return (
     <main className="mx-auto w-full max-w-none grow px-5 pb-8 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-10 lg:px-10">
-      <div className="flex flex-wrap items-end justify-between gap-4 rounded-3xl bg-[#191919] px-6 py-8 sm:px-8">
+      <div className="flex flex-wrap items-end justify-between gap-4 rounded-3xl bg-[#191919] px-6 py-8 max-md:!bg-transparent max-md:!p-0 sm:px-8">
         <div className="flex flex-col gap-3">
-          <p className="eyebrow">Your library</p>
-          <h1 className="text-[40px] font-bold leading-[1.05] tracking-tight sm:text-[56px]">My <span className="grad-text">Creations</span></h1>
+          <p className="eyebrow max-md:hidden">Your library</p>
+          <h1 className="max-md:hidden text-[40px] font-bold leading-[1.05] tracking-tight sm:text-[56px]">My <span className="grad-text">Creations</span></h1>
           <p className="text-[16px] text-[#A1A1AA]">{signedIn && list.length ? `${list.length}${nextToken ? '+' : ''} ${list.length === 1 ? 'creation' : 'creations'}. Tap one to compare, download or delete.` : 'Everything you create, saved in one place.'}</p>
         </div>
         {signedIn && <Link to="/explore" className="btn-primary !px-6 !py-3 !text-[14px]">New creation</Link>}
