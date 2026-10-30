@@ -27,12 +27,12 @@ export default function PaymentSuccess() {
         <h1 className="mt-2 font-display text-[36px] font-extrabold leading-none tracking-tight sm:text-[46px]">Payment successful</h1>
         <p className="mt-3 text-[15px] text-[#A1A1AA]">Thank you! Your coins have been added to your account.</p>
 
-        <div className="mt-8 rounded-[28px] bg-[#2A2A2D] px-5 py-6">
+        <div className="mt-8 rounded-[28px] bg-[#191919] px-5 py-6">
           <p className="eyebrow">New balance</p>
           <p className="mt-2 flex items-baseline justify-center gap-2"><span className="grad-text font-display text-[64px] font-extrabold leading-none tabular-nums">{balance.toLocaleString('en-US')}</span><span className="text-[15px] text-[#A1A1AA]">coins</span></p>
         </div>
 
-        <dl className="mt-4 rounded-[28px] border border-[#3A3A3E] bg-[#272629] text-left text-[14px]">
+        <dl className="mt-4 rounded-[28px] border border-[#3A3A3E] bg-[#191919] text-left text-[14px]">
           {rows.map(([label, value]) => (
             <div key={label} className="flex items-start justify-between gap-4 border-b border-[#3A3A3E] px-5 py-3.5 last:border-b-0"><dt className="shrink-0 text-[#A1A1AA]">{label}</dt><dd className="min-w-0 break-all text-right font-plexmono text-[13px] text-[#FFFFFF]">{value}</dd></div>
           ))}

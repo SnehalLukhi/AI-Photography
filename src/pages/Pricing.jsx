@@ -9,12 +9,12 @@ import { formatPrice } from '../lib/format.js'
 
 const pending = <span aria-hidden="true" className="invisible">₹000</span> // the price is not known until the server says which currency this visitor pays in
 
-const TINTS = ['#2A2A2D', '#271425', '#2A2A2D', '#102419', '#2A1C10']
+const TINTS = ['#1C1C1E'] // one neutral theme gray for every plan (no per-plan colour tints)
 
 const bar = (cls) => <span className={`block animate-pulse rounded-md bg-[#2C2C2F] ${cls}`} />
 /** Placeholder cards for the very first visit (no saved prices yet) until the server says which currency applies. */
 const SkeletonCard = () => (
-  <article aria-hidden="true" className="flex flex-col rounded-[32px] border border-[#3A3A3E] bg-[#272629] p-6 sm:p-8 lg:p-6 xl:p-8">
+  <article aria-hidden="true" className="flex flex-col rounded-[32px] border border-[#3A3A3E] bg-[#191919] p-6 sm:p-8 lg:p-6 xl:p-8">
     {bar('h-6 w-40')}
     <div className="mt-5">{bar('h-10 w-32')}</div>
     <div className="mt-4 flex items-center gap-2.5"><span className="size-9 animate-pulse rounded-full bg-[#2C2C2F]" />{bar('h-4 w-28')}</div>
@@ -23,7 +23,7 @@ const SkeletonCard = () => (
   </article>
 )
 const SkeletonRow = () => (
-  <div aria-hidden="true" className="flex items-center gap-3 rounded-[24px] border border-[#3A3A3E] bg-[#272629] p-4">
+  <div aria-hidden="true" className="flex items-center gap-3 rounded-[24px] border border-[#3A3A3E] bg-[#191919] p-4">
     <span className="size-5 shrink-0 rounded-full border-2 border-[#4A4A4F]" />
     <div className="flex-1 space-y-2">{bar('h-4 w-32')}{bar('h-3 w-24')}</div>
     {bar('h-6 w-20')}
@@ -75,7 +75,7 @@ export default function Pricing() {
           const on = p.id === selId
           return (
             <div key={p.id} role="radio" aria-checked={on} tabIndex={0} onClick={() => setSel(p.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(p.id)}
-              className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#272629]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
+              className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#191919]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
               {p.popular && <span className="badge absolute right-0 top-0 !rounded-none !rounded-bl-2xl !px-3 !py-1 !text-[10px] uppercase tracking-wide">Most Popular</span>}
               <div className="flex items-center gap-3">
                 <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#4A4A4F]'}`}>{on && <span className="size-2.5 rounded-full bg-[#101011] ring-1 ring-[#FF3DF2]/30" />}</span>
@@ -97,7 +97,7 @@ export default function Pricing() {
           )
         })}
       </div>
-      {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#272629] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
+      {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#191919] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
       <button type="button" disabled={!chosen?.price || busy === selId} onClick={() => chosen && choose(chosen)} className="btn-primary mt-5 !h-[54px] !w-full !text-[16px] !font-bold disabled:cursor-wait">{busy === selId ? 'Please wait…' : chosen ? chosen.price ? `Continue · ${chosen.price}` : 'Continue' : 'Continue'}</button>
       <p className="mt-3 text-center text-[11px] text-[#A1A1AA]">Auto-renewable subscription. Cancel anytime.</p>
     </div>
@@ -117,7 +117,7 @@ export default function Pricing() {
         <div className="grid grid-cols-1 gap-5 pt-3 sm:grid-cols-2 sm:pt-4 lg:grid-cols-3 lg:gap-6">
           {loading && [0, 1, 2].map((i) => <SkeletonCard key={i} />)}
           {!loading && plans.map((p, idx) => (
-            <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-[#FFFFFF] bg-[#101011] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
+            <article key={p.id} className={`card-orbit relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-[#FFFFFF] bg-[#191919] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
               {p.popular && <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(255,61,242,0.35)]">Most Popular</span>}
               <h3 className={`font-display ${p.popular ? 'pr-24 ' : ''}text-[22px] font-bold leading-tight sm:text-[26px] ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.name}</h3>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -134,14 +134,14 @@ export default function Pricing() {
                 {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2.5"><span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${p.popular ? 'bg-[#1C1C1E]/15 text-white' : 'bg-[#2A2A2D] text-[#FF3DF2]'}`}>✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className={`shrink-0 text-right font-semibold leading-snug ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{value}</dd></div>)}
               </dl>
               <button type="button" disabled={busy === p.id} onClick={() => choose(p)}
-                className={`${p.popular ? 'btn-grad' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`}>
+                className={`${p.popular ? 'btn-primary' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`}>
                 {busy === p.id ? 'Please wait…' : `Choose ${p.name}`}
               </button>
             </article>
           ))}
         </div>
         <p className="mt-8 text-center text-[11px] text-[#A1A1AA] sm:hidden">Auto-renewable subscription. Cancel anytime.</p>
-        {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#272629] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
+        {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#191919] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
       </section>
     </div>
     </>

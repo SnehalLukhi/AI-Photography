@@ -24,11 +24,11 @@ const readPackCache = () => { try { return JSON.parse(localStorage.getItem(PACK_
 let early = typeof location !== 'undefined' && location.pathname.startsWith('/coins') ? getCoinPacks().catch(() => null) : null
 const loadPacks = () => { const p = early || getCoinPacks(); early = null; return p.then((d) => d || getCoinPacks()) } // the early request failed: try once more
 
-const Skel = ({ className = '' }) => <div aria-hidden="true" className={`animate-pulse rounded-md border border-[#3A3A3E] bg-[#272629] ${className}`} />
+const Skel = ({ className = '' }) => <div aria-hidden="true" className={`animate-pulse rounded-md border border-[#3A3A3E] bg-[#191919] ${className}`} />
 
 const Tick = ({ dark }) => <span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${dark ? 'bg-[#1C1C1E]/15 text-white' : 'bg-[#2A2A2D] text-[#FF3DF2]'}`}>✓</span>
 
-const TINTS = ['#2A2A2D', '#271425', '#2A2A2D', '#102419', '#2A1C10']
+const TINTS = ['#1C1C1E'] // one neutral theme gray for every plan (no per-plan colour tints)
 
 export default function Wallet({ tab = 'plans' }) {
   const nav = useNavigate()
@@ -36,6 +36,7 @@ export default function Wallet({ tab = 'plans' }) {
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState('')
   const [sel, setSel] = useState(null) // phone plan picker: the chosen radio row
+  const [packSel, setPackSel] = useState(null) // phone coin-pack picker: the chosen radio row
 
   // plans
   const [plans, setPlans] = useState(() => (cachedPlans() ? buildPlans(cachedPlans()) : null))
@@ -74,6 +75,8 @@ export default function Wallet({ tab = 'plans' }) {
 
   const selId = sel || (plans?.find((p) => p.popular) || plans?.[0])?.id
   const chosen = plans?.find((p) => p.id === selId)
+  const packSelId = packSel || (packs.find((p) => p.popular) || packs[0])?.id
+  const packChosen = packs.find((p) => p.id === packSelId)
   const HEAD = {
     plans: ['Flexible plans', 'Choose ', 'Your Plan', 'Unlock premium templates, faster generation and more creative freedom.'],
     packs: ['Top up anytime', 'Get More ', 'Coins', null],
@@ -82,9 +85,9 @@ export default function Wallet({ tab = 'plans' }) {
   const sub = tab === 'packs'
     ? <>Buy a coin pack once - no subscription. Coins never expire{signedIn ? <>, and you have <strong className="text-[#FFFFFF]">{coins.toLocaleString()}</strong> now.</> : '.'}</>
     : HEAD[3]
-  const card = (popular) => `relative flex flex-col rounded-[32px] border p-6 transition-transform duration-200 sm:p-8 lg:p-6 xl:p-8 ${popular ? 'border-[#FFFFFF] bg-[#101011] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#3A3A3E] bg-[#272629]'}`
+  const card = (popular) => `card-orbit relative flex flex-col rounded-[32px] border p-6 transition-transform duration-200 sm:p-8 lg:p-6 xl:p-8 ${popular ? 'border-[#FFFFFF] bg-[#191919] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#3A3A3E] bg-[#191919]'}`
   const badge = <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(255,61,242,0.35)]">Most Popular</span>
-  const btn = (popular) => `${popular ? 'btn-grad' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`
+  const btn = (popular) => `${popular ? 'btn-primary' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`
   const ink = (popular) => (popular ? 'text-white' : 'text-[#FFFFFF]')
   const muted = (popular) => (popular ? 'text-white/65' : 'text-[#A1A1AA]')
   const offTag = (popular, pct) => <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${popular ? 'bg-[#FF3DF2] text-white' : 'bg-[#271425] text-[#FF3DF2]'}`}>{pct}% OFF</span>
@@ -96,7 +99,7 @@ export default function Wallet({ tab = 'plans' }) {
   )
   return (
     <div className="mx-auto w-full max-w-[1280px] px-4 pb-12 pt-6 text-[#FFFFFF] max-md:pb-32 sm:px-6 sm:pt-10 md:px-8 lg:px-10">
-      <header className={`mx-auto max-w-3xl text-center ${tab === 'plans' ? 'max-md:hidden' : ''}`}>
+      <header className={`mx-auto max-w-3xl text-center ${tab === 'plans' || tab === 'packs' ? 'max-md:hidden' : ''}`}>
         <span className="pill-tag"><SparkIcon className="size-3.5 text-[#FF3DF2]" /><span>{HEAD[0]}</span></span>
         <h1 className="mt-5 font-display text-[36px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[52px] lg:text-[60px]">{HEAD[1]}<span className="grad-text">{HEAD[2]}</span></h1>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#A1A1AA] sm:text-lg">{sub}</p>
@@ -132,7 +135,7 @@ export default function Wallet({ tab = 'plans' }) {
               const on = p.id === selId
               return (
                 <div key={p.id} role="radio" aria-checked={on} tabIndex={0} onClick={() => setSel(p.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(p.id)}
-                  className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#272629]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
+                  className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#191919]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
                   {p.popular && <span className="badge absolute right-0 top-0 !rounded-none !rounded-bl-2xl !px-3 !py-1 !text-[10px] uppercase tracking-wide">Most Popular</span>}
                   <div className="flex items-center gap-3">
                     <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#4A4A4F]'}`}>{on && <span className="size-2.5 rounded-full bg-[#101011] ring-1 ring-[#FF3DF2]/30" />}</span>
@@ -189,7 +192,56 @@ export default function Wallet({ tab = 'plans' }) {
       )}
 
       {tab === 'packs' && (
-        <section aria-label="Coin packs" className="mt-10 lg:mt-14">
+        <>
+        {/* ---------- phone: pick a coin pack from radio rows, then Continue (same design as the plans picker) ---------- */}
+        <section aria-label="Choose your coins" className="md:hidden">
+          <div className="relative flex items-center justify-center pb-3 pt-1">
+            <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+            <h1 className="font-display text-[20px] font-bold text-[#FFFFFF]">Get More Coins</h1>
+          </div>
+          <nav aria-label="Wallet sections" className="mb-4 flex justify-center gap-2">
+            {[['plans', '/pricing', 'Plans'], ['packs', '/coins', 'Coin packs'], ['history', '/transactions', 'History']].map(([k, to, label]) => (
+              <Link key={k} to={to} aria-current={tab === k ? 'page' : undefined} className={`chip ${tab === k ? 'chip-on' : ''}`}>{label}</Link>
+            ))}
+          </nav>
+          <p className="mb-5 text-center text-[14px] text-[#A1A1AA]">{sub}</p>
+          {packsFailed && <p role="alert" className="mb-4 rounded-2xl border border-[#F3B6C8] bg-[#FFF0F4] px-4 py-3 text-sm text-[#B4234F]">Could not load the coin packs. Please check your connection and refresh.</p>}
+          <div className="space-y-3" role="radiogroup" aria-label="Coin packs">
+            {!packData && !packsFailed && [0, 1, 2].map((i) => <Skel key={i} className="h-[76px] !rounded-[24px]" />)}
+            {packs.map((p) => {
+              const on = p.id === packSelId
+              const list = typeof p.price === 'object' ? p.price.USD : p.price
+              const per = packData.costPerGeneration ? Math.floor(p.coins / packData.costPerGeneration) : null
+              return (
+                <div key={p.id} role="radio" aria-checked={on} tabIndex={0} onClick={() => setPackSel(p.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setPackSel(p.id)}
+                  className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#191919]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
+                  {p.popular && <span className="badge absolute right-0 top-0 !rounded-none !rounded-bl-2xl !px-3 !py-1 !text-[10px] uppercase tracking-wide">Most Popular</span>}
+                  <div className="flex items-center gap-3">
+                    <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#4A4A4F]'}`}>{on && <span className="size-2.5 rounded-full bg-white" />}</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[16px] font-bold text-[#FFFFFF]">{p.name}</p>
+                      <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#A1A1AA]"><img src="/images/features/coin.svg" alt="" width="16" height="16" className="size-4 object-contain" />{p.coins.toLocaleString('en-US')} Coins</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="font-display text-[22px] font-bold leading-none text-[#FFFFFF]">{formatPrice(p.offer ? p.offer.price : list, p.currency)}</p>
+                      {p.offer && <p className="mt-1 text-[11px] text-[#A1A1AA]"><span className="line-through">{formatPrice(list, p.currency)}</span> <span className="font-bold text-[#FF3DF2]">{p.offer.discountPercent}% OFF</span></p>}
+                    </div>
+                  </div>
+                  {on && per != null && (
+                    <dl className="mt-3.5 space-y-2 border-t border-[#3A3A3E] pt-3 text-[12px] text-[#A1A1AA]">
+                      <div className="flex items-start gap-2"><span aria-hidden="true" className="text-[#FF3DF2]">✓</span><dt className="min-w-0 flex-1 leading-snug">Photos you can create</dt><dd className="shrink-0 text-right font-semibold text-[#FFFFFF]">About {per}</dd></div>
+                      <div className="flex items-start gap-2"><span aria-hidden="true" className="text-[#FF3DF2]">✓</span><dt className="min-w-0 flex-1 leading-snug">Coins never expire</dt><dd className="shrink-0 text-right font-semibold text-[#FFFFFF]">One-time</dd></div>
+                    </dl>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+          <button type="button" disabled={!packChosen || busy === packSelId} onClick={() => packChosen && buy(packChosen.id)} className="btn-primary mt-5 !h-[54px] !w-full !text-[16px] !font-bold disabled:cursor-wait">{busy === packSelId ? 'Please wait…' : packChosen ? `Continue · ${formatPrice(packChosen.offer ? packChosen.offer.price : (typeof packChosen.price === 'object' ? packChosen.price.USD : packChosen.price), packChosen.currency)}` : 'Continue'}</button>
+          <p className="mt-3 text-center text-[11px] text-[#A1A1AA]">One-time purchase. No subscription or automatic renewal.</p>
+          <p className="mt-4 text-center text-[13px] text-[#A1A1AA]">Prefer a subscription? <Link to="/pricing" className="font-semibold text-[#FFFFFF] underline">See the plans</Link></p>
+        </section>
+        <section aria-label="Coin packs" className="mt-10 hidden md:block lg:mt-14">
           {packsFailed && <p role="alert" className="rounded-2xl border border-[#F3B6C8] bg-[#FFF0F4] px-4 py-3 text-sm text-[#B4234F]">Could not load the coin packs. Please check your connection and refresh.</p>}
           <div className="grid grid-cols-1 gap-5 pt-3 sm:grid-cols-2 sm:pt-4 lg:grid-cols-3 lg:gap-6 xl:grid-cols-5">
             {!packData && !packsFailed && [0, 1, 2, 3, 4].map((k) => <Skel key={k} className="h-[300px] !rounded-[32px]" />)}
@@ -215,16 +267,17 @@ export default function Wallet({ tab = 'plans' }) {
           </div>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-sm text-[#A1A1AA]"><span>Prefer a subscription?</span><Link to="/pricing" className="btn-dark !px-5 !py-2.5 !text-[14px]">See the plans<span aria-hidden="true">→</span></Link></div>
         </section>
+        </>
       )}
 
       {tab === 'history' && (
         <section aria-label="History" className="mx-auto mt-10 max-w-4xl lg:mt-14">
           {!signedIn ? (
-            <div className="rounded-[32px] bg-[#272629] px-6 py-14 text-center"><p className="font-display text-[22px] font-bold">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-primary mt-5 !px-6 !py-2.5 !text-[14px]">Sign in</button></div>
+            <div className="rounded-[32px] bg-[#191919] px-6 py-14 text-center"><p className="font-display text-[22px] font-bold">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-primary mt-5 !px-6 !py-2.5 !text-[14px]">Sign in</button></div>
           ) : history === null ? (
             <div className="flex flex-col gap-3">{[0, 1, 2].map((k) => <Skel key={k} className="h-16 !rounded-2xl" />)}</div>
           ) : history.length ? (
-            <div className="overflow-hidden rounded-[32px] border border-[#3A3A3E] bg-[#272629] text-[14px]">
+            <div className="overflow-hidden rounded-[32px] border border-[#3A3A3E] bg-[#191919] text-[14px]">
               <div className="hidden grid-cols-[170px_1fr_150px_110px] bg-[#1C1C1E] px-6 py-3.5 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#A1A1AA] sm:grid"><span>Date</span><span>Item</span><span className="text-right">Paid</span><span className="text-right">Coins</span></div>
               {history.map((p) => (
                 <div key={p.paymentId} className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 border-b border-[#3A3A3E] px-5 py-4 last:border-b-0 sm:grid-cols-[170px_1fr_150px_110px] sm:px-6">
@@ -236,7 +289,7 @@ export default function Wallet({ tab = 'plans' }) {
               ))}
             </div>
           ) : (
-            <div className="rounded-[32px] bg-[#272629] px-6 py-14 text-center">
+            <div className="rounded-[32px] bg-[#191919] px-6 py-14 text-center">
               <span className="mx-auto grid size-16 place-items-center rounded-full bg-[#262310]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
               <p className="mt-5 font-display text-[22px] font-bold text-[#FFFFFF]">No transactions yet</p>
               <p className="mt-2 text-[14px] text-[#A1A1AA]">Subscriptions and coin purchases will show up here.</p>

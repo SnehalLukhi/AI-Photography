@@ -8,7 +8,7 @@ import { formatPrice } from '../lib/format.js'
 
 const usd = (amount, currency = 'USD') => formatPrice(amount, currency) // dollars, or rupees for visitors in India
 
-const TINTS = ['#2A2A2D', '#271425', '#2A2A2D', '#102419', '#2A1C10']
+const TINTS = ['#1C1C1E'] // one neutral theme gray for every plan (no per-plan colour tints)
 
 // The packs come from the backend; the last answer is kept in this browser so the cards appear at once on the next visit while a fresh copy loads.
 const CACHE_KEY = 'pictrify-coin-packs'
@@ -18,7 +18,7 @@ const readCache = () => { try { return JSON.parse(localStorage.getItem(CACHE_KEY
 let early = typeof location !== 'undefined' && location.pathname.startsWith('/coins') ? getCoinPacks().catch(() => null) : null
 const loadPacks = () => { const p = early || getCoinPacks(); early = null; return p.then((d) => d || getCoinPacks()) } // the early request failed: try once more
 
-const Skel = ({ className = '' }) => <div className={`animate-pulse rounded-[20px] border border-[#3A3A3E] bg-[#272629] ${className}`} />
+const Skel = ({ className = '' }) => <div className={`animate-pulse rounded-[20px] border border-[#3A3A3E] bg-[#191919] ${className}`} />
 
 /** "Get Coins": one-time coin packs (no subscription). Opened by the coin badge in the header. */
 export default function Coins() {
@@ -61,7 +61,7 @@ export default function Coins() {
       {failed && <p role="alert" className="mb-3 rounded-2xl border border-[#F3B6C8] bg-[#FFF0F4] px-4 py-3 text-sm text-[#B4234F]">Could not load the coin packs. Please check your connection and refresh.</p>}
       {loading && <><Skel className="h-[132px]" /><div className="mt-5 grid grid-cols-2 gap-3">{[0, 1, 2, 3].map((k) => <Skel key={k} className="h-[230px]" />)}</div></>}
       {featured && (
-        <div className="relative overflow-hidden rounded-[28px] bg-[#101011] ring-1 ring-[#FF3DF2]/30 p-4 pt-5 text-center">
+        <div className="relative overflow-hidden rounded-[28px] bg-[#191919] ring-1 ring-[#FF3DF2]/30 p-4 pt-5 text-center">
           <img src={brandImages.coin} alt="" width="56" height="56" className="absolute -left-1 -top-1 size-14 -rotate-12 object-contain" />
           <p className="font-display text-[22px] font-bold text-white">{featured.coins.toLocaleString('en-US')} Coins <span className="badge ml-1 align-middle !text-[10px]">BEST VALUE</span></p>
           <p className="mt-0.5 text-[12px] text-white/65">About {Math.floor(featured.coins / data.costPerGeneration)} photos · {featured.name}</p>
@@ -71,7 +71,7 @@ export default function Coins() {
       {rest.length > 0 && <p className="mb-3 mt-6 text-center font-display text-[16px] font-semibold text-[#FFFFFF]">Choose Your Coins</p>}
       <div className="grid grid-cols-2 gap-3">
         {rest.map((p, idx) => (
-          <article key={p.id} className={`relative flex flex-col items-center overflow-hidden rounded-[24px] border px-3 pb-3.5 pt-6 text-center ${p.popular ? 'border-[#FFFFFF] bg-[#272629]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
+          <article key={p.id} className={`relative flex flex-col items-center overflow-hidden rounded-[24px] border px-3 pb-3.5 pt-6 text-center ${p.popular ? 'border-[#FFFFFF] bg-[#191919]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
             {p.popular && <span className="badge absolute left-0 top-0 !rounded-none !rounded-br-xl !px-2.5 !py-1 !text-[10px]">Popular</span>}
             <span className="grid size-14 place-items-center rounded-full" style={{ background: TINTS[idx % TINTS.length] }}><img src={brandImages.coin} alt="" width="36" height="36" className="size-9 object-contain" /></span>
             <p className="mt-2.5 text-[16px] font-semibold text-[#FFFFFF]">{p.coins.toLocaleString('en-US')} Coins</p>
@@ -82,7 +82,7 @@ export default function Coins() {
           </article>
         ))}
       </div>
-      {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#272629] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
+      {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#191919] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
       <p className="mt-6 text-center text-[13px] font-semibold text-[#FFFFFF]"><span className="mr-1.5 text-[#FF3DF2]">✓</span>Safe &amp; Secure Payment</p>
       <p className="mx-auto mt-2 max-w-[300px] text-center text-[11px] leading-snug text-[#A1A1AA]">Payment is secure and processed instantly. This is a one-time purchase with no subscriptions or automatic renewals.</p>
       <p className="mt-4 text-center text-[13px] text-[#A1A1AA]">Prefer a subscription? <Link to="/pricing" className="font-semibold text-[#FFFFFF] underline">See the plans</Link></p>
@@ -108,7 +108,7 @@ export default function Coins() {
             const photos = Math.floor(p.coins / data.costPerGeneration)
             const list = typeof p.price === 'object' ? p.price.USD : p.price // regular price; with an offer the discounted price is what is charged
             return (
-              <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 sm:p-8 lg:p-6 ${p.popular ? 'border-[#FFFFFF] bg-[#101011] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
+              <article key={p.id} className={`card-orbit relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 sm:p-8 lg:p-6 ${p.popular ? 'border-[#FFFFFF] bg-[#191919] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
                 {p.popular && <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(255,61,242,0.35)]">Most Popular</span>}
                 <h3 className={`font-display ${p.popular ? 'pr-20 ' : ''}text-[20px] font-bold leading-tight sm:text-[24px] ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.name}</h3>
                 <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -121,14 +121,14 @@ export default function Coins() {
                 </div>
                 <p className={`mt-7 flex flex-1 items-start gap-2.5 text-[13px] sm:text-[14px] ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}><span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${p.popular ? 'bg-[#1C1C1E]/15 text-white' : 'bg-[#2A2A2D] text-[#FF3DF2]'}`}>✓</span><span>About <strong className={p.popular ? 'text-white' : 'text-[#FFFFFF]'}>{photos}</strong> {photos === 1 ? 'photo' : 'photos'}</span></p>
                 <button type="button" disabled={busy === p.id} onClick={() => buy(p)}
-                  className={`${p.popular ? 'btn-grad' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`}>
+                  className={`${p.popular ? 'btn-primary' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`}>
                   {busy === p.id ? 'Please wait…' : `Buy ${p.name}`}
                 </button>
               </article>
             )
           })}
         </div>
-        {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#272629] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
+        {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#191919] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
         <p className="mt-8 text-center text-sm text-[#A1A1AA]">Prefer a subscription? <Link to="/pricing" className="font-semibold text-[#FFFFFF] underline">See the plans</Link></p>
       </section>
     </div>

@@ -4,7 +4,7 @@ import { useStudio } from '../context/StudioContext.jsx'
 import { displayName } from './Header.jsx'
 import TemplateCard from './TemplateCard.jsx'
 import { TopCarousel } from './MobileHome.jsx'
-import { Head, SeeAll, FeaturedCarousel, CategoryRows, getCollections, useTrendingPicks } from './homeParts.jsx'
+import { Head, FeaturedCarousel, CategoryRows, getCollections, useTrendingPicks } from './homeParts.jsx'
 import { templatesByIds, generateUrl, categoryItems } from '../data/templates.js'
 import { listGenerations } from '../lib/aiPhotography.js'
 
@@ -28,9 +28,9 @@ const TOOLS = [
 /** A horizontally scrolling row of image cards (each shown whole, at its own shape). */
 function Rail({ items, onSelect, h = 'h-[220px] lg:h-[260px]', label }) {
   return (
-    <div className="no-scrollbar -mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0" aria-label={label}>
+    <div className="no-scrollbar -mx-4 flex snap-x scroll-px-4 gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:mx-0 lg:scroll-px-0 lg:px-0" aria-label={label}>
       {items.map((t) => (
-        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`group relative block ${h} aspect-[9/16] shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#3A3A3E] bg-[#272629] text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70`}>
+        <button key={t.id} type="button" onClick={() => onSelect(t)} aria-label={t.name} className={`card-orbit group relative block ${h} aspect-[9/16] shrink-0 cursor-pointer snap-start overflow-hidden rounded-[6px] border border-[#3A3A3E] bg-[#191919] text-left outline-none focus-visible:ring-2 focus-visible:ring-white/70`}>
           <img src={t.image} alt="" loading="lazy" draggable="false" className="size-full object-cover" />
           <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#000000]/90 to-transparent px-3.5 pb-2.5 pt-9"><span className="block truncate text-[13px] font-semibold text-white">{t.name}</span></span>
         </button>
@@ -72,19 +72,18 @@ export default function MemberHome() {
   return (
     <>
       <div className="w-full text-white">
-        <div className="w-full px-4 pb-12 pt-5 sm:px-6 lg:px-8">
+        <div className="w-full px-4 pb-2 pt-5 sm:px-6 md:pb-12 lg:px-8">
           {/* featured carousel */}
           <section aria-label="Featured">
             <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
               <div><p className="text-[14px] font-semibold text-[#FF3DF2]">Welcome back</p><h1 className="text-[28px] sm:text-[36px]">Hi {first}, what will you create today?</h1></div>
-              <SeeAll to="/explore?category=trending" />
             </div>
             <FeaturedCarousel items={feat} className="max-md:hidden" />
             {top.length > 0 && <div className="-mx-4 md:hidden"><TopCarousel items={top} /></div>} {/* phones: the same top carousel as the public home (one card at a time, Try It, dots) */}
           </section>
 
           {/* quick tools */}
-          <section aria-label="Tools" className="mt-8 max-md:hidden">
+          <section aria-label="Tools" className="mt-8">
             <Head title="Tools & shortcuts" />
             <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-1 pt-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:gap-2 lg:overflow-visible lg:px-0">
               {TOOLS.map(([label, to, d, beta]) => (
@@ -98,7 +97,7 @@ export default function MemberHome() {
 
           {/* ready-made presets */}
           {collections.length > 0 && (
-            <section aria-label="Ready-made presets" className="mt-9 max-md:hidden">
+            <section aria-label="Ready-made presets" className="mt-9">
               <Head title="Ready-made presets" sub="Pick a style, then pick a look." />
               <div role="tablist" aria-label="Preset categories" className="no-scrollbar -mx-4 mb-4 flex gap-2 overflow-x-auto px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
                 {presets.map((c) => <button key={c.id} type="button" role="tab" aria-selected={activePreset?.id === c.id} onClick={() => setPreset(c.id)} className={`chip shrink-0 ${activePreset?.id === c.id ? 'chip-on' : ''}`}>{c.category || c.name}</button>)}
@@ -109,7 +108,7 @@ export default function MemberHome() {
 
           {/* trending */}
           {trendingPicks.length > 0 && (
-            <section aria-label="Trending" className="mt-9 max-md:hidden">
+            <section aria-label="Trending" className="mt-9">
               <Head title="Trending templates" sub="Popular looks picked by the Pictrify team." to="/explore?category=trending" />
               <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 md:gap-3 xl:grid-cols-6">
                 {trendingPicks.slice(0, 12).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
@@ -118,14 +117,14 @@ export default function MemberHome() {
           )}
 
           {/* recent creations */}
-          <section aria-label="Recent creations" className="mt-9 max-md:hidden">
+          <section aria-label="Recent creations" className="mt-9">
             <Head title="Your recent creations" to={recent?.length ? '/creations' : undefined} />
             {recent === null ? (
-              <div className="flex gap-3">{[0, 1, 2, 3].map((i) => <div key={i} className="h-[220px] w-[160px] animate-pulse rounded-[20px] bg-[#272629]" aria-hidden="true" />)}</div>
+              <div className="flex gap-3">{[0, 1, 2, 3].map((i) => <div key={i} className="h-[220px] w-[160px] animate-pulse rounded-[20px] bg-[#191919]" aria-hidden="true" />)}</div>
             ) : recent.length ? (
               <Rail items={recent} onSelect={() => nav('/creations')} label="Recent creations" />
             ) : (
-              <div className="flex flex-col items-start gap-3 rounded-[24px] bg-[#272629] p-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col items-start gap-3 rounded-[24px] bg-[#191919] p-6 sm:flex-row sm:items-center sm:justify-between">
                 <div><h3 className="text-[19px]">Nothing here yet</h3><p className="mt-1 text-[14px] text-[#A1A1AA]">Your first creation will show up here.</p></div>
                 <Link to="/explore" className="btn-primary !px-6 !py-2.5">Pick a look<span className="arrow" aria-hidden="true">→</span></Link>
               </div>
@@ -134,7 +133,7 @@ export default function MemberHome() {
 
           {/* favourites */}
           {favs.length > 0 && (
-            <section aria-label="Favourites" className="mt-9 max-md:hidden">
+            <section aria-label="Favourites" className="mt-9">
               <Head title="Your favourites" sub="Looks you saved with the heart." />
               <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 md:gap-3 xl:grid-cols-6">
                 {favs.slice(0, 6).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
@@ -144,7 +143,7 @@ export default function MemberHome() {
 
           {/* every photo style as its own row */}
           {collections.length > 0 && (
-            <section aria-label="Photo styles" className="mt-9 max-md:hidden">
+            <section aria-label="Photo styles" className="mt-9">
               <div className="flex flex-col gap-8"><CategoryRows collections={collections} onSelect={pick} /></div>
             </section>
           )}

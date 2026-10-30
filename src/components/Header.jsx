@@ -74,7 +74,7 @@ function GetApp() {
         <PhoneIcon /><span>Get app</span><Chevron open={open} />
       </button>
       <div className={`absolute right-0 top-full z-50 w-[200px] pt-2 transition-all duration-200 ${open ? 'visible translate-y-0 opacity-100' : 'pointer-events-none invisible -translate-y-1 opacity-0'}`}>
-        <div className="flex flex-col items-center space-y-2.5 rounded-md border border-[#3A3A3E] bg-[#272629] p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.16)]">
+        <div className="flex flex-col items-center space-y-2.5 rounded-md border border-[#3A3A3E] bg-[#191919] p-3.5 text-center shadow-[0_16px_40px_rgba(0,0,0,0.16)]">
           <div className="w-full rounded bg-[#2C2C2F] px-2 py-1 text-[11px] font-semibold text-[#FFFFFF]">Android app</div>
           <div className="rounded bg-[#1C1C1E] p-1.5"><img src={brandImages.qr} alt="QR code" className="size-24 rounded object-contain" /></div>
           <p className="text-[11px] font-medium leading-tight text-[#A1A1AA]">Scan for the app</p>
@@ -211,7 +211,7 @@ export function TopNav() {
           <div className={`overflow-hidden transition-all duration-300 ease-in-out lg:hidden ${menu ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0'}`}>
             <div className="no-scrollbar max-h-[70vh] overflow-y-auto border-t border-[#3A3A3E]">
               <div className="space-y-0.5 px-1 pb-3 pt-2">
-                {NAV.map((n) => <NavLink key={n.label} to={n.to} tabIndex={menu ? 0 : -1} className={`block rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${n.match(pathname) ? 'bg-[#272629] text-[#FFFFFF] ring-1 ring-inset ring-[#3A3A3E]' : 'text-[#A1A1AA] hover:bg-[#1C1C1E] hover:text-[#FFFFFF]'}`}>{n.label}</NavLink>)}
+                {NAV.map((n) => <NavLink key={n.label} to={n.to} tabIndex={menu ? 0 : -1} className={`block rounded-xl px-3 py-2.5 text-base font-medium transition-colors ${n.match(pathname) ? 'bg-[#191919] text-[#FFFFFF] ring-1 ring-inset ring-[#3A3A3E]' : 'text-[#A1A1AA] hover:bg-[#1C1C1E] hover:text-[#FFFFFF]'}`}>{n.label}</NavLink>)}
                 <div className="!mt-2 space-y-0.5 border-t border-[#3A3A3E] pt-2">
                   <div className="px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#A1A1AA]">Account &amp; Support</div>
                   {ACCOUNT_LINKS.filter(([to]) => signedIn || to !== '/profile').map(([to, label]) => <Link key={to} to={to} tabIndex={menu ? 0 : -1} className="block rounded-xl px-3 py-2 text-sm font-medium text-[#A1A1AA] transition-colors hover:bg-[#1C1C1E] hover:text-[#FFFFFF]">{label}</Link>)}

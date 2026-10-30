@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 /* Pictrify dark design system: near-black page, deep violet-black sections, dark cards with soft purple edges and glows, white type, one purple -> magenta gradient accent.
-   Palette: page #000000 | section #101011 | card #272629 | raised #2C2C2F | border #3A3A3E | text #FFFFFF | muted #A1A1AA | purple #FF3DF2 | gradient #FF3DF2 -> #FF3DF2 */
+   Palette: page #000000 | section #101011 | card #191919 | raised #2C2C2F | border #3A3A3E | text #FFFFFF | muted #A1A1AA | purple #FF3DF2 | gradient #FF3DF2 -> #FF3DF2 */
 :root {
-  --page: #000000; --section: #101011; --card: #272629; --raised: #2C2C2F; --line: #3A3A3E; --ink: #FFFFFF; --muted: #A1A1AA; --brand: #FF3DF2;
+  --page: #000000; --section: #101011; --card: #191919; --raised: #2C2C2F; --line: #3A3A3E; --ink: #FFFFFF; --muted: #A1A1AA; --brand: #FF3DF2;
 }
 body {
   @apply bg-[#000000] text-white font-sans font-normal antialiased overflow-x-hidden;
@@ -29,14 +29,14 @@ body {
   /* brand action: the solid #FF3DF2 pill, with a soft glow */
   .btn-grad { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-[14px] bg-[#FF3DF2] px-6 py-3 text-[15px] font-semibold text-white shadow-[0_8px_26px_-8px_rgba(255,61,242,0.6)] transition-[filter,transform] duration-150 hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none; }
   /* secondary action: dark pill with a purple-tinted outline */
-  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-[14px] border-[1.5px] border-white/25 bg-[#272629] bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.015)_55%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_10px_24px_-12px_rgba(0,0,0,0.85)] px-6 py-3 text-[15px] font-semibold text-white transition-[border-color,background-color,transform,box-shadow] duration-150 hover:-translate-y-px hover:bg-[#302F32] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-dark { @apply cursor-pointer inline-flex items-center justify-center gap-2 rounded-[14px] border-[1.5px] border-white/25 bg-[#191919] bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.015)_55%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_10px_24px_-12px_rgba(0,0,0,0.85)] px-6 py-3 text-[15px] font-semibold text-white transition-[border-color,background-color,transform,box-shadow] duration-150 hover:bg-[#302F32] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50; }
   .grad-text { color: #FF3DF2; }
   .grad-bg { background-color: #FF3DF2; color: #fff !important; font-weight: 600; }
   .grad-bg:hover { filter: brightness(1.08); }
   .grad-alt-text { color: #FF3DF2; }
   .grad-alt-bg { background-color: #FF3DF2; color: #fff !important; font-weight: 600; }
   .grad-alt-border { border-color: #FF3DF2 !important; }
-  .card-box { @apply rounded-xl border border-[#3A3A3E] bg-[#272629]; }
+  .card-box { @apply rounded-xl border border-[#3A3A3E] bg-[#191919]; }
   .pill-tag { @apply inline-flex items-center gap-2 rounded-full bg-[#2C2C2F] px-3 py-1.5 text-[12px] font-semibold text-white; }
   .eyebrow { @apply inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#FF3DF2]; font-family: 'Inter', system-ui, sans-serif; }
   .eyebrow::before { content: ''; @apply size-1.5 rounded-full bg-[#FF3DF2]; }
@@ -48,10 +48,10 @@ body {
   .section-head { @apply mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2; }
   .section-title { @apply text-[28px] font-bold leading-tight tracking-tight text-white sm:text-[36px]; font-family: 'Outfit', 'Inter', system-ui, sans-serif; }
   .see-all { @apply inline-flex items-center gap-1 text-[14px] font-semibold text-[#FF3DF2] underline underline-offset-4 decoration-[#FF3DF2]/40 transition-colors hover:text-white hover:decoration-white; }
-  .chip { @apply inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-[14px] border-[1.5px] border-white/25 bg-[#272629] bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.015)_55%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_10px_24px_-12px_rgba(0,0,0,0.85)] px-4 py-2 text-[14px] font-semibold text-white; }
+  .chip { @apply inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-[14px] border-[1.5px] border-white/25 bg-[#191919] bg-[linear-gradient(165deg,rgba(255,255,255,0.09),rgba(255,255,255,0.015)_55%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_10px_24px_-12px_rgba(0,0,0,0.85)] px-4 py-2 text-[14px] font-semibold text-white; }
   .chip-on { @apply border-white bg-white bg-none text-[#000000] hover:bg-white; }
   .badge { @apply inline-flex items-center rounded-full bg-[#FF3DF2] px-2.5 py-0.5 text-[11px] font-semibold text-white; }
-  .tile { @apply relative block overflow-hidden rounded-xl bg-[#272629]; }
+  .tile { @apply relative block overflow-hidden rounded-xl bg-[#191919]; }
   .input { @apply w-full rounded-xl border border-[#3A3A3E] bg-[#1C1C1E] px-4 py-3 text-[15px] text-white placeholder:text-[#71717A] outline-none transition-colors focus:border-[#FF3DF2]; }
 }
 
@@ -184,11 +184,9 @@ body {
 .btn-accent:hover { transform: translateY(-1px); filter: brightness(1.07); box-shadow: 0 14px 34px -10px rgba(255,61,242,0.8), inset 0 1px 0 rgba(255,255,255,0.4); }
 .btn-accent:active { transform: translateY(0) scale(0.98); }
 .btn-accent:focus-visible, .chip-glass:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
-.chip-glass { display: inline-flex; cursor: pointer; align-items: center; justify-content: center; white-space: nowrap; border-radius: 14px; border: 1.5px solid rgba(255,255,255,0.25); background-color: rgba(39,38,41,0.88); background-image: linear-gradient(165deg, rgba(255,255,255,0.09), rgba(255,255,255,0.015) 55%);
+.chip-glass { display: inline-flex; cursor: pointer; align-items: center; justify-content: center; white-space: nowrap; border-radius: 14px; border: 1.5px solid rgba(255,255,255,0.25); background-color: rgba(25,25,25,0.88); background-image: linear-gradient(165deg, rgba(255,255,255,0.09), rgba(255,255,255,0.015) 55%);
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); padding: .5rem 1.05rem; font-size: 14px; font-weight: 600; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 10px 24px -12px rgba(0,0,0,0.85);
   transition: border-color .2s ease, background-color .2s ease, transform .2s ease, box-shadow .2s ease; }
-.chip-glass:hover { background-color: rgba(48,47,50,0.92); transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 14px 28px -12px rgba(0,0,0,0.9); }
-.chip-glass:active { transform: translateY(0) scale(0.98); }
 
 /* Carousel card names: a long name scrolls to the left and re-enters from the right (the text is repeated, so the loop is seamless). */
 @keyframes name-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -204,7 +202,7 @@ body {
 
 /* Tool / action buttons: a dark charcoal circle with a light icon, the label underneath, an optional white "Beta" pill above. Neutral (no colored border) on hover / focus. */
 .tool-btn { position: relative; display: flex; width: 124px; flex-shrink: 0; flex-direction: column; align-items: center; gap: .65rem; cursor: pointer; text-align: center; outline: none; color: #fff; font-size: 14px; font-weight: 500; line-height: 1.2; }
-.tool-btn__icon { display: grid; place-items: center; width: min(100%, 148px); height: 64px; border-radius: 22px; background-color: #272629; background-image: linear-gradient(165deg, rgba(255,255,255,0.07), rgba(255,255,255,0.01) 55%); border: 1.5px solid rgba(255,255,255,0.22); color: #E8E8EA;
+.tool-btn__icon { display: grid; place-items: center; width: min(100%, 148px); height: 64px; border-radius: 22px; background-color: #191919; background-image: linear-gradient(165deg, rgba(255,255,255,0.07), rgba(255,255,255,0.01) 55%); border: 1.5px solid rgba(255,255,255,0.22); color: #E8E8EA;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 10px 24px -12px rgba(0,0,0,0.85); transition: border-color .2s ease, background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease; }
 .tool-btn:active .tool-btn__icon { transform: translateY(0) scale(.96); }
 /* Hover: only the icon zooms (hovering the icon itself); the button/card stays still. */
@@ -217,25 +215,24 @@ body {
 
 /* Comet border (hero search bar): two pale lavender-white comets, 180deg apart, orbiting clockwise on an SVG rounded-rect stroke, one lap = 20s. See GlowBorder.jsx. */
 .glow-border { --streak-r: 22px; --streak-rgb: 255, 255, 255; --streak-lap: 20s; position: relative; }
-.glow-border__svg { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); overflow: visible; pointer-events: none; z-index: 1; filter: drop-shadow(0 0 3px rgba(var(--streak-rgb), .5)); }
-.gb-path { x: .75px; y: .75px; width: calc(100% - 1.5px); height: calc(100% - 1.5px); rx: calc(var(--streak-r) - .75px); fill: none; stroke: rgb(var(--streak-rgb)); stroke-width: 1.5px; stroke-opacity: .13; stroke-dashoffset: 0; animation: gb-orbit var(--streak-lap) linear infinite; }
-.gb-1 { stroke-dasharray: 0 93.5 6.5 0; }
-.gb-2 { stroke-dasharray: 0 94.8 5.2 0; }
-.gb-3 { stroke-dasharray: 0 95.8 4.2 0; }
-.gb-4 { stroke-dasharray: 0 96.8 3.2 0; }
-.gb-5 { stroke-dasharray: 0 97.7 2.3 0; }
-.gb-6 { stroke-dasharray: 0 98.5 1.5 0; }
-.gb-7 { stroke-dasharray: 0 99.2 .8 0; }
-.gb-head { stroke-dasharray: 0 99.75 .25 0; stroke-opacity: .95; }
-/* each comet: a white head whose tail turns pink the further behind it gets (white -> theme pink #FF3DF2) */
-.gb-head { stroke: rgb(255, 255, 255); }
-.gb-7 { stroke: rgb(255, 227, 253); }
-.gb-6 { stroke: rgb(255, 200, 251); }
-.gb-5 { stroke: rgb(255, 172, 249); }
-.gb-4 { stroke: rgb(255, 144, 248); }
-.gb-3 { stroke: rgb(255, 116, 246); }
-.gb-2 { stroke: rgb(255, 89, 244); }
-.gb-1 { stroke: rgb(255, 61, 242); }
-.gb-b .gb-path { animation-delay: calc(var(--streak-lap) / -2); }
-@keyframes gb-orbit { to { stroke-dashoffset: -100; } }
-@media (prefers-reduced-motion: reduce) { .gb-path { animation: none; stroke-opacity: 0; } }
+.glow-border__svg { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); overflow: visible; pointer-events: none; z-index: 1; filter: drop-shadow(0 0 6px rgba(var(--streak-rgb), .75)); animation: gb-orbit var(--streak-lap) linear infinite; }
+.gb-path { x: 1.25px; y: 1.25px; width: calc(100% - 2.5px); height: calc(100% - 2.5px); rx: calc(var(--streak-r) - 1.25px); fill: none; stroke: rgb(var(--streak-rgb)); stroke-width: 2.5px; stroke-dashoffset: calc(var(--gb-off) * 1px); }
+.gb-b .gb-path { stroke-dashoffset: calc((var(--gb-off) - 50) * 1px); } /* second comet: half a lap ahead */
+@property --gb-off { syntax: '<number>'; inherits: true; initial-value: 0; }
+@keyframes gb-orbit { to { --gb-off: -100; } } /* one animation on the svg drives every segment */
+@media (prefers-reduced-motion: reduce) { .glow-border__svg { display: none; } }
+
+/* Hero info cards (components/HeroInfoCards.jsx): charcoal glass cards with a thin border; on hover the card stays still, its icon badge zooms and the comet border runs. */
+.info-card { position: relative; display: flex; align-items: center; gap: 10px; border-radius: 16px; padding: 9px 16px 9px 10px; text-align: left; cursor: pointer; color: #fff; outline: none;
+  background-color: rgba(25,25,25,0.88); background-image: linear-gradient(165deg, rgba(255,255,255,0.07), rgba(255,255,255,0.01) 55%); border: 1.5px solid rgba(255,255,255,0.22);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), 0 10px 24px -12px rgba(0,0,0,0.85); }
+.info-card__badge { display: grid; width: 26px; height: 26px; flex-shrink: 0; place-items: center; border-radius: 8px; background: rgba(255,255,255,0.08); color: #E8E8EA; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14); transition: transform .35s cubic-bezier(0.22, 1, 0.36, 1); }
+.info-card:focus-visible { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 2px; }
+@media (hover: hover) { .info-card:hover .info-card__badge { transform: scale(1.12); } }
+@media (max-width: 640px) { .info-card { padding: 8px 12px 8px 8px; } }
+
+/* the comet border on the hero info cards: hidden until hover, runs only while hovered, sits on the card's own border */
+.info-card .glow-border__svg, .comet-card .glow-border__svg { inset: -1.5px; width: calc(100% + 3px); height: calc(100% + 3px); opacity: 0; transition: opacity .3s ease; animation-play-state: paused; filter: drop-shadow(0 0 4px rgba(255,255,255,0.6)); }
+@media (hover: hover) { .info-card:hover .glow-border__svg, .comet-card:hover .glow-border__svg { opacity: 1; animation-play-state: running; } }
+.comet-card .glow-border__svg { inset: 0; width: 100%; height: 100%; } /* these cards clip their edge (overflow-hidden), so the line is drawn just inside the border instead of on it */
+.group[data-peek="true"] .card-orbit::after { opacity: 1; animation-play-state: running; } /* touch screens: the comet border runs while a card is "peeked" (first tap) */

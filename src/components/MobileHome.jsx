@@ -2,14 +2,13 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { exploreTabs, sortTabs, hasAdminOrder, categoryItems, generateUrl } from '../data/templates.js'
 import PImage from './PImage.jsx'
-import { useStudio } from '../context/StudioContext.jsx'
 import { SeeAll } from './homeParts.jsx'
 
 function SnapRow({ items, cardCls, rowCls, render }) {
   return (
     <div className={`no-scrollbar flex snap-x snap-mandatory overflow-x-auto scroll-smooth ${rowCls}`} style={{ WebkitOverflowScrolling: 'touch' }}>
       {items.map((t) => (
-        <div key={t.id} className={`relative shrink-0 snap-start overflow-hidden border border-[#3A3A3E] bg-[#272629] ${cardCls}`}>
+        <div key={t.id} className={`relative shrink-0 snap-start overflow-hidden border border-[#3A3A3E] bg-[#191919] ${cardCls}`}>
           {render(t)}
         </div>
       ))}
@@ -99,7 +98,7 @@ export function TopCarousel({ items }) {
         const copy = loop && (k === 0 || k === n + 1)
         return (
           <div key={copy ? `${t.id}-copy${k}` : t.id} className="w-full shrink-0 snap-start px-4" aria-hidden={copy ? 'true' : undefined}>
-            <div className="relative max-h-[78vh] w-full overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#272629] shadow-xl" style={{ aspectRatio: shapes[t.image] || '16 / 10' }}>
+            <div className="relative max-h-[78vh] w-full overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#191919] shadow-xl" style={{ aspectRatio: shapes[t.image] || '16 / 10' }}>
               <Link to={generateUrl(t)} aria-label={t.name} tabIndex={copy ? -1 : undefined} className="block size-full">
                 <PImage src={t.image} alt={t.name} className="absolute inset-0 size-full object-contain" draggable="false" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
@@ -140,7 +139,6 @@ const CATEGORY_INFO = {
 
 /** Phone home, laid out like the Glymo reference: a top carousel, then one titled snap row per category. No hero or intro before the templates. */
 export default function MobileHome({ trending = [] }) {
-  const { openLogin } = useStudio()
   const top = categoryItems('top-carousel')
   const rows = (hasAdminOrder ? sortTabs(exploreTabs) : exploreTabs).filter((tab) => tab.id !== 'top-carousel').map((tab) => ({
     id: tab.id, title: tab.category || tab.name, info: CATEGORY_INFO[tab.id], items: categoryItems(tab.id),
@@ -151,15 +149,6 @@ export default function MobileHome({ trending = [] }) {
   if (trending.length) rows.unshift({ id: 'trending', title: 'Trending Templates', info: 'Chosen by the Pictrify team, newest first.', items: trending.slice(0, 20), to: '/explore?category=trending&from=home' }) // first section on the phone home
   return (
     <div className="pb-2 text-[#FFFFFF] md:hidden">
-      <section aria-label="Welcome" className="relative isolate mx-4 mt-3 overflow-hidden rounded-[28px] bg-[#000000] bg-[url('/images/bg.png')] bg-cover bg-center p-5 pt-14">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[#000000]/60" aria-hidden="true" />
-        <h1 className="text-[28px] leading-[1.08]">Create stunning <span className="grad-text">photos</span> with AI</h1>
-        <p className="mt-2 text-[14px] leading-relaxed text-[#D4D4D8]">Pick a template, add your photo and get a professional result.</p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button type="button" onClick={openLogin} className="btn-accent !px-5 !py-2.5 !text-[14px]">Sign up, get 100 coins</button>
-          <Link to="/explore" className="chip-glass !px-5 !py-2.5 !text-[14px]">Browse</Link>
-        </div>
-      </section>
       {top.length > 0 && (
         <div className="mt-1">
           <TopCarousel items={top} />

@@ -109,7 +109,7 @@ export default function PlansSheet({ onClose }) {
             const on = sel === p.id
             return (
               <button key={p.id} type="button" onClick={() => setSel(p.id)} aria-pressed={on}
-                className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-[22px] border-2 px-4 py-2.5 text-left transition-colors ${on ? 'border-[#FFFFFF] bg-[#272629]' : 'border-[#3A3A3E] bg-[#272629]'}`}>
+                className={`flex w-full cursor-pointer items-center justify-between gap-3 rounded-[22px] border-2 px-4 py-2.5 text-left transition-colors ${on ? 'border-[#FFFFFF] bg-[#191919]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
                 <span className="min-w-0">
                   <span className="flex items-center gap-2 text-[15px] font-semibold text-[#FFFFFF]">{p.name}{p.popular && <span className="rounded bg-[#FF3DF2] px-2 py-px text-[9px] font-bold uppercase text-white">Popular</span>}</span>
                   <span className="mt-0.5 block font-display text-[22px] font-bold leading-tight text-[#FFFFFF]">{p.price || <span aria-hidden="true" className="invisible">₹000</span>} <span className="text-[12px] font-normal text-[#A1A1AA]">{p.per}</span></span>
@@ -122,7 +122,7 @@ export default function PlansSheet({ onClose }) {
               </button>
             )
           })}
-          {note && <p role="status" className="rounded-2xl bg-[#272629] px-4 py-3 text-center text-sm text-[#FFFFFF]">{note}</p>}
+          {note && <p role="status" className="rounded-2xl bg-[#191919] px-4 py-3 text-center text-sm text-[#FFFFFF]">{note}</p>}
         </div>
         <div className="relative z-10 shrink-0 px-4 pt-2 text-center" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}>
           <button type="button" disabled={busy || !sel} onClick={cont} className="flex h-14 w-full cursor-pointer items-center justify-center rounded-full text-[17px] font-bold text-white shadow-[0_12px_28px_rgba(255,61,242,0.28)] disabled:opacity-60" style={{ background: '#FF3DF2' }}>{busy ? 'Please wait…' : 'Continue'}</button>

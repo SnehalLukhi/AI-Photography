@@ -43,7 +43,7 @@ function PhotoTile({ kind, photo, onPick, onClear, error }) {
       <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
       <div className="relative aspect-[9/16] w-full sm:max-w-[240px] lg:h-[clamp(260px,calc(100dvh-340px),640px)] lg:w-auto lg:max-w-none">
         {photo ? (
-          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-[#3A3A3E] bg-[#272629] shadow-[0_24px_60px_-28px_rgba(255,61,242,0.45)]">
+          <div className="absolute inset-0 overflow-hidden rounded-2xl border border-[#3A3A3E] bg-[#191919] shadow-[0_24px_60px_-28px_rgba(255,61,242,0.45)]">
             <img src={photo.url} alt={`Your ${what}`} className="size-full object-cover" />
             <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-9 cursor-pointer place-items-center rounded-full bg-[#000000]/80 text-white backdrop-blur transition-colors hover:bg-[#2C2C2F]"><Svg d="M6 6l12 12M18 6L6 18" /></button>
           </div>
@@ -72,7 +72,7 @@ function PhotoTile({ kind, photo, onPick, onClear, error }) {
 function Compare({ before, after, alt }) {
   const [pos, setPos] = useState(50)
   return (
-    <div className="relative mx-auto aspect-[3/3.7] w-full max-w-[640px] touch-none select-none overflow-hidden rounded-3xl border border-[#3A3A3E] bg-[#272629] shadow-[0_30px_70px_-30px_rgba(255,61,242,0.4)]">
+    <div className="relative mx-auto aspect-[3/3.7] w-full max-w-[640px] touch-none select-none overflow-hidden rounded-3xl border border-[#3A3A3E] bg-[#191919] shadow-[0_30px_70px_-30px_rgba(255,61,242,0.4)]">
       <img src={after} alt={alt} className="absolute inset-0 size-full object-cover" draggable="false" />
       {before && <img src={before} alt="Your original photo" className="absolute inset-0 size-full object-cover" draggable="false" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} />}
       {before && (
@@ -176,7 +176,7 @@ function Generator({ asset }) {
     return (
       <div className="mx-auto w-full max-w-none px-5 pb-10 pt-6 text-[#FFFFFF] sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-14">
-          <section aria-label="Before and after" className="flex flex-col gap-3 rounded-3xl bg-[#272629] p-4 sm:p-8">
+          <section aria-label="Before and after" className="flex flex-col gap-3 rounded-3xl bg-[#191919] p-4 sm:p-8">
             <Compare before={before} after={after} alt={`${asset.name} result`} />
             {before && <p className="mx-auto text-[13px] text-[#A1A1AA]">Drag the handle to compare.</p>}
           </section>
@@ -192,7 +192,7 @@ function Generator({ asset }) {
               <button type="button" onClick={again} className="btn-dark !py-3">Make another with this look</button>
               <Link to="/explore" className="btn-dark !py-3">Try a different look</Link>
             </div>
-            <dl className="overflow-hidden rounded-2xl border border-[#3A3A3E] bg-[#272629] text-[14px]">
+            <dl className="overflow-hidden rounded-2xl border border-[#3A3A3E] bg-[#191919] text-[14px]">
               <div className="flex justify-between border-b border-[#3A3A3E] px-4 py-3"><dt className="text-[#A1A1AA]">Look</dt><dd>{asset.name}</dd></div>
               {real && <div className="flex justify-between border-b border-[#3A3A3E] px-4 py-3"><dt className="text-[#A1A1AA]">Coins used</dt><dd className="font-plexmono">{cost}</dd></div>}
               {real && <div className="flex justify-between px-4 py-3"><dt className="text-[#A1A1AA]">Left in wallet</dt><dd className="font-plexmono">{coins.toLocaleString()} coins</dd></div>}
@@ -235,7 +235,7 @@ function Generator({ asset }) {
           <div className="flex w-full flex-1 flex-col items-center justify-center gap-4 sm:gap-6">
             <div className="flex w-full items-start justify-center gap-2 sm:gap-4 lg:items-center lg:gap-6">
               <figure className="flex min-w-0 flex-1 flex-col items-center gap-2.5 lg:flex-none">
-                <div className="relative aspect-[9/16] w-full sm:max-w-[240px] overflow-hidden rounded-2xl bg-[#272629] lg:h-[clamp(260px,calc(100dvh-340px),640px)] lg:w-auto lg:max-w-none">
+                <div className="relative aspect-[9/16] w-full sm:max-w-[240px] overflow-hidden rounded-2xl bg-[#191919] lg:h-[clamp(260px,calc(100dvh-340px),640px)] lg:w-auto lg:max-w-none">
                   <PImage src={asset.image} alt={`The look: ${asset.name}`} className="absolute inset-0 size-full object-cover" draggable="false" />
                 </div>
                 <figcaption className="flex max-w-full items-center gap-2 text-[14px] max-sm:flex-col max-sm:gap-0.5 max-sm:text-center">
@@ -270,7 +270,7 @@ function Generator({ asset }) {
       )}
       {phase === 'error' && (
         <div className="fixed inset-0 z-[300] grid place-items-center overflow-y-auto bg-[#000000]/40 p-4 backdrop-blur-sm" onClick={() => setPhase('idle')}>
-          <div role="alert" className="flex w-full max-w-sm flex-col gap-4 rounded-3xl border border-[#3A3A3E] bg-[#272629] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <div role="alert" className="flex w-full max-w-sm flex-col gap-4 rounded-3xl border border-[#3A3A3E] bg-[#191919] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="rounded-2xl border border-[#E5484D]/40 bg-[#2A1216] px-4 py-3.5"><p className="text-[17px] font-semibold">Generation failed</p><p className="mt-1.5 text-[14px] leading-relaxed text-[#A1A1AA]">{apiError || 'Something went wrong. Please try again.'}</p></div>
             <div className="flex flex-col gap-2.5">
               {needCoins && <button type="button" className="btn-grad" onClick={() => nav(coins < 150 ? '/pricing' : '/coins')}>Get coins</button>}

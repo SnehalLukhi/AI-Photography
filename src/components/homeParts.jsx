@@ -61,9 +61,9 @@ export function CategoryTiles({ collections, limit = Infinity, exclude = [] }) {
       {list.map((c) => {
         const a = categoryItems(c.id)[0]
         return (
-          <Link key={c.id} to={tabLink(c)} aria-label={c.category || c.name} className="group flex flex-col rounded-[24px] border border-[#3A3A3E] bg-[#272629] p-2.5 outline-none transition-[transform,border-color] duration-300 focus-visible:ring-2 focus-visible:ring-white/70">
+          <Link key={c.id} to={tabLink(c)} aria-label={c.category || c.name} className="card-orbit group relative flex flex-col rounded-[24px] border border-[#3A3A3E] bg-[#191919] p-2.5 outline-none transition-[transform,border-color] duration-300 focus-visible:ring-2 focus-visible:ring-white/70">
             <span className="block min-h-[2.6em] px-1.5 pt-1 font-display text-[17px] font-bold leading-tight text-white">{c.category || c.name}</span>
-            <span className="relative mt-1.5 block overflow-hidden rounded-[16px] bg-[#101011]" style={{ aspectRatio: (a && shapes[a.image]) || '9 / 16' }}>
+            <span className="relative mt-1.5 block overflow-hidden rounded-[16px] bg-[#191919]" style={{ aspectRatio: (a && shapes[a.image]) || '9 / 16' }}>
               {a && <PImage src={a.image} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-contain" draggable="false" />}
             </span>
             <span className="mt-2.5 flex items-center justify-between rounded-full bg-[#2C2C2F] py-1 pl-3.5 pr-1 text-[13px] font-semibold text-white transition-colors group-hover:bg-white group-hover:text-[#000000]">
@@ -112,7 +112,7 @@ function CategoryRow({ c, onSelect }) {
         )}
       </div>
       {/* 5 cards fill the row on a wide screen (4 / 3 / 2 and a peek of the next one on smaller ones); the rest scroll sideways. Every card is 9:16. */}
-      <div ref={row} className={`no-scrollbar -mx-4 flex snap-x items-start overflow-x-auto scroll-smooth px-4 pb-1 ${wide ? '[--cols:1.3] min-[560px]:[--cols:2.2] md:[--cols:3] lg:[--cols:3]' : '[--cols:2.4] min-[560px]:[--cols:3.4] md:[--cols:4] lg:[--cols:5]'} [--gap:8px] sm:-mx-6 sm:px-6 md:[--gap:10px] lg:mx-0 lg:px-0`} style={{ gap: 'var(--gap)' }}>
+      <div ref={row} className={`no-scrollbar -mx-4 flex snap-x scroll-px-4 items-start overflow-x-auto scroll-smooth px-4 pb-1 ${wide ? '[--cols:1.3] min-[560px]:[--cols:2.2] md:[--cols:3] lg:[--cols:3]' : '[--cols:2.4] min-[560px]:[--cols:3.4] md:[--cols:4] lg:[--cols:5]'} [--gap:8px] sm:-mx-6 sm:scroll-px-6 sm:px-6 md:[--gap:10px] lg:mx-0 lg:scroll-px-0 lg:px-0`} style={{ gap: 'var(--gap)' }}>
         {items.map((t) => (
           <div key={t.id} className="shrink-0 snap-start" style={{ width: 'calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols))' }}>
             {natural ? <TemplateCard t={t} fit="contain" ratio={String(shapes[t.image] || 9 / 16)} onSelect={onSelect} /> : <TemplateCard t={t} fit="cover" ratio="9 / 16" onSelect={onSelect} />}
@@ -170,7 +170,7 @@ export function FeaturedCarousel({ items: list, className = '' }) {
         {[0, 1].map((copy) => (
           <div key={copy} aria-hidden={copy ? true : undefined} className="flex shrink-0 gap-2 pr-2">
             {half.map((t, k) => (
-              <Link key={`${t.id}-${k}`} to={generateUrl(t)} tabIndex={copy ? -1 : undefined} aria-label={t.name} className="group relative block aspect-[9/16] h-[300px] shrink-0 overflow-hidden rounded-[6px] border border-[#3A3A3E] bg-[#101011] lg:h-[380px]">
+              <Link key={`${t.id}-${k}`} to={generateUrl(t)} tabIndex={copy ? -1 : undefined} aria-label={t.name} className="group relative block aspect-[9/16] h-[300px] shrink-0 overflow-hidden rounded-[6px] bg-[#191919] lg:h-[380px]">
                 <img src={t.image} alt="" loading="lazy" draggable="false" className="size-full object-cover" />
                 <span className="absolute inset-0 bg-gradient-to-t from-[#000000]/85 via-transparent to-transparent" />
                 <span className="absolute inset-x-5 bottom-4">

@@ -38,7 +38,7 @@ export default function LastManPopup({ onClose, onUnlock }) {
   return (
     <div className="fixed inset-0 z-[310] flex items-center justify-center overflow-y-auto p-4 md:hidden" role="dialog" aria-modal="true" aria-label="Last Man">
       <div onClick={() => close()} className={`fixed inset-0 bg-[#000000]/45 backdrop-blur-md transition-opacity duration-300 ${shown ? 'opacity-100' : 'opacity-0'}`} />
-      <div className={`relative my-auto w-full max-w-[380px] overflow-hidden rounded-[32px] bg-[#272629] px-5 pb-6 pt-8 shadow-[0_18px_40px_rgba(0,0,0,0.14)] text-center transition-all duration-300 ease-out ${shown ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-6 scale-95 opacity-0'}`}>
+      <div className={`relative my-auto w-full max-w-[380px] overflow-hidden rounded-[32px] bg-[#191919] px-5 pb-6 pt-8 shadow-[0_18px_40px_rgba(0,0,0,0.14)] text-center transition-all duration-300 ease-out ${shown ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-6 scale-95 opacity-0'}`}>
         <button type="button" aria-label="Close" onClick={() => close()} className="absolute right-3.5 top-3.5 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]">
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
@@ -51,7 +51,7 @@ export default function LastManPopup({ onClose, onUnlock }) {
         <p className="relative mx-auto mt-1.5 max-w-[280px] text-[14px] leading-snug text-[#A1A1AA]">Unlock exclusive features and take your creativity to the next level.</p>
         <ul className="relative mt-5 space-y-2.5 text-left">
           {features.map(([label, d]) => (
-            <li key={label} className="flex items-center gap-3 rounded-2xl bg-[#272629] px-3.5 py-3">
+            <li key={label} className="flex items-center gap-3 rounded-2xl bg-[#191919] px-3.5 py-3">
               <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#2A2A2D] text-[#FF3DF2]"><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
               <span className="text-[14px] font-medium text-[#FFFFFF]">{label}</span>
             </li>

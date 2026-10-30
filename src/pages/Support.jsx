@@ -9,15 +9,14 @@ import { termsTitle, termsSections, termsDate } from '../data/termsContent.js'
 
 const Hero = ({ eyebrow, title, sub, center = false }) => (
   <header className="mx-auto w-full max-w-[1100px] px-5 pt-8 sm:px-8 sm:pt-12 lg:px-10">
-    <div className={`relative overflow-hidden rounded-3xl bg-[#272629] px-6 py-12 sm:px-12 sm:py-16 ${center ? 'flex flex-col items-center text-center' : ''}`}>
+    <div className={`relative overflow-hidden rounded-3xl bg-[#191919] px-6 py-12 sm:px-12 sm:py-16 ${center ? 'flex flex-col items-center text-center' : ''}`}>
       <p className="badge relative">{eyebrow}</p>
       <h1 className="relative mt-4 w-fit text-[40px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[60px]">{title}</h1>
       <p className="relative mt-4 max-w-2xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[18px]">{sub}</p>
     </div>
   </header>
 )
-const field = 'w-full rounded-2xl border border-[#3A3A3E] bg-[#272629] px-4 text-[15px] text-[#FFFFFF] outline-none transition placeholder:text-[#A1A1AA] focus:border-[#FF3DF2] focus:ring-4 focus:ring-[#FF3DF2]/15'
-const TILES = ['bg-[#272629]']
+const field = 'w-full rounded-2xl border border-[#3A3A3E] bg-[#191919] px-4 text-[15px] text-[#FFFFFF] outline-none transition placeholder:text-[#A1A1AA] focus:border-[#FF3DF2] focus:ring-4 focus:ring-[#FF3DF2]/15'
 const submitBtn = 'btn-primary !w-full !rounded-[14px] !py-3.5 !text-[15px] disabled:cursor-not-allowed disabled:opacity-50'
 
 const topics = [
@@ -66,35 +65,88 @@ const topics = [
   ]],
 ]
 
+// one outline icon per help topic (same order as `topics`)
+const TOPIC_ICONS = [
+  'M12 3c3 2 5 5 5 9l-2 3H9l-2-3c0-4 2-7 5-9zM9 15l-2 4 3-1M15 15l2 4-3-1', // Getting Started: rocket
+  'M4 8h3l1.5-2h7L17 8h3v11H4zM12 17a3.5 3.5 0 100-7 3.5 3.5 0 000 7z', // Photo Upload Guide: camera
+  'M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z', // AI Generation: sparkle
+  'M12 21a9 9 0 100-18 9 9 0 000 18zM14.5 9.5a3 3 0 00-5 1.5c0 3 5 1.5 5 4.5a3 3 0 01-5 1.5M12 7v1.5M12 15.5V17', // Coins & Billing: coin
+  'M3.5 18.5l-1-9 5 3.5L12 5l4.5 8 5-3.5-1 9zM3.8 21h16.4', // Plans & Pricing: crown
+  'M12 20.5s-8-4.9-8-11A4.5 4.5 0 0112 7a4.5 4.5 0 018 2.5c0 6.1-8 11-8 11z', // Likes & My Creations: heart
+  'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-4 3.5-6 8-6s8 2 8 6', // Account & Login: person
+  'M14.7 6.3a4 4 0 00-5.4 5.1L3.5 17.2a1.5 1.5 0 002.1 2.1l5.8-5.8a4 4 0 005.1-5.4l-2.5 2.5-2-.5-.5-2z', // Troubleshooting: wrench
+]
+const HelpIcon = ({ d, className = 'size-5' }) => <svg className={`${className} shrink-0`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+// the charcoal glass card used across the site: thin light border, faint top sheen, soft shadow
+const GLASS = 'border-[1.5px] border-white/[0.22] bg-[#191919] bg-[linear-gradient(165deg,rgba(255,255,255,0.07),rgba(255,255,255,0.01)_55%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),0_10px_24px_-12px_rgba(0,0,0,0.85)]'
+
 export function Help() {
   const [open, setOpen] = useState(0)
+  const [q, setQ] = useState('')
+  const needle = q.trim().toLowerCase()
+  const shown = topics.map((t, i) => ({ t, i })).filter(({ t: [title, desc, body] }) => !needle || `${title} ${desc} ${body.join(' ')}`.toLowerCase().includes(needle))
   return (
-    <div className="pb-8">
-      <Hero eyebrow="Support" title="Help" sub="Answers, how-tos and troubleshooting for Pictrify." />
-      <div className="mx-auto mt-8 w-full max-w-[1100px] px-5 sm:px-8 lg:px-10">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {topics.map(([t], i) => (
-            <button key={t} type="button" onClick={() => setOpen(open === i ? -1 : i)} className={`cursor-pointer rounded-2xl p-5 text-left text-[15px] font-bold text-[#FFFFFF] ${TILES[i % TILES.length]} ${open === i ? 'ring-2 ring-[#FFFFFF]' : ''}`}>{t}</button>
-          ))}
+    <div className="pb-10">
+      <header className="mx-auto w-full max-w-[1100px] px-5 pt-8 sm:px-8 sm:pt-12 lg:px-10">
+        <div className={`flex flex-col items-center rounded-[28px] px-6 py-12 text-center sm:px-12 sm:py-14 ${GLASS}`}>
+          <p className="badge">Support</p>
+          <h1 className="mt-4 text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[52px]">How can we help?</h1>
+          <p className="mt-3 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[17px]">Answers, how-tos and troubleshooting for Pictrify.</p>
+          <label className="mt-7 flex h-14 w-full max-w-[560px] items-center gap-3 rounded-2xl border-[1.5px] border-white/[0.22] bg-[#1C1C1E] px-5 transition-colors focus-within:border-white/50">
+            <HelpIcon d="M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4-4" className="size-5 text-[#A1A1AA]" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search help" placeholder="Search help, e.g. coins, upload, refund" className="min-w-0 flex-1 bg-transparent text-[15px] text-white outline-none placeholder:text-[#8E8E93]" />
+            {q && <button type="button" onClick={() => setQ('')} aria-label="Clear search" className="grid size-7 cursor-pointer place-items-center rounded-full bg-white/10 text-[#E8E8EA]"><svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>}
+          </label>
         </div>
-        <div className="mt-8 space-y-3">
-          {topics.map(([t, d, body], i) => (
-            <div key={t} className={`overflow-hidden rounded-2xl border bg-[#272629] transition-colors ${open === i ? 'border-[#FFFFFF] shadow-[0_18px_40px_rgba(0,0,0,0.08)]' : 'border-[#3A3A3E]'}`}>
-              <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full cursor-pointer items-center gap-4 px-5 py-5 text-left sm:px-6">
-                <span className="min-w-0 flex-1"><span className="block text-[17px] font-bold text-[#FFFFFF]">{t}</span><span className="mt-0.5 block text-[14px] text-[#A1A1AA]">{d}</span></span>
-                <svg className={`size-8 shrink-0 rounded-full bg-[#2C2C2F] p-2 text-[#A1A1AA] transition-transform ${open === i ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
-              </button>
-              {open === i && <ul className="space-y-2.5 px-5 pb-6 text-[14px] leading-relaxed text-[#A1A1AA] sm:px-6">{body.map((line) => <li key={line} className="flex gap-3"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-[#FF3DF2]" />{line}</li>)}</ul>}
+      </header>
+
+      <div className="mx-auto mt-6 w-full max-w-[1100px] px-5 sm:px-8 lg:px-10">
+        {shown.length === 0 ? (
+          <div className={`rounded-[22px] px-6 py-12 text-center ${GLASS}`}>
+            <p className="text-[20px] font-extrabold text-white">No answers found</p>
+            <p className="mt-1.5 text-[14px] text-[#A1A1AA]">Try another word, or contact support from the box below.</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              {shown.map(({ t: [title, , body], i }) => (
+                <button key={title} type="button" onClick={() => setOpen(open === i ? -1 : i)} aria-pressed={open === i}
+                  className={`flex cursor-pointer items-center gap-3 rounded-[20px] px-4 py-3.5 text-left ${GLASS} ${open === i ? '!border-white' : ''}`}>
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/[0.08] text-[#E8E8EA] ring-1 ring-white/[0.14]"><HelpIcon d={TOPIC_ICONS[i]} /></span>
+                  <span className="min-w-0"><span className="block text-[14px] font-bold leading-tight text-white">{title}</span><span className="mt-0.5 block text-[12px] text-[#A1A1AA]">{body.length} tips</span></span>
+                </button>
+              ))}
             </div>
-          ))}
+
+            <div className="mt-6 space-y-3">
+              {shown.map(({ t: [title, desc, body], i }) => (
+                <div key={title} className={`overflow-hidden rounded-[22px] ${GLASS} ${open === i ? '!border-white/60' : ''}`}>
+                  <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left sm:px-6">
+                    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white/[0.08] text-[#E8E8EA] ring-1 ring-white/[0.14]"><HelpIcon d={TOPIC_ICONS[i]} className="size-[22px]" /></span>
+                    <span className="min-w-0 flex-1"><span className="block text-[17px] font-bold text-white">{title}</span><span className="mt-0.5 block text-[14px] text-[#A1A1AA]">{desc}</span></span>
+                    <svg className={`size-8 shrink-0 rounded-full bg-white/[0.08] p-2 text-[#E8E8EA] transition-transform duration-300 ${open === i ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                  </button>
+                  <div className={`grid transition-[grid-template-rows] duration-300 ease-out ${open === i ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                    <ul className="min-h-0 space-y-3 overflow-hidden px-5 text-[14px] leading-relaxed text-[#B4B4B8] sm:px-6" style={{ paddingBottom: open === i ? 24 : 0, transition: 'padding-bottom 300ms ease-out' }}>
+                      {body.map((line) => <li key={line} className="flex gap-3"><HelpIcon d="M5 12l5 5 9-10" className="mt-0.5 size-4 text-white/70" />{line}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className={`mt-8 flex flex-wrap items-center justify-between gap-4 rounded-[28px] p-6 sm:p-8 ${GLASS}`}>
+          <div><p className="text-[22px] font-extrabold text-white">Still stuck?</p><p className="mt-1 text-[14px] text-[#A1A1AA]">Our team will get back to you.</p></div>
+          <Link to="/contact-support" className="btn-primary !px-6 !py-3 !text-[14px]">Contact support<span aria-hidden="true">→</span></Link>
         </div>
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-[#272629] p-6 sm:p-8"><p className="text-[22px] font-extrabold text-[#FFFFFF]">Still stuck?</p><Link to="/contact-support" className="btn-accent !px-6 !py-3 !text-[14px]">Contact support<span aria-hidden="true">→</span></Link></div>
       </div>
     </div>
   )
 }
 
-const Card = ({ children, w = 'max-w-[760px]' }) => <div className={`mx-auto mt-8 w-[calc(100%-40px)] sm:w-[calc(100%-64px)] ${w} rounded-3xl border border-[#3A3A3E] bg-[#272629] p-6 sm:p-10`}>{children}</div>
+const Card = ({ children, w = 'max-w-[760px]' }) => <div className={`mx-auto mt-8 w-[calc(100%-40px)] sm:w-[calc(100%-64px)] ${w} rounded-3xl border border-[#3A3A3E] bg-[#191919] p-6 sm:p-10`}>{children}</div>
 const Label = ({ children }) => <span className="text-[13px] font-semibold text-[#FFFFFF]">{children}</span>
 
 export function Contact() {
@@ -114,33 +166,66 @@ export function Contact() {
     setFile(f)
   }
   const valid = title.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim()) && text.trim()
+  const box = 'w-full rounded-2xl border-[1.5px] border-white/[0.18] bg-[#1C1C1E] px-4 text-[15px] text-white outline-none transition-colors placeholder:text-[#8E8E93] focus:border-white/50'
+  const Ic = ({ d, className = 'size-5' }) => <svg className={`${className} shrink-0`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+  const tips = [
+    ['M4 6h16M4 12h16M4 18h10', 'Give your request a short, clear title.'],
+    ['M12 21a9 9 0 100-18 9 9 0 000 18zM12 8v5M12 16.5v.01', 'Say what happened and what you expected.'],
+    ['M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4', 'Add a screenshot if it helps (optional).'],
+  ]
   return (
-    <div className="mx-auto w-full max-w-none pb-8">
-      <Hero center eyebrow="Support request" title="Contact support" sub="Tell us what happened and our team will review it." />
-      <Card w="max-w-[760px]">
-        {sent ? (
-          <div className="py-10 text-center"><p className="mb-5 text-[28px] font-bold">Request noted</p><button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-dark !rounded-[14px] !px-5 !py-2.5 !text-[14px]">Write another</button></div>
-        ) : (
-          <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); if (valid) setSent(true) }}>
-            <label className="block space-y-2"><Label>Title</Label><input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter title" className={`${field} h-12`} /></label>
-            <label className="block space-y-2"><Label>Email</Label><input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" className={`${field} h-12`} /></label>
-            <label className="block space-y-2"><Label>Description</Label><textarea required value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} placeholder="Enter description" className={`${field} h-[150px] resize-none py-3`} /></label>
-            <div className="space-y-2">
-              <Label>Attachment (optional)</Label>
-              <div onClick={() => input.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); pick(e.dataTransfer.files?.[0]) }}
-                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#4A4A4F] bg-[#272629] px-4 py-8 text-center transition hover:bg-[#2A2A2D]/40">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-[#000000]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 16V5M7 9l5-5 5 5M5 19h14" /></svg>Upload image</span>
-                <span className="text-[14px]">{file ? file.name : 'Click or drag an image here (max 5 MB)'}</span>
-                <span className="text-[12px] text-[#A1A1AA]">JPG, JPEG, PNG and WEBP supported</span>
-                <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { pick(e.target.files?.[0]); e.target.value = '' }} />
-              </div>
-              {file && <button type="button" onClick={() => setFile(null)} className="cursor-pointer text-[12px] text-[#A1A1AA] underline underline-offset-2 hover:text-[#FFFFFF]">Remove image</button>}
-              {err && <p role="alert" className="text-[12px] text-[#C0392B]">{err}</p>}
+    <div className="mx-auto w-full max-w-[1100px] px-5 pb-10 pt-8 sm:px-8 sm:pt-12 lg:px-10">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+        {/* left: what this is and how to get the quickest review */}
+        <aside className={`self-start rounded-[28px] p-7 sm:p-9 ${GLASS}`}>
+          <p className="badge">Support request</p>
+          <h1 className="mt-4 text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[44px]">Contact support</h1>
+          <p className="mt-3 text-[16px] leading-relaxed text-[#A1A1AA]">Tell us what happened and our team will review it.</p>
+          <ul className="mt-7 space-y-4">
+            {tips.map(([d, t]) => (
+              <li key={t} className="flex items-start gap-3.5">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/[0.08] text-[#E8E8EA] ring-1 ring-white/[0.14]"><Ic d={d} /></span>
+                <span className="pt-2 text-[14px] leading-snug text-[#D4D4D8]">{t}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-7 text-[13px] text-[#A1A1AA]">Looking for quick answers first? <Link to="/help" className="font-semibold text-white underline underline-offset-2">Open the Help page</Link>.</p>
+        </aside>
+
+        {/* right: the request form */}
+        <section className={`rounded-[28px] p-6 sm:p-9 ${GLASS}`}>
+          {sent ? (
+            <div className="flex flex-col items-center py-14 text-center">
+              <span className="grid size-16 place-items-center rounded-full bg-white/[0.08] text-white ring-1 ring-white/[0.18]"><Ic d="M5 12l5 5 9-10" className="size-8" /></span>
+              <p className="mt-5 text-[28px] font-bold text-white">Request noted</p>
+              <p className="mt-1.5 max-w-sm text-[14px] text-[#A1A1AA]">Thank you. Our team will review what you sent.</p>
+              <button type="button" onClick={() => { setSent(false); setTitle(''); setText(''); setFile(null) }} className="btn-dark mt-6 !px-5 !py-2.5 !text-[14px]">Write another</button>
             </div>
-            <button className={submitBtn} disabled={!valid}>Submit request</button>
-          </form>
-        )}
-      </Card>
+          ) : (
+            <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); if (valid) setSent(true) }}>
+              <label className="block space-y-2"><Label>Title</Label><input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter title" className={`${box} h-12`} /></label>
+              <label className="block space-y-2"><Label>Email</Label><input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter email" className={`${box} h-12`} /></label>
+              <label className="block space-y-2">
+                <span className="flex items-center justify-between"><Label>Description</Label><span className="text-[12px] text-[#8E8E93]">{text.length}/1000</span></span>
+                <textarea required value={text} onChange={(e) => setText(e.target.value)} maxLength={1000} placeholder="Enter description" className={`${box} h-[150px] resize-none py-3`} />
+              </label>
+              <div className="space-y-2">
+                <Label>Attachment (optional)</Label>
+                <div onClick={() => input.current?.click()} onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); pick(e.dataTransfer.files?.[0]) }}
+                  className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-white/25 bg-[#1C1C1E] px-4 py-7 text-center transition-colors hover:border-white/45">
+                  <span className="grid size-11 place-items-center rounded-xl bg-white/[0.08] text-[#E8E8EA] ring-1 ring-white/[0.14]"><Ic d="M12 16V4M7 9l5-5 5 5M5 20h14" /></span>
+                  <span className="text-[14px] text-white">{file ? file.name : 'Click or drag an image here (max 5 MB)'}</span>
+                  <span className="text-[12px] text-[#A1A1AA]">JPG, JPEG, PNG and WEBP supported</span>
+                  <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { pick(e.target.files?.[0]); e.target.value = '' }} />
+                </div>
+                {file && <button type="button" onClick={() => setFile(null)} className="cursor-pointer text-[12px] text-[#A1A1AA] underline underline-offset-2 hover:text-[#FFFFFF]">Remove image</button>}
+                {err && <p role="alert" className="text-[12px] text-[#C0392B]">{err}</p>}
+              </div>
+              <button className={submitBtn} disabled={!valid}>Submit request</button>
+            </form>
+          )}
+        </section>
+      </div>
     </div>
   )
 }
@@ -225,7 +310,7 @@ function MobileMe() {
         </ul>
         <button type="button" onClick={() => setPlansOpen(true)} className="btn-primary mt-6 !h-14 !w-full !text-[16px]">Upgrade to Pro</button>
       </div>
-      <div className="mt-4 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#272629]">
+      <div className="mt-4 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#191919]">
         <button type="button" onClick={() => setPlanOpen((o) => !o)} aria-expanded={planOpen} aria-controls="plan-purchases" className="flex h-[54px] w-full cursor-pointer items-center gap-3.5 px-4 text-left text-[14px] font-semibold text-[#FFFFFF]">
           {I('M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z')}<span className="flex-1">Plan &amp; purchases</span>
           <svg className={`size-4 shrink-0 text-[#A1A1AA] transition-transform duration-300 ${planOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
@@ -233,14 +318,14 @@ function MobileMe() {
         <div id="plan-purchases" className={`grid transition-[grid-template-rows] duration-300 ease-out ${planOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`} aria-hidden={!planOpen}>
           <div className="min-h-0 overflow-hidden">
             <div className="space-y-2 border-t border-[#3A3A3E] p-3.5">
-              <CurrentPlan className="rounded-2xl bg-[#272629] px-3.5 py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} tabIndex={planOpen ? 0 : -1} />
-              <div className="rounded-2xl bg-[#272629] px-3.5 py-2.5"><p className="eyebrow">Coin balance</p><p className="mt-2 text-[15px] font-bold text-[#FFFFFF]">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" tabIndex={planOpen ? 0 : -1} className="mt-1 inline-block text-xs font-semibold text-[#A1A1AA] underline">Get more coins</Link></div>
+              <CurrentPlan className="rounded-2xl bg-[#191919] px-3.5 py-2.5" purchases={purchases} lastPlan={lastPlan} plan={plan} tabIndex={planOpen ? 0 : -1} />
+              <div className="rounded-2xl bg-[#191919] px-3.5 py-2.5"><p className="eyebrow">Coin balance</p><p className="mt-2 text-[15px] font-bold text-[#FFFFFF]">{coins.toLocaleString('en-US')} coins</p><Link to="/coins" tabIndex={planOpen ? 0 : -1} className="mt-1 inline-block text-xs font-semibold text-[#A1A1AA] underline">Get more coins</Link></div>
               <Link to="/transactions" tabIndex={planOpen ? 0 : -1} className="inline-block pt-1 text-[13px] font-semibold text-[#A1A1AA] underline">View all transactions</Link>
             </div>
           </div>
         </div>
       </div>
-      <div className="mt-4 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#272629]">
+      <div className="mt-4 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#191919]">
         {meItems.map(([label, to, d]) => <Link key={label} to={to} className={row}>{I(d)}<span className="flex-1">{label}</span><Chev /></Link>)}
       </div>
       {plansOpen && <PlansSheet onClose={() => setPlansOpen(false)} />}
@@ -264,7 +349,7 @@ export function Profile() {
     {!settings && <MobileMe />}
     <div className={`mx-auto w-full max-w-[1100px] px-5 pb-32 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-12 md:pb-12 lg:px-10 ${settings ? '' : 'max-md:hidden'}`}>
       {!signedIn ? (
-        <div className="relative overflow-hidden rounded-3xl bg-[#272629] px-6 py-16 text-center sm:py-24">
+        <div className="relative overflow-hidden rounded-3xl bg-[#191919] px-6 py-16 text-center sm:py-24">
           <div className="relative">
             <h1 className="mx-auto w-fit text-[40px] font-extrabold leading-[1.05] tracking-tight sm:text-[56px]">Your account</h1>
             <p className="mx-auto mt-4 max-w-sm text-[15px] text-[#A1A1AA]">Sign in to see your coins, plan and creations in one place.</p>
@@ -273,7 +358,7 @@ export function Profile() {
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          <section aria-label="Profile" className="relative overflow-hidden rounded-3xl bg-[#272629]">
+          <section aria-label="Profile" className="relative overflow-hidden rounded-3xl bg-[#191919]">
             <div className="relative flex flex-wrap items-center gap-5 p-6 sm:gap-6 sm:p-9">
               <span className="grid size-20 shrink-0 place-items-center rounded-full bg-[#FF3DF2] text-[34px] font-semibold text-white sm:size-24 sm:text-[40px]">{(name[0] || 'P').toUpperCase()}</span>
               <div className="min-w-0 flex-1">
@@ -282,14 +367,14 @@ export function Profile() {
                 <p className="mt-1 truncate text-[14px] text-[#A1A1AA] sm:text-[15px]" title={userEmail}>{userEmail}</p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <Link to="/creations" className="btn-accent !px-5 !py-2.5 !text-[14px]">My Creations</Link>
+                <Link to="/creations" className="btn-primary !px-5 !py-2.5 !text-[14px]">My Creations</Link>
                 <button type="button" onClick={signOut} className="btn-dark !rounded-[14px] !px-5 !py-2.5 !text-[14px] !text-[#D14343]">Log out</button>
               </div>
             </div>
           </section>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.3fr_1fr]">
-            <section aria-label="Personal details" className="self-start rounded-3xl bg-[#272629] p-6 sm:p-8">
+            <section aria-label="Personal details" className="self-start rounded-3xl bg-[#191919] p-6 sm:p-8">
               <h2 className="mb-6 text-[22px] font-extrabold">Personal details</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div><label htmlFor="pf-first" className={lbl}>First name</label><input id="pf-first" readOnly value={first || ''} placeholder="Not set" className={box} /></div>
@@ -304,15 +389,15 @@ export function Profile() {
             </section>
 
             <div className="flex flex-col gap-6">
-              <section aria-label="Coins" className="relative overflow-hidden rounded-3xl bg-[#272629] p-6 sm:p-8">
+              <section aria-label="Coins" className="relative overflow-hidden rounded-3xl bg-[#191919] p-6 sm:p-8">
                 <div className="relative flex items-center gap-4">
                   <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#1C1C1E]"><img src="/images/features/coin.svg" alt="" className="size-9 object-contain" /></span>
                   <div className="flex flex-col"><span className="text-[13px] text-[#A1A1AA]">Coin balance</span><span className="flex items-baseline gap-2"><span className="grad-text text-[44px] font-extrabold leading-none tabular-nums">{coins.toLocaleString('en-US')}</span><span className="text-[14px] text-[#A1A1AA]">coins</span></span></div>
                 </div>
-                <Link to="/coins" className="btn-accent relative mt-6 !w-full !py-3 !text-[14px]">Get more coins</Link>
+                <Link to="/coins" className="btn-primary relative mt-6 !w-full !py-3 !text-[14px]">Get more coins</Link>
               </section>
 
-              <section aria-label="Plan" className="rounded-3xl bg-[#272629] p-6 sm:p-8">
+              <section aria-label="Plan" className="rounded-3xl bg-[#191919] p-6 sm:p-8">
                 <CurrentPlan className="" purchases={purchases} lastPlan={lastPlan} plan={plan} />
                 {purchases?.length > 0 && (
                   <ul className="mt-5 divide-y divide-[#FFFFFF]/10 border-t border-[#FFFFFF]/10">
@@ -337,28 +422,57 @@ export function Feedback() {
   const [hover, setHover] = useState(0)
   const [text, setText] = useState('')
   const [sent, setSent] = useState(false)
+  const box = 'w-full rounded-2xl border-[1.5px] border-white/[0.18] bg-[#1C1C1E] px-4 text-[15px] text-white outline-none transition-colors placeholder:text-[#8E8E93] focus:border-white/50'
+  const WORDS = ['', 'Poor', 'Fair', 'Good', 'Very good', 'Excellent']
+  const tips = [
+    ['M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z', 'Pick a star rating for your experience.'],
+    ['M4 6h16M4 12h16M4 18h10', 'Tell us what you like or how we can improve.'],
+  ]
   return (
-    <div className="mx-auto w-full max-w-none pb-8">
-      <Hero center eyebrow="Product feedback" title="Feedback" sub="Tell us about your experience and how we can make Pictrify better." />
-      <Card w="max-w-[640px]">
-        {sent ? (
-          <div className="py-10 text-center"><p className="mb-5 text-[28px] font-bold">Thanks for your feedback</p><button className="btn-dark !rounded-[14px] !px-5 !py-2.5 !text-[14px]" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button></div>
-        ) : (
-          <form onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
-            <Label>How was it?</Label>
-            <div className="flex gap-3 py-4" onMouseLeave={() => setHover(0)}>
-              {[1, 2, 3, 4, 5].map((n) => (
-                <button key={n} type="button" aria-label={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setStars(n)} onMouseEnter={() => setHover(n)} className="cursor-pointer transition-transform hover:scale-110 active:scale-95">
-                  <svg className={`size-10 transition-colors ${n <= (hover || stars) ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#4A4A4F]'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
-                </button>
-              ))}
+    <div className="mx-auto w-full max-w-[1100px] px-5 pb-10 pt-8 sm:px-8 sm:pt-12 lg:px-10">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+        {/* left: what this is */}
+        <aside className={`self-start rounded-[28px] p-7 sm:p-9 ${GLASS}`}>
+          <p className="badge">Product feedback</p>
+          <h1 className="mt-4 text-[36px] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[44px]">Feedback</h1>
+          <p className="mt-3 text-[16px] leading-relaxed text-[#A1A1AA]">Tell us about your experience and how we can make Pictrify better.</p>
+          <ul className="mt-7 space-y-4">
+            {tips.map(([d, t]) => (
+              <li key={t} className="flex items-start gap-3.5">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/[0.08] text-[#E8E8EA] ring-1 ring-white/[0.14]"><HelpIcon d={d} /></span>
+                <span className="pt-2 text-[14px] leading-snug text-[#D4D4D8]">{t}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-7 text-[13px] text-[#A1A1AA]">Having a problem instead? <Link to="/contact-support" className="font-semibold text-white underline underline-offset-2">Contact support</Link>.</p>
+        </aside>
+
+        {/* right: the form */}
+        <section className={`rounded-[28px] p-6 sm:p-9 ${GLASS}`}>
+          {sent ? (
+            <div className="flex flex-col items-center py-14 text-center">
+              <span className="grid size-16 place-items-center rounded-full bg-white/[0.08] text-white ring-1 ring-white/[0.18]"><HelpIcon d="M5 12l5 5 9-10" className="size-8" /></span>
+              <p className="mt-5 text-[28px] font-bold text-white">Thanks for your feedback</p>
+              <button className="btn-dark mt-6 !px-5 !py-2.5 !text-[14px]" onClick={() => { setSent(false); setStars(0); setText('') }}>Send more</button>
             </div>
-            <div className="mb-2 mt-2 flex items-center justify-between"><label htmlFor="fb"><Label>Description</Label></label><span className="font-plexmono text-[11px] text-[#A1A1AA]">{text.length}/500</span></div>
-            <textarea id="fb" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder="Tell us what you like or how we can improve..." className={`${field} h-[150px] resize-none py-3`} />
-            <button className={`${submitBtn} mt-6`} disabled={!stars || !text.trim()}>Submit feedback</button>
-          </form>
-        )}
-      </Card>
+          ) : (
+            <form onSubmit={(e) => { e.preventDefault(); setSent(true) }}>
+              <div className="flex items-center justify-between"><Label>How was it?</Label><span className="text-[13px] font-semibold text-white" aria-live="polite">{WORDS[hover || stars]}</span></div>
+              <div className="flex gap-2 py-4 sm:gap-2.5" onMouseLeave={() => setHover(0)}>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button key={n} type="button" aria-label={`${n} star${n > 1 ? 's' : ''}`} onClick={() => setStars(n)} onMouseEnter={() => setHover(n)}
+                    className={`grid aspect-square min-w-0 max-w-14 flex-1 cursor-pointer place-items-center rounded-2xl border-[1.5px] transition-colors active:scale-95 ${n <= (hover || stars) ? 'border-white/60 bg-white/[0.12]' : 'border-white/[0.18] bg-[#1C1C1E]'}`}>
+                    <svg className={`size-7 transition-colors ${n <= (hover || stars) ? 'fill-white text-white' : 'fill-none text-[#6B6B70]'}`} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" /></svg>
+                  </button>
+                ))}
+              </div>
+              <div className="mb-2 mt-3 flex items-center justify-between"><label htmlFor="fb"><Label>Description</Label></label><span className="font-plexmono text-[11px] text-[#8E8E93]">{text.length}/500</span></div>
+              <textarea id="fb" value={text} onChange={(e) => setText(e.target.value)} maxLength={500} placeholder="Tell us what you like or how we can improve..." className={`${box} h-[170px] resize-none py-3`} />
+              <button className={`${submitBtn} mt-6`} disabled={!stars || !text.trim()}>Submit feedback</button>
+            </form>
+          )}
+        </section>
+      </div>
     </div>
   )
 }

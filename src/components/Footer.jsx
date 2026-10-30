@@ -13,7 +13,7 @@ const cols = {
 /** Slim footer of the content column (hidden on phones, where the bottom bar takes its place). */
 export default function Footer() {
   return (
-    <footer className="mt-20 border-t border-[#3A3A3E] bg-[#111111] max-md:hidden">
+    <footer className="mt-20 border-t border-[#3A3A3E] bg-[#121212] max-md:hidden">
       <div className="mx-auto w-full max-w-none px-6 pb-8 pt-10 lg:px-10">
         <div className="grid gap-12 lg:grid-cols-[1.1fr_2.9fr]">
           <div className="flex flex-col items-start gap-4">

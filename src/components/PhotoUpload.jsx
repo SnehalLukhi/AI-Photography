@@ -20,7 +20,7 @@ export default function PhotoUpload({ photo, onChange }) {
         onDragOver={(e) => { e.preventDefault(); setDrag(true) }}
         onDragLeave={() => setDrag(false)}
         onDrop={(e) => { e.preventDefault(); setDrag(false); handle(e.dataTransfer.files[0]) }}
-        className={`grid min-h-[240px] place-items-center overflow-hidden rounded-3xl border-2 border-dashed p-4 text-center transition ${photo ? '' : 'cursor-pointer'} ${drag ? 'border-[#FF3DF2] bg-[#271425]' : 'border-[#4A4A4F] bg-[#272629] hover:bg-[#2A2A2D]/50'}`}
+        className={`grid min-h-[240px] place-items-center overflow-hidden rounded-3xl border-2 border-dashed p-4 text-center transition ${photo ? '' : 'cursor-pointer'} ${drag ? 'border-[#FF3DF2] bg-[#271425]' : 'border-[#4A4A4F] bg-[#191919] hover:bg-[#2A2A2D]/50'}`}
       >
         {photo ? (
           <img src={photo.url} alt="Your upload" className="max-h-[380px] w-full rounded-2xl object-contain" />

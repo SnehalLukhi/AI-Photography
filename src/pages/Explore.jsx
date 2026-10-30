@@ -48,7 +48,7 @@ function Preview({ list, index, onClose, onStep, onUse }) {
           <span className="font-plexmono text-[11px] uppercase tracking-[0.1em] text-[#A1A1AA]">Look {index + 1} of {list.length}</span>
           <button type="button" aria-label="Close preview" onClick={onClose} className="grid size-9 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF] transition hover:bg-[#2C2C2F]"><svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></button>
         </div>
-        <div className="relative mx-auto aspect-[9/16] w-full overflow-hidden rounded-2xl bg-[#272629]" style={{ maxWidth: 'max(200px, calc((100dvh - 330px) * 0.5625))' }}>
+        <div className="relative mx-auto aspect-[9/16] w-full overflow-hidden rounded-2xl bg-[#191919]" style={{ maxWidth: 'max(200px, calc((100dvh - 330px) * 0.5625))' }}>
           <PImage src={t.image} alt={t.name} className="absolute inset-0 h-full w-full object-cover" draggable="false" />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#000000]/85 via-[#000000]/40 to-transparent px-4 pb-4 pt-20">
             <span className="inline-block rounded-full bg-[#1C1C1E]/90 px-2.5 py-1 font-plexmono text-[10px] uppercase tracking-[0.1em] text-[#FFFFFF]">{t.category}</span>
@@ -58,7 +58,7 @@ function Preview({ list, index, onClose, onStep, onUse }) {
             <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#FFFFFF]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
           </button>
         </div>
-        <dl className="grid grid-cols-3 rounded-2xl bg-[#272629]">
+        <dl className="grid grid-cols-3 rounded-2xl bg-[#191919]">
           {[['Cost', cost ? `${cost} coins` : '...'], ['Shape', '9:16'], ['Needs', t.slots?.length > 1 ? `${t.slots.length} photos` : '1 photo']].map(([k, v], i) => (
             <div key={k} className={`px-3.5 py-3 ${i < 2 ? 'border-r border-[#3A3A3E]' : ''}`}><dt className="font-plexmono text-[10px] uppercase tracking-[0.08em] text-[#A1A1AA]">{k}</dt><dd className="mt-1 text-[15px] font-semibold text-[#FFFFFF]">{v}</dd></div>
           ))}
@@ -180,26 +180,12 @@ export default function Explore() {
         </>
       )}
       <div className="mt-5 grid grid-cols-2 gap-2 px-5">
-        {list.map((t) => {
-          const liked = favorites.has(t.id)
-          return (
-            <div key={t.id} className="relative">
-              <Link to={generateUrl(t)} aria-label={t.name} className="relative block aspect-[9/16] overflow-hidden rounded-[6px] bg-[#272629] shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
-                <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
-                <span className="absolute inset-0 bg-gradient-to-t from-[#000000]/60 via-transparent to-transparent" />
-                <span className="absolute inset-x-2 bottom-2.5 truncate text-center text-[12px] font-medium text-white">{t.name}</span>
-              </Link>
-              <button type="button" aria-pressed={liked} aria-label={liked ? 'Remove from favourites' : 'Add to favourites'} onClick={() => (signedIn ? toggleFavorite(t.id) : openLogin())} className="absolute right-2 top-2 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-[#1C1C1E]/90 shadow-[0_4px_12px_rgba(0,0,0,0.15)] backdrop-blur-sm">
-                <svg viewBox="0 0 24 24" className={`size-[18px] ${liked ? 'fill-[#FF3DF2] text-[#FF3DF2]' : 'fill-none text-[#FFFFFF]'}`} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
-              </button>
-            </div>
-          )
-        })}
+        {list.map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={(look) => nav(generateUrl(look))} />)}
       </div>
     </div>
 
     <div className="mx-auto hidden w-full max-w-none px-5 pb-8 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-10 md:block lg:px-10">
-      <div className="mb-7 flex flex-col gap-3 rounded-3xl bg-[#272629] px-8 py-9">
+      <div className="mb-7 flex flex-col gap-3 rounded-3xl bg-[#191919] px-8 py-9">
         <p className="eyebrow">{q ? 'Search results' : 'Discover AI styles'}</p>
         <h1 className="w-fit text-[48px] font-bold leading-[1.05] tracking-tight sm:text-[60px]">{q ? <>Search <span className="grad-text">results</span></> : <>Explore <span className="grad-text">Looks</span></>}</h1>
         <p className="text-[16px] text-[#A1A1AA]">
@@ -223,7 +209,7 @@ export default function Explore() {
           {list.map(card)}
         </div>
       ) : (
-        <div className="rounded-3xl bg-[#272629] px-6 py-16 text-center">
+        <div className="rounded-3xl bg-[#191919] px-6 py-16 text-center">
           <p className="text-[28px] font-bold text-[#FFFFFF]">{q ? 'No looks match that search' : 'No looks here yet'}</p>
           <p className="mt-2 text-[14px] text-[#A1A1AA]">{q ? 'Try another word, or browse a collection.' : 'Check back soon, or try another collection.'}</p>
           {q && <Link to="/explore" className="btn-dark mt-5 !px-5 !py-2.5 !text-[14px]">Browse all looks</Link>}

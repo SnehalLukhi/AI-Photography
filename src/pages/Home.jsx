@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import TemplateCard from '../components/TemplateCard.jsx'
 import GlowBorder from '../components/GlowBorder.jsx'
+import HeroInfoCards from '../components/HeroInfoCards.jsx'
 import { generateUrl } from '../data/templates.js'
 import MobileHome from '../components/MobileHome.jsx'
 import MemberHome from '../components/MemberHome.jsx'
@@ -37,10 +38,8 @@ function GuestHome() {
       <MobileHome trending={trendingPicks} />
       <div className="hidden w-full text-[#FFFFFF] md:block">
 
-        {/* 1. Hero: centred headline, the creation bar, quick category chips, a collage of trending looks */}
-        <section aria-label="Start" className="relative isolate overflow-hidden bg-[#000000] bg-[url('/images/bg.png')] bg-cover bg-center px-4 pb-14 pt-20 sm:px-6 lg:px-8 lg:pt-28">
-          {/* dark overlay: keeps the text readable on the photo and fades into the page colour at the bottom */}
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[#000000]/55 via-[#000000]/60 to-[#000000]" aria-hidden="true" />
+        {/* 1. Hero: centred headline, the creation bar, info cards (free coins, cost, plans), a collage of trending looks */}
+        <section aria-label="Start" className="relative isolate overflow-hidden bg-[#000000] bg-[url('/images/bg.png')] bg-cover bg-center px-4 pb-0 pt-20 sm:px-6 lg:px-8 lg:pt-28">
           <div className="mx-auto flex max-w-[1100px] flex-col items-center text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[#101011]/60 px-4 py-1.5 text-[13px] font-semibold backdrop-blur-md text-[#FF3DF2]"><SparkIcon className="size-3.5 text-[#FF3DF2]" />AI photo and video creation</span>
             <h1 className="mt-6 text-[52px] drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)] lg:text-[76px]">Create stunning <span className="grad-text">photos</span><br />and <span className="grad-text">videos</span> with AI</h1>
@@ -50,20 +49,16 @@ function GuestHome() {
               <GlowBorder />
               <div className="flex shrink-0 rounded-[16px] border border-white/[0.08] bg-black/30 p-1" role="tablist" aria-label="What to create">
                 {[['photo', 'Photo'], ['video', 'Video']].map(([k, label]) => (
-                  <button key={k} type="button" role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={`cursor-pointer rounded-[12px] px-4 py-2 text-[14px] font-semibold transition-all duration-200 sm:px-5 ${mode === k ? 'bg-[#FF3DF2] text-[#000000] shadow-[0_6px_18px_-6px_rgba(255,61,242,0.7)]' : 'text-[#B4B4B8] hover:bg-white/[0.07] hover:text-white'}`}>{label}</button>
+                  <button key={k} type="button" role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={`cursor-pointer rounded-[12px] px-4 py-2 text-[14px] font-semibold transition-all duration-200 sm:px-5 ${mode === k ? 'bg-white text-[#000000] shadow-[0_6px_18px_-8px_rgba(0,0,0,0.6)]' : 'text-[#B4B4B8] hover:bg-white/[0.07] hover:text-white'}`}>{label}</button>
                 ))}
               </div>
               {mode === 'photo'
                 ? <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search templates" placeholder="Search a look, e.g. corporate headshot, cartoon, diwali" className="min-w-0 flex-1 bg-transparent px-2 text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#8E8E93] sm:px-3" />
                 : <input value={vq} onChange={(e) => setVq(e.target.value)} maxLength={500} aria-label="Describe the video" placeholder="Describe a video, e.g. a slow drone shot over a misty lake" className="min-w-0 flex-1 bg-transparent px-2 text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#8E8E93] sm:px-3" />}
-              <button type="submit" className="btn-accent group shrink-0 !px-5 !py-3 sm:!px-7 [&::after]:hidden">{mode === 'video' ? 'Create video' : 'Start creating'}<span className="arrow transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span></button>
+              <button type="submit" className="btn-primary group shrink-0 !px-5 !py-3 sm:!px-7">{mode === 'video' ? 'Create video' : 'Start creating'}<span className="arrow transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true">→</span></button>
             </form>
 
-            {collections.length > 0 && (
-              <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
-                {collections.slice(0, 6).map((c) => <Link key={c.id} to={tabLink(c)} className="chip-glass">{c.category || c.name}</Link>)}
-              </div>
-            )}
+            <HeroInfoCards />
           </div>
 
           {/* the hero's featured carousel: the admin's Trending list only (no fallback); endless right-to-left glide */}
@@ -75,13 +70,13 @@ function GuestHome() {
           {/* 3. Photo and Video */}
           <section aria-label="Create">
             <div className="grid gap-5 md:grid-cols-2">
-              <Link to="/explore" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#3A3A3E] bg-[#272629] p-7 transition-transform duration-300 sm:p-8">
+              <Link to="/explore" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#3A3A3E] bg-[#191919] p-7 transition-transform duration-300 sm:p-8">
                 <span className="grid size-12 place-items-center rounded-2xl bg-[#FF3DF2]/10 text-[#FF3DF2] ring-1 ring-[#FF3DF2]/25 [transition:transform_350ms_cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:scale-110"><svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM4 16l5-5 4 4 3-3 4 4M17 8.5h.01" /></svg></span>
                 <h3 className="mt-6 font-display text-[30px] font-bold leading-tight">Create photos</h3>
                 <p className="mb-6 mt-2 max-w-md text-[16px] leading-relaxed text-[#B4B4B8]">Pick a template, add one photo and get a styled result in moments.</p>
                 <span className="chip-glass mt-auto w-fit gap-2 !px-5 !py-2.5 !text-[14px]">Browse templates<span className="arrow transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">→</span></span>
               </Link>
-              <Link to="/video" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#3A3A3E] bg-[#272629] p-7 transition-transform duration-300 sm:p-8">
+              <Link to="/video" className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-[#3A3A3E] bg-[#191919] p-7 transition-transform duration-300 sm:p-8">
                 <span className="grid size-12 place-items-center rounded-2xl bg-[#FF3DF2]/10 text-[#FF3DF2] ring-1 ring-[#FF3DF2]/25 [transition:transform_350ms_cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:scale-110"><svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM17 10l5-3v10l-5-3z" /></svg></span>
                 <h3 className="mt-6 font-display text-[30px] font-bold leading-tight">Create videos</h3>
                 <p className="mb-6 mt-2 max-w-md text-[16px] leading-relaxed text-[#B4B4B8]">Bring your photos to life with short clips.</p>
@@ -117,8 +112,8 @@ function GuestHome() {
             <Head title="Create in three steps" />
             <ol className="grid gap-4 sm:grid-cols-3">
               {HOW.map(([t, d], i) => (
-                <li key={t} className="rounded-[28px] bg-[#272629] p-7">
-                  <span className="grid size-11 place-items-center rounded-full bg-white font-display text-[18px] font-bold text-[#000000]">{i + 1}</span>
+                <li key={t} className="group rounded-[28px] bg-[#191919] p-7">
+                  <span className="grid size-11 place-items-center rounded-full bg-white font-display text-[18px] font-bold text-[#000000] [transition:transform_350ms_cubic-bezier(0.22,1,0.36,1)] group-hover:scale-125">{i + 1}</span>
                   <h3 className="mt-5 text-[20px]">{t}</h3>
                   <p className="mt-1.5 text-[15px] text-[#A1A1AA]">{d}</p>
                 </li>
@@ -127,12 +122,12 @@ function GuestHome() {
           </section>
 
           {/* 8. Closing call to action */}
-          <section aria-label="Start creating" className="relative isolate overflow-hidden rounded-[40px] bg-[#272629] px-6 py-16 text-center sm:px-12">
+          <section aria-label="Start creating" className="relative isolate overflow-hidden rounded-[40px] bg-[#191919] px-6 py-16 text-center sm:px-12">
             <h2 className="mx-auto max-w-2xl text-[34px] !text-white sm:text-[48px]">Ready to create something worth sharing?</h2>
             <p className="mx-auto mt-4 max-w-lg text-[17px] text-white/70">Choose a look, add your photo and watch it come together.</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <button type="button" onClick={openLogin} className="btn-grad !px-9 !py-4 !text-[16px]">Sign up and claim 100 coins<span className="arrow" aria-hidden="true">→</span></button>
-              <Link to="/explore" className="btn-dark !px-7 !py-4 !text-[16px]">Browse templates</Link>
+              <button type="button" onClick={openLogin} className="btn-primary !px-9 !py-4 !text-[16px] !transition-[background-color,color,transform,box-shadow] !duration-[350ms] !ease-[cubic-bezier(0.22,1,0.36,1)] hover:!bg-[#302F32] hover:!text-white active:!scale-[0.98]">Sign up and claim 100 coins<span className="arrow" aria-hidden="true">→</span></button>
+              <Link to="/explore" className="btn-dark !px-7 !py-4 !text-[16px] hover:!bg-[#191919] active:!scale-100">Browse templates</Link>
             </div>
           </section>
         </div>
@@ -142,6 +137,7 @@ function GuestHome() {
 }
 
 /** One home, two experiences: the signed-out visitor sees the public landing page, a signed-in user sees their personal start page. */
+
 export default function Home() {
   const { signedIn } = useStudio()
   return signedIn ? <MemberHome /> : <GuestHome />

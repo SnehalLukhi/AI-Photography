@@ -35,19 +35,19 @@ function Compare({ item, onClose, onDelete }) {
   }
   return (
     <div className="welcome-backdrop fixed inset-0 z-[200] grid place-items-center overflow-y-auto bg-[#000000]/50 px-4 py-8 backdrop-blur-[2px]" onClick={onClose}>
-      <div className={`welcome-card w-full ${original ? 'max-w-3xl' : 'max-w-xs'} rounded-3xl bg-[#272629] p-6 text-center shadow-[0_18px_40px_rgba(0,0,0,0.14)]`} onClick={(e) => e.stopPropagation()}>
+      <div className={`welcome-card w-full ${original ? 'max-w-3xl' : 'max-w-xs'} rounded-3xl bg-[#191919] p-6 text-center shadow-[0_18px_40px_rgba(0,0,0,0.14)]`} onClick={(e) => e.stopPropagation()}>
         <p className="mb-4 text-[24px] font-bold leading-tight text-[#FFFFFF]">{item.name}</p>
         <div className={original ? 'grid grid-cols-2 gap-3' : 'mx-auto max-w-[200px]'}>{/* no saved original (other browser / device): just the AI image */}
           {[...(original ? [['Original', original]] : []), ['AI generated', item.image]].map(([label, src]) => (
             <figure key={label}>
-              <div className="aspect-[9/16] overflow-hidden rounded-2xl bg-[#272629]">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#A1A1AA]">Not available</div>}</div>
+              <div className="aspect-[9/16] overflow-hidden rounded-2xl bg-[#191919]">{src ? <img src={src} alt={label} className="size-full object-cover object-center" /> : <div className="grid size-full place-items-center text-xs text-[#A1A1AA]">Not available</div>}</div>
               <figcaption className="mt-2 font-plexmono text-[11px] uppercase tracking-[0.08em] text-[#A1A1AA]">{label}</figcaption>
             </figure>
           ))}
         </div>
         {error && <p role="alert" className="mt-3 text-sm text-[#D14343]">{error}</p>}
         <div className="mt-4 flex flex-wrap justify-center gap-3">
-          {item.image && item.generationId && <button type="button" disabled={!!busy} onClick={() => save('result')} className="btn-grad disabled:opacity-60">{busy === 'result' ? 'Downloading…' : 'Download'}</button>}
+          {item.image && item.generationId && <button type="button" disabled={!!busy} onClick={() => save('result')} className="btn-primary disabled:opacity-60">{busy === 'result' ? 'Downloading…' : 'Download'}</button>}
           {item.generationId && <button type="button" className="btn-dark disabled:opacity-60" disabled={!!busy} onClick={del}>{busy === 'delete' ? 'Deleting…' : 'Delete'}</button>}
           <button className="btn-dark" onClick={onClose}>Close</button>
         </div>
@@ -104,34 +104,34 @@ export default function Creations() {
   }
   return (
     <main className="mx-auto w-full max-w-none grow px-5 pb-8 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-10 lg:px-10">
-      <div className="flex flex-wrap items-end justify-between gap-4 rounded-3xl bg-[#272629] px-6 py-8 sm:px-8">
+      <div className="flex flex-wrap items-end justify-between gap-4 rounded-3xl bg-[#191919] px-6 py-8 sm:px-8">
         <div className="flex flex-col gap-3">
           <p className="eyebrow">Your library</p>
           <h1 className="text-[40px] font-bold leading-[1.05] tracking-tight sm:text-[56px]">My <span className="grad-text">Creations</span></h1>
           <p className="text-[16px] text-[#A1A1AA]">{signedIn && list.length ? `${list.length}${nextToken ? '+' : ''} ${list.length === 1 ? 'creation' : 'creations'}. Tap one to compare, download or delete.` : 'Everything you create, saved in one place.'}</p>
         </div>
-        {signedIn && <Link to="/explore" className="btn-grad !px-6 !py-3 !text-[14px]">New creation</Link>}
+        {signedIn && <Link to="/explore" className="btn-primary !px-6 !py-3 !text-[14px]">New creation</Link>}
       </div>
 
       {loadError && <p role="alert" className="mt-6 text-sm text-[#D14343]">{loadError}</p>}
       {!authReady ? null : !signedIn ? (
-        <div className="mt-10 rounded-3xl bg-[#272629] px-6 py-16 text-center sm:py-20">
+        <div className="mt-10 rounded-3xl bg-[#191919] px-6 py-16 text-center sm:py-20">
           <h2 className="text-[30px] font-bold leading-tight text-[#FFFFFF]">Sign in to see your creations</h2>
           <p className="mx-auto mt-3 max-w-md text-[15px] text-[#A1A1AA]">Your creations are stored on your account, so they are here on every device.</p>
-          <button type="button" onClick={openLogin} className="btn-grad mt-7 !px-6 !py-3 !text-[15px]">Sign in</button>
+          <button type="button" onClick={openLogin} className="btn-primary mt-7 !px-6 !py-3 !text-[15px]">Sign in</button>
         </div>
       ) : (
         <>
           {list.length === 0 && !listLoading ? (
-            <div className="mt-10 rounded-3xl bg-[#272629] px-6 py-16 text-center sm:py-20">
+            <div className="mt-10 rounded-3xl bg-[#191919] px-6 py-16 text-center max-md:hidden sm:py-20">
               <h2 className="text-[30px] font-bold leading-tight text-[#FFFFFF]">Nothing here yet</h2>
               <p className="mt-3 text-[15px] text-[#A1A1AA]">Create something and it will show up here.</p>
-              <Link to="/explore" className="btn-grad mt-7 !px-6 !py-3 !text-[15px]">Browse looks</Link>
+              <Link to="/explore" className="btn-primary mt-7 !px-6 !py-3 !text-[15px]">Browse looks</Link>
             </div>
           ) : (
             <div className="mt-10 grid grid-cols-2 gap-3 min-[480px]:grid-cols-3 sm:gap-6 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
               {list.map((c) => (
-                <div key={c.id} onClick={() => setOpen(c)} className="group relative aspect-[9/16] animate-fade-in cursor-pointer overflow-hidden rounded-2xl bg-[#272629] transition-all duration-300">
+                <div key={c.id} onClick={() => setOpen(c)} className="card-orbit group relative aspect-[9/16] animate-fade-in cursor-pointer overflow-hidden rounded-2xl bg-[#191919] transition-all duration-300">
                   {/* every generated picture fills the whole 9:16 card (cropped evenly, never stretched): results from the AI Photography API are almost 9:16, Cartoon results keep the photo's own shape */}
                   <PImage src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/75 via-transparent to-transparent" />

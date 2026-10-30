@@ -70,7 +70,7 @@ export default function OfferPopup({ onClose: finish }) {
     <div className={`welcome-backdrop ${closing ? 'welcome-closing' : ''} fixed inset-0 z-[300] flex items-center justify-center bg-[#000000]/45 p-4`} onClick={() => onClose()}>
       <StarBurst />
       <div role="dialog" aria-modal="true" aria-labelledby="offer-title" onClick={(e) => e.stopPropagation()}
-        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[32px] bg-[#272629] px-5 pb-7 pt-7 text-center shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:px-7">
+        className="offer-card relative max-h-[96dvh] w-full max-w-[500px] overflow-y-auto overflow-x-hidden rounded-[32px] bg-[#191919] px-5 pb-7 pt-7 text-center shadow-[0_18px_40px_rgba(0,0,0,0.14)] sm:px-7">
         <div className="pointer-events-none absolute inset-0 bg-[rgba(255,61,242,0.06)]" />
         <button type="button" onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 z-10 grid size-8 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-lg leading-none text-[#A1A1AA] transition hover:bg-[#2C2C2F] hover:text-[#FFFFFF]">×</button>
 
@@ -78,7 +78,7 @@ export default function OfferPopup({ onClose: finish }) {
         <h2 id="offer-title" className="welcome-rise welcome-rise-1 relative mt-4 text-[26px] font-display font-extrabold leading-tight text-[#FFFFFF] sm:text-[32px]">Wait! Create <span className="grad-alt-text">More</span> for Less</h2>
         <p className="welcome-rise welcome-rise-2 relative mt-2 text-sm text-[#A1A1AA]">Limited-time premium trial reserved for you.</p>
 
-        <div className="welcome-rise welcome-rise-2 relative mt-6 flex items-center gap-5 rounded-[24px] border-2 border-dashed border-[#FF3DF2] bg-[#272629] px-5 py-5 text-left">
+        <div className="welcome-rise welcome-rise-2 relative mt-6 flex items-center gap-5 rounded-[24px] border-2 border-dashed border-[#FF3DF2] bg-[#191919] px-5 py-5 text-left">
           <div className="shrink-0 text-center">
             <p className="text-[34px] font-extrabold leading-none sm:text-[40px] grad-alt-text">{offer.discountPercent}%</p>
             <p className="mt-1 text-xs font-extrabold tracking-wide grad-alt-text">OFF</p>
@@ -108,7 +108,7 @@ export default function OfferPopup({ onClose: finish }) {
           className="welcome-rise welcome-rise-3 relative mt-5 flex h-[50px] w-full cursor-pointer items-center justify-center rounded-full bg-[#FF3DF2] text-base font-bold text-white transition-shadow hover:shadow-[0_12px_32px_rgba(255,61,242,0.35)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70 disabled:cursor-wait disabled:opacity-70">
           {busy ? 'Please wait…' : `Claim ${name} Offer`}
         </button>
-        {note && <p role="status" className="relative mt-3 rounded-2xl bg-[#272629] px-4 py-2.5 text-sm text-[#FFFFFF]">{note}</p>}
+        {note && <p role="status" className="relative mt-3 rounded-2xl bg-[#191919] px-4 py-2.5 text-sm text-[#FFFFFF]">{note}</p>}
         <button type="button" onClick={() => onClose()} className="welcome-rise welcome-rise-3 relative mt-4 cursor-pointer text-xs text-[#A1A1AA] underline underline-offset-2 hover:text-[#FFFFFF]">No Thanks, I'll Decide Later</button>
       </div>
     </div>

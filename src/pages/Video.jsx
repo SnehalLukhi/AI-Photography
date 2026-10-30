@@ -43,7 +43,7 @@ function FrameUpload({ label, hint, file, onFile }) {
   return (
     <div className="min-w-0">
       <span className="mb-2 block text-[14px] font-semibold">{label}</span>
-      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#4A4A4F] bg-[#101011] text-center transition-colors focus-within:border-[#FF3DF2]">
+      <label className="group relative grid min-h-[168px] cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-[#4A4A4F] bg-[#191919] text-center transition-colors focus-within:border-[#FF3DF2]">
         <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => { onFile(e.target.files?.[0] || null); e.target.value = '' }} />
         {url ? <img src={url} alt={`${label} preview`} className="absolute inset-0 size-full object-cover" /> : (
           <span className="px-4 py-6">
@@ -81,13 +81,13 @@ export default function Video() {
       </section>
 
       <div className="mx-auto w-full max-w-[1200px] px-4 pb-24 sm:px-6 lg:px-8">
-        <section aria-label="Video studio" className="overflow-hidden rounded-[32px] border border-[#3A3A3E] bg-[#272629] shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
+        <section aria-label="Video studio" className="overflow-hidden rounded-[32px] border border-[#3A3A3E] bg-[#191919] shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#3A3A3E] px-5 py-4 sm:px-8">
             <h2 className="font-display text-[20px] font-bold">Video studio</h2>
           </div>
 
           <div className="border-b border-[#3A3A3E] px-5 py-4 sm:px-8">
-            <div role="tablist" aria-label="Video mode" className="grid grid-cols-2 gap-1.5 rounded-[22px] bg-[#101011] p-1.5 sm:grid-cols-4">
+            <div role="tablist" aria-label="Video mode" className="grid grid-cols-2 gap-1.5 rounded-[22px] bg-[#191919] p-1.5 sm:grid-cols-4">
               {MODES.map((m) => (
                 <button key={m.id} type="button" role="tab" aria-selected={mode === m.id} onClick={() => setMode(m.id)}
                   className={`cursor-pointer rounded-full px-3 py-2.5 text-[13px] font-semibold transition-colors sm:text-[14px] ${mode === m.id ? 'bg-[#FF3DF2] text-white shadow-[0_8px_22px_-10px_rgba(255,61,242,0.8)]' : 'text-[#A1A1AA] hover:bg-[#2C2C2F] hover:text-white'}`}>
@@ -121,7 +121,7 @@ export default function Video() {
                       ))}
                     </div>
                   ) : (
-                    <div className="grid min-h-[168px] place-items-center rounded-2xl border border-dashed border-[#4A4A4F] bg-[#101011] px-5 py-8 text-center">
+                    <div className="grid min-h-[168px] place-items-center rounded-2xl border border-dashed border-[#4A4A4F] bg-[#191919] px-5 py-8 text-center">
                       <div>
                         <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#2C2C2F] text-[#FF3DF2]"><Icon d="M4 5h16v14H4zM9 9l6 3-6 3z" /></span>
                         <p className="mt-3 text-[14px] font-semibold">No video templates yet</p>
