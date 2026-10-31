@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { exploreTabs, sortTabs, hasAdminOrder, categoryItems, generateUrl } from '../data/templates.js'
+import { exploreTabs, sortTabs, hasAdminOrder, categoryItems, generateUrl, templatesByIds } from '../data/templates.js'
 import PImage from './PImage.jsx'
 import TemplateCard from './TemplateCard.jsx'
 import { SeeAll } from './homeParts.jsx'
@@ -136,7 +136,9 @@ export default function MobileHome({ trending = [] }) {
   const FIRST = ['diwali', 'halloween', 'christmas'] // festival collections come right after Trending, then every other category in its usual order
   if (!hasAdminOrder) rows.sort((x, y) => { const f = (r) => { const i = FIRST.indexOf(r.id); return i < 0 ? FIRST.length : i }; return f(x) - f(y) }) // stable: the rest keep their order
   const nav = useNavigate()
-  const { signedIn, openLogin } = useStudio()
+  const { signedIn, openLogin, favorites } = useStudio()
+  const [likedAll, setLikedAll] = useState(false)
+  const liked = signedIn ? templatesByIds([...favorites]) : [] // follows the hearts live: favourites is shared state
   return (
     <div className="pb-2 text-[#FFFFFF] md:hidden">
       {!signedIn && (
@@ -160,6 +162,25 @@ export default function MobileHome({ trending = [] }) {
           </div>
         </section>
       )}
+      {signedIn && (
+        <section aria-label="Your liked templates" className="mt-5">
+          <div className="flex items-center justify-between gap-3 px-4">
+            <h2 className="truncate text-[20px] font-bold text-white">Your Liked Templates</h2>
+            {liked.length > 4 && <button type="button" onClick={() => setLikedAll((v) => !v)} className="btn-dark shrink-0 !px-4 !py-2 !text-[13px]">{likedAll ? 'Show less' : 'See all'}</button>}
+          </div>
+          {liked.length ? (
+            <div className="mt-2.5 grid grid-cols-2 gap-2 px-4">
+              {(likedAll ? liked : liked.slice(0, 4)).map((t) => <TemplateCard key={t.id} t={t} fav ratio="9 / 16" onSelect={(look) => nav(generateUrl(look))} />)}
+            </div>
+          ) : (
+            <div className="mx-4 mt-2.5 rounded-[20px] bg-[#191919] px-5 py-7 text-center">
+              <svg className="mx-auto size-8 text-[#FF3DF2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+              <p className="mt-3 text-[16px] font-semibold text-white">No liked templates yet</p>
+              <p className="mt-1 text-[13px] text-[#A1A1AA]">Tap the heart on any template to save it here.</p>
+            </div>
+          )}
+        </section>
+      )}
       {/* every category one after another: title, "See all", and a 2-column grid of its first templates */}
       {rows.map((r) => (
         <section key={r.id} aria-label={r.title} className="mt-5">
@@ -167,21 +188,9 @@ export default function MobileHome({ trending = [] }) {
             <div className="min-w-0"><h2 className="truncate text-[20px] font-bold text-white">{r.title}</h2>{r.info && <p className="mt-0.5 line-clamp-1 text-[13px] text-[#A1A1AA]">{r.info}</p>}</div>
             <SeeAll to={r.to} />
           </div>
-          {signedIn ? (
-            <div className="no-scrollbar mt-2.5 flex snap-x scroll-px-4 gap-2 overflow-x-auto px-4">
-              {r.items.map((t) => (
-                <Link key={t.id} to={generateUrl(t)} aria-label={t.name} className="card-orbit relative block aspect-[9/16] w-[38vw] max-w-[170px] shrink-0 snap-start overflow-hidden rounded-[6px] bg-[#191919]">
-                  <PImage src={t.image} alt="" loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
-                  <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <span className="absolute inset-x-3 bottom-3 truncate text-[13px] font-semibold text-white">{t.name}</span>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="mt-2.5 grid grid-cols-2 gap-2 px-4">
-              {r.items.slice(0, 6).map((t) => <TemplateCard key={t.id} t={t} fav ratio="9 / 16" onSelect={(look) => nav(generateUrl(look))} />)}
-            </div>
-          )}
+          <div className="mt-2.5 grid grid-cols-2 gap-2 px-4">
+            {r.items.slice(0, signedIn ? 4 : 6).map((t) => <TemplateCard key={t.id} t={t} fav ratio="9 / 16" onSelect={(look) => nav(generateUrl(look))} />)}
+          </div>
         </section>
       ))}
     </div>

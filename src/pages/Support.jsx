@@ -356,7 +356,7 @@ export function Profile() {
           <div className="relative">
             <h1 className="mx-auto w-fit text-[40px] font-extrabold leading-[1.05] tracking-tight sm:text-[56px]">Your account</h1>
             <p className="mx-auto mt-4 max-w-sm text-[15px] text-[#A1A1AA]">Sign in to see your coins, plan and creations in one place.</p>
-            <button type="button" onClick={openLogin} className="btn-primary mt-8 !rounded-[14px] !px-8 !py-3 !text-[15px]">Sign in</button>
+            <button type="button" onClick={openLogin} className="btn-primary mt-8 !rounded-[14px] !px-8 !py-3 !text-[15px]">Login</button>
           </div>
         </div>
       ) : (

@@ -118,7 +118,7 @@ export default function Creations() {
         <div className="mt-10 rounded-3xl bg-[#191919] px-6 py-16 text-center sm:py-20">
           <h2 className="text-[30px] font-bold leading-tight text-[#FFFFFF]">Sign in to see your creations</h2>
           <p className="mx-auto mt-3 max-w-md text-[15px] text-[#A1A1AA]">Your creations are stored on your account, so they are here on every device.</p>
-          <button type="button" onClick={openLogin} className="btn-primary mt-7 !px-6 !py-3 !text-[15px]">Sign in</button>
+          <button type="button" onClick={openLogin} className="btn-primary mt-7 !px-6 !py-3 !text-[15px]">Login</button>
         </div>
       ) : (
         <>

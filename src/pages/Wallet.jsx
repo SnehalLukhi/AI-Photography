@@ -273,7 +273,7 @@ export default function Wallet({ tab = 'plans' }) {
       {tab === 'history' && (
         <section aria-label="History" className="mx-auto mt-10 max-w-4xl lg:mt-14">
           {!signedIn ? (
-            <div className="rounded-[32px] bg-[#191919] px-6 py-14 text-center"><p className="font-display text-[22px] font-bold">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-primary mt-5 !px-6 !py-2.5 !text-[14px]">Sign in</button></div>
+            <div className="rounded-[32px] bg-[#191919] px-6 py-14 text-center"><p className="font-display text-[22px] font-bold">Sign in to see your transactions</p><button type="button" onClick={openLogin} className="btn-primary mt-5 !px-6 !py-2.5 !text-[14px]">Login</button></div>
           ) : history === null ? (
             <div className="flex flex-col gap-3">{[0, 1, 2].map((k) => <Skel key={k} className="h-16 !rounded-2xl" />)}</div>
           ) : history.length ? (

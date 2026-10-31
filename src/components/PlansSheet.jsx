@@ -20,6 +20,16 @@ const columns = [[0, 3, 4], [1, 2, 5]].map((ids, c) => ids.flatMap((i) => COLS[i
 const reel = [columns[0] || [], columns[1] || [], (columns[0] || []).slice().reverse()]
 
 
+// One collage picture: its space is reserved by the aspect ratio and a dark placeholder shows until the picture is decoded, then it fades in (no pop-in, no shifting)
+function CollageImg({ src, cls }) {
+  const [ok, setOk] = useState(false)
+  return (
+    <div className={`w-full shrink-0 overflow-hidden rounded-2xl bg-[#191919] ${cls}`}>
+      <img src={src} alt="" decoding="async" draggable="false" onLoad={() => setOk(true)} className={`size-full object-cover transition-opacity duration-500 ${ok ? 'opacity-100' : 'opacity-0'}`} />
+    </div>
+  )
+}
+
 /** Phone-only bottom sheet with the subscription plans (same plans and purchase call as the Pricing page). Slides up; closes by the X, tapping outside or dragging down. */
 const build = (r) => r.plans.map((p) => {
   const card = fallbackPlans.find((f) => f.id === p.id) || {}
@@ -77,8 +87,8 @@ export default function PlansSheet({ onClose }) {
           <div className="absolute -inset-x-6 -top-6 bottom-0 flex justify-center gap-3 px-3 opacity-90" style={{ transform: 'rotate(-5deg) scale(1.12)' }}>
             {reel.map((col, c) => (
               <div key={c} className="relative w-[38%] overflow-hidden">
-                <div className="pc-col flex flex-col gap-3" style={{ animation: `${c === 1 ? 'pc-down' : 'pc-up'} ${28 + c * 7}s linear infinite`, marginTop: c === 1 ? -60 : 0 }}>
-                  {[...col, ...col].map((src, k) => <img key={k} src={src} alt="" loading="lazy" draggable="false" className={`w-full shrink-0 rounded-2xl object-cover ${k % 3 === 1 ? 'aspect-[3/4]' : 'aspect-[3/5]'}`} />)}
+                <div className="pc-col flex flex-col gap-3 will-change-transform" style={{ animation: `${c === 1 ? 'pc-down' : 'pc-up'} ${28 + c * 7}s linear infinite`, marginTop: c === 1 ? -60 : 0 }}>
+                  {[...col, ...col].map((src, k) => <CollageImg key={k} src={src} cls={k % 3 === 1 ? 'aspect-[3/4]' : 'aspect-[3/5]'} />)}
                 </div>
               </div>
             ))}
