@@ -19,6 +19,7 @@ function spacesEndpoint() {
 module.exports = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: int(process.env.PORT, 5001),
+  corsLanDev: (process.env.NODE_ENV || 'development') !== 'production' && process.env.CORS_ALLOW_LAN !== 'false', // development: also accept the frontend opened through this PC's LAN address (http://192.168.x.x:5173)
   corsOrigins: list(process.env.CORS_ORIGIN, ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5180']).map((o) => o.replace(/\/+$/, '')), // a browser's Origin header never ends with "/", so a trailing slash in the setting would never match
 
   ailab: {

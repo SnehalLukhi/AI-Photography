@@ -2,8 +2,10 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
+      // Picsart-style softness: the classic 6px corners become generous rounded ones everywhere (cards, panels, inputs) without touching each page
+      borderRadius: { DEFAULT: '10px', md: '16px', lg: '20px', xl: '24px', '2xl': '28px', '3xl': '36px' },
       fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], display: ['Outfit', 'Inter', 'sans-serif'], serif: ['Outfit', 'Inter', 'sans-serif'], mono: ['Inter', 'system-ui', 'sans-serif'] },
-      colors: { page: '#0A0809', panel: '#1D181B', ink: '#0A0809', slate: '#141011', graphite: '#1D181B', line: '#2C2529', bone: '#FAFAFA', citron: '#B653F6', ice: '#B653F6', mint: '#B653F6', coral: '#D98282', accent: '#B653F6', pink: '#B653F6', footer: '#0A0809' },
+      colors: { page: '#0A0809', panel: '#1D181B', ink: '#0A0809', slate: '#141011', graphite: '#1D181B', line: '#2C2529', bone: '#FAFAFA', citron: '#FF3DF2', ice: '#FF3DF2', mint: '#FF3DF2', coral: '#D98282', accent: '#FF3DF2', pink: '#FF3DF2', footer: '#0A0809' },
       keyframes: {
         marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
         'card-float-3d': { '0%,100%': { transform: 'translateY(0) rotateY(-12deg) rotateX(6deg)' }, '50%': { transform: 'translateY(-14px) rotateY(-8deg) rotateX(10deg)' } },

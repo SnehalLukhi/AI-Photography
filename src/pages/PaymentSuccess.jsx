@@ -20,28 +20,26 @@ export default function PaymentSuccess() {
     ['Payment ID', p.paymentId],
   ]
   return (
-    <div className="px-5 pb-8 pt-8 sm:px-8 sm:pt-10 lg:px-12">
-      <div className="mx-auto w-full max-w-[560px] rounded-md border border-[#2C2529] bg-[#141011] p-6 sm:p-9">
-        <p className="eyebrow">Payment</p>
-        <div className="mt-3 flex items-center gap-3">
-          <span className="grid size-10 shrink-0 place-items-center rounded-md border border-[#B653F6]/40 bg-[#B653F6]/10 text-[#B653F6]"><svg className="size-5" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-          <h1 className="text-[40px] leading-none sm:text-[48px]">Payment successful</h1>
-        </div>
-        <p className="mt-3 text-[15px] text-[#B4B0C0]">Thank you! Your coins have been added to your account.</p>
+    <div className="px-5 pb-12 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-12 lg:px-12">
+      <div className="mx-auto w-full max-w-[560px] text-center">
+        <span className="mx-auto grid size-20 place-items-center rounded-full bg-[#102419] text-[#1B7A44]"><svg className="size-9" fill="none" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+        <p className="eyebrow mt-6">Payment</p>
+        <h1 className="mt-2 font-display text-[36px] font-extrabold leading-none tracking-tight sm:text-[46px]">Payment successful</h1>
+        <p className="mt-3 text-[15px] text-[#A1A1AA]">Thank you! Your coins have been added to your account.</p>
 
-        <div className="mt-6 rounded-md border border-[#2C2529] px-5 py-4">
+        <div className="mt-8 rounded-[28px] bg-[#191919] px-5 py-6">
           <p className="eyebrow">New balance</p>
-          <p className="mt-2 flex items-baseline gap-2"><span className="font-serif text-[56px] leading-none tabular-nums">{balance.toLocaleString('en-US')}</span><span className="text-[15px] text-[#B4B0C0]">coins</span></p>
+          <p className="mt-2 flex items-baseline justify-center gap-2"><span className="grad-text font-display text-[64px] font-extrabold leading-none tabular-nums">{balance.toLocaleString('en-US')}</span><span className="text-[15px] text-[#A1A1AA]">coins</span></p>
         </div>
 
-        <dl className="mt-4 rounded-md border border-[#2C2529] text-[14px]">
+        <dl className="mt-4 rounded-[28px] border border-[#3A3A3E] bg-[#191919] text-left text-[14px]">
           {rows.map(([label, value]) => (
-            <div key={label} className="flex items-start justify-between gap-4 border-b border-[#2C2529] px-4 py-3 last:border-b-0"><dt className="shrink-0 text-[#B4B0C0]">{label}</dt><dd className="min-w-0 break-all text-right font-plexmono text-[13px]">{value}</dd></div>
+            <div key={label} className="flex items-start justify-between gap-4 border-b border-[#3A3A3E] px-5 py-3.5 last:border-b-0"><dt className="shrink-0 text-[#A1A1AA]">{label}</dt><dd className="min-w-0 break-all text-right font-plexmono text-[13px] text-[#FFFFFF]">{value}</dd></div>
           ))}
         </dl>
 
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-          <Link to="/explore" className="btn-grad flex-1 !py-3">Start creating</Link>
+          <Link to="/explore" className="btn-primary flex-1 !py-3">Start creating</Link>
           <Link to="/transactions" className="btn-dark flex-1 !py-3">View my purchases</Link>
         </div>
       </div>

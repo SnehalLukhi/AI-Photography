@@ -10,9 +10,26 @@
  * `template` (the Hairstyle cards carry no colour); the backend turns the id into the API's `hair_style`. The JSON prompts are not used by that API.
  */
 // Where the backend is. Local development: http://localhost:5001. Deployed (Vercel services, backend under /api on the same domain): '' = same origin.
-// A production build ignores a localhost VITE_API_BASE_URL (copied from the local .env by mistake): it could never work for visitors.
+// The address is decided by WHERE THE PAGE IS SERVED, not only by the build mode, so a public site can never end up calling a development address:
+//  - on a public host (e.g. *.vercel.app) a localhost VITE_API_BASE_URL is ignored, and so is any http:// address when the page is https (the browser blocks it as "Mixed Content");
+//  - the localhost default and the LAN rewrite below apply only on this PC or on a private network address (http://192.168.x.x:5173 and the like).
 const CONFIGURED_API = import.meta.env.VITE_API_BASE_URL
-export const API_BASE = ((CONFIGURED_API && !(import.meta.env.PROD && /(^|\/\/)(localhost|127\.0\.0\.1)(:|\/|$)/.test(CONFIGURED_API))) ? CONFIGURED_API : (import.meta.env.DEV ? 'http://localhost:5001' : '')).replace(/\/+$/, '')
+const LOOPBACK = /^(localhost|127\.0\.0\.1|\[::1\])$/
+const PRIVATE_HOST = /^(10(\.\d{1,3}){3}|192\.168(\.\d{1,3}){2}|172\.(1[6-9]|2\d|3[01])(\.\d{1,3}){2}|[^.]+\.local)$/
+const pageHost = typeof window !== 'undefined' ? window.location.hostname : ''
+const onHttps = typeof window !== 'undefined' && window.location.protocol === 'https:'
+const privatePage = LOOPBACK.test(pageHost) || PRIVATE_HOST.test(pageHost) // this PC or a device on the same network
+const loopbackUrl = (u) => /(^|\/\/)(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(u)
+const unusable = (u) => (loopbackUrl(u) && !privatePage) || (/^http:\/\//i.test(u) && onHttps)
+const baseUrl = (CONFIGURED_API && !unusable(CONFIGURED_API)) ? CONFIGURED_API : (import.meta.env.DEV && privatePage ? 'http://localhost:5001' : '')
+// "localhost" means the visitor's own device. When the app is opened from another device through this PC's LAN address (e.g. http://192.168.x.x:5173), a loopback API
+// address is pointed at the same host the page came from, so the backend (same machine, same port) is reached without editing any env file.
+const forLan = (u) => {
+  if (!u || !PRIVATE_HOST.test(pageHost)) return u
+  try { const url = new URL(u); if (LOOPBACK.test(url.hostname)) { url.hostname = pageHost; return url.origin + url.pathname } } catch { /* not an absolute URL: leave it */ }
+  return u
+}
+export const API_BASE = forLan(baseUrl).replace(/\/+$/, '')
 export const IMAGE_SIZE = '9:16'
 export const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 export const MAX_BYTES = 10 * 1024 * 1024
@@ -319,7 +336,7 @@ export async function buyCoins(itemId, { name = '', email = '' } = {}) {
   const subscription = order.kind === 'subscription' // an auto-renewing plan: Razorpay's window gets the subscription id (the amount belongs to the plan)
   return new Promise((resolve, reject) => {
     const rzp = new window.Razorpay({
-      key: order.keyId, name: order.name, description: order.description, prefill: { name, email }, theme: { color: '#B653F6' },
+      key: order.keyId, name: order.name, description: order.description, prefill: { name, email }, theme: { color: '#FF3DF2' },
       image: `${window.location.origin}/images/features/logo-256.png`, // the logo in Razorpay's payment window (it must be a small picture on a public address)
       ...(subscription ? { subscription_id: order.subscriptionId } : { amount: order.amount, currency: order.currency, order_id: order.orderId }),
       handler: (r) => post('/api/wallet/verify-payment', subscription

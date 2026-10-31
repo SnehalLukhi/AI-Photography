@@ -9,20 +9,22 @@ import { formatPrice } from '../lib/format.js'
 
 const pending = <span aria-hidden="true" className="invisible">₹000</span> // the price is not known until the server says which currency this visitor pays in
 
-const bar = (cls) => <span className={`block animate-pulse rounded-md bg-white/[0.08] ${cls}`} />
+const TINTS = ['#1C1C1E'] // one neutral theme gray for every plan (no per-plan colour tints)
+
+const bar = (cls) => <span className={`block animate-pulse rounded-md bg-[#2C2C2F] ${cls}`} />
 /** Placeholder cards for the very first visit (no saved prices yet) until the server says which currency applies. */
 const SkeletonCard = () => (
-  <article aria-hidden="true" className="flex flex-col rounded-[24px] border border-white/[0.08] bg-[#1D181B] p-6 sm:p-8 lg:p-6 xl:p-8">
+  <article aria-hidden="true" className="flex flex-col rounded-[32px] border border-[#3A3A3E] bg-[#191919] p-6 sm:p-8 lg:p-6 xl:p-8">
     {bar('h-6 w-40')}
     <div className="mt-5">{bar('h-10 w-32')}</div>
-    <div className="mt-4 flex items-center gap-2.5"><span className="size-9 animate-pulse rounded-full bg-white/[0.08]" />{bar('h-4 w-28')}</div>
+    <div className="mt-4 flex items-center gap-2.5"><span className="size-9 animate-pulse rounded-full bg-[#2C2C2F]" />{bar('h-4 w-28')}</div>
     <div className="mt-7 flex flex-col gap-4 sm:mt-8">{[0, 1, 2, 3, 4].map((i) => <div key={i} className="flex justify-between gap-6">{bar('h-3.5 w-36')}{bar('h-3.5 w-12')}</div>)}</div>
-    <span className="mt-8 block h-[52px] w-full animate-pulse rounded-xl bg-white/[0.06]" />
+    <span className="mt-8 block h-[52px] w-full animate-pulse rounded-full bg-[#1C1C1E]" />
   </article>
 )
 const SkeletonRow = () => (
-  <div aria-hidden="true" className="flex items-center gap-3 rounded-[20px] border border-white/[0.08] bg-[#141011] p-4">
-    <span className="size-5 shrink-0 rounded-full border-2 border-white/20" />
+  <div aria-hidden="true" className="flex items-center gap-3 rounded-[24px] border border-[#3A3A3E] bg-[#191919] p-4">
+    <span className="size-5 shrink-0 rounded-full border-2 border-[#4A4A4F]" />
     <div className="flex-1 space-y-2">{bar('h-4 w-32')}{bar('h-3 w-24')}</div>
     {bar('h-6 w-20')}
   </div>
@@ -63,84 +65,83 @@ export default function Pricing() {
   const mobile = (
     <div className="px-4 pb-32 pt-4 sm:hidden">
       <div className="relative flex items-center justify-center pb-3">
-        <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#1D181B] text-white"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
-        <h1 className="text-[18px] font-semibold text-white">Choose Your Plan</h1>
+        <button type="button" aria-label="Back" onClick={() => nav(-1)} className="absolute left-0 grid size-10 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+        <h1 className="font-display text-[20px] font-bold text-[#FFFFFF]">Choose Your Plan</h1>
       </div>
-      <p className="mb-4 text-center text-[13px] text-[#B4B0C0]">Unlock premium templates, faster generation and more creative freedom.</p>
+      <p className="mb-5 text-center text-[14px] text-[#A1A1AA]">Unlock premium templates, faster generation and more creative freedom.</p>
       <div className="space-y-3" role="radiogroup" aria-label="Subscription plans">
         {loading && [0, 1, 2].map((i) => <SkeletonRow key={i} />)}
         {!loading && plans.map((p) => {
           const on = p.id === selId
           return (
             <div key={p.id} role="radio" aria-checked={on} tabIndex={0} onClick={() => setSel(p.id)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSel(p.id)}
-              className={`relative cursor-pointer overflow-hidden rounded-[20px] border bg-[#141011] p-4 transition-colors ${on ? 'border-white/40 bg-[#1D181B]' : 'border-white/[0.08]'}`}>
-              {p.popular && <span className="absolute right-0 top-0 rounded-bl-xl bg-white/[0.12] px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">Most Popular</span>}
+              className={`relative cursor-pointer overflow-hidden rounded-[24px] border-2 p-4 transition-colors ${on ? 'border-[#FFFFFF] bg-[#191919]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
+              {p.popular && <span className="badge absolute right-0 top-0 !rounded-none !rounded-bl-2xl !px-3 !py-1 !text-[10px] uppercase tracking-wide">Most Popular</span>}
               <div className="flex items-center gap-3">
-                <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#B653F6]' : 'border-white/30'}`}>{on && <span className="size-2.5 rounded-full bg-[linear-gradient(90deg,#705CFF_0%,#FC48E7_100%)]" />}</span>
+                <span className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${on ? 'border-[#FFFFFF]' : 'border-[#4A4A4F]'}`}>{on && <span className="size-2.5 rounded-full bg-[#101011] ring-1 ring-[#FF3DF2]/30" />}</span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[15px] font-semibold text-white">{p.name}</p>
-                  <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#B4B0C0]"><img src={brandImages.coin} alt="" width="16" height="16" className="size-4 object-contain" />{p.coins}</p>
+                  <p className="text-[16px] font-bold text-[#FFFFFF]">{p.name}</p>
+                  <p className="mt-0.5 flex items-center gap-1.5 text-[12px] text-[#A1A1AA]"><img src={brandImages.coin} alt="" width="16" height="16" className="size-4 object-contain" />{p.coins}</p>
                 </div>
                 <div className="shrink-0 text-right">
-                  <p className="text-[20px] font-bold leading-none text-white">{p.price || pending} <span className="text-[11px] font-normal text-[#B4B0C0]">{p.per}</span></p>
-                  {p.originalPrice && <p className="mt-1 text-[11px] text-[#B4B0C0]"><span className="line-through">{p.originalPrice}</span> <span className="font-bold text-[#B653F6]">{p.discount}% OFF</span></p>}
+                  <p className="font-display text-[22px] font-bold leading-none text-[#FFFFFF]">{p.price || pending} <span className="font-sans text-[11px] font-normal text-[#A1A1AA]">{p.per}</span></p>
+                  {p.originalPrice && <p className="mt-1 text-[11px] text-[#A1A1AA]"><span className="line-through">{p.originalPrice}</span> <span className="font-bold text-[#FF3DF2]">{p.discount}% OFF</span></p>}
                 </div>
               </div>
               {on && p.details?.length > 0 && (
-                <dl className="mt-3.5 space-y-2 border-t border-white/[0.08] pt-3 text-[12px] text-[#B4B0C0]">
-                  {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold text-white">{value}</dd></div>)}
+                <dl className="mt-3.5 space-y-2 border-t border-[#3A3A3E] pt-3 text-[12px] text-[#A1A1AA]">
+                  {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="text-[#FF3DF2]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold text-[#FFFFFF]">{value}</dd></div>)}
                 </dl>
               )}
             </div>
           )
         })}
       </div>
-      {note && <p role="status" className="mt-4 rounded-xl border border-white/15 bg-[#141011] px-4 py-3 text-center text-sm text-[#B4B0C0]">{note}</p>}
-      <button type="button" disabled={!chosen?.price || busy === selId} onClick={() => chosen && choose(chosen)} className="mt-5 flex h-[54px] w-full cursor-pointer items-center justify-center rounded-full text-[16px] font-bold text-white shadow-[0_8px_28px_rgba(182,83,246,0.35)] transition-transform active:scale-[0.98] disabled:cursor-wait disabled:opacity-70" style={{ background: 'linear-gradient(90deg, #B653F6 0%, #B653F6 100%)' }}>{busy === selId ? 'Please wait…' : chosen ? chosen.price ? `Continue · ${chosen.price}` : 'Continue' : 'Continue'}</button>
-      <p className="mt-3 text-center text-[11px] text-[#B4B0C0]">Auto-renewable subscription. Cancel anytime.</p>
+      {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#191919] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
+      <button type="button" disabled={!chosen?.price || busy === selId} onClick={() => chosen && choose(chosen)} className="btn-primary mt-5 !h-[54px] !w-full !text-[16px] !font-bold disabled:cursor-wait">{busy === selId ? 'Please wait…' : chosen ? chosen.price ? `Continue · ${chosen.price}` : 'Continue' : 'Continue'}</button>
+      <p className="mt-3 text-center text-[11px] text-[#A1A1AA]">Auto-renewable subscription. Cancel anytime.</p>
     </div>
   )
   return (
     <>
     {mobile}
-    <div className="mx-auto w-full max-w-[1408px] max-sm:hidden px-4 pb-24 pt-6 sm:px-6 sm:pb-20 sm:pt-8 md:px-8 lg:px-12">
-      <header className="max-w-3xl">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-1.5 text-[13px] font-semibold text-white"><SparkIcon className="size-3.5 text-[#B653F6]" /><span>Flexible plans</span></div>
-        <h1 className="mt-6 text-[32px] font-bold leading-[1.05] tracking-tight sm:text-[44px] lg:text-[48px]"><span className="text-[#FAFAFA]">Choose </span> <span className="grad-text">Your Plan</span></h1>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed text-[#B4B0C0] sm:mt-4">Unlock premium templates, faster generation and more creative freedom.</p>
+    <div className="mx-auto w-full max-w-[1280px] max-sm:hidden px-4 pb-24 pt-6 text-[#FFFFFF] sm:px-6 sm:pb-20 sm:pt-10 md:px-8 lg:px-12">
+      <header className="mx-auto max-w-3xl text-center">
+        <span className="pill-tag"><SparkIcon className="size-3.5 text-[#FF3DF2]" /><span>Flexible plans</span></span>
+        <h1 className="mt-5 font-display text-[36px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[52px] lg:text-[60px]">Choose <span className="grad-text">Your Plan</span></h1>
+        <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#A1A1AA] sm:text-lg">Unlock premium templates, faster generation and more creative freedom.</p>
       </header>
 
-      <section className="mt-8 sm:mt-10 lg:mt-12">
+      <section className="mt-10 lg:mt-14">
         <h2 className="sr-only">Subscription plans</h2>
-        <div className="grid grid-cols-1 gap-4 pt-3 sm:grid-cols-2 sm:gap-5 sm:pt-4 lg:grid-cols-3 lg:gap-6">
+        <div className="grid grid-cols-1 gap-5 pt-3 sm:grid-cols-2 sm:pt-4 lg:grid-cols-3 lg:gap-6">
           {loading && [0, 1, 2].map((i) => <SkeletonCard key={i} />)}
-          {!loading && plans.map((p) => (
-            <article key={p.id} className={`relative flex flex-col overflow-visible rounded-[24px] border p-6 transition-transform duration-200 hover:-translate-y-1 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-white/25 bg-[#1D181B]' : 'border-white/[0.08] bg-[#1D181B]'}`}>
-              {p.popular && <span className="grad-alt-bg absolute right-5 top-0 z-10 -translate-y-1/2 rounded-full px-3 py-1 text-[10px] uppercase tracking-wide sm:text-[11px]">Most Popular</span>}
-              <h3 className={`${p.popular ? 'pr-16 ' : ''}text-[18px] font-bold leading-tight text-white sm:text-[22px]`}>{p.name}</h3>
+          {!loading && plans.map((p, idx) => (
+            <article key={p.id} className={`card-orbit relative flex flex-col overflow-visible rounded-[32px] border p-6 transition-transform duration-200 sm:p-8 lg:p-6 xl:p-8 ${p.popular ? 'border-[#FFFFFF] bg-[#191919] ring-1 ring-[#FF3DF2]/30 text-white shadow-[0_18px_40px_rgba(0,0,0,0.14)]' : 'border-[#3A3A3E] bg-[#191919]'}`}>
+              {p.popular && <span className="badge absolute right-6 top-0 z-10 -translate-y-1/2 !px-3.5 !py-1 !text-[11px] uppercase tracking-wide shadow-[0_6px_18px_rgba(255,61,242,0.35)]">Most Popular</span>}
+              <h3 className={`font-display ${p.popular ? 'pr-24 ' : ''}text-[22px] font-bold leading-tight sm:text-[26px] ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.name}</h3>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                <p className="text-[34px] font-bold leading-none text-white sm:text-[40px]">{p.price || pending}</p>
-                {p.originalPrice && <span className="text-[15px] text-[#B4B0C0] line-through">{p.originalPrice}</span>}
-                <span className="text-[13px] text-[#B4B0C0] sm:text-[14px]">{p.per}</span>
-                {p.discount > 0 && <span className="rounded-md bg-[#B653F6]/15 px-2 py-0.5 text-[11px] font-bold text-[#B653F6]">{p.discount}% OFF</span>}
+                <p className={`font-display text-[40px] font-extrabold leading-none sm:text-[48px] ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.price || pending}</p>
+                {p.originalPrice && <span className={`text-[15px] line-through ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}>{p.originalPrice}</span>}
+                <span className={`text-[13px] sm:text-[14px] ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}>{p.per}</span>
+                {p.discount > 0 && <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${p.popular ? 'bg-[#FF3DF2] text-white' : 'bg-[#271425] text-[#FF3DF2]'}`}>{p.discount}% OFF</span>}
               </div>
-              <div className="mt-4 flex items-center gap-2.5">
-                <img src={brandImages.coin} alt="Coins" width="44" height="44" className="size-9 shrink-0 object-contain drop-shadow-[0_0_10px_rgba(182,83,246,0.4)]" />
-                <p className="text-[14px] font-semibold text-white">{p.coins}</p>
+              <div className={`mt-5 flex items-center gap-3 rounded-2xl px-3 py-2.5 ${p.popular ? 'bg-[#1C1C1E]/10' : ''}`} style={p.popular ? undefined : { background: TINTS[idx % TINTS.length] }}>
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#1C1C1E]"><img src={brandImages.coin} alt="Coins" width="44" height="44" className="size-7 object-contain" /></span>
+                <p className={`text-[15px] font-semibold ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{p.coins}</p>
               </div>
-              <dl className="mt-7 flex flex-1 flex-col gap-3.5 text-[13px] text-[#B4B0C0] sm:mt-8 sm:gap-4 sm:text-[14px]">
-                {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2"><span aria-hidden="true" className="mt-px text-[#B4B0C0]">✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className="shrink-0 text-right font-semibold leading-snug text-white">{value}</dd></div>)}
+              <dl className={`mt-7 flex flex-1 flex-col gap-3.5 text-[13px] sm:mt-8 sm:gap-4 sm:text-[14px] ${p.popular ? 'text-white/65' : 'text-[#A1A1AA]'}`}>
+                {p.details.map(([label, value]) => <div key={label} className="flex items-start gap-2.5"><span aria-hidden="true" className={`mt-px grid size-5 shrink-0 place-items-center rounded-full text-[11px] font-bold ${p.popular ? 'bg-[#1C1C1E]/15 text-white' : 'bg-[#2A2A2D] text-[#FF3DF2]'}`}>✓</span><dt className="min-w-0 flex-1 leading-snug">{label}</dt><dd className={`shrink-0 text-right font-semibold leading-snug ${p.popular ? 'text-white' : 'text-[#FFFFFF]'}`}>{value}</dd></div>)}
               </dl>
               <button type="button" disabled={busy === p.id} onClick={() => choose(p)}
-                className={`group relative mt-8 flex h-[52px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl text-[15px] font-semibold text-white transition-shadow duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B653F6] ${p.popular ? 'grad-bg shadow-[0_0_28px_rgba(182,83,246,0.35)] hover:shadow-[0_0_36px_rgba(182,83,246,0.45)]' : 'border border-white/[0.08] bg-[#1D181B] hover:border-transparent hover:shadow-[0_0_28px_rgba(182,83,246,0.35)]'}`}>
-                {!p.popular && <span className="grad-bg pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />}
-                <span className="relative z-10">{busy === p.id ? 'Please wait…' : `Choose ${p.name}`}</span>
+                className={`${p.popular ? 'btn-primary' : 'btn-dark'} mt-8 !h-[52px] w-full disabled:cursor-wait`}>
+                {busy === p.id ? 'Please wait…' : `Choose ${p.name}`}
               </button>
             </article>
           ))}
         </div>
-        <p className="mt-6 text-center text-[11px] text-[#B4B0C0] sm:hidden">Auto-renewable subscription. Cancel anytime.</p>
-        {note && <p role="status" className="mt-4 rounded-xl border border-white/15 bg-[#1D181B] px-4 py-3 text-center text-sm text-[#B4B0C0]">{note}</p>}
+        <p className="mt-8 text-center text-[11px] text-[#A1A1AA] sm:hidden">Auto-renewable subscription. Cancel anytime.</p>
+        {note && <p role="status" className="mt-4 rounded-2xl border border-[#3A3A3E] bg-[#191919] px-4 py-3 text-center text-sm text-[#A1A1AA]">{note}</p>}
       </section>
     </div>
     </>

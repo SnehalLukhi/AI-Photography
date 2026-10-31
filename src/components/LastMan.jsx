@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 const CROWN = '/images/features/crown.svg'
-const GOLD = 'linear-gradient(90deg, #FAFAFA 0%, #B653F6 100%)'
+const GOLD = '#FF3DF2'
 
 const Lock = ({ className = '' }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10V8a5 5 0 0110 0v2h1a1 1 0 011 1v9a1 1 0 01-1 1H6a1 1 0 01-1-1v-9a1 1 0 011-1zm2 0h6V8a3 3 0 00-6 0z" /></svg>
@@ -10,7 +10,7 @@ const Lock = ({ className = '' }) => (
 /** Mobile header icon: golden crown with a small lock. Opens the "Last Man" popup. */
 export function LastManButton({ onClick }) {
   return (
-    <button type="button" onClick={onClick} aria-label="Premium" className="relative grid size-8 shrink-0 cursor-pointer place-items-center rounded-full border border-[#FFB02E]/45 bg-gradient-to-br from-[#3a2a12] to-[#17110a] transition-transform active:scale-95">
+    <button type="button" onClick={onClick} aria-label="Premium" className="relative grid size-8 shrink-0 cursor-pointer place-items-center rounded-full border border-[#FFD98A] bg-[#262310] transition-transform active:scale-95">
       <img src={CROWN} alt="" className="h-[18px] w-[22px] object-contain" draggable="false" />
     </button>
   )
@@ -37,23 +37,23 @@ export default function LastManPopup({ onClose, onUnlock }) {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="fixed inset-0 z-[310] flex items-center justify-center overflow-y-auto p-4 md:hidden" role="dialog" aria-modal="true" aria-label="Last Man">
-      <div onClick={() => close()} className={`fixed inset-0 bg-black/75 backdrop-blur-md transition-opacity duration-300 ${shown ? 'opacity-100' : 'opacity-0'}`} />
-      <div className={`relative my-auto w-full max-w-[380px] overflow-hidden rounded-[28px] border border-[#B653F6]/25 bg-[#141011] px-5 pb-6 pt-8 text-center transition-all duration-300 ease-out ${shown ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-6 scale-95 opacity-0'}`}>
-        <button type="button" aria-label="Close" onClick={() => close()} className="absolute right-3.5 top-3.5 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-white/10 text-[#FAFAFA]">
+      <div onClick={() => close()} className={`fixed inset-0 bg-[#000000]/45 backdrop-blur-md transition-opacity duration-300 ${shown ? 'opacity-100' : 'opacity-0'}`} />
+      <div className={`relative my-auto w-full max-w-[380px] overflow-hidden rounded-[32px] bg-[#191919] px-5 pb-6 pt-8 shadow-[0_18px_40px_rgba(0,0,0,0.14)] text-center transition-all duration-300 ease-out ${shown ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-6 scale-95 opacity-0'}`}>
+        <button type="button" aria-label="Close" onClick={() => close()} className="absolute right-3.5 top-3.5 z-10 grid size-9 cursor-pointer place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]">
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
-        <div className="pointer-events-none absolute left-1/2 top-4 size-52 -translate-x-1/2 rounded-full bg-[#B653F6]/25 blur-[60px]" aria-hidden="true" />
+        <div className="pointer-events-none absolute left-1/2 top-4 size-52 -translate-x-1/2 rounded-full bg-[#271425] blur-[50px]" aria-hidden="true" />
         <div className="relative mx-auto grid size-[132px] place-items-center">
           <img src={CROWN} alt="" className="h-[108px] w-[132px] object-contain" draggable="false" />
-          <span className="absolute bottom-1 right-1 grid size-10 place-items-center rounded-full border-2 border-[#141011] text-white" style={{ background: GOLD }}><Lock className="size-5" /></span>
+          <span className="absolute bottom-1 right-1 grid size-10 place-items-center rounded-full border-2 border-[#2C2C2F] text-white" style={{ background: GOLD }}><Lock className="size-5" /></span>
         </div>
-        <h2 className="relative mt-3 text-[28px] font-bold !text-[#B653F6]">Last Man</h2>
-        <p className="relative mx-auto mt-1.5 max-w-[280px] text-[14px] leading-snug text-[#B4B0C0]">Unlock exclusive features and take your creativity to the next level.</p>
+        <h2 className="relative mt-3 font-display text-[30px] font-extrabold !text-[#FFFFFF]">Last Man</h2>
+        <p className="relative mx-auto mt-1.5 max-w-[280px] text-[14px] leading-snug text-[#A1A1AA]">Unlock exclusive features and take your creativity to the next level.</p>
         <ul className="relative mt-5 space-y-2.5 text-left">
           {features.map(([label, d]) => (
-            <li key={label} className="flex items-center gap-3 rounded-md border border-white/[0.08] bg-white/[0.04] px-3.5 py-3">
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#B653F6]/15 text-[#B653F6]"><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
-              <span className="text-[14px] font-medium text-[#FAFAFA]">{label}</span>
+            <li key={label} className="flex items-center gap-3 rounded-2xl bg-[#191919] px-3.5 py-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-[#2A2A2D] text-[#FF3DF2]"><svg className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg></span>
+              <span className="text-[14px] font-medium text-[#FFFFFF]">{label}</span>
             </li>
           ))}
         </ul>
