@@ -85,7 +85,7 @@ export default function MemberHome() {
           {/* quick tools */}
           <section aria-label="Tools" className="mt-8 max-md:hidden">
             <Head title="Tools & shortcuts" />
-            <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-1 pt-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:gap-2 lg:overflow-visible lg:px-0">
+            <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-1 pt-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:gap-3 lg:overflow-visible lg:px-0">
               {TOOLS.map(([label, to, d, beta]) => (
                 <Link key={label} to={to} className="tool-btn lg:min-w-0 lg:flex-1">
                   {beta && <span className="tool-btn__beta">Beta</span>}

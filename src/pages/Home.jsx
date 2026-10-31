@@ -20,7 +20,9 @@ function GuestHome() {
 
   const collections = getCollections()
   const { custom, trendingPicks } = useTrendingPicks() // the admin's Trending list (newest first); until some are set, the built-in picks
-  const [trendPage, setTrendPage] = useState(0)
+  const [trendPage, setTrendPageRaw] = useState(0)
+  // changing the page swaps the whole grid (the page height changes): bring the top of the Trending section back into view so the new templates are seen, not a jump to the footer
+  const setTrendPage = (n) => { setTrendPageRaw(n); requestAnimationFrame(() => document.getElementById('trending-templates-section')?.scrollIntoView({ block: 'start' })) }
   const trendPages = Math.max(1, Math.ceil(trendingPicks.length / TREND_PAGE))
   const trendNow = Math.min(trendPage, trendPages - 1) // the list can shrink: never stay on a page that no longer exists
   const trendShown = trendingPicks.slice(trendNow * TREND_PAGE, (trendNow + 1) * TREND_PAGE)
