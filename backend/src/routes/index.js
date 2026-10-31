@@ -62,6 +62,22 @@ router.get('/admin/admins', requireAdmin, adminCtl.admins)
 router.post('/admin/admins', requireAdmin, adminCtl.createAdmin)
 router.put('/admin/admins/:id', requireAdmin, adminCtl.updateAdmin)
 router.delete('/admin/admins/:id', requireAdmin, adminCtl.deleteAdmin) // the admin dashboard: checks the key, numbers, people
+const videoCtl = require('../controllers/video.controller')
+router.get('/admin/video/config', requireAdmin, videoCtl.config) // Video lab: try Picsart video models with your own image + text
+router.post('/admin/video/upload', requireAdmin, uploadImage, videoCtl.upload)
+router.post('/admin/video/submit', requireAdmin, videoCtl.submit)
+router.post('/admin/video/viggle/submit', requireAdmin, videoCtl.viggleSubmit) // "Video + picture": Viggle copies the video's motion onto the picture
+router.get('/admin/video/viggle/:id/result', requireAdmin, videoCtl.viggleResult)
+router.get('/admin/video/:id/result', requireAdmin, videoCtl.result)
+const videoTplCtl = require('../controllers/videoTemplates.controller') // video templates: a reference video + prompt, the user adds a photo
+router.get('/admin/video-templates', requireAdmin, videoTplCtl.adminList)
+router.post('/admin/video-templates', requireAdmin, videoTplCtl.adminCreate)
+router.put('/admin/video-templates/:id', requireAdmin, videoTplCtl.adminUpdate)
+router.delete('/admin/video-templates/:id', requireAdmin, videoTplCtl.adminRemove)
+router.get('/video-templates', videoTplCtl.list)
+router.post('/video-templates/:id/generate', requireAuth, generateLimiter, uploadImage, videoTplCtl.generate)
+router.get('/video-jobs', requireAuth, videoTplCtl.jobs)
+router.get('/video-jobs/:id', requireAuth, videoTplCtl.job)
 router.get('/admin/stats', requireAdmin, adminCtl.stats)
 router.get('/admin/api-usage', requireAdmin, adminCtl.apiUsage)
 router.get('/admin/users', requireAdmin, adminCtl.users)

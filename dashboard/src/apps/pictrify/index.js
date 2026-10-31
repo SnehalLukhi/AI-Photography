@@ -6,6 +6,8 @@ import Templates from './pages/Templates.jsx'
 import Trending from './pages/Trending.jsx'
 import ApiUsage from './pages/ApiUsage.jsx'
 import Admins from './pages/Admins.jsx'
+import VideoLab from './pages/VideoLab.jsx'
+import VideoTemplates from './pages/VideoTemplates.jsx'
 
 /** Pictrify (AI photo generator). Its backend serves everything under /api/admin with the x-admin-key header. */
 export default {
@@ -26,6 +28,10 @@ export default {
       { id: 'categories', label: 'Categories', icon: 'folder', component: Categories },
       { id: 'templates', label: 'Templates', icon: 'image', component: Templates },
       { id: 'trending', label: 'Trending', icon: 'flame', component: Trending },
+      { id: 'video-templates', label: 'Video templates', icon: 'play', component: VideoTemplates },
+    ] },
+    { group: 'Tools', pages: [
+      { id: 'video-lab', label: 'Video lab', icon: 'play', component: VideoLab },
     ] },
     { group: 'Settings', pages: [
       { id: 'admins', label: 'Admins', icon: 'lock', component: Admins },

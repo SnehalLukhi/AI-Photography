@@ -69,6 +69,10 @@ module.exports = {
   adminUsername: (process.env.ADMIN_USERNAME || '').trim(), // the admin dashboard signs in with these two (POST /api/admin/login)
   adminPassword: process.env.ADMIN_PASSWORD || '',
   adminTokenHours: Number(process.env.ADMIN_TOKEN_HOURS) > 0 ? Number(process.env.ADMIN_TOKEN_HOURS) : 12, // how long one sign-in lasts
+  // Picsart API Platform (AI video / image models), used by the admin Video lab. https://picsart.com/api-platform/docs
+  picsart: { apiKey: (process.env.PICSART_API_KEY || '').trim(), apiUrl: (process.env.PICSART_API_URL || 'https://api.picsart.com').trim(), timeoutMs: int(process.env.PICSART_TIMEOUT_MS, 30_000) },
+  // Viggle API (motion transfer: a picture + a reference video), used by the admin Video lab. Sent as  Authorization: Bearer <key>
+  viggle: { apiKey: (process.env.VIGGLE_API_KEY || '').trim(), apiUrl: (process.env.VIGGLE_API_URL || 'https://apis.viggle.ai/v1').trim(), timeoutMs: int(process.env.VIGGLE_TIMEOUT_MS, 60_000) },
   adminApiKey: (process.env.ADMIN_API_KEY || '').trim(), // secret for the /api/admin/* endpoints (header x-admin-key); empty = those endpoints are off
   brandName: (process.env.BRAND_NAME || 'Pictrify').trim(), // the name of the site: shown at the top of Razorpay's payment window
 
@@ -85,6 +89,7 @@ module.exports = {
 
   coins: {
     perGeneration: int(process.env.COIN_COST_PER_GENERATION, 150), // coins one generation costs
+    perVideo: int(process.env.VIDEO_COST_COINS, 1500), // coins one video costs (a template can set its own price)
     signupBonus: int(process.env.SIGNUP_BONUS_COINS, 100), // free coins for a new account
   },
 
