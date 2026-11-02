@@ -110,7 +110,14 @@ export default function Templates({ api }) {
             {shown.map((t) => (
               <div key={t.id} className={cx('group relative overflow-hidden rounded-2xl border bg-panel transition hover:-translate-y-1 hover:shadow-2xl animate-rise', t.active ? 'border-line hover:border-white/25' : 'border-dashed border-white/15 opacity-70')}>
                 <div className="relative aspect-[9/13] overflow-hidden bg-ink">
-                  <img src={imageUrl(api, t)} alt={t.name} loading="lazy" className="size-full object-cover transition duration-500 group-hover:scale-105" onError={(e) => { e.currentTarget.style.opacity = 0.15 }} />
+                  <img src={imageUrl(api, t)} alt={t.name} loading="lazy" className="size-full object-cover transition duration-500 group-hover:scale-105"
+                    onLoad={(e) => { e.currentTarget.style.opacity = '' }}
+                    onError={(e) => { // a just-uploaded picture can take a moment to be served: try again a few times (with a changing address) before giving up
+                      const im = e.currentTarget; const n = Number(im.dataset.retry || 0)
+                      if (n >= 4) { im.style.opacity = 0.15; return }
+                      im.dataset.retry = n + 1
+                      setTimeout(() => { im.src = `${imageUrl(api, t)}${imageUrl(api, t).includes('?') ? '&' : '?'}r=${Date.now()}` }, 1200 * (n + 1))
+                    }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
                   <button type="button" aria-label={t.trending ? 'Remove from Trending' : 'Add to Trending'} title={t.trending ? 'In Trending — click to remove' : 'Add to Trending'} disabled={starring === tid(t)} onClick={() => star(t)}
                     className={cx('absolute right-2 top-2 grid size-9 cursor-pointer place-items-center rounded-full backdrop-blur transition active:scale-90', t.trending ? 'bg-gradient-to-br from-amber-400 to-pink text-white shadow-lg' : 'bg-black/50 text-white/70 hover:bg-black/70 hover:text-white')}>

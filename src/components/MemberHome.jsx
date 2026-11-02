@@ -56,7 +56,7 @@ export default function MemberHome() {
       .catch(() => { if (!ctrl.signal.aborted) setRecent([]) })
     return () => ctrl.abort()
   }, [])
-  const favs = templatesByIds([...favorites]).slice(0, 12)
+  const favs = templatesByIds([...favorites])
 
   // ready-made presets: category pills; the gallery shows the chosen collection's templates
   const [preset, setPreset] = useState(null)
@@ -111,7 +111,7 @@ export default function MemberHome() {
             <section aria-label="Trending" className="mt-9 max-md:mt-0">
               <Head title="Trending templates" sub="Popular looks picked by the Pictrify team." to="/explore?category=trending" />
               <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 md:gap-3 xl:grid-cols-6">
-                {trendingPicks.slice(0, 12).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
+                {trendingPicks.slice(0, 18).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
               </div>
             </section>
           )}
@@ -136,7 +136,7 @@ export default function MemberHome() {
             <section aria-label="Favourites" className="mt-9">
               <Head title="Your favourites" sub="Looks you saved with the heart." />
               <div className="grid grid-cols-2 gap-2.5 min-[480px]:grid-cols-3 md:gap-3 xl:grid-cols-6">
-                {favs.slice(0, 6).map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
+                {favs.map((t) => <TemplateCard key={t.id} t={t} fav fit="cover" onSelect={pick} />)}
               </div>
             </section>
           )}
