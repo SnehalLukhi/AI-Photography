@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { plans as fallbackPlans, categoryItems } from '../data/templates.js'
+import { plans as fallbackPlans } from '../data/templates.js'
+import { useTrendingPicks } from './homeParts.jsx'
 import { brandImages } from '../data/images.js'
 import { getPlans, cachedPlans, buyCoins } from '../lib/aiPhotography.js'
 import { useStudio } from '../context/StudioContext.jsx'
@@ -8,8 +9,6 @@ import { formatPrice } from '../lib/format.js'
 import { SparkIcon } from './Header.jsx'
 import usePopupExit from './usePopupExit.js'
 
-// Collage photos: existing template photos (Cartoon, LinkedIn Headshot, Old Money, 80's & 90's, Beard), one from each, no new assets.
-const COLLAGE = ['cartoon', 'linkedin-headshot', 'old-money', '80s-and-90s', 'beard', 'cartoon'].map((id, i) => categoryItems(id)[id === 'cartoon' ? i % 5 : 0]).filter(Boolean)
 
 const BRAND_GRADIENT = 'bg-[#FF3DF2]'
 
@@ -35,6 +34,8 @@ const fromApi = (p) => ({ id: p.id, name: p.name, price: formatPrice(p.offer ? p
 export default function PremiumPopup({ onClose: finish }) {
   const nav = useNavigate()
   const { user, refreshUser } = useStudio()
+  const { trendingPicks } = useTrendingPicks() // the collage shows the admin's Trending templates (so it never depends on a fixed category list)
+  const photos = Array.from({ length: 6 }, (_, k) => trendingPicks[k % Math.max(trendingPicks.length, 1)]?.image).filter(Boolean)
   const [closing, onClose] = usePopupExit(finish)
   const [plans, setPlans] = useState(() => (cachedPlans() ? cachedPlans().plans.map(fromApi) : fallbackPlans.map((p) => fromFallback(p, ''))))
   const [selected, setSelected] = useState((fallbackPlans.find((p) => p.popular) || fallbackPlans[0]).id)
@@ -81,9 +82,9 @@ export default function PremiumPopup({ onClose: finish }) {
           {/* collage: tilted photo columns on desktop */}
           <div className="relative hidden h-[290px] overflow-hidden lg:block" aria-hidden="true">
             <div className="absolute inset-[-10%] flex items-center justify-center gap-3" style={{ rotate: '8deg' }}>
-              {[COLLAGE.slice(0, 2), COLLAGE.slice(2, 4), COLLAGE.slice(4, 6)].map((col, ci) => (
+              {[photos.slice(0, 2), photos.slice(2, 4), photos.slice(4, 6)].map((col, ci) => (
                 <div key={ci} className={`flex w-[32%] flex-col gap-3 ${ci === 1 ? 'translate-y-10' : '-translate-y-6'}`}>
-                  {col.map((t, i) => <img key={i} src={t.image} alt="" className="aspect-[9/14] w-full rounded-2xl object-cover" />)}
+                  {col.map((src, i) => <img key={i} src={src} alt="" className="aspect-[9/14] w-full rounded-2xl object-cover" />)}
                 </div>
               ))}
             </div>

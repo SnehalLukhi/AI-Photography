@@ -21,7 +21,6 @@ import { useStudio } from './context/StudioContext.jsx'
 export default function App() {
   const { pathname } = useLocation()
   const { signedIn, loginOpen, welcomeOffer, closeWelcomeOffer, premiumOffer, closePremiumOffer, offerPopup, closeOfferPopup } = useStudio()
-  const dashboard = signedIn && pathname === '/' // the signed-in home (components/MemberHome.jsx) keeps its footer-less layout
   const generating = pathname === '/generate' // the Create workspace: collapsed rail, no footer, no phone chrome
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return (
@@ -53,7 +52,7 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
-        {!generating && !dashboard && <div className="max-md:hidden"><Footer /></div>}
+        {!generating && <div className="max-md:hidden"><Footer /></div>}
         {!generating && <div className="h-20 md:hidden" aria-hidden="true" />} {/* phones: room for the fixed bottom bar */}
       </div>
       {loginOpen && !signedIn && <LoginModal />}
