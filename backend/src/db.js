@@ -191,6 +191,38 @@ const SCHEMA = `
   ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
   ALTER TABLE template_categories ENABLE ROW LEVEL SECURITY;
   ALTER TABLE templates ENABLE ROW LEVEL SECURITY;
+  -- video templates: a reference video (the motion to copy) + prompt + settings of a Picsart model; the user adds only a photo (see videoTemplates.service)
+  CREATE TABLE IF NOT EXISTS video_templates (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    video_url TEXT NOT NULL,
+    preview_url TEXT,
+    model TEXT NOT NULL DEFAULT 'kling-motion-control',
+    video_key TEXT NOT NULL DEFAULT 'videoUrl',
+    prompt TEXT NOT NULL DEFAULT '',
+    params JSONB NOT NULL DEFAULT '{}',
+    cost_coins INTEGER,
+    active BOOLEAN NOT NULL DEFAULT true,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  );
+  -- one row per video a user asked for: id = the Picsart task id; the coins are given back once if it fails
+  CREATE TABLE IF NOT EXISTS video_jobs (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    template_id TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'processing',
+    coins INTEGER NOT NULL DEFAULT 0,
+    input_key TEXT,
+    video_url TEXT,
+    error TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    finished_at TIMESTAMPTZ
+  );
+  CREATE INDEX IF NOT EXISTS video_jobs_user ON video_jobs (user_id, created_at DESC);
+  ALTER TABLE video_templates ENABLE ROW LEVEL SECURITY;
+  ALTER TABLE video_jobs ENABLE ROW LEVEL SECURITY;
 `
 
 let impl

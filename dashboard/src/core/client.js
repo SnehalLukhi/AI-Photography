@@ -6,7 +6,7 @@
  * A page never builds a request by hand, so adding another app only means pointing a client at its API.
  */
 export class ApiError extends Error {
-  constructor(message, status, code) { super(message); this.status = status; this.code = code }
+  constructor(message, status, code, details) { super(message); this.status = status; this.code = code; this.details = details }
 }
 
 /** Signs in and returns { token, username, expiresAt, app }. */
@@ -41,7 +41,7 @@ export function createClient({ url, token, onExpired }) {
     let data = null
     try { data = await res.json() } catch { /* empty or not JSON */ }
     if (res.status === 401) onExpired?.() // the session ended: back to the sign-in screen
-    if (!res.ok) throw new ApiError(data?.error?.message || `Request failed (${res.status}).`, res.status, data?.error?.code)
+    if (!res.ok) throw new ApiError(data?.error?.message || `Request failed (${res.status}).`, res.status, data?.error?.code, data?.error?.details)
     return data
   }
   return {
