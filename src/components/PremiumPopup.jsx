@@ -35,7 +35,12 @@ export default function PremiumPopup({ onClose: finish }) {
   const nav = useNavigate()
   const { user, refreshUser } = useStudio()
   const { trendingPicks } = useTrendingPicks() // the collage shows the admin's Trending templates (so it never depends on a fixed category list)
-  const photos = Array.from({ length: 6 }, (_, k) => trendingPicks[k % Math.max(trendingPicks.length, 1)]?.image).filter(Boolean)
+  const pool = trendingPicks.map((t) => t.image).filter(Boolean)
+  // three columns of different photos that scroll slowly in opposite directions (same motion as the login popup's collage); each list is repeated so the loop has no seam
+  const columns = [['login-marquee-up', 70], ['login-marquee-down', 82], ['login-marquee-up', 76]].map(([anim, secs], c) => {
+    const list = pool.length ? Array.from({ length: 6 }, (_, k) => pool[(k * 3 + c * 2) % pool.length]) : []
+    return { anim, secs, list: [...list, ...list] }
+  })
   const [closing, onClose] = usePopupExit(finish)
   const [plans, setPlans] = useState(() => (cachedPlans() ? cachedPlans().plans.map(fromApi) : fallbackPlans.map((p) => fromFallback(p, ''))))
   const [selected, setSelected] = useState((fallbackPlans.find((p) => p.popular) || fallbackPlans[0]).id)
@@ -80,15 +85,23 @@ export default function PremiumPopup({ onClose: finish }) {
           </div>
 
           {/* collage: tilted photo columns on desktop */}
-          <div className="relative hidden h-[290px] overflow-hidden lg:block" aria-hidden="true">
-            <div className="absolute inset-[-10%] flex items-center justify-center gap-3" style={{ rotate: '8deg' }}>
-              {[photos.slice(0, 2), photos.slice(2, 4), photos.slice(4, 6)].map((col, ci) => (
-                <div key={ci} className={`flex w-[32%] flex-col gap-3 ${ci === 1 ? 'translate-y-10' : '-translate-y-6'}`}>
-                  {col.map((src, i) => <img key={i} src={src} alt="" className="aspect-[9/14] w-full rounded-2xl object-cover" />)}
+          <div className="relative hidden h-[290px] overflow-hidden rounded-[22px] lg:block" aria-hidden="true">
+            <style>{`
+              @keyframes pp-sway { 0%, 100% { transform: rotate(8deg) translateX(0) scale(1) } 50% { transform: rotate(6.5deg) translateX(8px) scale(1.04) } }
+              @keyframes pp-sweep { 0% { transform: translateX(-120%) skewX(-18deg) } 45%, 100% { transform: translateX(520%) skewX(-18deg) } }
+              @media (prefers-reduced-motion: reduce) { .pp-anim, .login-col { animation: none !important } }
+            `}</style>
+            <div className="pp-anim absolute inset-[-14%] flex items-stretch justify-center gap-3 px-2 [animation:pp-sway_14s_ease-in-out_infinite]">
+              {columns.map((col, ci) => (
+                <div key={ci} className="relative h-full min-w-0 flex-1 overflow-hidden">
+                  <div className="login-col flex w-full flex-col will-change-transform" style={{ animation: `${col.anim} ${col.secs}s linear infinite` }}>
+                    {col.list.map((src, k) => <img key={k} src={src} alt="" loading="lazy" decoding="async" draggable="false" className="mb-3 aspect-[9/14] w-full shrink-0 rounded-2xl object-cover ring-1 ring-white/10" />)}
+                  </div>
                 </div>
               ))}
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-[#101011] via-transparent to-transparent" />
+            <div className="pointer-events-none absolute inset-0 overflow-hidden"><span className="pp-anim absolute inset-y-0 left-0 w-1/5 animate-[pp-sweep_9s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" /></div>
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#101011]/70 via-transparent to-[#101011]/40" />
           </div>
         </div>
 
