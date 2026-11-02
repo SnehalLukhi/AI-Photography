@@ -98,7 +98,7 @@ export default function Wallet({ tab = 'plans' }) {
     </div>
   )
   return (
-    <div className="mx-auto w-full max-w-[1280px] px-4 pb-12 pt-6 text-[#FFFFFF] max-md:pb-32 sm:px-6 sm:pt-10 md:px-8 lg:px-10">
+    <div className="mx-auto w-full max-w-[1280px] px-4 pb-12 pt-6 text-[#FFFFFF] max-md:pb-4 sm:px-6 sm:pt-10 md:px-8 lg:px-10">
       <header className={`mx-auto max-w-3xl text-center max-md:hidden`}>
         <span className="pill-tag"><SparkIcon className="size-3.5 text-[#FF3DF2]" /><span>{HEAD[0]}</span></span>
         <h1 className="mt-5 font-display text-[36px] font-extrabold leading-[1.05] tracking-tight text-[#FFFFFF] sm:text-[52px] lg:text-[60px]">{HEAD[1]}<span className="grad-text">{HEAD[2]}</span></h1>

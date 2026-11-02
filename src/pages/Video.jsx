@@ -2,15 +2,17 @@ import { useEffect, useState } from 'react'
 import { VIDEO_TEMPLATES } from '../data/videoTemplates.js'
 import { useSearchParams } from 'react-router-dom'
 import PImage from '../components/PImage.jsx'
+import { useStudio } from '../context/StudioContext.jsx'
 
 // Video creation sits beside Photo creation. The backend has no video-generation integration yet (no endpoint, no provider key), so NOTHING on this page starts a job:
 // the studio below has working controls (mode tabs, uploads shown locally, prompt, settings) but Generate stays off, and people are sent to the photo flow, which works today.
-const IDEAS = [
-  ['Photo to video', 'Bring a styled photo to life with gentle motion.', '#2A2A2D'],
-  ['Template videos', 'Pick a look, add a photo, get a short clip back.', '#271425'],
-  ['Dance and motion', 'Put yourself into trending moves and music-ready loops.', '#2A2A2D'],
-  ['Story clips', 'Vertical clips sized for Reels, Shorts and Stories.', '#102419'],
+const IDEAS = [ // [title, text, the mode "Try it" opens]
+  ['Photo to video', 'Bring a styled photo to life with gentle motion.', 'image'],
+  ['Template videos', 'Pick a look, add a photo, get a short clip back.', 'template'],
+  ['Dance and motion', 'Put yourself into trending moves and music-ready loops.', 'template'],
+  ['Story clips', 'Vertical clips sized for Reels, Shorts and Stories.', 'text'],
 ]
+const MODE_ICON = { text: 'M5 6h14M5 12h14M5 18h9', image: 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4', frames: 'M4 6h6v12H4zM14 6h6v12h-6z', template: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z' }
 const RATIOS = ['9:16', '16:9', '1:1']
 const LENGTHS = ['5 s', '10 s']
 const MODES = [
@@ -58,6 +60,7 @@ function FrameUpload({ label, hint, file, onFile }) {
 
 export default function Video() {
   const [mode, setMode] = useState('text')
+  const { signedIn, coins } = useStudio()
   const [params] = useSearchParams()
   const [prompt, setPrompt] = useState(() => (params.get('prompt') || '').slice(0, 500)) // an idea typed in the home page's Video search bar arrives here
   const [image, setImage] = useState(null)
@@ -71,107 +74,134 @@ export default function Video() {
   const frame = ratio === '16:9' ? 'aspect-video' : ratio === '1:1' ? 'aspect-square' : 'aspect-[9/16]'
   // what a future Generate call will need per mode (kept for the integration; Generate itself stays off for now)
   const ready = { text: !!prompt.trim(), image: !!image && !!prompt.trim(), frames: !!first && !!last && !!prompt.trim(), template: !!tpl && !!tplPhoto }[mode]
+  const tryIdea = (m) => { setMode(m); document.getElementById('video-studio')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }
+  const step = (n, title, extra) => <p className="mb-3 flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.14em] text-[#A1A1AA]"><span><span className="text-[#FF3DF2]">{n}</span> · {title}</span>{extra}</p>
+  const secsOf = (l) => `0:${String(parseInt(l, 10) || 5).padStart(2, '0')}`
+  const modeTag = mode === 'template' ? 'Template' : `${cur.short} to Video`
   return (
     <div className="w-full text-[#FFFFFF]">
-      <section className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#101011_0%,#000000_100%)] px-4 pb-12 pt-12 text-center max-md:pb-4 max-md:pt-2 sm:px-6 lg:pt-16">
-        <h1 className="mx-auto max-w-3xl max-md:hidden text-[40px] sm:text-[58px] lg:text-[68px]">Create <span className="grad-text">videos</span> as easily as photos</h1>
-        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-[#A1A1AA] sm:text-[18px]">Turn a prompt, a photo or a template into a short video.</p>
-      </section>
+      <div className="mx-auto w-full max-w-[1200px] px-4 pb-6 sm:px-6 sm:pb-24 lg:px-8">
+        {/* intro (the phone header already names the page) */}
+        <header className="pb-8 pt-10 max-md:hidden lg:pt-14">
+          <p className="text-[13px] text-[#A1A1AA]">Create <span className="mx-1 text-[#52525B]">/</span> <span className="text-white">AI Video</span></p>
+          <h1 className="mt-4 max-w-3xl text-[44px] font-extrabold leading-[1.05] tracking-tight sm:text-[60px] lg:text-[76px]">Make a <span className="text-[#FF3DF2]">video</span> in a few lines.</h1>
+          <p className="mt-4 text-[16px] text-[#A1A1AA]">Turn a prompt, a photo or a template into a short video.</p>
+        </header>
 
-      <div className="mx-auto w-full max-w-[1200px] px-4 pb-24 sm:px-6 lg:px-8">
-        <section aria-label="Video studio" className="overflow-hidden rounded-[32px] border border-[#3A3A3E] bg-[#191919] shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#3A3A3E] px-5 py-4 sm:px-8">
-            <h2 className="font-display text-[20px] font-bold">Video studio</h2>
-          </div>
-
-          <div className="border-b border-[#3A3A3E] px-5 py-4 sm:px-8">
-            <div role="tablist" aria-label="Video mode" className="grid grid-cols-2 gap-1.5 rounded-[22px] bg-[#191919] p-1.5 sm:grid-cols-4">
-              {MODES.map((m) => (
-                <button key={m.id} type="button" role="tab" aria-selected={mode === m.id} onClick={() => setMode(m.id)}
-                  className={`cursor-pointer rounded-full px-3 py-2.5 text-[13px] font-semibold transition-colors sm:text-[14px] ${mode === m.id ? 'bg-[#FF3DF2] text-white shadow-[0_8px_22px_-10px_rgba(255,61,242,0.8)]' : 'text-[#A1A1AA] hover:bg-[#2C2C2F] hover:text-white'}`}>
-                  <span className="sm:hidden">{m.short}</span><span className="hidden sm:inline">{m.label}</span>
-                </button>
-              ))}
-            </div>
-            <p className="mt-3 text-[14px] text-[#A1A1AA]">{cur.hint}</p>
-          </div>
-
-          <div className="grid gap-0 lg:grid-cols-[1.1fr_1fr]">
-            <div role="tabpanel" className="flex min-w-0 flex-col gap-6 p-5 sm:p-8">
-              {mode === 'image' && <FrameUpload label="Starting image" hint="PNG, JPG or WebP" file={image} onFile={setImage} />}
-              {mode === 'frames' && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <FrameUpload label="Start frame" hint="How the video begins" file={first} onFile={setFirst} />
-                  <FrameUpload label="End frame" hint="How the video ends" file={last} onFile={setLast} />
-                </div>
-              )}
-              {mode === 'template' && (
-                <div>
-                  <span className="mb-2 block text-[14px] font-semibold">Choose a template</span>
-                  {VIDEO_TEMPLATES.length ? (
-                    <div className="grid grid-cols-3 gap-3">
-                      {VIDEO_TEMPLATES.map((t) => (
-                        <button key={t.id} type="button" onClick={() => setTpl(t.id)} aria-pressed={tpl === t.id} className={`tile group relative aspect-[3/4] overflow-hidden !rounded-[18px] border-2 ${tpl === t.id ? 'border-[#FF3DF2]' : 'border-transparent'}`}>
-                          <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
-                          <span className="absolute inset-0 bg-gradient-to-t from-[#000000]/80 via-transparent to-transparent" />
-                          <span className="absolute inset-x-2 bottom-2 truncate text-[12px] font-semibold text-white">{t.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="grid min-h-[168px] place-items-center rounded-2xl border border-dashed border-[#4A4A4F] bg-[#191919] px-5 py-8 text-center">
-                      <div>
-                        <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#2C2C2F] text-[#FF3DF2]"><Icon d="M4 5h16v14H4zM9 9l6 3-6 3z" /></span>
-                        <p className="mt-3 text-[14px] font-semibold">No video templates yet</p>
-                        <p className="mt-1 text-[12px] text-[#A1A1AA]">Templates added in the admin panel will appear here, each with its own style and reference image.</p>
-                      </div>
-                    </div>
-                  )}
-                  <div className="mt-5"><FrameUpload label="Your photo" hint="The photo the template is applied to" file={tplPhoto} onFile={setTplPhoto} /></div>
-                </div>
-              )}
-
-              <label className="block">
-                <span className="mb-2 flex items-center justify-between text-[14px] font-semibold">{mode === 'template' ? 'Extra details (optional)' : 'Describe the video'}<span className="text-[12px] font-normal text-[#A1A1AA]">{prompt.length}/500</span></span>
-                <textarea rows={4} maxLength={500} value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder={PROMPT_PLACEHOLDER[mode]} className="input resize-none !bg-[#101011]" />
-              </label>
-
-              <div className={`grid gap-5 sm:grid-cols-2 ${mode === 'template' ? 'hidden' : ''}`}>
-                <div>
-                  <span className="mb-2 block text-[14px] font-semibold">Aspect ratio</span>
-                  <div className="flex flex-wrap gap-2">{RATIOS.map((r) => <button key={r} type="button" onClick={() => setRatio(r)} aria-pressed={ratio === r} className={`chip ${ratio === r ? 'chip-on' : ''}`}>{r}</button>)}</div>
-                </div>
-                <div>
-                  <span className="mb-2 block text-[14px] font-semibold">Duration</span>
-                  <div className="flex flex-wrap gap-2">{LENGTHS.map((l) => <button key={l} type="button" onClick={() => setLen(l)} aria-pressed={len === l} className={`chip ${len === l ? 'chip-on' : ''}`}>{l}</button>)}</div>
-                </div>
+        <section id="video-studio" aria-label="Video studio" className="grid scroll-mt-24 gap-5 max-md:mt-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]">
+          {/* left: the steps */}
+          <div className="flex min-w-0 flex-col gap-6 rounded-[28px] bg-[#191919] p-5 sm:p-7">
+            <div>
+              {step('1', 'Choose a mode')}
+              <div role="tablist" aria-label="Video mode" className="grid grid-cols-2 gap-2.5">
+                {MODES.map((m) => (
+                  <button key={m.id} type="button" role="tab" aria-selected={mode === m.id} onClick={() => setMode(m.id)}
+                    className={`flex cursor-pointer items-center gap-3 rounded-full border-2 px-3 py-2.5 text-left text-[13px] font-semibold leading-tight transition-colors sm:text-[14px] ${mode === m.id ? 'border-[#ffffff]  text-white' : 'border-[#3A3A3E] bg-[#1C1C1E] text-[#C4C4C8]  hover:text-white'}`}>
+                    <span className={`grid size-8 shrink-0 place-items-center rounded-full ${mode === m.id ? 'bg-[#FF3DF2] text-white' : 'bg-[#2C2C2F] text-[#A1A1AA]'}`}><Icon d={MODE_ICON[m.id]} className="size-4" /></span>
+                    <span className="min-w-0">{m.label}</span>
+                  </button>
+                ))}
               </div>
+              <p className="mt-3 text-[13px] text-[#A1A1AA]">{cur.hint}</p>
+            </div>
 
+            {mode === 'image' && <FrameUpload label="Starting image" hint="PNG, JPG or WebP" file={image} onFile={setImage} />}
+            {mode === 'frames' && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <FrameUpload label="Start frame" hint="How the video begins" file={first} onFile={setFirst} />
+                <FrameUpload label="End frame" hint="How the video ends" file={last} onFile={setLast} />
+              </div>
+            )}
+            {mode === 'template' && (
               <div>
-                <button type="button" disabled className="btn-grad !w-full !py-4 !text-[16px]" data-ready={ready ? 'true' : 'false'}>Generate video</button>
+                <span className="mb-2 block text-[14px] font-semibold">Choose a template</span>
+                {VIDEO_TEMPLATES.length ? (
+                  <div className="grid grid-cols-3 gap-3">
+                    {VIDEO_TEMPLATES.map((t) => (
+                      <button key={t.id} type="button" onClick={() => setTpl(t.id)} aria-pressed={tpl === t.id} className={`tile group relative aspect-[3/4] overflow-hidden !rounded-[18px] border-2 ${tpl === t.id ? 'border-[#FF3DF2]' : 'border-transparent'}`}>
+                        <PImage src={t.image} alt={t.name} loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
+                        <span className="absolute inset-0 bg-gradient-to-t from-[#000000]/80 via-transparent to-transparent" />
+                        <span className="absolute inset-x-2 bottom-2 truncate text-[12px] font-semibold text-white">{t.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid min-h-[140px] place-items-center rounded-2xl border border-dashed border-[#4A4A4F] bg-[#191919] px-5 py-8 text-center">
+                    <div>
+                      <span className="mx-auto grid size-11 place-items-center rounded-full bg-[#2C2C2F] text-[#FF3DF2]"><Icon d="M4 5h16v14H4zM9 9l6 3-6 3z" /></span>
+                      <p className="mt-3 text-[14px] font-semibold">No video templates yet</p>
+                      <p className="mt-1 text-[12px] text-[#A1A1AA]">Templates added in the admin panel will appear here, each with its own style and reference image.</p>
+                    </div>
+                  </div>
+                )}
+                <div className="mt-5"><FrameUpload label="Your photo" hint="The photo the template is applied to" file={tplPhoto} onFile={setTplPhoto} /></div>
+              </div>
+            )}
+
+            <label className="block">
+              {step('2', mode === 'template' ? 'Extra details (optional)' : 'Describe the video', <span className="text-[11px] font-medium normal-case tracking-normal">{prompt.length}/500</span>)}
+              <textarea rows={4} maxLength={500} value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder={PROMPT_PLACEHOLDER[mode]} className="input resize-none !bg-[#101011]" />
+            </label>
+
+            <div className={`grid gap-6 sm:grid-cols-2 ${mode === 'template' ? 'hidden' : ''}`}>
+              <div>
+                {step('3', 'Aspect ratio')}
+                <div className="flex flex-wrap gap-1.5">{RATIOS.map((r) => <button key={r} type="button" onClick={() => setRatio(r)} aria-pressed={ratio === r} className={`chip !gap-1.5 !px-3 !py-2 ${ratio === r ? 'chip-on' : ''}`}><span className={`inline-block rounded-[3px] border-[1.5px] border-current ${r === '9:16' ? 'h-3.5 w-2' : r === '16:9' ? 'h-2 w-3.5' : 'size-3'}`} aria-hidden="true" />{r}</button>)}</div>
+              </div>
+              <div>
+                {step('4', 'Duration')}
+                <div className="flex flex-wrap gap-2">{LENGTHS.map((l) => <button key={l} type="button" onClick={() => setLen(l)} aria-pressed={len === l} className={`chip !px-4 !py-2 ${len === l ? 'chip-on' : ''}`}>{l}</button>)}</div>
               </div>
             </div>
 
-            <div className="grid place-items-center border-t border-[#3A3A3E] bg-[linear-gradient(135deg,#2A2A2D_0%,#271425_100%)] p-6 sm:p-8 lg:border-l lg:border-t-0">
-              <div className={`grid w-full place-items-center rounded-[28px] border-4 border-[#2C2C2F] bg-[#1C1C1E]/60 shadow-[0_24px_50px_rgba(0,0,0,0.3)] ${frame} ${ratio === '16:9' ? 'max-w-[420px]' : 'max-w-[300px]'}`}>
+            <div className="mt-auto">
+              {signedIn && <p className="mb-3 flex items-center justify-between text-[13px] text-[#A1A1AA]"><span>Your balance</span><b className="font-semibold text-white">{coins.toLocaleString()} coins</b></p>}
+              <button type="button" disabled className="btn-grad !w-full !flex-col !gap-0.5 !rounded-2xl !py-3.5 !text-[16px] disabled:!bg-[#2A2A2D] disabled:!bg-none disabled:text-[#A1A1AA] disabled:opacity-100 disabled:shadow-none" data-ready={ready ? 'true' : 'false'}>
+                Generate video<span className="text-[12px] font-medium text-[#8E8E93]">{ready ? 'Coming soon' : mode === 'text' || mode === 'frames' ? 'Add a prompt first' : 'Add your inputs first'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* right: the preview stage */}
+          <div className="flex min-w-0 flex-col rounded-[28px] bg-[#0B0B0C] p-5 ring-1 ring-white/10 sm:p-7">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-white">Preview stage</p>
+              <div className="flex gap-1.5 text-[11px] font-semibold">
+                <span className="rounded-full bg-[#2C2C2F] px-2.5 py-1 text-[#C4C4C8]">{ratio}</span>
+                <span className="rounded-full bg-[#2C2C2F] px-2.5 py-1 text-[#C4C4C8]">{len}</span>
+                <span className="rounded-full bg-[#FF3DF2] px-2.5 py-1 text-white">{modeTag}</span>
+              </div>
+            </div>
+            <div className="my-5 grid flex-1 place-items-center rounded-[22px] bg-[#121214] p-4 sm:p-6">
+              <div className={`grid w-full place-items-center rounded-[22px] border border-white/10 bg-[#1A1A1D] ${frame} ${ratio === '16:9' ? 'max-w-[440px]' : ratio === '1:1' ? 'max-w-[300px]' : 'max-w-[220px]'}`}>
                 <div className="px-4 text-center">
-                  <span className="mx-auto grid size-14 place-items-center rounded-full bg-white text-[#000000]"><svg className="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
-                  <p className="mt-3 text-[14px] font-semibold">Your video will appear here</p>
+                  <span className="mx-auto grid size-14 place-items-center rounded-full bg-[#FF3DF2] text-white shadow-[0_10px_30px_-8px_rgba(255,61,242,0.7)]"><svg className="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
+                  <p className="mt-3 text-[14px] font-bold">Your video will appear here</p>
                   <p className="mt-1 text-[12px] text-[#A1A1AA]">{mode === 'template' ? cur.label : `${cur.label} · ${ratio} · ${len}`}</p>
                 </div>
               </div>
             </div>
+            <div className="flex items-center gap-3 text-[12px] text-[#8E8E93]" aria-hidden="true">
+              <span className="grid size-8 place-items-center rounded-full bg-[#2C2C2F] text-white"><svg className="size-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg></span>
+              <span className="tabular-nums">0:00</span>
+              <span className="relative h-1 flex-1 rounded-full bg-[#2C2C2F]"><span className="absolute left-0 top-1/2 size-2.5 -translate-y-1/2 rounded-full bg-[#FF3DF2]" /></span>
+              <span className="tabular-nums">{secsOf(len)}</span>
+            </div>
           </div>
         </section>
 
-        <section className="mt-20" aria-label="What you can create">
+        <section className="mt-16 sm:mt-20" aria-label="What you can create">
           <div className="section-head"><h2 className="section-title">What you can create with video</h2></div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {IDEAS.map(([t, d, bg]) => (
-              <div key={t} className="rounded-[28px] p-7" style={{ background: bg }}>
-                <span className="grid size-11 place-items-center rounded-full bg-white text-[#000000]"><svg className="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
-                <h3 className="mt-5 text-[20px]">{t}</h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-[#C4C4C8]">{d}</p>
+            {IDEAS.map(([t, d, m], k) => (
+              <div key={t} className="flex flex-col rounded-[26px] bg-[#191919] p-6 ring-1 ring-white/[0.06] transition-colors hover:ring-[#FF3DF2]/40">
+                <div className="flex items-center justify-between">
+                  <span className="font-plexmono text-[12px] font-semibold text-[#FF3DF2]">{String(k + 1).padStart(2, '0')}</span>
+                  <span className="grid size-10 place-items-center rounded-full bg-white text-[#000000]"><svg className="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
+                </div>
+                <h3 className="mt-8 text-[19px]">{t}</h3>
+                <p className="mt-2 flex-1 text-[13px] leading-relaxed text-[#A1A1AA]">{d}</p>
+                <button type="button" onClick={() => tryIdea(m)} className="chip mt-5 w-fit !px-4 !py-1.5 !text-[12px]">Try it</button>
               </div>
             ))}
           </div>

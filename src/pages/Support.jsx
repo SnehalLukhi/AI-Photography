@@ -300,7 +300,7 @@ function MobileMe() {
   const [planOpen, setPlanOpen] = useState(false)
   const row = 'flex h-[54px] w-full items-center gap-3.5 border-b border-[#3A3A3E] px-4 text-left text-[14px] text-[#FFFFFF] last:border-b-0'
   return (
-    <div className="mx-auto w-full max-w-[560px] px-4 pb-32 pt-4 md:hidden">
+    <div className="mx-auto w-full max-w-[560px] px-4 pb-4 pt-4 md:hidden">
       {signedIn && (
         <div className="flex items-center gap-4 px-1 pb-4">
           <span className="grid size-16 shrink-0 place-items-center rounded-full bg-[#FF3DF2] text-[28px] font-semibold text-white">{(userEmail[0] || 'P').toUpperCase()}</span>
@@ -350,7 +350,7 @@ export function Profile() {
   return (
     <>
     {!settings && <MobileMe />}
-    <div className={`mx-auto w-full max-w-[1100px] px-5 pb-32 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-12 md:pb-12 lg:px-10 ${settings ? '' : 'max-md:hidden'}`}>
+    <div className={`mx-auto w-full max-w-[1100px] px-5 pb-6 pt-8 text-[#FFFFFF] sm:px-8 sm:pt-12 md:pb-12 lg:px-10 ${settings ? '' : 'max-md:hidden'}`}>
       {!signedIn ? (
         <div className="relative overflow-hidden rounded-3xl bg-[#191919] px-6 py-16 text-center sm:py-24">
           <div className="relative">

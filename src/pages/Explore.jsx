@@ -153,7 +153,7 @@ export default function Explore() {
   return (
     <>
     {/* ---------- phone Explore, like the reference: eyebrow + title, underlined tabs, one titled 2-column grid ---------- */}
-    <div className="pb-32 text-[#FFFFFF] md:hidden">
+    <div className="pb-4 text-[#FFFFFF] md:hidden">
       {fromHome ? (
         <div className="flex items-center gap-3 px-4 pb-3 pt-3">
           <Link to="/" aria-label="Back to Home" className="grid size-9 shrink-0 place-items-center rounded-full bg-[#1C1C1E] text-[#FFFFFF]"><svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></Link>

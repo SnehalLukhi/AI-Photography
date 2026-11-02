@@ -38,21 +38,34 @@ function PhotoTile({ kind, photo, onPick, onClear, error, compact = false }) {
   const [drag, setDrag] = useState(false)
   const choose = (f) => f && onPick(f)
   const what = kind === 'Photo' ? 'photo' : kind
-  if (compact) { // phones: a label above a square tile (upload icon, or the chosen photo)
+  if (compact) { // phones: a wide dark box with a glowing icon, "Upload your selfie" and a hint (or the chosen photo), under a small caps label
+    const label = kind === 'Photo' ? 'Your photo input' : `${kind} input`
     return (
-      <figure className="flex w-[46%] max-w-[190px] flex-col items-center gap-3">
+      <figure className="w-full">
         <input ref={input} type="file" hidden accept="image/*,.heic,.HEIC,.heif,.HEIF" onChange={(e) => { choose(e.target.files[0]); e.target.value = '' }} />
-        <figcaption className="text-[15px] font-medium text-[#A1A1AA]">{kind === 'Photo' ? 'Your photo' : kind}</figcaption>
-        <div className="relative aspect-square w-full">
+        <figcaption className="mb-2.5 flex items-center justify-between gap-3 px-1">
+          <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-white">{label}</span>
+          <span className="text-[11px] text-[#A1A1AA]">Portrait mode recommended</span>
+        </figcaption>
+        <div className="relative w-full">
           {photo ? (
-            <div className="absolute inset-0 overflow-hidden rounded-[24px] border border-[#3A3A3E] bg-[#191919]">
-              <img src={photo.url} alt={`Your ${what}`} className="size-full object-cover" />
-              <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2 top-2 grid size-8 cursor-pointer place-items-center rounded-full bg-[#000000]/80 text-white"><Svg d="M6 6l12 12M18 6L6 18" /></button>
+            <div className="relative flex w-full items-center justify-center overflow-hidden rounded-[26px] border border-white/15 bg-[#191919] p-2">
+              <img src={photo.url} alt={`Your ${what}`} className="block h-auto max-h-[58vh] w-auto max-w-full rounded-[20px] object-contain" />
+              <button type="button" aria-label="Remove photo" onClick={onClear} className="absolute right-2.5 top-2.5 grid size-9 cursor-pointer place-items-center rounded-full bg-[#000000]/80 text-white"><Svg d="M6 6l12 12M18 6L6 18" /></button>
+              <button type="button" onClick={() => input.current.click()} className="absolute bottom-2.5 right-2.5 cursor-pointer rounded-full bg-[#000000]/80 px-3.5 py-1.5 text-[12px] font-semibold text-white">Replace</button>
             </div>
           ) : (
-            <button type="button" onClick={() => input.current.click()} aria-label={kind === 'Photo' ? 'Add your photo' : `Add ${kind}`} className="absolute inset-0 grid cursor-pointer place-items-center rounded-[24px] border-[1.5px] border-[#3A3A3E] bg-[#191919] text-[#FF3DF2] transition-colors active:bg-[#222]"><Svg d="M12 16V5M7 10l5-5 5 5M4 19h16" className="size-9" /></button>
+            <button type="button" onClick={() => input.current.click()} aria-label={kind === 'Photo' ? 'Add your photo' : `Add ${kind}`} className="relative grid h-[168px] w-full cursor-pointer place-items-center overflow-hidden rounded-[26px] border border-white/15 bg-gradient-to-b from-[#1b1b1d] to-[#111112] px-4 text-center transition-colors active:bg-[#1d1d1f]">
+              <span className="flex flex-col items-center">
+                <span className="relative grid size-[58px] place-items-center rounded-[18px] border border-[#FF3DF2]/60 bg-[#FF3DF2]/10 text-[#FF3DF2] shadow-[0_0_34px_-4px_rgba(255,61,242,0.55)]">
+                  <Svg d="M12 16V5M7 10l5-5 5 5M5 19h14" className="size-6" />
+                </span>
+                <span className="mt-4 text-[16px] font-bold text-white">{kind === 'Photo' ? 'Upload your selfie' : `Upload ${kind}`}</span>
+                <span className="mt-1 text-[13px] text-[#A1A1AA]">High clarity for the best result</span>
+              </span>
+            </button>
           )}
-          {error && <p role="alert" className="absolute inset-x-1.5 bottom-1.5 z-10 rounded-lg border-l-[3px] border-[#E5484D] bg-[#2A1216] px-2 py-1.5 text-[11px] leading-snug text-[#FFD9DC]">{error}</p>}
+          {error && <p role="alert" className="mt-2 rounded-lg border-l-[3px] border-[#E5484D] bg-[#2A1216] px-2.5 py-2 text-[12px] leading-snug text-[#FFD9DC]">{error}</p>}
         </div>
       </figure>
     )
@@ -295,7 +308,7 @@ function Generator({ asset }) {
             </div>
           </div>
         </section>
-        <div className="mt-6 flex items-start justify-center gap-4 px-4">
+        <div className="mt-6 flex flex-col gap-5 px-4">
           {slots.map((k, i) => <PhotoTile key={k} compact kind={k} photo={photos[i]} error={errors[i]} onPick={pick(i)} onClear={clear(i)} />)}
         </div>
         <div className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-3 bg-gradient-to-t from-[#000000] via-[#000000]/95 to-transparent px-4 pb-4 pt-8" style={{ paddingBottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}>

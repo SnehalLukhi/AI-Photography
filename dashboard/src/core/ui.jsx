@@ -24,7 +24,7 @@ export const Badge = ({ tone = 'gray', children, className = '' }) => <span clas
 
 export function Avatar({ name = '', email = '', size = 36 }) {
   const label = (name || email || '?').trim()[0]?.toUpperCase() || '?'
-  const hue = [...(email || name)].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 0)
+  const hue = [...(email || name || '')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 0)
   return <span className="grid shrink-0 place-items-center rounded-full font-semibold text-white" style={{ width: size, height: size, fontSize: size * 0.4, background: `linear-gradient(135deg, hsl(${hue} 70% 55%), hsl(${(hue + 50) % 360} 70% 45%))` }}>{label}</span>
 }
 
