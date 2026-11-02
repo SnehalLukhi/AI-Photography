@@ -37,7 +37,7 @@ export default function PremiumPopup({ onClose: finish }) {
   const { trendingPicks } = useTrendingPicks() // the collage shows the admin's Trending templates (so it never depends on a fixed category list)
   const pool = trendingPicks.map((t) => t.image).filter(Boolean)
   // three columns of different photos that scroll slowly in opposite directions (same motion as the login popup's collage); each list is repeated so the loop has no seam
-  const columns = [['login-marquee-up', 70], ['login-marquee-down', 82], ['login-marquee-up', 76]].map(([anim, secs], c) => {
+  const columns = [['login-marquee-up', 22], ['login-marquee-down', 26], ['login-marquee-up', 24]].map(([anim, secs], c) => {
     const list = pool.length ? Array.from({ length: 6 }, (_, k) => pool[(k * 3 + c * 2) % pool.length]) : []
     return { anim, secs, list: [...list, ...list] }
   })
@@ -91,7 +91,7 @@ export default function PremiumPopup({ onClose: finish }) {
               @keyframes pp-sweep { 0% { transform: translateX(-120%) skewX(-18deg) } 45%, 100% { transform: translateX(520%) skewX(-18deg) } }
               @media (prefers-reduced-motion: reduce) { .pp-anim, .login-col { animation: none !important } }
             `}</style>
-            <div className="pp-anim absolute inset-[-14%] flex items-stretch justify-center gap-3 px-2 [animation:pp-sway_14s_ease-in-out_infinite]">
+            <div className="pp-anim absolute inset-[-14%] flex items-stretch justify-center gap-3 px-2 [animation:pp-sway_9s_ease-in-out_infinite]">
               {columns.map((col, ci) => (
                 <div key={ci} className="relative h-full min-w-0 flex-1 overflow-hidden">
                   <div className="login-col flex w-full flex-col will-change-transform" style={{ animation: `${col.anim} ${col.secs}s linear infinite` }}>
@@ -100,7 +100,7 @@ export default function PremiumPopup({ onClose: finish }) {
                 </div>
               ))}
             </div>
-            <div className="pointer-events-none absolute inset-0 overflow-hidden"><span className="pp-anim absolute inset-y-0 left-0 w-1/5 animate-[pp-sweep_9s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" /></div>
+            <div className="pointer-events-none absolute inset-0 overflow-hidden"><span className="pp-anim absolute inset-y-0 left-0 w-1/5 animate-[pp-sweep_6s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/[0.12] to-transparent" /></div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#101011]/70 via-transparent to-[#101011]/40" />
           </div>
         </div>
