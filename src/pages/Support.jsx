@@ -21,47 +21,55 @@ const submitBtn = 'btn-primary !w-full !rounded-[14px] !py-3.5 !text-[15px] disa
 
 const topics = [
   ['Getting Started', 'Learn the basic workflow.', [
-    'Browse templates on Home or Explore and tap one to open it.',
-    'Add a photo of yourself, then press Generate. If you are not signed in yet, you will be asked to sign in first.',
+    'Open Home or Explore and tap a template to open it. Use the search box or the category tabs on Explore to find one.',
+    'On the template page, add your photo, then press Generate.',
+    'You need to be signed in to generate. If you are not, you will be asked to sign in first.',
     'Your finished image is saved in My Creations.',
   ]],
   ['Photo Upload Guide', 'Choose the best source photo.', [
     'Use a clear, front-facing photo with good lighting and your face fully visible.',
-    'Most templates accept JPG, PNG or WebP up to 10 MB. Cartoon and Hairstyle templates accept JPG or PNG up to 5 MB.',
+    'Photos must be JPG, PNG or WebP, up to 10 MB.',
     'HEIC photos cannot be used to generate. Save or export the photo as JPG or PNG first.',
-    'Use the ✕ on your photo to remove it, or Change Photo to pick another one.',
+    'Tap or click the upload box to choose a photo. On a computer you can also drag a photo onto the box.',
+    'Use the ✕ on your photo to remove it, or Replace to pick another one.',
   ]],
   ['AI Generation', 'How your image is created.', [
-    'Pictrify turns your photo into the style of the template you picked. Each generation makes one image.',
-    'It can take up to a minute. Keep the page open until your result appears.',
-    'Templates are grouped into categories such as 80’s & 90’s, Cartoon, LinkedIn Headshot, Old Money, Beard and Hairstyle.',
+    'Pictrify turns your photo into the look of the template you picked. Each generation makes one image.',
+    'The Generate button shows how many coins one generation costs.',
+    'While your image is being made you will see “Creating your look”. It can take up to a minute. Keep the page open until your result appears.',
+    'When it is ready, drag the handle to compare your photo with the result. You can Download it, make another with the same look, or try a different look.',
   ]],
   ['Coins & Billing', 'Coins, packs and payments.', [
-    'Every generation costs coins (150 coins at the moment). New accounts get free coins to start.',
-    'If a generation fails, the coins are returned to your balance automatically.',
-    'Need more? Open Get More Coins and buy a one-time coin pack. Coins do not expire.',
-    'Payments are processed securely through Razorpay. Your purchases are listed on the Transactions page, which you can open from the profile menu.',
+    'Every generation costs coins. Your balance is shown at the top of the page, and the cost is shown on the Generate button.',
+    'New accounts get free coins the first time they sign in.',
+    'If your balance is too low, you will be asked to get more coins before you can generate.',
+    'If a generation fails, the coins are refunded to your balance automatically.',
+    'Need more? Open Pricing, then the Coin packs tab, and buy a one-time pack. Coins from packs do not expire.',
+    'Payments are processed securely through Razorpay, and prices are shown in your currency. Your payments are listed on the Transactions page.',
   ]],
   ['Plans & Pricing', 'See what each plan includes.', [
-    'The Pricing page lists the Weekly, Monthly and Yearly plans with their price and the coins each one adds.',
+    'The Plans tab on the Pricing page lists the Weekly, Monthly and Yearly Premium plans with their price and the coins each one adds.',
     'After a payment succeeds, the plan’s coins are added to your balance. You use them for generations like any other coins.',
-    'Any special offer or discount shown on the Pricing or Get More Coins page is applied to the price you pay at checkout.',
+    'Plans renew automatically. To stop renewal, open your Profile and press Cancel under Current plan. Your plan stays active until the end of the period you paid for.',
+    'When a plan ends, any plan coins you have not used are removed. Coins from coin packs are never removed.',
+    'Any special offer shown on the Pricing page is already included in the price you pay at checkout.',
   ]],
   ['Likes & My Creations', 'Save favourites and find your images.', [
-    'Tap the heart on a template in Explore to like it. Likes are saved to your account, so they stay after you refresh or log in again. Tap it again to unlike.',
-    'My Creations shows every image you have generated. Open one to compare your original with the AI result, then open or download it, or delete it.',
+    'Tap the heart on a template to like it. You need to be signed in. Likes are saved to your account and stay after you refresh or log in again. Tap the heart again to unlike.',
+    'Your liked templates appear on Home once you are signed in.',
+    'My Creations shows every image you have generated. Open one to compare it with your original photo, then Download it or Delete it. Press Load more to see older creations.',
   ]],
   ['Account & Login', 'Sign in and manage your account.', [
     'You sign in with your Google or Apple account. A new account is created the first time you sign in.',
-    'Open the profile menu to see Profile Settings, Transactions, Help, Contact Support, Share Your Feedback, Privacy Policy, Terms & Conditions and Log out.',
-    'Profile Settings shows your name and email from your sign-in account. These details are for viewing only.',
+    'On a computer, open the profile menu at the top right. On a phone, use the Profile tab at the bottom. From there you can reach Profile, My Creations, Transactions, Help, Privacy Policy, Terms & Conditions and Log out.',
+    'The Profile page shows your name and email from your sign-in account. These details are for viewing only. It also shows your current plan.',
   ]],
   ['Troubleshooting', 'Fix common generation issues.', [
-    'Photo rejected? Check that it is a JPG, PNG or WebP (JPG or PNG for Cartoon and Hairstyle) and within the size limit.',
-    'Not enough coins? Open Get More Coins, then try again.',
-    'Generation failed? Your coins are returned. Try a sharper, well-lit photo or a different template.',
-    'Signed out unexpectedly? Sign in again and your coins, likes and creations will still be there.',
-    'Still stuck? Use Contact Support from the profile menu.',
+    'Photo rejected? Check that it is a JPG, PNG or WebP and 10 MB or smaller. HEIC photos are not supported.',
+    'Not enough coins? Press Get coins in the message, or open Pricing and buy a plan or a coin pack.',
+    'Generation failed? Your coins are refunded automatically. Try again, or use a sharper, well-lit photo or a different template.',
+    'See “Generation is temporarily unavailable”? Try again a little later. Your coins were not used.',
+    'Signed out unexpectedly? Sign in again. Your coins, likes and creations are saved to your account.',
   ]],
 ]
 
@@ -104,7 +112,7 @@ export function Help() {
         {shown.length === 0 ? (
           <div className={`rounded-[22px] px-6 py-12 text-center ${GLASS}`}>
             <p className="text-[20px] font-extrabold text-white">No answers found</p>
-            <p className="mt-1.5 text-[14px] text-[#A1A1AA]">Try another word, or contact support from the box below.</p>
+            <p className="mt-1.5 text-[14px] text-[#A1A1AA]">Try another word, such as coins, upload or plan.</p>
           </div>
         ) : (
           <>
@@ -137,10 +145,6 @@ export function Help() {
           </>
         )}
 
-        <div className={`mt-8 flex flex-wrap items-center justify-between gap-4 rounded-[28px] p-6 sm:p-8 ${GLASS}`}>
-          <div><p className="text-[22px] font-extrabold text-white">Still stuck?</p><p className="mt-1 text-[14px] text-[#A1A1AA]">Our team will get back to you.</p></div>
-          <Link to="/contact-support" className="btn-primary !px-6 !py-3 !text-[14px]">Contact support<span aria-hidden="true">→</span></Link>
-        </div>
       </div>
     </div>
   )
