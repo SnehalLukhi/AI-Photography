@@ -21,6 +21,43 @@ const roundRobin = (ids, max) => {
 const trendingGroups = TRENDING_GROUPS.map((g) => roundRobin(g, 5))
 const defaultGrid = [0, 1, 2, 3, 4].flatMap((i) => trendingGroups.map((g) => g[i])).filter(Boolean)
 
+// a mouse has no sideways scroll: the wheel moves the row, and the row can be dragged. Touch and trackpads keep their own scrolling.
+function useRowScroll(ref) {
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+    const to = (left) => el.scrollTo({ left, behavior: 'instant' })
+    const wheel = (e) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX) || el.scrollWidth <= el.clientWidth) return
+      e.preventDefault()
+      to(el.scrollLeft + e.deltaY)
+    }
+    let start = null
+    let moved = false
+    const down = (e) => { if (e.pointerType === 'mouse' && e.button === 0) { start = { x: e.clientX, left: el.scrollLeft }; moved = false } }
+    const move = (e) => {
+      if (!start) return
+      const dx = e.clientX - start.x
+      if (Math.abs(dx) > 5) moved = true
+      if (moved) to(start.left - dx)
+    }
+    const up = () => { start = null }
+    const click = (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false } } // a drag is not a click on a chip
+    el.addEventListener('wheel', wheel, { passive: false })
+    el.addEventListener('pointerdown', down)
+    el.addEventListener('click', click, true)
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    return () => {
+      el.removeEventListener('wheel', wheel)
+      el.removeEventListener('pointerdown', down)
+      el.removeEventListener('click', click, true)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+    }
+  }, [ref])
+}
+
 const Chip = ({ on, onClick, children, count }) => (
   <button type="button" role="tab" aria-selected={on} onClick={onClick}
     className={`chip h-10 shrink-0 ${on ? 'chip-on !font-semibold' : ''}`}>
@@ -122,6 +159,8 @@ export default function Explore() {
   }, [isTop, list.length]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const searchBox = useRef(null)
+  const chipRow = useRef(null)
+  useRowScroll(chipRow)
   const [draft, setDraft] = useState(q)
   useEffect(() => { setDraft((d) => (d.trim() === q ? d : q)) }, [q]) // follows the address (a chip click clears the search) without eating a space the visitor is typing
   // live search: the results update while typing (no Enter needed) and cover every collection, whichever one is open
@@ -210,7 +249,7 @@ export default function Explore() {
         <input ref={searchBox} value={draft} onChange={(e) => setDraft(e.target.value)} aria-label="Search looks" placeholder="Search looks, styles, keywords..." className="min-w-0 flex-1 bg-transparent text-[15px] text-[#FFFFFF] outline-none placeholder:text-[#A1A1AA]" />
       </form>
 
-      <div role="tablist" aria-label="Collections" className="no-scrollbar -mx-5 mb-8 flex gap-2 overflow-x-auto px-5 sm:-mx-8 sm:px-8 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0">
+      <div ref={chipRow} role="tablist" aria-label="Collections" className="no-scrollbar -mx-5 mb-8 flex flex-nowrap gap-2 overflow-x-auto scroll-smooth px-5 sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0">
         {shownChips.map((c) => <Chip key={c.id} on={!q && chip.id === c.id} count={countOf(c)} onClick={() => setChip(c)}>{c.name}</Chip>)}
       </div>
 

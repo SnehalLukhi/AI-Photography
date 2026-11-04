@@ -298,9 +298,9 @@ function Generator({ asset }) {
           <Link to={collectionLink} replace className="shrink-0 rounded-full bg-[#191919] px-3.5 py-1.5 text-[13px] font-semibold text-[#FF3DF2]">Change look</Link>
           {signedIn && <Link to={coins >= 150 ? '/coins' : '/pricing'} aria-label={`${coins} coins - open wallet`} className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[#191919] pl-1.5 pr-3 text-[13px] font-semibold text-white"><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}</Link>}
         </div>
-        <section aria-label="The look" className="relative mx-4 mt-3 h-[50vh] min-h-[300px] overflow-hidden rounded-[30px] bg-[#191919] p-2.5">
+        <section aria-label="The look" className="relative mx-auto mt-3 aspect-[9/16] w-[min(calc(100%_-_2rem),calc(62dvh_*_0.5625))] overflow-hidden rounded-[30px] bg-[#191919] p-2.5">
           <div className="relative size-full overflow-hidden rounded-[22px]">
-            <PImage src={asset.image} alt={`The look: ${asset.name}`} className="absolute inset-0 size-full object-cover" draggable="false" />
+            <PImage src={asset.image} alt={`The look: ${asset.name}`} className="absolute inset-0 size-full object-contain" draggable="false" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
             <div className="absolute inset-x-4 bottom-4">
               <h1 className="text-[22px] font-bold leading-tight text-white">{asset.name}</h1>

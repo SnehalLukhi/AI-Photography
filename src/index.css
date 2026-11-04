@@ -234,7 +234,8 @@ body {
 /* the comet border on the hero info cards: hidden until hover, runs only while hovered, sits on the card's own border */
 .info-card .glow-border__svg, .comet-card .glow-border__svg { inset: -1.5px; width: calc(100% + 3px); height: calc(100% + 3px); opacity: 0; transition: opacity .3s ease; animation-play-state: paused; filter: drop-shadow(0 0 4px rgba(255,255,255,0.6)); }
 @media (hover: hover) { .info-card:hover .glow-border__svg, .comet-card:hover .glow-border__svg { opacity: 1; animation-play-state: running; } }
-.comet-card .glow-border__svg { inset: 0; width: 100%; height: 100%; } /* these cards clip their edge (overflow-hidden), so the line is drawn just inside the border instead of on it */
+.comet-card .glow-border__svg { inset: 0; width: 100%; height: 
+  100%; } /* these cards clip their edge (overflow-hidden), so the line is drawn just inside the border instead of on it */
 .group[data-peek="true"] .card-orbit::after { opacity: 1; animation-play-state: running; } /* touch screens: the comet border runs while a card is "peeked" (first tap) */
 
 @media (min-width: 1024px) { .tool-btn__icon { width: 100%; } } /* desktop: each shortcut tile fills its column, so the gap between tiles is just the row gap */
