@@ -2,13 +2,16 @@
  * Cartoon Yourself integration tests. A local HTTP stand-in for AILabTools (test-only; the app itself never fakes results) asserts that OUR
  * request matches the official documentation of POST /api/portrait/effects/portrait-animation:
  *   header ailabapi-api-key, multipart: task_type=async, type=<style>, image (JPG/PNG <= 5 MB)
- * and that every one of the 49 templates of src/data/cartoon-yourself_templates.json is sent with its own JSON `id` as `type`.
+ * and that every one of the 49 documented styles is sent with its own id as `type` - and that the two templates whose database id is NOT an API type
+ * (3d_toon, artistic) are mapped to their verified type (config/cartoonTemplates.js) instead of being forwarded as they are.
  */
 const { test, before, after } = require('node:test')
 const assert = require('node:assert/strict')
 const sharp = require('sharp')
 const h = require('./helpers')
-const TEMPLATES = require('../../src/data/cartoon-yourself_templates.json').categories[0].templates
+const CARTOON_TYPES = require('../src/config/cartoonTypes')
+const { TYPES, ALIASES, cartoonTypeFor } = require('../src/config/cartoonTemplates')
+const TEMPLATES = CARTOON_TYPES.map((id) => ({ id }))
 
 let mock, app
 const part = (call, name) => call.parts?.find((p) => p.name === name)?.data.toString()
@@ -42,11 +45,13 @@ after(async () => { await app.close(); await mock.close() })
 const img = async (format = 'jpeg', w = 600, hgt = 800) => ({ buffer: await h.solid(w, hgt, { r: 120, g: 90, b: 70 }, format), type: `image/${format}`, filename: `p.${format === 'jpeg' ? 'jpg' : format}` })
 const post = (files, f, qs = '') => fetch(`${app.base}/api/cartoon/generate${qs}`, { method: 'POST', body: h.form(files, f) })
 
-test('the JSON has 49 templates and each id is a unique, documented style', () => {
-  const types = require('../src/config/cartoonTypes')
-  assert.equal(TEMPLATES.length, 49)
-  assert.equal(new Set(TEMPLATES.map((t) => t.id)).size, 49)
-  assert.deepEqual(TEMPLATES.map((t) => t.id), types)
+test('the id -> type table covers all 49 documented styles, and every value it can send is a documented type', () => {
+  assert.equal(CARTOON_TYPES.length, 49)
+  assert.deepEqual(Object.keys(TYPES), CARTOON_TYPES)
+  for (const id of CARTOON_TYPES) assert.equal(cartoonTypeFor(id), id)
+  assert.deepEqual(ALIASES, { '3d_toon': '3d_cartoon', artistic: 'artstyle' })
+  for (const v of [...Object.values(TYPES), ...Object.values(ALIASES)]) assert.ok(CARTOON_TYPES.includes(v), v)
+  assert.equal(cartoonTypeFor('not_a_style'), '')
 })
 
 test('ALL 49 templates: the request carries the template id as `type`, task_type=async, the photo and the key', async () => {
@@ -130,4 +135,33 @@ test('no uploaded file is left on disk after any Cartoon request', async () => {
   await post({ image: await img() }, { type: 'bad' })
   await post({ image: await img('webp') }, { type: 'anime' })
   assert.deepEqual(h.newTempFiles(before), [])
+})
+
+test('templates whose database id is not an API type are sent with their verified type: 3d_toon -> 3d_cartoon, artistic -> artstyle', async () => {
+  for (const [id, type] of Object.entries(ALIASES)) {
+    const before = mock.calls.length
+    const res = await post({ image: await img() }, { type: id })
+    assert.equal(res.status, 200, id)
+    const submit = mock.calls.slice(before).find((c) => c.method === 'POST')
+    assert.ok(submit.url.startsWith('/api/portrait/effects/portrait-animation'))
+    assert.equal(part(submit, 'type'), type, `${id} must reach AILabTools as ${type}`)
+    assert.notEqual(part(submit, 'type'), id)
+  }
+  const before = mock.calls.length
+  assert.equal((await post({ image: await img() }, { type: '3d_toon_typo' })).status, 400)
+  assert.equal(mock.calls.slice(before).filter((c) => c.method === 'POST').length, 0, 'an unmapped id never reaches AILabTools')
+})
+
+test('the flow is the CATEGORY\'s: a cartoon category reports flow `cartoon`; a photography category is never turned into cartoon because of a template id', async () => {
+  const T = require('../src/services/templates.service')
+  await T.saveCategory({ id: 'toon-flow-test', name: 'Toon test', flow: 'cartoon' })
+  await T.saveCategory({ id: 'photo-flow-test', name: 'Photo test', flow: 'photography' })
+  const url = 'https://cdn.example.com/p.jpg'
+  await T.createTemplates([
+    { id: 'anime', category_id: 'toon-flow-test', name: 'Anime', preview_url: url },
+    { id: 'comic', category_id: 'photo-flow-test', name: 'Comic id in a photo category', preview_url: url, style_title_prompt: 't' },
+  ])
+  assert.equal((await T.getTemplate('anime')).flow, 'cartoon')
+  assert.equal((await T.getTemplate('comic')).flow, 'photography')
+  await assert.rejects(() => T.createTemplates({ id: 'not_a_style', category_id: 'toon-flow-test', name: 'Bad', preview_url: url }), /Cartoon Yourself style/)
 })

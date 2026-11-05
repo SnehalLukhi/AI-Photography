@@ -1,5 +1,6 @@
 const AppError = require('../utils/AppError')
 const CARTOON_TYPES = require('../config/cartoonTypes')
+const { cartoonTypeFor } = require('../config/cartoonTemplates')
 const { removeFiles } = require('../utils/tempFiles')
 const { prepareImage } = require('../services/image.service')
 const ailab = require('../services/ailab.service')
@@ -23,7 +24,8 @@ async function generate(req, res) {
     const type = typeof req.body?.type === 'string' ? req.body.type.trim() : ''
     if (!type) throw new AppError(400, 'MISSING_FIELDS', '"type" is required (the Cartoon Yourself style, for example "anime").')
     const row = await templates.getTemplate(type)
-    const style = row?.flow === 'cartoon' && row.active ? (row.api_value || row.id) : type // a template added through the API may map its id to the provider's style
+    // the provider's style for this template: an `api_value` set in the Admin wins, else the verified id -> type table (config/cartoonTemplates.js), else the id itself when it is a documented type
+    const style = row?.flow === 'cartoon' && row.active ? (row.api_value || cartoonTypeFor(row.id) || row.id) : (cartoonTypeFor(type) || type)
     if (!CARTOON_TYPES.includes(style)) throw new AppError(400, 'INVALID_TYPE', `"type" must be one of the ${CARTOON_TYPES.length} supported Cartoon Yourself styles.`)
 
     const image = await prepareImage(req.file.path, 'image', LIMITS)

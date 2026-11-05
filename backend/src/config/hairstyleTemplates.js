@@ -7,6 +7,15 @@
  * This integration sends `image`, `hair_style` and (when the card has a hair colour) `color`; the colour ids of the JSON are identical to the API's colour values.
  */
 module.exports = {
+  // Admin templates whose ids are not the bundled JSON ids (added later in the Admin): each id -> the documented hair_style with the same name (verified against ./hairstyleOptions.js)
+  hair_men_undercut: 'UnderCut',
+  'men-s-hairstyles-side-part-crop': 'Side-Part_Crop',
+  hair_women_updo: 'Updo',
+  'woman-s-hairstyles-cornrows': 'Cornrows',
+  hair_women_shoulderlengthhair: 'ShoulderLengthHair',
+  hair_women_layered_waves: 'Layered_Waves',
+  'woman-s-hairstyles-elegant-side-wave': 'Elegant_Side_Wave',
+  'woman-s-hairstyles-classic-wavy-bob': 'ClassicWavyBob',
   hair_men_bluntbowlcut: 'BluntBowlCut',
   hair_men_buzzcut: 'BuzzCut',
   hair_men_chestnut: 'Chestnut',

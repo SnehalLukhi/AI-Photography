@@ -1,6 +1,6 @@
 const AppError = require('../utils/AppError')
 const TEMPLATES = require('../config/hairstyleTemplates')
-const { COLORS } = require('../config/hairstyleOptions')
+const { COLORS, HAIR_STYLES } = require('../config/hairstyleOptions')
 const { removeFiles } = require('../utils/tempFiles')
 const { prepareImage } = require('../services/image.service')
 const ailab = require('../services/ailab.service')
@@ -30,7 +30,8 @@ async function generate(req, res) {
     const row = await templates.getTemplate(id)
     const hairStyle = row?.flow === 'hairstyle' && row.active && row.api_value ? row.api_value : Object.hasOwn(TEMPLATES, id) ? TEMPLATES[id] : '' // added through the API, else bundled
     if (!hairStyle) throw new AppError(400, 'INVALID_TEMPLATE', `"template" is not a known Hairstyle template id: ${id.slice(0, 60)}`)
-    const color = typeof req.body?.color === 'string' ? req.body.color.trim() : ''
+    if (!HAIR_STYLES.includes(hairStyle)) throw new AppError(400, 'INVALID_TEMPLATE', `"template" does not resolve to a supported Hairstyle Changer hair_style: ${id.slice(0, 60)}`) // an internal id is never forwarded to the API
+    const color = (typeof req.body?.color === 'string' ? req.body.color.trim() : '') || 'original' // the documented default: keep the user's own hair colour
     if (color && !COLORS.includes(color)) throw new AppError(400, 'INVALID_COLOR', `"color" must be one of the supported hair colours (received: ${color.slice(0, 40)}).`)
 
     const image = await prepareImage(req.file.path, 'image', LIMITS)

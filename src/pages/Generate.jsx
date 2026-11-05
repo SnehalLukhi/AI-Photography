@@ -191,6 +191,19 @@ function Generator({ asset }) {
     setSaving(false)
   }
   const again = () => { setPhotos(slots.map(() => null)); setErrors(slots.map(() => '')); setPhase('idle') }
+  // Share link: the Generate page's own address for this look (categoryId + assetId). Anyone who opens it, signed in or not, lands on this same page with this look selected.
+  const shareUrl = `${window.location.origin}${generateUrl(asset)}`
+  const [copied, setCopied] = useState(false)
+  const copyTimer = useRef()
+  useEffect(() => () => clearTimeout(copyTimer.current), [])
+  const copyLink = async () => {
+    let ok = false
+    try { await navigator.clipboard.writeText(shareUrl); ok = true } catch {
+      try { const t = document.createElement('textarea'); t.value = shareUrl; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select(); ok = document.execCommand('copy'); t.remove() } catch { /* no clipboard access: the prompt below shows the link instead */ }
+    }
+    if (!ok) { window.prompt('Copy this link', shareUrl); return }
+    setCopied(true); clearTimeout(copyTimer.current); copyTimer.current = setTimeout(() => setCopied(false), 2000)
+  }
   const collectionLink = /^hairstyle-/.test(asset.categoryId) ? `/explore?category=${asset.categoryId}` : `/explore?category=${asset.categoryId}`
   const strip = useRef(null)
   useEffect(() => { // bring the selected look into view in the thumbnail strip (it can be far down the list)
@@ -274,6 +287,8 @@ function Generator({ asset }) {
                   <span className="font-semibold text-white sm:truncate">{asset.name}</span>
                   <span aria-hidden="true" className="text-[#52525B] max-sm:hidden">·</span>
                   <Link to={collectionLink} replace className="shrink-0 font-medium text-[#FF3DF2] transition-colors hover:text-white">Change look</Link>
+                  <span aria-hidden="true" className="text-[#52525B] max-sm:hidden">·</span>
+                  <button type="button" onClick={copyLink} className="shrink-0 cursor-pointer font-medium text-[#FF3DF2] transition-colors hover:text-white">{copied ? 'Link copied' : 'Copy link'}</button>
                 </figcaption>
               </figure>
               <Svg d="M5 12h14M13 6l6 6-6 6" className="size-6 shrink-0 self-center text-[#A1A1AA] max-sm:hidden lg:size-8" />
@@ -295,6 +310,9 @@ function Generator({ asset }) {
         <div className="flex h-14 items-center gap-3 px-4">
           <button type="button" aria-label="Back" onClick={() => nav(-1)} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-white active:bg-white/10"><Svg d="M15 5l-7 7 7 7" className="size-6" /></button>
           <span className="flex-1" />
+          <button type="button" aria-label={copied ? 'Link copied' : 'Copy link to this look'} onClick={copyLink} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full bg-[#191919] text-white active:scale-95">
+            {copied ? <Svg d="M5 12l5 5 9-10" className="size-[18px] text-[#FF3DF2]" /> : <Svg d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1" className="size-[18px]" />}
+          </button>
           <Link to={collectionLink} replace className="shrink-0 rounded-full bg-[#191919] px-3.5 py-1.5 text-[13px] font-semibold text-[#FF3DF2]">Change look</Link>
           {signedIn && <Link to={coins >= 150 ? '/coins' : '/pricing'} aria-label={`${coins} coins - open wallet`} className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[#191919] pl-1.5 pr-3 text-[13px] font-semibold text-white"><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}</Link>}
         </div>

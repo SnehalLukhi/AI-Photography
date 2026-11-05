@@ -9,7 +9,7 @@ const FLOW_HELP = {
   photography: 'AI Photography: every template needs a title and description prompt.',
   cartoon: 'Cartoon Yourself: the template id is the cartoon style.',
   beard: 'AI Beard Styling: uses the template picture as the reference.',
-  hairstyle: 'Hairstyle Changer: every template needs its hair style value.',
+  hairstyle: 'Hairstyle Changer: the template id selects the built-in hair style; a value is needed only for a new style that is not built in.',
 }
 const blank = { id: '', name: '', flow: 'photography', parent_id: '', sort_order: 0, hide_from_all: false }
 

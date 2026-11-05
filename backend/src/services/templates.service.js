@@ -1,6 +1,9 @@
 const AppError = require('../utils/AppError')
 const { query, tx } = require('../db')
 const CARTOON_TYPES = require('../config/cartoonTypes')
+const { cartoonTypeFor } = require('../config/cartoonTemplates')
+const HAIRSTYLE_TABLE = require('../config/hairstyleTemplates')
+const { HAIR_STYLES } = require('../config/hairstyleOptions')
 const trending = require('./trending.service')
 
 const FLOWS = ['photography', 'cartoon', 'beard', 'hairstyle']
@@ -102,8 +105,12 @@ function templateValues(b, category) {
   const title = promptText(b.style_title_prompt)
   const desc = promptText(b.style_desc_prompt)
   const apiValue = optText(b.api_value, 100)
-  if (category.flow === 'cartoon' && !CARTOON_TYPES.includes(apiValue || id)) throw bad(`Template "${id}": for a cartoon category the id (or "api_value") must be a supported Cartoon Yourself style.`)
-  if (category.flow === 'hairstyle' && !apiValue) throw bad(`Template "${id}": "api_value" (the Hairstyle Changer hair_style) is required for the hairstyle flow.`)
+  if (category.flow === 'cartoon' && !CARTOON_TYPES.includes(apiValue || cartoonTypeFor(id) || id)) throw bad(`Template "${id}": for a cartoon category the id (or "api_value") must be a supported Cartoon Yourself style.`)
+  if (category.flow === 'hairstyle') { // the hair_style comes from the template's own api_value or, failing that, from the verified id -> hair_style table; either way it must be a documented value
+    const style = apiValue || (Object.hasOwn(HAIRSTYLE_TABLE, id) ? HAIRSTYLE_TABLE[id] : '')
+    if (!style) throw bad(`Template "${id}": this id is not a built-in hairstyle, so "api_value" (the Hairstyle Changer hair_style) is required.`)
+    if (!HAIR_STYLES.includes(style)) throw bad(`Template "${id}": "${style}" is not a supported Hairstyle Changer hair_style.`)
+  }
   const extra = b.extra && typeof b.extra === 'object' && !Array.isArray(b.extra) ? b.extra : {}
   return {
     id, category_id: category.id, name, preview_url: previewUrl, style_title_prompt: title, style_desc_prompt: desc, api_value: apiValue,

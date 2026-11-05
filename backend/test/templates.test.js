@@ -122,3 +122,13 @@ test('prompts of any length are stored and returned complete (no 500 / 1000 char
   assert.equal((await call('PUT', '/admin/templates/long1', { style_desc_prompt: longer })).status, 200) // edit keeps it whole too
   assert.equal((await get()).style_desc_prompt, longer)
 })
+
+test('the flow comes from the category only: a Cartoon style id in a photography category stays a photography template', async () => {
+  const flowOf = async (id) => (await (await call('GET', '/templates?category=retro', undefined, {})).json()).templates.find((t) => t.id === id)?.flow
+  assert.equal((await call('POST', '/admin/templates', { id: 'angel', category_id: 'retro', name: 'Celestial Angel', preview_url: url })).status, 201)
+  assert.equal(await flowOf('angel'), 'photography') // the category decides; the template id never changes the flow
+  assert.equal((await call('POST', '/admin/templates', { id: 'demon', category_id: 'retro', name: 'With prompts', preview_url: url, style_title_prompt: 't', style_desc_prompt: 'd' })).status, 201)
+  assert.equal(await flowOf('demon'), 'photography') // has prompts: stays a photography template
+  assert.equal((await call('POST', '/admin/templates', { id: 'plain-photo', category_id: 'retro', name: 'Plain', preview_url: url })).status, 201)
+  assert.equal(await flowOf('plain-photo'), 'photography') // not a Cartoon style id
+})

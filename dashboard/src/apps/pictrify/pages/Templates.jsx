@@ -88,7 +88,7 @@ export default function Templates({ api }) {
 
   const showPrompts = flow === 'photography' // the prompt fields are shown for this flow but are optional
   const needHair = flow === 'hairstyle'
-  const canSave = form && form.id && form.name && form.category_id && (file || form.preview_url) && (!needHair || form.api_value)
+  const canSave = form && form.id && form.name && form.category_id && (file || form.preview_url) // hairstyle: an empty value is fine - the server uses its built-in id -> hair_style table (and says so if the id is not in it)
 
   return (
     <>
@@ -166,7 +166,7 @@ export default function Templates({ api }) {
               <Field label="Title prompt" hint="Sent to the AI as the style title."><input className="input" value={form.style_title_prompt} onChange={(e) => set('style_title_prompt', e.target.value)} placeholder="Golden hour portrait" /></Field>
               <Field label="Description prompt" hint="Describe the look, light and mood."><textarea className="input min-h-[96px] resize-y" value={form.style_desc_prompt} onChange={(e) => set('style_desc_prompt', e.target.value)} placeholder="Warm sunset light, soft film grain…" /></Field>
             </>}
-            {(needHair || flow === 'cartoon' || flow === 'beard') && <Field label={needHair ? 'Hair style value' : 'Provider value (optional)'} hint={needHair ? 'The Hairstyle Changer hair_style, e.g. BuzzCut.' : 'Only when it differs from the id.'}><input className="input" value={form.api_value} onChange={(e) => set('api_value', e.target.value)} /></Field>}
+            {(needHair || flow === 'cartoon' || flow === 'beard') && <Field label={needHair ? 'Hair style value (optional)' : 'Provider value (optional)'} hint={needHair ? 'Leave empty to use the built-in value for this id. Only a new style that is not built in needs one, e.g. BuzzCut.' : 'Only when it differs from the id.'}><input className="input" value={form.api_value} onChange={(e) => set('api_value', e.target.value)} /></Field>}
 
             <div className="grid grid-cols-3 gap-4">
               <Field label="Shape"><select className="input" value={form.aspect_ratio} onChange={(e) => set('aspect_ratio', e.target.value)}>{RATIOS.map((r) => <option key={r}>{r}</option>)}</select></Field>
