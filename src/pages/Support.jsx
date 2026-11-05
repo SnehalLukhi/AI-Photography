@@ -370,7 +370,7 @@ export function Profile() {
               <span className="grid size-20 shrink-0 place-items-center rounded-full bg-[#FF3DF2] text-[34px] font-semibold text-white sm:size-24 sm:text-[40px]">{(name[0] || 'P').toUpperCase()}</span>
               <div className="min-w-0 flex-1">
                 <p className="badge">Account</p>
-                <h1 className="mt-3 w-fit max-w-full truncate text-[32px] font-extrabold leading-[1.1] tracking-tight sm:text-[44px]">{name}</h1>
+                <h1 className="mt-3 max-w-full truncate whitespace-nowrap text-[clamp(14px,4.6vw,32px)] font-extrabold leading-[1.15] tracking-tight sm:text-[clamp(26px,4.4vw,44px)]" title={name}>{name}</h1>
                 <p className="mt-1 truncate text-[14px] text-[#A1A1AA] sm:text-[15px]" title={userEmail}>{userEmail}</p>
               </div>
               <div className="flex flex-wrap gap-3">

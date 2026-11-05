@@ -366,11 +366,16 @@ export async function cancelSubscription() {
  * Saves one image of a creation to the user's device: `which` = 'result' (the AI image) | 'original'. The backend sends it as a file download (a plain link to the image
  * would only open it in a tab), so this fetches it with the login token and saves it under the file name the backend gives.
  */
-export async function downloadGeneration(id, which = 'result') {
+export async function fetchGeneration(id, which = 'result') { // the stored image as { blob, filename }: used by Download and by Share
   const res = await fetch(`${API_BASE}/api/generations/${encodeURIComponent(id)}/download`, { headers: headers() })
   if (!res.ok) throw failure(await readJson(res), res)
   const filename = /filename="([^"]+)"/.exec(res.headers.get('content-disposition') || '')?.[1] || `pictrify-${which}.jpg`
-  const url = URL.createObjectURL(await res.blob())
+  return { blob: await res.blob(), filename }
+}
+
+export async function downloadGeneration(id, which = 'result') {
+  const { blob, filename } = await fetchGeneration(id, which)
+  const url = URL.createObjectURL(blob)
   const a = Object.assign(document.createElement('a'), { href: url, download: filename })
   document.body.appendChild(a); a.click(); a.remove()
   setTimeout(() => URL.revokeObjectURL(url), 10_000)

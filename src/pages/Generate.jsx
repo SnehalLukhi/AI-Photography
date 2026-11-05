@@ -4,7 +4,7 @@ import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { findAsset, siblingsOf, generateUrl } from '../data/templates.js'
 import PImage from '../components/PImage.jsx'
 import { useStudio } from '../context/StudioContext.jsx'
-import { promptFor, inspectUpload, generatePhoto, getPlans, downloadGeneration } from '../lib/aiPhotography.js'
+import { promptFor, inspectUpload, generatePhoto, getPlans, downloadGeneration, fetchGeneration } from '../lib/aiPhotography.js'
 
 const BAD_FILE = 'The file is empty or corrupted. Please upload a valid image.'
 
@@ -190,6 +190,32 @@ function Generator({ asset }) {
     try { await downloadGeneration(resultId) } catch (e) { setSaveError(e.message || 'Could not download the image. Please try again.') }
     setSaving(false)
   }
+  // Share the generated photo: the stored final AI image (never the original photo or the template preview) as a real file, through the device's share sheet. The file is fetched as soon as the
+  // result is shown, so the share sheet opens right on the click (browsers only allow it shortly after a tap). Where files cannot be shared, the user is offered the download instead.
+  const [shareBusy, setShareBusy] = useState(false)
+  const [shareNote, setShareNote] = useState('')
+  const shareFile = useRef(null) // { id, promise } - the File of the current result
+  const loadShareFile = (id) => {
+    if (shareFile.current?.id !== id) {
+      const promise = fetchGeneration(id).then(({ blob, filename }) => new File([blob], filename, { type: blob.type || 'image/jpeg' }))
+      promise.catch(() => { if (shareFile.current?.promise === promise) shareFile.current = null }) // a failed load is retried on the next click
+      shareFile.current = { id, promise }
+    }
+    return shareFile.current.promise
+  }
+  useEffect(() => { if (phase === 'done' && real && resultId && typeof navigator.share === 'function') loadShareFile(resultId).catch(() => {}) }, [phase, real, resultId]) // eslint-disable-line react-hooks/exhaustive-deps
+  const shareResult = async () => {
+    if (shareBusy || !resultId) return
+    setShareBusy(true); setShareNote('')
+    try {
+      const file = await loadShareFile(resultId)
+      if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function' || !navigator.canShare({ files: [file] })) { setShareNote("Sharing images isn't supported on this device or browser. You can download the image instead."); return }
+      await navigator.share({ files: [file], title: 'Created with Pictrify', text: `Created with Pictrify - my photo in the ${asset.name} look.` })
+    } catch (e) {
+      if (e?.name === 'AbortError') return // the user closed the share sheet: not an error
+      setShareNote('Could not share the image. You can download it instead.')
+    } finally { setShareBusy(false) }
+  }
   const again = () => { setPhotos(slots.map(() => null)); setErrors(slots.map(() => '')); setPhase('idle') }
   // Share link: the Generate page's own address for this look (categoryId + assetId). Anyone who opens it, signed in or not, lands on this same page with this look selected.
   const shareUrl = `${window.location.origin}${generateUrl(asset)}`
@@ -202,7 +228,14 @@ function Generator({ asset }) {
       try { const t = document.createElement('textarea'); t.value = shareUrl; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select(); ok = document.execCommand('copy'); t.remove() } catch { /* no clipboard access: the prompt below shows the link instead */ }
     }
     if (!ok) { window.prompt('Copy this link', shareUrl); return }
-    setCopied(true); clearTimeout(copyTimer.current); copyTimer.current = setTimeout(() => setCopied(false), 2000)
+    setCopied(true); clearTimeout(copyTimer.current); copyTimer.current = setTimeout(() => setCopied(false), 2500)
+  }
+  // Share: the phone / OS share sheet (WhatsApp, Telegram, ...) with this look's own page address; where Web Share is missing (most desktop browsers) or fails, the link is copied and a toast says so
+  const shareLook = async () => {
+    if (typeof navigator.share === 'function') {
+      try { await navigator.share({ title: `${asset.name} on Pictrify`, text: `Try the ${asset.name} look on Pictrify - upload your photo and create yours with AI.`, url: shareUrl }); return } catch (e) { if (e?.name === 'AbortError') return /* the user closed the share sheet */ }
+    }
+    copyLink()
   }
   const collectionLink = /^hairstyle-/.test(asset.categoryId) ? `/explore?category=${asset.categoryId}` : `/explore?category=${asset.categoryId}`
   const strip = useRef(null)
@@ -233,6 +266,8 @@ function Generator({ asset }) {
             </div>
             <div className="flex flex-col gap-2.5">
               {real && resultId && <button type="button" onClick={download} disabled={saving} className="btn-primary !py-3.5 !text-[16px]"><Svg d="M12 4v11M7 11l5 5 5-5M5 20h14" className="size-5" />{saving ? 'Downloading…' : 'Download'}</button>}
+              {real && resultId && <button type="button" onClick={shareResult} disabled={shareBusy} aria-busy={shareBusy} className="btn-dark !border-[#8B5CF6]/60 !py-3.5 !text-[16px] disabled:opacity-70"><Svg d="M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4" className="size-5 text-[#C4B5FD]" />{shareBusy ? 'Preparing…' : 'Share'}</button>}
+              {shareNote && <p role="status" className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-lg border-l-[3px] border-[#8B5CF6] bg-[#191919] px-3 py-2.5 text-[13px] text-[#E4E4E7]"><span>{shareNote}</span><button type="button" onClick={download} disabled={saving} className="shrink-0 cursor-pointer font-semibold text-[#C4B5FD] underline underline-offset-4 hover:text-white">{saving ? 'Downloading…' : 'Download Image'}</button></p>}
               {saveError && <p role="alert" className="rounded-lg border-l-[3px] border-[#E5484D] bg-[#2A1216] px-3 py-2.5 text-[13px] text-[#FFD9DC]">{saveError}</p>}
               <button type="button" onClick={again} className="btn-dark !py-3">Make another with this look</button>
               <Link to="/explore" className="btn-dark !py-3">Try a different look</Link>
@@ -253,6 +288,9 @@ function Generator({ asset }) {
   const blocked = signedIn && real && coins < cost
   return (
     <div className="relative isolate flex min-h-[calc(100dvh-60px)] flex-col overflow-hidden text-[#FFFFFF] md:min-h-[calc(100dvh-68px)]">
+      <div role="status" aria-live="polite" className={`pointer-events-none fixed inset-x-4 bottom-28 z-[500] mx-auto flex w-fit max-w-full items-center gap-2 rounded-full border border-[#8B5CF6]/50 bg-[#191919] px-4 py-2.5 text-[14px] font-medium text-white shadow-[0_12px_32px_rgba(0,0,0,0.5)] transition-all duration-300 sm:bottom-24 ${copied ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'}`}>
+        {copied && <><Svg d="M5 12l5 5 9-10" className="size-[18px] shrink-0 text-[#8B5CF6]" />Link copied successfully</>}
+      </div>
       {/* the selected template as the page background: strongly blurred, dimmed and darkened, so it is barely recognisable. A different template = a different page key, so it follows the selection by itself */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#000000] max-sm:hidden" aria-hidden="true">
         <img key={asset.image} src={asset.image} alt="" draggable="false" className="absolute -inset-40 size-[calc(100%+20rem)] max-w-none animate-fade-in object-cover opacity-60 blur-[160px]" />
@@ -288,7 +326,7 @@ function Generator({ asset }) {
                   <span aria-hidden="true" className="text-[#52525B] max-sm:hidden">·</span>
                   <Link to={collectionLink} replace className="shrink-0 font-medium text-[#FF3DF2] transition-colors hover:text-white">Change look</Link>
                   <span aria-hidden="true" className="text-[#52525B] max-sm:hidden">·</span>
-                  <button type="button" onClick={copyLink} className="shrink-0 cursor-pointer font-medium text-[#FF3DF2] transition-colors hover:text-white">{copied ? 'Link copied' : 'Copy link'}</button>
+                  <button type="button" onClick={shareLook} aria-label={`Share the ${asset.name} look`} className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-[#8B5CF6]/50 bg-[#8B5CF6]/10 px-3.5 py-1.5 font-semibold text-[#C4B5FD] transition-colors hover:bg-[#8B5CF6]/25 hover:text-white"><Svg d="M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4" className="size-4" />Share</button>
                 </figcaption>
               </figure>
               <Svg d="M5 12h14M13 6l6 6-6 6" className="size-6 shrink-0 self-center text-[#A1A1AA] max-sm:hidden lg:size-8" />
@@ -310,9 +348,7 @@ function Generator({ asset }) {
         <div className="flex h-14 items-center gap-3 px-4">
           <button type="button" aria-label="Back" onClick={() => nav(-1)} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full text-white active:bg-white/10"><Svg d="M15 5l-7 7 7 7" className="size-6" /></button>
           <span className="flex-1" />
-          <button type="button" aria-label={copied ? 'Link copied' : 'Copy link to this look'} onClick={copyLink} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full bg-[#191919] text-white active:scale-95">
-            {copied ? <Svg d="M5 12l5 5 9-10" className="size-[18px] text-[#FF3DF2]" /> : <Svg d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1" className="size-[18px]" />}
-          </button>
+          <button type="button" aria-label="Share this look" onClick={shareLook} className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full bg-[#191919] text-[#C4B5FD] active:scale-95"><Svg d="M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4" className="size-[18px]" /></button>
           <Link to={collectionLink} replace className="shrink-0 rounded-full bg-[#191919] px-3.5 py-1.5 text-[13px] font-semibold text-[#FF3DF2]">Change look</Link>
           {signedIn && <Link to={coins >= 150 ? '/coins' : '/pricing'} aria-label={`${coins} coins - open wallet`} className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-[#191919] pl-1.5 pr-3 text-[13px] font-semibold text-white"><img src="/images/features/coin.svg" alt="" className="size-5 object-contain" />{coins.toLocaleString()}</Link>}
         </div>
