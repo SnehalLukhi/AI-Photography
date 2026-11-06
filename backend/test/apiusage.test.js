@@ -7,7 +7,9 @@ let mock, app, user
 const store = new Map()
 const H = { 'x-admin-key': 'admin-secret' }
 const usage = async (q = '') => (await (await fetch(`${app.base}/api/admin/api-usage${q}`, { headers: H })).json())
-const generate = async (title) => fetch(`${app.base}/api/photos/generate`, { method: 'POST', headers: { authorization: `Bearer ${user.token}` }, body: h.form({ image: { buffer: await h.solid(300, 400, { r: 5, g: 50, b: 90 }, 'jpeg'), type: 'image/jpeg', filename: 'p.jpg' } }, { style_title: title, style_desc: 'd', template_name: title }) })
+// the client sends only a template_id; this is the DB row whose own saved style_title_prompt the mock inspects below ('Golden hour' / 'NO FACE')
+const TEMPLATE_FOR = { 'Golden hour': 'usage-golden', 'NO FACE': 'usage-no-face' }
+const generate = async (title) => fetch(`${app.base}/api/photos/generate`, { method: 'POST', headers: { authorization: `Bearer ${user.token}` }, body: h.form({ image: { buffer: await h.solid(300, 400, { r: 5, g: 50, b: 90 }, 'jpeg'), type: 'image/jpeg', filename: 'p.jpg' } }, { template_id: TEMPLATE_FOR[title], template_name: title }) })
 
 before(async () => {
   mock = await h.startMockAilab(async (call) => {
@@ -26,6 +28,13 @@ before(async () => {
   require('../src/services/ailab.service').downloadImage = async () => ({ buffer: await h.resultJpeg(), mimeType: 'image/jpeg' })
   app = await h.startApp(require('../src/app'))
   user = await h.createUser('usage@example.com', 'Una User')
+
+  const T = require('../src/services/templates.service')
+  await T.saveCategory({ id: 'usage-test', name: 'Usage test', flow: 'photography' })
+  await T.createTemplates([
+    { id: 'usage-golden', category_id: 'usage-test', name: 'Golden hour', preview_url: 'https://cdn.example.com/p.jpg', style_title_prompt: 'Golden hour', style_desc_prompt: 'd' },
+    { id: 'usage-no-face', category_id: 'usage-test', name: 'No face', preview_url: 'https://cdn.example.com/p.jpg', style_title_prompt: 'NO FACE', style_desc_prompt: 'd' },
+  ])
 })
 after(async () => { await app.close(); await mock.close() })
 

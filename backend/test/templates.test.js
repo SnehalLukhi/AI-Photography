@@ -111,16 +111,21 @@ test('multipart: the picture is stored in Spaces and its URL becomes preview_url
   }
 })
 
-test('prompts of any length are stored and returned complete (no 500 / 1000 character cut)', async () => {
-  const title = `T${'x'.repeat(2999)}`, desc = `D${'y '.repeat(5000)}end`
-  const res = await call('POST', '/admin/templates', { id: 'long1', category_id: 'retro', name: 'Long', preview_url: url, style_title_prompt: title, style_desc_prompt: desc })
+test('a prompt up to the Admin Panel\'s own limit (500 title / 1000 description) is stored complete and unchanged; over the limit it is rejected, never cut', async () => {
+  const title500 = 'T'.repeat(500), desc1000 = 'D'.repeat(1000)
+  const res = await call('POST', '/admin/templates', { id: 'long1', category_id: 'retro', name: 'Long', preview_url: url, style_title_prompt: title500, style_desc_prompt: desc1000 })
   assert.equal(res.status, 201)
   const get = async () => (await (await call('GET', '/templates?category=retro', undefined, {})).json()).templates.find((t) => t.id === 'long1')
-  assert.equal((await get()).style_title_prompt, title)
-  assert.equal((await get()).style_desc_prompt, desc)
-  const longer = `${desc} and more ${'z'.repeat(4000)}`
-  assert.equal((await call('PUT', '/admin/templates/long1', { style_desc_prompt: longer })).status, 200) // edit keeps it whole too
-  assert.equal((await get()).style_desc_prompt, longer)
+  assert.equal((await get()).style_title_prompt, title500) // whole, not shortened
+  assert.equal((await get()).style_desc_prompt, desc1000)
+
+  assert.equal((await call('POST', '/admin/templates', { id: 'long-title-over', category_id: 'retro', name: 'Over', preview_url: url, style_title_prompt: 'T'.repeat(501), style_desc_prompt: 'd' })).status, 400)
+  assert.equal((await call('POST', '/admin/templates', { id: 'long-desc-over', category_id: 'retro', name: 'Over', preview_url: url, style_title_prompt: 't', style_desc_prompt: 'D'.repeat(1001) })).status, 400)
+
+  assert.equal((await call('PUT', '/admin/templates/long1', { style_desc_prompt: 'D'.repeat(1000) })).status, 200) // edit: exactly at the limit still accepted
+  assert.equal((await get()).style_desc_prompt, 'D'.repeat(1000))
+  assert.equal((await call('PUT', '/admin/templates/long1', { style_desc_prompt: 'D'.repeat(1001) })).status, 400) // edit: one character over is rejected, not silently cut
+  assert.equal((await get()).style_desc_prompt, 'D'.repeat(1000)) // rejected write never touched the stored value
 })
 
 test('the flow comes from the category only: a Cartoon style id in a photography category stays a photography template', async () => {

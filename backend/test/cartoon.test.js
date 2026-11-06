@@ -119,14 +119,17 @@ test('maps AILabTools errors: no credits -> 402, API error code passed through -
   assert.equal(noFace.status, 422); assert.equal((await noFace.json()).error.code, 'ERROR_NO_FACE_IN_FILE')
 })
 
-test('the existing AI Photography endpoint is untouched: still accepts WebP and its own fields', async () => {
+test('the existing AI Photography endpoint is untouched: still accepts WebP and uses the template\'s own saved fields', async () => {
+  const T = require('../src/services/templates.service')
+  await T.saveCategory({ id: 'photo-cross-check', name: 'Photo cross-check', flow: 'photography' }).catch(() => {}) // may already exist from an earlier test run
+  await T.createTemplates({ id: 'cross-check-golden', category_id: 'photo-cross-check', name: 'Golden hour', preview_url: 'https://cdn.example.com/p.jpg', style_title_prompt: 'Golden hour', style_desc_prompt: 'Warm light' }).catch(() => {})
   const before = mock.calls.length
-  const f = h.form({ image: await img('webp') }, { style_title: 'Golden hour', style_desc: 'Warm light', image_size: '9:16' })
+  const f = h.form({ image: await img('webp') }, { template_id: 'cross-check-golden', image_size: '9:16' })
   const res = await fetch(`${app.base}/api/photos/generate`, { method: 'POST', body: f })
   assert.notEqual(res.status, 415)
   const submit = mock.calls.slice(before).find((c) => c.method === 'POST')
   assert.ok(submit.url.startsWith('/api/image/effects/ai-photography'))
-  assert.deepEqual(submit.parts.map((p) => p.name).sort(), ['image', 'image_size', 'style_desc', 'style_title'])
+  assert.deepEqual(submit.parts.map((p) => p.name).sort(), ['image', 'image_size', 'style_desc', 'style_title']) // template_id itself is never forwarded to AILabTools
 })
 
 test('no uploaded file is left on disk after any Cartoon request', async () => {

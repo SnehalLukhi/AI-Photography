@@ -69,7 +69,9 @@ export function promptFor(asset) {
     if (t.flow === 'cartoon') return { id: t.id, name: t.name, cartoonType: t.id }
     if (t.flow === 'beard') return { id: t.id, name: t.name, beardTemplate: t.id }
     if (t.flow === 'hairstyle') return { id: t.id, name: t.name, hairTemplate: t.id }
-    return { id: t.id, name: t.name, title: t.style_title_prompt || undefined, desc: t.style_desc_prompt || undefined } // both prompts are optional: a missing one is simply not sent
+    // Photography: only the template's own id is sent. The backend looks up this exact row and uses ITS saved style_title_prompt / style_desc_prompt -
+    // the browser never carries the prompt text, so a modified request cannot replace a template's saved prompt with different text.
+    return { id: t.id, name: t.name, templateId: t.id }
   }
   const src = (() => { try { return decodeURIComponent(asset.image) } catch { return asset.image } })() // image URLs are percent-encoded ("Linkedin%20Headshot")
   const cat = CATALOGUES.find((c) => src.includes(c.folder))
@@ -425,7 +427,7 @@ export async function deleteGeneration(id) {
  * Sends the photo plus the template's title/description to the backend and resolves with the generated image URL.
  * Rejects (never resolves with the original photo) on any failure: network, API error, no image, or timeout.
  */
-export async function generatePhoto({ file, title, desc, cartoonType, beardTemplate, hairTemplate, hairColor, name, signal }) {
+export async function generatePhoto({ file, templateId, cartoonType, beardTemplate, hairTemplate, hairColor, name, signal }) {
   const form = new FormData()
   form.append('image', file, file.name)
   if (name) form.append('template_name', name) // shown in My Creations
@@ -433,8 +435,9 @@ export async function generatePhoto({ file, title, desc, cartoonType, beardTempl
   else if (beardTemplate) form.append('template', beardTemplate) // Beard: the JSON id only; the backend sends the template's reference image as `image_template`
   else if (cartoonType) form.append('type', cartoonType) // Cartoon Yourself: the style is chosen with `type`; no prompts, no image_size
   else {
-    if (title) form.append('style_title', title) // both prompts are optional; only a prompt the template really has is sent, unchanged
-    if (desc) form.append('style_desc', desc)
+    // AI Photography: only the template's id is sent. The backend looks up that template and uses its own saved style_title / style_desc -
+    // this browser never sends prompt text, so there is nothing here for a modified request to override.
+    form.append('template_id', templateId)
     form.append('image_size', IMAGE_SIZE)
   }
 

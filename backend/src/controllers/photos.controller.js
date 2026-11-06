@@ -4,15 +4,27 @@ const { removeFiles } = require('../utils/tempFiles')
 const { prepareImage } = require('../services/image.service')
 const ailab = require('../services/ailab.service')
 const generations = require('../services/generations.service')
+const templates = require('../services/templates.service')
 
 const TASK_ID_RE = /^[A-Za-z0-9_-]{6,128}$/
-// The template prompts (style_title / style_desc) are OPTIONAL. When sent they come from the template JSON files and are passed to AILabTools EXACTLY as received: no
-// trimming, truncation, character filtering or any other change. When omitted (or empty) the field is simply not sent - a replacement prompt is never created.
-// AILabTools applies its own length limits and answers with its own error if it needs a field that is missing.
-function styleText(raw, field) {
-  if (raw == null || raw === '') return undefined
-  if (typeof raw !== 'string') throw new AppError(400, 'INVALID_STYLE_TEXT', `"${field}" must be text.`)
-  return raw.trim() ? raw : undefined
+
+/**
+ * The browser never sends prompt text for AI Photography: it sends only `template_id`, the id of a row of the `templates` table. This function looks that
+ * row up and returns ITS OWN saved style_title_prompt / style_desc_prompt (passed to AILabTools exactly as saved: no trimming, truncation or rewriting).
+ * Both prompts stay optional, same as before - a template with one left blank in the Admin Panel still generates, just without that field.
+ * `style_title` / `style_desc` sent directly in the request body are rejected outright: a modified request has no way to replace a template's saved prompt.
+ */
+async function resolvePrompt(req) {
+  if (req.body?.style_title !== undefined || req.body?.style_desc !== undefined) {
+    throw new AppError(400, 'PROMPT_OVERRIDE_REJECTED', '"style_title" / "style_desc" are not accepted. Send "template_id"; the template\'s own saved prompt is used automatically.')
+  }
+  const id = typeof req.body?.template_id === 'string' ? req.body.template_id.trim() : ''
+  if (!id) throw new AppError(400, 'MISSING_FIELDS', 'Missing required field "template_id" (the id of an AI Photography template). Send multipart/form-data with "image", "template_id" and optional "image_size".')
+  const row = await templates.getTemplate(id)
+  if (!row) throw new AppError(400, 'INVALID_TEMPLATE', `"template_id" is not a known template: ${id.slice(0, 60)}`)
+  if (!row.active) throw new AppError(400, 'INVALID_TEMPLATE', `Template "${id}" is not active.`)
+  if (row.flow !== 'photography') throw new AppError(400, 'INVALID_TEMPLATE', `Template "${id}" does not use the AI Photography flow (it is "${row.flow}"). Use that flow's own endpoint instead.`)
+  return { id, styleTitle: row.style_title_prompt || undefined, styleDesc: row.style_desc_prompt || undefined }
 }
 
 function parseImageSize(raw) {
@@ -54,10 +66,9 @@ async function generate(req, res) {
 
   try {
     if (!req.file) {
-      throw new AppError(400, 'MISSING_FIELDS', 'Missing required file field "image". Send multipart/form-data with "image" (optional "style_title", "style_desc" and "image_size").')
+      throw new AppError(400, 'MISSING_FIELDS', 'Missing required file field "image". Send multipart/form-data with "image", "template_id" and optional "image_size".')
     }
-    const styleTitle = styleText(req.body?.style_title, 'style_title')
-    const styleDesc = styleText(req.body?.style_desc, 'style_desc')
+    const { styleTitle, styleDesc } = await resolvePrompt(req) // looks up template_id and returns ITS saved prompt; throws on a missing/inactive/wrong-flow id
     const imageSize = parseImageSize(req.body?.image_size)
 
     const image = await prepareImage(req.file.path, 'image')

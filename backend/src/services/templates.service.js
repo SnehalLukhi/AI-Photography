@@ -14,8 +14,17 @@ const ID = /^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$/
 
 const text = (v) => (typeof v === 'string' ? v.trim() : '')
 const optText = (v, max) => { const s = text(v); return s ? s.slice(0, max) : null }
-const promptText = (v) => (typeof v === 'string' && v.trim() ? v : null) // prompts are stored exactly as entered: no length limit, no trimming, no rewriting
+const promptText = (v) => (typeof v === 'string' && v.trim() ? v : null) // prompts are stored exactly as entered: never trimmed or rewritten here (see promptLimit below for the length check)
 const bad = (message) => new AppError(400, 'INVALID_TEMPLATE', message)
+
+// AILabTools' own limits (backend/README.md) for style_title / style_desc. Checked on save so a value is accepted whole or rejected whole - it is never
+// silently shortened: a prompt over the limit must be shortened by the admin, not by this code.
+const TITLE_MAX = 500
+const DESC_MAX = 1000
+const promptLimit = (value, field, id, max) => {
+  if (value && value.length > max) throw bad(`Template "${id}": "${field}" is ${value.length} characters; the limit is ${max}.`)
+  return value
+}
 
 const templateOut = (r) => ({
   id: r.id, category_id: r.category_id, flow: r.flow, name: r.name, preview_url: r.preview_url,
@@ -102,8 +111,8 @@ function templateValues(b, category) {
   let ok = /^\/(?!\/)\S+$/.test(previewUrl) // a site-relative path (/images/...) served by the frontend
   try { ok ||= /^https?:$/.test(new URL(previewUrl).protocol) } catch { /* not a URL */ }
   if (!ok) throw bad(`Template "${id}": "preview_url" must be an http(s) image URL (or a site path starting with "/").`)
-  const title = promptText(b.style_title_prompt)
-  const desc = promptText(b.style_desc_prompt)
+  const title = promptLimit(promptText(b.style_title_prompt), 'style_title_prompt', id, TITLE_MAX)
+  const desc = promptLimit(promptText(b.style_desc_prompt), 'style_desc_prompt', id, DESC_MAX)
   const apiValue = optText(b.api_value, 100)
   if (category.flow === 'cartoon' && !CARTOON_TYPES.includes(apiValue || cartoonTypeFor(id) || id)) throw bad(`Template "${id}": for a cartoon category the id (or "api_value") must be a supported Cartoon Yourself style.`)
   if (category.flow === 'hairstyle') { // the hair_style comes from the template's own api_value or, failing that, from the verified id -> hair_style table; either way it must be a documented value

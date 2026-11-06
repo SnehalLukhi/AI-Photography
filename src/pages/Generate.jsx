@@ -162,7 +162,7 @@ function Generator({ asset }) {
     abort.current?.abort()
     const ctrl = new AbortController(); abort.current = ctrl
     try {
-      const { url, original, generationId } = await generatePhoto({ file, title: prompt.title, desc: prompt.desc, cartoonType: prompt.cartoonType, beardTemplate: prompt.beardTemplate, hairTemplate: prompt.hairTemplate, hairColor: prompt.hairColor, name: asset.name, signal: ctrl.signal })
+      const { url, original, generationId } = await generatePhoto({ file, templateId: prompt.templateId, cartoonType: prompt.cartoonType, beardTemplate: prompt.beardTemplate, hairTemplate: prompt.hairTemplate, hairColor: prompt.hairColor, name: asset.name, signal: ctrl.signal })
       saveOriginal(generationId, file) // the original photo stays in this browser (the server keeps only the AI image)
       addCreation({ type: asset.type, name: asset.name, image: url, original, generationId })
       refreshUser() // new coin balance

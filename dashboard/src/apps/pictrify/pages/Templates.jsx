@@ -6,6 +6,8 @@ import { slug } from '../../../core/format.js'
 import { FLOW_LABEL, FLOW_TONE, imageUrl, tid, useCatalogue } from '../catalogue.js'
 
 const RATIOS = ['9:16', '3:4', '1:1', '4:3', '16:9']
+const TITLE_MAX = 500 // AILabTools' own limit for style_title (backend/README.md); the backend rejects anything over this, never shortens it
+const DESC_MAX = 1000 // same, for style_desc
 const NO_CAT = 'trending-only' // reserved category of templates that belong to no category (they exist only for Trending); the server creates it on first use
 const blank = { id: '', category_id: '', name: '', preview_url: '', style_title_prompt: '', style_desc_prompt: '', api_value: '', aspect_ratio: '9:16', cost_coins: '', gender: '', sort_order: 0, active: true, trending: false }
 
@@ -88,7 +90,9 @@ export default function Templates({ api }) {
 
   const showPrompts = flow === 'photography' // the prompt fields are shown for this flow but are optional
   const needHair = flow === 'hairstyle'
-  const canSave = form && form.id && form.name && form.category_id && (file || form.preview_url) // hairstyle: an empty value is fine - the server uses its built-in id -> hair_style table (and says so if the id is not in it)
+  const titleOver = (form?.style_title_prompt || '').length > TITLE_MAX
+  const descOver = (form?.style_desc_prompt || '').length > DESC_MAX
+  const canSave = form && form.id && form.name && form.category_id && (file || form.preview_url) && !titleOver && !descOver // hairstyle: an empty value is fine - the server uses its built-in id -> hair_style table (and says so if the id is not in it)
 
   return (
     <>
@@ -163,8 +167,14 @@ export default function Templates({ api }) {
             <Field label="Id" hint={flow === 'cartoon' ? 'For Cartoon this must be a supported cartoon style.' : form.isNew ? 'Unique across all templates. Cannot be changed later.' : 'The id cannot be changed.'}><input className="input font-mono" value={form.id} disabled={!form.isNew} onChange={(e) => set('id', e.target.value.trim())} placeholder="old-money-vintage-sari" /></Field>
 
             {showPrompts && <>
-              <Field label="Title prompt" hint="Sent to the AI as the style title."><input className="input" value={form.style_title_prompt} onChange={(e) => set('style_title_prompt', e.target.value)} placeholder="Golden hour portrait" /></Field>
-              <Field label="Description prompt" hint="Describe the look, light and mood."><textarea className="input min-h-[96px] resize-y" value={form.style_desc_prompt} onChange={(e) => set('style_desc_prompt', e.target.value)} placeholder="Warm sunset light, soft film grain…" /></Field>
+              <Field label="Title prompt" hint="Sent to the AI as the style title." error={titleOver ? `Maximum ${TITLE_MAX} characters allowed.` : undefined}>
+                <input className="input" value={form.style_title_prompt} onChange={(e) => set('style_title_prompt', e.target.value)} placeholder="Golden hour portrait" />
+                <span className={cx('mt-1 block text-xs', titleOver ? 'text-red-300' : 'text-white/35')}>{form.style_title_prompt.length} / {TITLE_MAX} characters</span>
+              </Field>
+              <Field label="Description prompt" hint="Describe the look, light and mood." error={descOver ? `Maximum ${DESC_MAX} characters allowed.` : undefined}>
+                <textarea className="input min-h-[96px] resize-y" value={form.style_desc_prompt} onChange={(e) => set('style_desc_prompt', e.target.value)} placeholder="Warm sunset light, soft film grain…" />
+                <span className={cx('mt-1 block text-xs', descOver ? 'text-red-300' : 'text-white/35')}>{form.style_desc_prompt.length} / {DESC_MAX} characters</span>
+              </Field>
             </>}
             {(needHair || flow === 'cartoon' || flow === 'beard') && <Field label={needHair ? 'Hair style value (optional)' : 'Provider value (optional)'} hint={needHair ? 'Leave empty to use the built-in value for this id. Only a new style that is not built in needs one, e.g. BuzzCut.' : 'Only when it differs from the id.'}><input className="input" value={form.api_value} onChange={(e) => set('api_value', e.target.value)} /></Field>}
 

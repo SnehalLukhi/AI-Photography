@@ -140,7 +140,7 @@ test('WebP photos are accepted (docs: JPEG/JPG/PNG/WEBP)', async () => {
 
 test('the existing AI Photography endpoint is untouched', async () => {
   const before = mock.calls.length
-  const f = h.form({ image: await img('webp') }, { style_title: 'Golden hour', style_desc: 'Warm light', image_size: '9:16' })
+  const f = h.form({ image: await img('webp') }, { template_id: 'plain-photo', image_size: '9:16' }) // a photography template created in before(), unrelated to Beard
   await fetch(`${app.base}/api/photos/generate`, { method: 'POST', body: f })
   assert.ok(mock.calls.slice(before).find((c) => c.method === 'POST').url.startsWith('/api/image/effects/ai-photography'))
 })

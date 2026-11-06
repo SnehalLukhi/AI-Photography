@@ -31,6 +31,10 @@ before(async () => {
 
   app = await h.startApp(require('../src/app'))
   other = (await h.createUser('other@example.com')).token
+
+  const T = require('../src/services/templates.service') // the client sends only this id; its own saved prompt is what the server forwards
+  await T.saveCategory({ id: 'gen-test', name: 'Gen test', flow: 'photography' })
+  await T.createTemplates({ id: 'gen-test-template', category_id: 'gen-test', name: 'Gen test template', preview_url: 'https://cdn.example.com/p.jpg', style_title_prompt: 'Golden hour', style_desc_prompt: 'Warm light' })
 })
 after(async () => { await app.close(); await mock.close() })
 
@@ -39,7 +43,7 @@ const api = (path, init = {}) => fetch(`${app.base}/api${path}`, init)
 const as = (token) => ({ headers: { authorization: `Bearer ${token}` } })
 
 test('generate stores only the AI result (the original photo is not stored) and returns its URL', async () => {
-  const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { style_title: 'Golden hour', style_desc: 'Warm light', template_name: 'Retro Vibes' }) })
+  const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { template_id: 'gen-test-template', template_name: 'Retro Vibes' }) })
   assert.equal(res.status, 200)
   const { generation } = await res.json()
   assert.equal(generation.status, 'completed')
@@ -86,7 +90,7 @@ test('upload endpoint starts a record, result endpoint adds the AI image once', 
 
 test('a storage outage never breaks generation', async () => {
   storageUp = false
-  const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { style_title: 'x', style_desc: 'y' }) })
+  const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { template_id: 'gen-test-template' }) })
   assert.equal(res.status, 200)
   const body = await res.json()
   assert.equal(body.status, 'succeeded')
@@ -112,7 +116,7 @@ test('listing pages through the newest generations first', async () => {
 })
 
 test('download sends the image as a file; only its owner can get it', async () => {
-  const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { style_title: 'Vintage Sari', style_desc: 'warm', template_name: 'Vintage Sari!' }) })
+  const res = await api('/photos/generate', { method: 'POST', body: h.form({ image: await img() }, { template_id: 'gen-test-template', template_name: 'Vintage Sari!' }) })
   const { generation } = await res.json()
   const file = await api(`/generations/${generation.id}/download`)
   assert.equal(file.status, 200)

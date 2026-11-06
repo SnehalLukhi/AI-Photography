@@ -273,7 +273,7 @@ test('a photo of 4090 px or more is downscaled below 4090 before it is sent', as
 
 test('the other endpoints are untouched (Photography and Cartoon still use their own AILabTools APIs)', async () => {
   let before = mock.calls.length
-  const f = h.form({ image: await img('webp') }, { style_title: 'Golden hour', style_desc: 'Warm light', image_size: '9:16' })
+  const f = h.form({ image: await img('webp') }, { template_id: 'plain-photo', image_size: '9:16' }) // a photography template created in before(), unrelated to Hairstyle
   await fetch(`${app.base}/api/photos/generate`, { method: 'POST', body: f })
   assert.ok(mock.calls.slice(before).find((c) => c.method === 'POST').url.startsWith('/api/image/effects/ai-photography'))
   before = mock.calls.length

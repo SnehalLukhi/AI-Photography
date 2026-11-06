@@ -5,15 +5,21 @@
  *   GET  /api/common/query-async-task-result?task_id=...   - task_status 0 queued / 1 processing / 2 completed
  * The shape of `data` for a completed AI Photography task is NOT documented, so these tests only check that whatever
  * the API returns is passed through untouched and that URLs inside it are listed in `images`.
+ *
+ * The client sends only `template_id` (never prompt text): the server looks that template up in the database and uses
+ * ITS OWN saved style_title_prompt / style_desc_prompt. These tests set up real template rows (same services the
+ * Admin Panel uses) and confirm the exact saved prompt is what reaches AILabTools, unchanged - and that a request
+ * trying to send `style_title` / `style_desc` directly is rejected before anything is sent upstream.
  */
 const { test, before, after } = require('node:test')
 const assert = require('node:assert/strict')
 const sharp = require('sharp')
 const h = require('./helpers')
 
-let mock, app
+let mock, app, T
 let polls = 0
 const RESULT = { anything: { nested: ['https://example.invalid/out-1.png'] }, note: 'not a url' }
+const URL_IMG = 'https://cdn.example.com/p.jpg'
 
 before(async () => {
   mock = await h.startMockAilab(async (call) => {
@@ -40,11 +46,25 @@ before(async () => {
   process.env.AILAB_POLL_TIMEOUT_MS = '1500'
   process.env.RATE_LIMIT_MAX = '1000' // the app's own rate limiter (default 10/min) would otherwise trip during the suite
   app = await h.startApp(require('../src/app'))
+
+  // Fixture templates, created the same way the Admin Panel does (POST /api/admin/templates -> templates.service).
+  T = require('../src/services/templates.service')
+  await T.saveCategory({ id: 'photo-flow-test', name: 'Photo test', flow: 'photography' })
+  await T.saveCategory({ id: 'cartoon-flow-test', name: 'Cartoon test', flow: 'cartoon' })
+  await T.createTemplates([
+    { id: 'photo-golden', category_id: 'photo-flow-test', name: 'Golden Hour', preview_url: URL_IMG, style_title_prompt: 'Golden hour portrait', style_desc_prompt: 'Warm cinematic light, soft film grain' },
+    { id: 'photo-no-prompt', category_id: 'photo-flow-test', name: 'No Prompt', preview_url: URL_IMG }, // both prompts left blank in the Admin form
+    { id: 'photo-hidden', category_id: 'photo-flow-test', name: 'Hidden', preview_url: URL_IMG, style_title_prompt: 'Hidden style', active: false },
+    { id: 'photo-max-len', category_id: 'photo-flow-test', name: 'Max length', preview_url: URL_IMG, style_title_prompt: 'T'.repeat(500), style_desc_prompt: 'D'.repeat(1000) }, // the Admin Panel's own limit (500 / 1000)
+    { id: 'photo-no-credits', category_id: 'photo-flow-test', name: 'No Credits', preview_url: URL_IMG, style_title_prompt: 'NO CREDITS', style_desc_prompt: 'x' },
+    { id: 'photo-no-face', category_id: 'photo-flow-test', name: 'No Face', preview_url: URL_IMG, style_title_prompt: 'NO FACE', style_desc_prompt: 'x' },
+    { id: 'anime', category_id: 'cartoon-flow-test', name: 'Anime', preview_url: URL_IMG }, // a real template, but NOT a photography one
+  ])
 })
 after(async () => { await app.close(); await mock.close() })
 
 const img = async (w = 600, hgt = 800, format = 'jpeg') => ({ buffer: await h.solid(w, hgt, { r: 120, g: 90, b: 70 }, format), type: `image/${format}`, filename: `p.${format}` })
-const fields = (extra = {}) => ({ style_title: 'Golden hour portrait', style_desc: 'Warm cinematic light, soft film grain', ...extra })
+const fields = (extra = {}) => ({ template_id: 'photo-golden', ...extra })
 const post = (files, f, qs = '') => fetch(`${app.base}/api/photos/generate${qs}`, { method: 'POST', body: h.form(files, f) })
 
 test('GET /api/health is unchanged and never leaks the key', async () => {
@@ -57,9 +77,9 @@ test('GET /api/health is unchanged and never leaks the key', async () => {
   assert.ok(!JSON.stringify(body).includes('test-key'))
 })
 
-test('sends the documented AI Photography request, polls the async task and returns the result', async () => {
+test('a valid template_id uses that template\'s exact saved prompt - the client never sends prompt text', async () => {
   polls = 0
-  const res = await post({ image: await img() }, fields({ image_size: '3:4' }))
+  const res = await post({ image: await img() }, { template_id: 'photo-golden', image_size: '3:4' })
   assert.equal(res.status, 200)
   const body = await res.json()
   assert.equal(body.success, true)
@@ -74,9 +94,9 @@ test('sends the documented AI Photography request, polls the async task and retu
   assert.equal(submit.url, '/api/image/effects/ai-photography')
   assert.equal(submit.headers['ailabapi-api-key'], 'test-key')
   assert.match(submit.headers['content-type'], /^multipart\/form-data; boundary=/)
-  assert.deepEqual(submit.parts.map((p) => p.name).sort(), ['image', 'image_size', 'style_desc', 'style_title'])
+  assert.deepEqual(submit.parts.map((p) => p.name).sort(), ['image', 'image_size', 'style_desc', 'style_title']) // template_id itself is never forwarded to AILabTools
   const val = (n) => submit.parts.find((p) => p.name === n).data.toString()
-  assert.equal(val('style_title'), 'Golden hour portrait')
+  assert.equal(val('style_title'), 'Golden hour portrait') // exactly the saved row, not anything the request could have supplied
   assert.equal(val('style_desc'), 'Warm cinematic light, soft film grain')
   assert.equal(val('image_size'), '3:4')
   const imgPart = submit.parts.find((p) => p.name === 'image')
@@ -86,6 +106,60 @@ test('sends the documented AI Photography request, polls the async task and retu
   assert.ok(gets.length >= 3) // queued (0) -> processing (1) -> completed (2)
   assert.match(gets[0].url, /^\/api\/common\/query-async-task-result\?task_id=task_PHOTO-001$/)
   assert.equal(gets[0].headers['ailabapi-api-key'], 'test-key')
+})
+
+test('a template with no saved prompt is still accepted: both fields are simply left out, never replaced', async () => {
+  polls = 0
+  const res = await post({ image: await img() }, { template_id: 'photo-no-prompt' })
+  assert.equal(res.status, 200)
+  const submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
+  assert.deepEqual(submit.parts.map((p) => p.name), ['image']) // no style_title, no style_desc, no image_size (not sent)
+})
+
+test('sending style_title / style_desc directly is rejected outright, even with a valid template_id, and AILabTools is never called', async () => {
+  const before = mock.calls.length
+  let res = await post({ image: await img() }, { template_id: 'photo-golden', style_title: 'Attacker-controlled title' })
+  assert.equal(res.status, 400)
+  assert.equal((await res.json()).error.code, 'PROMPT_OVERRIDE_REJECTED')
+
+  res = await post({ image: await img() }, { template_id: 'photo-golden', style_desc: 'Attacker-controlled description' })
+  assert.equal(res.status, 400)
+  assert.equal((await res.json()).error.code, 'PROMPT_OVERRIDE_REJECTED')
+  assert.equal(mock.calls.length, before) // neither attempt ever reached AILabTools
+})
+
+test('an unknown template_id is rejected and AILabTools is never called', async () => {
+  const before = mock.calls.length
+  const res = await post({ image: await img() }, { template_id: 'not-a-real-template' })
+  assert.equal(res.status, 400)
+  assert.equal((await res.json()).error.code, 'INVALID_TEMPLATE')
+  assert.equal(mock.calls.length, before)
+})
+
+test('an inactive template_id is rejected and AILabTools is never called', async () => {
+  const before = mock.calls.length
+  const res = await post({ image: await img() }, { template_id: 'photo-hidden' })
+  assert.equal(res.status, 400)
+  assert.equal((await res.json()).error.code, 'INVALID_TEMPLATE')
+  assert.equal(mock.calls.length, before)
+})
+
+test('a template_id of a non-photography flow (e.g. Cartoon) is rejected and AILabTools is never called', async () => {
+  const before = mock.calls.length
+  const res = await post({ image: await img() }, { template_id: 'anime' }) // a real, active template - just not a photography one
+  assert.equal(res.status, 400)
+  const body = await res.json()
+  assert.equal(body.error.code, 'INVALID_TEMPLATE')
+  assert.match(body.error.message, /AI Photography flow/)
+  assert.equal(mock.calls.length, before)
+})
+
+test('missing template_id is rejected and AILabTools is never called', async () => {
+  const before = mock.calls.length
+  const res = await post({ image: await img() }, {})
+  assert.equal(res.status, 400)
+  assert.equal((await res.json()).error.code, 'MISSING_FIELDS')
+  assert.equal(mock.calls.length, before)
 })
 
 test('image_size is optional and omitted from the request when not given; PNG/WebP are forwarded unchanged', async () => {
@@ -119,7 +193,7 @@ test('response=image tries to download the first result URL (reported as an erro
   assert.equal((await res.json()).error.code, 'AILAB_UNREACHABLE')
 })
 
-test('validation: image, style fields, image_size, file type, fake image', async () => {
+test('validation: image, image_size, file type, fake image', async () => {
   let res = await post({}, fields())
   assert.equal(res.status, 400); assert.equal((await res.json()).error.code, 'MISSING_FIELDS')
 
@@ -133,35 +207,21 @@ test('validation: image, style fields, image_size, file type, fake image', async
   assert.equal(res.status, 422); assert.equal((await res.json()).error.code, 'INVALID_IMAGE')
 })
 
-test('style text is sent to AILabTools exactly as received (no trimming, truncation or character filtering)', async () => {
+test('a saved prompt at the Admin Panel\'s own maximum length (500 / 1000 characters) reaches AILabTools complete and unchanged', async () => {
   polls = 0
-  const title = `  ${'a'.repeat(700)} subject’s “look” – é  `
-  const desc = `${'b'.repeat(1500)} jack-o’-lantern`
-  const res = await post({ image: await img() }, fields({ style_title: title, style_desc: desc }))
+  const res = await post({ image: await img() }, { template_id: 'photo-max-len' })
   assert.equal(res.status, 200)
   const submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
-  assert.equal(submit.parts.find((p) => p.name === 'style_title').data.toString(), title)
-  assert.equal(submit.parts.find((p) => p.name === 'style_desc').data.toString(), desc)
-})
-
-test('style_title and style_desc are optional: a missing prompt is left out of the AILabTools request, never replaced', async () => {
-  polls = 0
-  let res = await post({ image: await img() }, { style_desc: 'only a description' })
-  assert.equal(res.status, 200)
-  let submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
-  assert.deepEqual(submit.parts.map((p) => p.name).sort(), ['image', 'style_desc'])
-  polls = 0
-  res = await post({ image: await img() }, {})
-  assert.equal(res.status, 200)
-  submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
-  assert.deepEqual(submit.parts.map((p) => p.name), ['image'])
+  const val = (n) => submit.parts.find((p) => p.name === n).data.toString()
+  assert.equal(val('style_title'), 'T'.repeat(500))
+  assert.equal(val('style_desc'), 'D'.repeat(1000))
 })
 
 test('maps AILabTools errors: no credits -> 402, API error code passed through -> 422, unknown route -> 404', async () => {
-  let res = await post({ image: await img() }, fields({ style_title: 'NO CREDITS' }))
+  let res = await post({ image: await img() }, { template_id: 'photo-no-credits' })
   assert.equal(res.status, 402); assert.equal((await res.json()).error.code, 'AILAB_INSUFFICIENT_CREDITS')
 
-  res = await post({ image: await img() }, fields({ style_title: 'NO FACE' }))
+  res = await post({ image: await img() }, { template_id: 'photo-no-face' })
   assert.equal(res.status, 422); assert.equal((await res.json()).error.code, 'ERROR_NO_FACE_IN_FILE')
 
   res = await fetch(`${app.base}/api/nope`)
@@ -183,18 +243,8 @@ test('no uploaded file is left on disk after any request (success and every fail
   const before = h.tempFiles()
   polls = 0
   await post({ image: await img() }, fields())
-  await post({ image: await img() }, { style_desc: 'x' }) // validation error
+  await post({ image: await img() }, {}) // validation error: no template_id
   await post({ image: { buffer: Buffer.from('nope'), type: 'image/png', filename: 'x.png' } }, fields()) // not an image
-  await post({ image: await img() }, fields({ style_title: 'NO CREDITS' })) // upstream error
+  await post({ image: await img() }, { template_id: 'photo-no-credits' }) // upstream error
   assert.deepEqual(h.newTempFiles(before), [])
-})
-
-test('a very long prompt (far over 1000 characters) reaches AILabTools complete and unchanged', async () => {
-  const title = `T${'a'.repeat(2999)}`, desc = ` D${'b '.repeat(9000)}end ` // 3,000 and 18,000+ characters, with edge spaces
-  const res = await post({ image: await img() }, fields({ style_title: title, style_desc: desc }))
-  assert.equal(res.status, 200)
-  const submit = mock.calls.filter((c) => c.method === 'POST').at(-1)
-  const val = (n) => submit.parts.find((p) => p.name === n).data.toString()
-  assert.equal(val('style_title'), title)
-  assert.equal(val('style_desc'), desc)
 })

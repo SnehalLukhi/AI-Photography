@@ -152,7 +152,7 @@ export default function MobileHome({ trending = [] }) {
         <section aria-label="Trending templates" className="mt-4">
           <h2 className="px-4 text-[17px] font-bold text-white">Trending templates</h2>
           <div className="no-scrollbar mt-2.5 flex snap-x scroll-px-4 gap-2 overflow-x-auto px-4">
-            {trending.slice(0, 12).map((t) => (
+            {trending.map((t) => (
               <Link key={t.id} to={generateUrl(t)} aria-label={t.name} className="card-orbit relative block aspect-[9/16] w-[38vw] max-w-[170px] shrink-0 snap-start overflow-hidden rounded-[6px] bg-[#191919]">
                 <PImage src={t.image} alt="" loading="lazy" className="absolute inset-0 size-full object-cover" draggable="false" />
                 <span className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
